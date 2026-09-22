@@ -9,11 +9,15 @@ against OSM) still TBD.
 
 ## MPrint interior layouts
 
-Interior floor plans used to map study zones inside buildings. **Not present** in the
-data received so far — the `floors` field on each building is just a count, not
-geometry. Either source real MPrint data, or scope the MVP to building-level pins with
-a floor/room list instead of true indoor mapping — see
-[Data Sources § Gaps, item 3](data-sources.md#gaps-relative-to-what-the-app-needs).
+Interior floor plans used to map study zones inside buildings, sourced from UM's own
+[mprint.umich.edu](https://mprint.umich.edu/) viewer. **Confirmed working**: raster
+PNGs at `https://mprint.umich.edu/assets/floorplans/{tag}/{tag}_{floorNumber}.png`,
+where `{tag}` is a building's `acronym` field lowercased (verified for East/South/
+West/North Quad). Detailed CAD-style drawings with individual room numbers, stairs,
+and elevators — see [Data Sources § 5](data-sources.md#5-mprint-interior-floor-plans-confirmed-separate-source)
+for full detail and caveats (raster not vector, `acronym` only covers 112/466
+buildings, floor counts need discovery per building). Not yet mirrored into our own
+storage — see [Data Sources § Next Steps](data-sources.md#next-steps).
 
 ## Waitz IoT occupancy API
 

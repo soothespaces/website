@@ -32,3 +32,9 @@ makes decisions — record them here and as ADRs under [decisions/](../decisions
 - Whether the Waitz occupancy API is called directly from the client, proxied through
   a Next.js route handler, or synced into Supabase on a schedule — TBD (see
   [Integrations](integrations.md)).
+- How much MPrint interior data to digitize: raster floor plan image as a reference
+  layer (cheap) vs. manually hotspotted, clickable rooms (matches the original "mapped
+  interiors" pitch, but per-room manual work) — see
+  [Data Sources § 5](data-sources.md#5-mprint-interior-floor-plans-confirmed-separate-source).
+- Whether MPrint images are hot-linked from `mprint.umich.edu` at request time or
+  mirrored into Supabase Storage/the repo — TBD.

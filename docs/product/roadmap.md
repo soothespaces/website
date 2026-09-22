@@ -16,8 +16,10 @@ data drop.
       other sensory dimensions are not yet)
 - [ ] Decide the accessibility-data strategy (building `rampAccess` text + sparse
       entrance `wheelchair` tags need a plan to become reliable, connected data)
-- [ ] Decide whether per-floor interior mapping stays in scope without MPrint data, or
-      the MVP ships building-level pins + a floor/room list instead
+- [ ] Build an MPrint discovery/mirroring script (tag→floor-count mapping beyond the
+      112 buildings with an `acronym`, download images rather than hot-linking)
+- [ ] Decide how much MPrint digitization to do: raster reference image vs. manually
+      hotspotted clickable rooms
 
 ## Phase 2 — TBD
 

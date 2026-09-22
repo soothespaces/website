@@ -1,8 +1,9 @@
 # Data Sources
 
 Status: analysis of the first data drop (`data.json`, 2.7MB, not yet committed to the
-repo — see [Next Steps](#next-steps)). It's actually four separate top-level JSON
-values concatenated in one file, not one JSON document:
+repo — see [Next Steps](#next-steps)), plus MPrint interior floor plans confirmed as a
+separate, usable source. It's actually four separate top-level JSON values
+concatenated in one file, not one JSON document:
 
 | # | Shape | Count | Content |
 |---|-------|-------|---------|
@@ -14,6 +15,14 @@ values concatenated in one file, not one JSON document:
 All four are keyed by `slug` (spaces reference `buildingSlug`; every `buildingSlug` in
 the spaces array and every polygon's `slug` resolves to a record in the buildings
 array — checked, zero orphans either direction).
+
+**Provenance**: pulled from the API backing [mguide.app](https://mguide.app/), a third
+-party UM campus map, which itself presumably sources from official UM facilities/OSM
+data (the field shapes — `buildingRecordNumber`, OSM `osmId` tags — support that). It's
+someone else's API, not an official UM data feed, so treat field completeness/accuracy
+as "best effort" and don't assume stability of the endpoint long-term — worth committing
+the raw drop into the repo (see [Next Steps](#next-steps)) precisely because it may not
+be re-fetchable later.
 
 ## 1. Study spaces (24 records)
 
@@ -111,6 +120,39 @@ This is the closest thing to structured, point-level accessibility data, but it'
 - `entranceType`: main (935), service (628), emergency (22), secondary (9), stairs (7).
 - Only 33 have a `name`, only 102 have a free-text `description`.
 
+## 5. MPrint interior floor plans (confirmed, separate source)
+
+[mprint.umich.edu](https://mprint.umich.edu/) is UM's own interior floor plan viewer.
+It serves raster floor plan images at a predictable URL:
+
+```
+https://mprint.umich.edu/assets/floorplans/{tag}/{tag}_{floorNumber}.png
+```
+
+Confirmed by direct fetch: `eq_1.png` through `eq_4.png` (East Quad, floors 1–4) all
+return real ~500–700KB PNGs; `eq_9.png` 404s (falls back to the app shell). Each image
+is a full architectural CAD-style drawing with individual room numbers labeled (e.g.
+`1400`, `1400C`, `1408`), stairs, and elevators — genuinely detailed, not a schematic.
+
+**The `{tag}` matches our existing `acronym` field, lowercased** — verified: East Quad
+is `acronym: "EQ"` in dataset #3 and `eq` in the MPrint URL; same pattern holds for
+South/West/North Quad (`SQ`/`WQ`/`NQ`). This means dataset #3 already carries the join
+key needed to construct MPrint URLs for *some* buildings — but:
+
+- Only **112 of 466 buildings have an `acronym` at all**, and one value (`al`) is
+  reused by two different buildings — so acronym-based tag guessing is a good starting
+  point, not a complete or guaranteed-unique mapping. Full coverage requires either
+  probing each candidate URL (HTTP 200 vs. app-shell fallback) or finding an actual
+  MPrint building index/API.
+- **These are raster images, not vector geometry.** They're excellent for showing a
+  user "here's what this floor looks like" (zoomable/pannable, like a scanned map), but
+  there's no structured per-room polygon data — turning a specific room number into a
+  clickable, filterable map pin means manually digitizing hotspot regions per room per
+  floor, not just dropping the image in.
+- Floor count per building isn't given anywhere in our data (`floors` in dataset #3 is
+  a count, but hasn't been cross-checked against how many MPrint images actually
+  exist per building) — needs the same probing approach as tag discovery.
+
 ## Gaps relative to what the app needs
 
 1. **Study-space coverage is the biggest gap.** 24 curated spaces across 17 buildings
@@ -122,11 +164,11 @@ This is the closest thing to structured, point-level accessibility data, but it'
    for lighting quality, adaptive furniture, or other sensory dimensions the proposal
    calls out as core — those need a defined taxonomy and a way to populate them (manual
    survey, crowdsourced, or both).
-3. **No interior/per-floor maps.** `floors` is a count, not geometry. If per-floor
-   indoor mapping is still wanted (per the original "MPrint layouts" idea), that's a
-   wholly separate sourcing effort — MPrint access, floor plan digitization, or
-   dropping the indoor-layout ambition in favor of building-level pins + a room/floor
-   list.
+3. **Interior/per-floor maps are sourceable (MPrint, see § 5) but not yet structured
+   data.** The images exist and the URL pattern is confirmed; what's missing is (a) a
+   full building→tag mapping beyond the 112 buildings with an `acronym`, and (b) a
+   decision on how much manual digitization (room hotspots) is worth doing vs. just
+   showing the raster image as a reference layer under the pin-based map.
 4. **Accessibility data is real but thin and disconnected.** `rampAccess` (building
    level, prose) and entrance `wheelchair` tags (point level, <10% coverage) don't
    connect to each other and don't cover most buildings. Options: geocode/parse
@@ -152,12 +194,19 @@ This is the closest thing to structured, point-level accessibility data, but it'
    of inheriting the building's).
 3. Write and run a seed script that loads buildings + polygons + entrances + the 24
    curated spaces into Supabase, so the map has real content from day one.
-4. Decide the sensory/environmental data taxonomy (noise, lighting, etc.) the product
+4. Build an MPrint discovery/mirroring script: for each building, try
+   `{acronym-lowercased}_{n}.png` for increasing `n` until a fetch falls back to the
+   app shell, record the resulting tag→floor-count mapping, and download the images
+   (or at least their URLs) into the repo/Supabase Storage rather than hot-linking
+   `mprint.umich.edu` from production. For the 354 buildings with no `acronym`, the tag
+   is unknown and needs another discovery method (a real MPrint index, if one exists,
+   or manual lookup for the buildings that actually need interior maps).
+5. Decide the sensory/environmental data taxonomy (noise, lighting, etc.) the product
    overview promises, since current data only covers noise, and only coarsely.
-5. Decide how to close the study-space coverage gap: more manual curation before
+6. Decide how to close the study-space coverage gap: more manual curation before
    launch, prioritizing the crowdsourced contribution flow, or both.
-6. Decide the accessibility-data strategy (see gap 4) — this is arguably the most
+7. Decide the accessibility-data strategy (see gap 4) — this is arguably the most
    product-critical open question, since accessibility is the app's whole premise.
-7. Scope whether per-floor interior mapping stays in scope for this semester given no
-   MPrint data currently exists, or whether the MVP is building-level pins with a
-   floor/room list (see [Architecture](architecture.md)'s open questions).
+8. Decide how much MPrint digitization is worth doing for the semester: raster image
+   as a reference layer (cheap) vs. manually hotspotted rooms (expensive, but matches
+   the original "mapped interiors" pitch) — see [Architecture](architecture.md).
