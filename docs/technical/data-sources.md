@@ -269,13 +269,64 @@ No official Waitz API details (auth, base URL, rate limits) were recovered this 
 since mguide's own backend is the thing calling Waitz, not the browser — that part of
 [Integrations § Waitz](integrations.md) is still genuinely TBD for us.
 
+## 8. Official UM Student Life campus map (higher-authority source)
+
+[maps.studentlife.umich.edu](https://maps.studentlife.umich.edu/) — the *actual*
+official UM campus map (an Angular app), distinct from and more authoritative than
+mguide.app. Found the same way: fetched its bundle directly (no browser needed) and
+grepped for endpoint strings. It calls a genuinely official, unauthenticated,
+CORS-open API:
+
+```
+https://apibuilder.studentlife.umich.edu/api/1/type/{building|department|parking|bus-stops}?limit=-1&visible[eq][]=1
+```
+
+(`limit=-1` returns everything; the app's default page size is 50.) Confirmed live by
+direct fetch. Only 4 types exist (checked the whole bundle for `type/` strings) — no
+entrances, pathways, room-equipment, or restroom types here, so this **complements**
+rather than replaces the mguide.app-derived data in §§ 1–6:
+
+- **`building`** (265 visible records) — this is the primary source `officalbuildingid`
+  (mguide's `buildingRecordNumber`), `rampaccess`, and `acronym` all trace back to; our
+  mguide-derived data is a copy of a subset of this. **New field not seen before:
+  `elevatoraccess`** (free text, 67/265 have it, e.g. *"Enter through the south
+  entrance... the elevator is located on the left just past the lobby"*) — same shape
+  and caveats as `rampAccess` (prose, not a coordinate), but a real accessibility
+  attribute we didn't have. Only 265 buildings vs. mguide's 466 — mguide's set appears
+  to be a superset (possibly combined with OSM or non-"visible" buildings); worth
+  reconciling when this becomes the seed source.
+- **`department`** (child records of a building, linked via `parent`) — office/lounge/
+  amenity listings within a building, e.g. East Quad's children include
+  `abeng-lounge`, `anderson-lounge`, `greene-lounge`, `madrigal-lounge`,
+  `benzinger-library`, each with a free-text `roomaddress` (e.g. `"1st floor Cooley"`,
+  `"basement-Hayden"`). **Real, named, authoritative candidates for closing
+  [Gap 1](#gaps-relative-to-what-the-app-needs) (study-space coverage)** — these are
+  actual lounges/libraries UM lists per building, not something to invent — but no
+  lat/lng, noise, or amenity data of their own; would need enrichment to become full
+  `StudySpace` records.
+- **`parking`** — each lot has a boolean **`accessiblespace`** flag plus `lotname`,
+  `type` (e.g. "Blue"), `enforcementhours`, point geometry. Directly usable
+  accessible-parking data, which nothing else surfaced so far had at all.
+- **`bus-stops`** — just points, redundant with mguide's GTFS feeds.
+- **Building photos, separately**: `https://mapproxy.studentlife.umich.edu/image.php?d={slug}`
+  returns a JSON array of real photo URLs for that building (confirmed for East Quad —
+  2 photos). **Fills [Gap 6](#gaps-relative-to-what-the-app-needs) (no photos)
+  directly.** There's also a `places.php?q=` search endpoint, not yet explored.
+
+Being UM's own official public map (not a third party's), this is the better primary
+source to build on for buildings/accessibility/parking/photos long-term, even though
+mguide.app remains the only source found so far for entrances, pathways, per-room
+equipment, and restrooms.
+
 ## Gaps relative to what the app needs
 
-1. **Study-space coverage is the biggest gap.** 24 curated spaces across 17 buildings
-   vs. 466 buildings total — most academic buildings, all dorms beyond the three
-   "quads," and anything Medical/Administrative/Athletic have zero entries. This has to
-   grow substantially, likely combining more manual curation with the crowdsourced
-   contribution flow from day one rather than after launch.
+1. **Study-space coverage is still the biggest gap, though less blank than it looked.**
+   24 curated spaces across 17 buildings vs. 466 buildings total. § 8's `department`
+   records (named lounges/libraries per building, straight from UM's own map) are real
+   candidates to expand from — cheaper than pure manual curation since the names and
+   rough locations already exist — but still need enrichment (noise, amenities,
+   accessibility) to become full `StudySpace` records, and won't cover informal spaces
+   UM doesn't list as a department (a dorm hallway nook, an empty classroom).
 2. **Sensory/environmental taxonomy is now mostly a data-wiring problem, not a
    sourcing problem.** `rooms.json`'s equipment tags (`assistive-listening`,
    `tables-moveable`/`tables-fixed`) cover exactly what [§ 6](#6-additional-mguideapp-static-data-confirmed-live-not-yet-pulled-in)
@@ -288,20 +339,22 @@ since mguide's own backend is the thing calling Waitz, not the browser — that 
    full building→tag mapping beyond the 112 buildings with an `acronym`, and (b) a
    decision on how much manual digitization (room hotspots) is worth doing vs. just
    showing the raster image as a reference layer under the pin-based map.
-4. **Accessibility data is better than it looked, but still disconnected across four
-   sources.** Building-level `rampAccess` prose, entrance-level `wheelchair` tags
-   (<10% coverage), `rooms.json`'s `wheelchair-instructor`/`assistive-listening` tags
-   (classrooms only), `restrooms.json`'s accessible/changing-table flags, and
-   `pathways.geojson`'s route-level `wheelchair` tags (27 yes / 3 no / 13,787 untagged)
-   don't share a key or a data model today — they're keyed by slug, buildingSlug,
-   acronym, and raw geometry respectively. Unifying these into one accessibility view
-   per building/space is now the real work, more than sourcing is.
+4. **Accessibility data is better than it looked, but still disconnected across six
+   sources.** Building-level `rampAccess`/`elevatorAccess` prose (§ 8, official),
+   entrance-level `wheelchair` tags (<10% coverage), `rooms.json`'s
+   `wheelchair-instructor`/`assistive-listening` tags (classrooms only),
+   `restrooms.json`'s accessible/changing-table flags, `pathways.geojson`'s route-level
+   `wheelchair` tags (27 yes / 3 no / 13,787 untagged), and `parking`'s
+   `accessiblespace` flag don't share a key or a data model today — keyed by slug,
+   buildingSlug, acronym, and raw geometry respectively. Unifying these into one
+   accessibility view per building/space is now the real work, more than sourcing is.
 5. **Waitz occupancy**: only 6/24 spaces have a `waitzId`. mguide.app proxies Waitz
    through its own backend rather than calling it from the browser (see § 7) — we still
    don't have Waitz's own API details (auth, rate limits), only confirmation that
    proxying server-side is the right shape, matching our existing plan.
-6. **No hours of operation, no photos** for study spaces specifically (`academic-
-   calendar.json` gives term dates, not building/room hours).
+6. **No hours of operation** for study spaces specifically (`academic-calendar.json`
+   gives term dates, not building/room hours). Photos are now sourced (§ 8,
+   `image.php?d={slug}`), so that half of this gap is resolved.
 7. **No user-generated content yet** — ratings, crowdsourced pins, accounts. That's the
    app's job to create, not something to source.
 
@@ -312,28 +365,34 @@ since mguide's own backend is the thing calling Waitz, not the browser — that 
    minimum add `rooms.json`, `restrooms.json`, and `pathways.geojson` given § 6, plus
    `parking.geojson` and `dining.json` since they're low-effort adds. Keep each as its
    own file rather than re-concatenating.
-2. Turn [Data Model](data-model.md)'s sketch into real Supabase SQL migrations,
+2. Also pull `apibuilder.studentlife.umich.edu`'s `building`, `department`, and
+   `parking` types (§ 8, official, `limit=-1&visible[eq][]=1`) and reconcile against
+   the mguide-derived building set — decide whether the official 265 or mguide's 466
+   is the base building list going forward, and treat the official `rampaccess`/
+   `elevatoraccess`/`acronym` as the source of truth where the two disagree.
+3. Turn [Data Model](data-model.md)'s sketch into real Supabase SQL migrations,
    informed by the actual fields above (in particular: keep `buildingSlug` as the
    join key, and give `StudySpace` its own lat/lng or floor-relative position instead
    of inheriting the building's).
-3. Write and run a seed script that loads buildings + polygons + entrances + the 24
+4. Write and run a seed script that loads buildings + polygons + entrances + the 24
    curated spaces into Supabase, so the map has real content from day one.
-4. Design how `rooms.json` (keyed by acronym), `restrooms.json` (keyed by slug), and
-   `pathways.geojson` (raw geometry) join into the same `buildingSlug`-keyed schema as
-   everything else, so accessibility data can be queried per building/space instead of
-   living in four disconnected shapes (see gap 4).
-5. Build an MPrint discovery/mirroring script: for each building, try
+6. Design how `rooms.json` (keyed by acronym), `restrooms.json` (keyed by slug),
+   `pathways.geojson` (raw geometry), and `parking`'s `accessiblespace` flag join into
+   the same `buildingSlug`-keyed schema as everything else, so accessibility data can
+   be queried per building/space instead of living in six disconnected shapes (gap 4).
+7. Build an MPrint discovery/mirroring script: for each building, try
    `{acronym-lowercased}_{n}.png` for increasing `n` until a fetch falls back to the
    app shell, record the resulting tag→floor-count mapping, and download the images
    (or at least their URLs) into the repo/Supabase Storage rather than hot-linking
    `mprint.umich.edu` from production. For the 354 buildings with no `acronym`, the tag
    is unknown and needs another discovery method (a real MPrint index, if one exists,
    or manual lookup for the buildings that actually need interior maps).
-6. Decide the lighting-quality taxonomy specifically — the one sensory dimension with
+8. Decide the lighting-quality taxonomy specifically — the one sensory dimension with
    no source anywhere yet (noise and adaptive-furniture/assistive-listening now have
    real data via `rooms.json`).
-7. Decide how to close the study-space coverage gap: more manual curation before
-   launch, prioritizing the crowdsourced contribution flow, or both.
-8. Decide how much MPrint digitization is worth doing for the semester: raster image
-   as a reference layer (cheap) vs. manually hotspotted rooms (expensive, but matches
-   the original "mapped interiors" pitch) — see [Architecture](architecture.md).
+9. Decide how to close the remaining study-space coverage gap: use `department`
+   records (§ 8) as seed candidates for named lounges/libraries, then more manual
+   curation and the crowdsourced contribution flow for what's still missing.
+10. Decide how much MPrint digitization is worth doing for the semester: raster image
+    as a reference layer (cheap) vs. manually hotspotted rooms (expensive, but matches
+    the original "mapped interiors" pitch) — see [Architecture](architecture.md).

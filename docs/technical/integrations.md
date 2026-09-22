@@ -42,3 +42,17 @@ Two more data sources fill in accessibility gaps directly:
 `pathways.geojson` (13,817 OSM path segments tagged `wheelchair`/`surface`, the network
 an accessible-routing feature would run on). Not yet pulled into the repo — see
 [Data Sources § Next Steps](data-sources.md#next-steps).
+
+## Official UM Student Life campus map API
+
+`https://apibuilder.studentlife.umich.edu/api/1/type/{building|department|parking|bus-stops}`
+— UM's own official campus map API (unauthenticated, CORS-open), distinct from and
+more authoritative than mguide.app. See
+[Data Sources § 8](data-sources.md#8-official-um-student-life-campus-map-higher-authority-source)
+for full detail. Adds `elevatorAccess` (a field mguide's copy doesn't carry), an
+`accessiblespace` flag on parking lots, named lounge/department listings per building
+(candidate `StudySpace` seeds), and real building photos via a separate
+`mapproxy.studentlife.umich.edu/image.php?d={slug}` endpoint. Recommended as the
+long-term primary source for building/accessibility/parking/photo data, with
+mguide.app kept for what it alone provides (entrances, pathways, per-room equipment,
+restrooms, and the Waitz proxy pattern above).

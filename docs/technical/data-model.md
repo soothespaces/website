@@ -5,13 +5,24 @@ not yet turned into Supabase migrations. Entities below reflect the fields we ac
 have, plus what the feature set (see [Features](../product/features.md)) still needs
 that isn't in the data yet — those are marked TBD.
 
-- **Building** — from the official U-M facilities data + matching GeoJSON polygon
-  footprint (466 of each, joined by `slug`). Fields: `slug`, `name`, `preferredName`,
-  `acronym`, `address`, `category`, `lat`/`lng`, `website`, `children` (sub-units),
-  `floors` (count, not per-floor geometry), `buildingType`, `campus`, `ownership`,
-  `classroomCount`, `history` (yearBuilt/architect/style/etc.), `rampAccess` (free-text
-  accessibility note, present on 104/466). No MPrint-style interior layout exists in
-  the data — see [Data Sources § Gaps](data-sources.md#gaps-relative-to-what-the-app-needs).
+- **Building** — from official U-M facilities data + matching GeoJSON polygon
+  footprint, in two overlapping copies: a 466-record mguide.app-derived set (richer:
+  `preferredName`, `history`, `buildingType`, `campus`, `ownership`, `classroomCount`)
+  and the 265-record official `apibuilder.studentlife.umich.edu` set, which is the
+  authoritative source for `rampAccess`/`elevatorAccess`/`acronym` and adds
+  **`elevatorAccess`** (free-text, 67/265) alongside `rampAccess` (110/265 official,
+  104/466 mguide copy) — see [Data Sources § 8](data-sources.md#8-official-um-student-life-campus-map-higher-authority-source).
+  Common fields either way: `slug`, `name`, `acronym`, `address`, `category`, `lat`/
+  `lng`, `website`, `children` (sub-units/departments). `floors` is a count, not
+  per-floor geometry — no MPrint-style interior layout exists in either building
+  dataset itself (MPrint is sourced separately, § 5). The two building sets need
+  reconciling into one before migration — see [Data Sources § Next Steps](data-sources.md#next-steps).
+- **BuildingPhoto** — from `mapproxy.studentlife.umich.edu/image.php?d={slug}`, per
+  building, returns an array of `{path, name}` real photo URLs (confirmed for East
+  Quad). Not yet pulled into the repo.
+- **AccessibleParking** — from the official `parking` type, point geometry with
+  `lotname`, `type` (e.g. "Blue"), `enforcementhours`, and a boolean
+  **`accessiblespace`**. The only accessible-parking data found so far.
 - **Entrance** — from OSM, 1,601 points tied to a `buildingSlug`. Fields:
   `entranceType`, `wheelchair`, `automatic`, `access`, `lit`, `covered`, `door`,
   `description`, `osmId`, point geometry. Sparse (e.g. only 96/1,601 have any
@@ -24,7 +35,10 @@ that isn't in the data yet — those are marked TBD.
   — only 6/24 set). TBD: lighting quality has no source anywhere yet. Adaptive
   furniture and assistive listening now have a real source (`RoomEquipment` below) but
   only for registrar classrooms, not most of today's 24 curated spaces — still needs
-  wiring together.
+  wiring together. The official `department` type (§ 8) — named lounges/libraries per
+  building, e.g. East Quad's `anderson-lounge`, `greene-lounge`, `benzinger-library` —
+  is a real candidate list to expand `StudySpace` coverage from, though each still
+  needs noise/amenity/accessibility enrichment to become a full record.
 - **RoomEquipment** — from `rooms.json` (Registrar Schedule of Classes data), keyed by
   building acronym + room number, not `buildingSlug`/`StudySpace.slug` (needs a join).
   771 rooms across 77 buildings. Fields: `floor`, `type`, `capacity`, `roomType`,
