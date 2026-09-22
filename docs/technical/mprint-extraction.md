@@ -6,32 +6,42 @@ tested in depth, but needs more validation across buildings before being trusted
 scale. This document records what was tried, what worked, what didn't, and why —
 treat every number here as evidence from a specific test, not a general guarantee.
 
-## The actual use case — simpler than it first sounds
+## The actual use case — simpler than it first sounds, with one caveat
 
-This isn't for placing precisely-georeferenced room pins on the outdoor campus map.
-The goal is: show the MPrint floor-plan image itself, let a user **click a zone on
-that image**, and attach/read a crowdsourced review of that zone's noise/light/etc —
-like clicking a wing on a mall directory. That reframes what "good enough" means:
+The goal: a seamless drill-down from the outdoor map into a building's floor level —
+zoom into a building on the map, and (if the user wants that fine-grained view) it
+opens onto the MPrint floor plan showing individual rooms. Every room a floodfill
+segment identifies is a clickable zone that user-generated content (reviews, photos —
+whatever) attaches to directly, as the primary unit, not a side effect of a coarser
+`StudySpace` record. That reframes what "good enough" means, with two distinct levels
+of georeferencing that are easy to conflate but very different in cost:
 
-- **The segmentation doesn't need to be pixel-perfect.** It needs to divide the floor
-  into clickable zones that roughly match what a person looking at the image would
-  call "a room" — not survive a CAD audit.
-- **No georeferencing needed for this feature.** Zones only need to exist in the
-  *image's own pixel space*, since the image itself is the canvas being clicked on —
-  not the outdoor lat/lng map. (Georeferencing would still matter for a *different*,
-  not-yet-built feature — showing an interior room as a pin on the outdoor map — but
-  that's a separate, later feature, not a blocker for this one.)
-- **No polygon-vector step needed either.** The label mask this pipeline already
-  produces (which pixel belongs to which room) is directly usable as-is: keep it as a
-  small raster (e.g. an indexed PNG the same dimensions as the floor plan, one integer
-  per zone) shipped alongside the source image, and on click, look up the mask's value
-  at that pixel. No contour-tracing/polygon-simplification step is required — that
-  would only matter if the shape needed to be smooth or precisely drawn, which it
-  doesn't for a click target.
+- **Per-room polygon georeferencing: still not needed.** A room zone's shape only
+  needs to exist in the *floor plan image's own pixel space* — clicking on the
+  displayed image and hit-testing a label mask works regardless of where that image
+  sits in the real world. **The segmentation doesn't need to be pixel-perfect either**
+  — it needs to divide the floor into zones that roughly match what a person looking
+  at the image would call "a room," not survive a CAD audit. And **no polygon-vector
+  step is needed** — the label mask this pipeline already produces (which pixel
+  belongs to which room) is directly usable as-is: ship it as a small raster (e.g. an
+  indexed PNG the same size as the floor plan) alongside the source image, and hit-test
+  by pixel lookup on click. No contour-tracing/simplification needed for a click
+  target.
+- **Whole-image anchoring: needed for the seamless part, and much cheaper than
+  per-room georeferencing.** For the map→floor transition to feel continuous rather
+  than a jarring cut to an unrelated modal, the floor-plan image as a *single unit*
+  needs to be placed at the building's real-world position — a map library like
+  MapLibre GL (which mguide.app already uses) supports exactly this via an image
+  source anchored to a handful of real-world corner coordinates. That's **one
+  calibration per floor image** (matching its corners/orientation against the
+  building's known footprint), not one per room — meaningfully cheaper than what "MPrint
+  digitization" first sounded like, but a real, not-yet-attempted step, unlike the
+  per-room case above.
 
-This is a meaningfully smaller lift than "digitize the interior map" first sounded
-like. The rest of this document still applies — OCR accuracy and per-image tuning are
-still real work — but the finish line is closer than the original framing implied.
+This is still a meaningfully smaller lift than "digitize the interior map" first
+sounded like — most of the work (OCR, segmentation) is already validated and stays in
+pixel space regardless. The one piece of geography that *is* required (anchoring the
+whole image, once per floor) hasn't been attempted yet.
 
 ## The idea, and why it's plausible
 
@@ -126,11 +136,14 @@ sanity check worth keeping regardless of how the rest of the pipeline evolves.
 
 ## What this does NOT do yet
 
-- **No georeferencing — and that's fine for the click-to-review use case** (see
-  above). Extracted regions exist only in the image's own pixel coordinate space,
-  which is exactly what's needed to make zones clickable on the displayed floor-plan
-  image itself. Converting to real lat/lng would only be needed for a separate,
-  later feature (showing a room as a pin on the outdoor map), not this one.
+- **No whole-image anchoring to the map yet.** Extracted regions exist only in the
+  image's own pixel coordinate space, which is all *they* need (see above) — but a
+  seamless map→floor transition needs the floor-plan image itself, as one unit,
+  placed at the building's real-world position (a handful of corner coordinates,
+  matched against the building's known footprint). That's a per-floor-image
+  calibration, not per-room, and it hasn't been attempted. Without it, the floor
+  plan can still be shown (e.g. in a panel/modal on building click), just not as a
+  geographically continuous zoom.
 - **No exported polygon/vector shapes yet** — the script currently outputs a labeled
   region per room number (component id + pixel area), not a traced boundary. For the
   click-to-review use case that's actually sufficient as-is (ship the label mask,

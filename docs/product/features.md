@@ -12,22 +12,28 @@ that are crowdsourced by design, where "no data yet" is expected, not a gap), or
 
 The central interface: an interactive campus map rendering GeoJSON building footprints
 and MPrint interior layouts. Users pan and zoom across the map; study zones appear as
-interactive, color-coded pins layered over the facilities.
+interactive, color-coded pins layered over the facilities. The design target is a
+seamless drill-down: zoom into a building, and — if the user wants that fine-grained
+view — it opens onto the floor plan with individual clickable rooms. Reviews and
+photos attach directly to those room-level zones, not just to the building or a
+coarser named space.
 
 - ✅ **Building footprints and pins.** 466 (mguide) or 265 (official) building
   polygons, and two real `StudySpace` sources — 34 official UM Library spaces (§9) and
   24 mguide-derived spaces (§1) — are enough to render a real map with real pins today.
-- ⚠️ **MPrint interior layouts, partially — better than it looked.** A raster
-  reference image per floor works today (§5), for buildings whose MPrint tag is known
-  (112/466 via `acronym`, more via probing). Beyond that: a prototype pipeline
-  (OCR + dilated flood fill) can auto-extract clickable per-room zones from these
-  images, validated on a real floor plan — see
-  [MPrint Room Extraction](../technical/mprint-extraction.md). The actual use case
-  (clicking a zone on the displayed floor plan to attach a sensory review, not
-  placing a room as a pin on the outdoor map) doesn't need georeferencing or clean
-  polygons at all, so this is closer to done than "interior mapping" first sounded —
-  the remaining work is OCR accuracy and per-image tuning, tested on only 2 buildings
-  so far, not a from-scratch manual effort.
+- ⚠️ **MPrint interior layouts, partially — better than it looked, with one real
+  remaining piece.** A raster reference image per floor works today (§5), for
+  buildings whose MPrint tag is known (112/466 via `acronym`, more via probing).
+  Beyond that, a validated prototype (OCR + dilated flood fill — see
+  [MPrint Room Extraction](../technical/mprint-extraction.md)) auto-extracts clickable
+  per-room zones. Room-level zones themselves don't need georeferencing — they only
+  need to exist in the floor plan image's own pixel space to be clickable. But a truly
+  *seamless* zoom from the outdoor map into that floor plan (rather than a panel/modal
+  that opens on click) needs the floor-plan **image as a whole** anchored to the
+  building's real-world position — one calibration per floor, not per room, and not
+  yet attempted. Either way this is closer to done than "interior mapping" first
+  sounded — remaining work is OCR accuracy, per-image tuning (tested on only 2
+  buildings so far), and that one anchoring step, not a from-scratch manual effort.
 
 ## Multi-Attribute Filtering Panel
 
@@ -114,15 +120,18 @@ how directly they serve the "not-only-you" premise:
   (§8, official) surfaced as their own info panel per building, not just a filter
   toggle — genuinely useful prose ("a ramp is located at the north entrance near the
   Diag") that a boolean filter would throw away.
-- **Interactive floor-plan viewer.** Display the raw MPrint PNG for a building/floor,
+- **Interactive floor-plan viewer.** Display the MPrint image for a building/floor,
   zoomable/pannable, with each room clickable to attach or read a sensory review
   (noise, light, etc.) for that specific zone — like clicking a wing on a mall
-  directory. This has a validated automated path (see
-  [MPrint Room Extraction](../technical/mprint-extraction.md)): the zones only need to
-  be clickable on the image itself, not placed on the outdoor map, so no
-  georeferencing or clean polygon shapes are required — a plain zoomable image with no
-  clickable zones is the fallback if the extraction isn't ready in time, not a
-  separate feature to build twice.
+  directory. This has a validated automated path for the room-click part (see
+  [MPrint Room Extraction](../technical/mprint-extraction.md)) — no georeferencing or
+  clean polygon shapes needed for that piece specifically. Whether it opens as a
+  panel/modal or as a continuous zoom from the outdoor map is a separate, still-open
+  design choice (see [Architecture](../technical/architecture.md)) — the latter is the
+  more "seamless" product intent, but needs the floor-plan image as a whole anchored
+  to the building's map position, which the room-click extraction alone doesn't
+  provide. A plain zoomable image with no clickable zones is the fallback if the
+  extraction isn't ready in time, not a separate feature to build twice.
 - **Accessible-classroom/meeting-space finder.** `rooms.json`'s per-room equipment
   (§6) — `assistive-listening`, `wheelchair-instructor`, `tables-moveable` — could
   extend the app past informal lounges to help someone find a specific accessible

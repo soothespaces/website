@@ -51,17 +51,23 @@ that isn't in the data yet — those are marked TBD.
   `anderson-lounge`, `greene-lounge`, `benzinger-library` — is a real candidate list to
   expand coverage further, though each still needs § 9-style tagging to become a full
   record.
-- **RoomZone** — a clickable region on a specific MPrint floor-plan image, produced by
-  the extraction prototype (see [MPrint Room Extraction](mprint-extraction.md)).
-  Fields: `buildingSlug`, `mprintTag`, `floorNumber` (together identify the source
-  image), `roomNumber` (OCR'd label, e.g. "1808"), and a reference to that image's
-  label mask (a small raster the same dimensions as the floor plan — no polygon/
-  vector shape needed, since a zone only needs to be clickable on the displayed image
-  itself, not placed on the outdoor lat/lng map — see the linked doc). Where
-  `roomNumber` matches a `RoomEquipment` entry (below), that metadata applies; where
-  it doesn't (e.g. a named lounge like East Quad's Greene Lounge, room 1808), it needs
-  a manual override entry (name, type). This is what `Rating` (below) actually attaches
-  to for interior spaces, not `StudySpace` directly.
+- **FloorPlan** — one MPrint image (`buildingSlug` + `mprintTag` + `floorNumber`), plus
+  its **map anchor**: the calibration (a handful of real-world corner coordinates)
+  that places the image as a whole at the building's position on the outdoor map, for
+  a seamless map→floor zoom (see [MPrint Room Extraction](mprint-extraction.md)). TBD,
+  not yet attempted — without it the floor plan can still be shown (e.g. on building
+  click, as a panel), just not as a continuous geographic zoom.
+- **RoomZone** — a clickable region within a `FloorPlan`, produced by the extraction
+  prototype. **This is the primary unit user-generated content attaches to** —
+  ratings, photos, whatever — not a side effect of a coarser `StudySpace` record.
+  Fields: `floorPlanId`, `roomNumber` (OCR'd label, e.g. "1808"), and a reference to
+  that floor plan's label mask (a small raster the same size as the image — no
+  polygon/vector shape needed, since a zone only needs to be clickable on the
+  displayed image itself; see the linked doc for why per-room geometry doesn't need
+  its own real-world coordinates even though the `FloorPlan` it belongs to does).
+  Where `roomNumber` matches a `RoomEquipment` entry (below), that metadata applies;
+  where it doesn't (e.g. a named lounge like East Quad's Greene Lounge, room 1808), it
+  needs a manual override entry (name, type).
 - **RoomEquipment** — from `rooms.json` (Registrar Schedule of Classes data), keyed by
   building acronym + room number, not `buildingSlug`/`StudySpace.slug` (needs a join).
   771 rooms across 77 buildings. Fields: `floor`, `type`, `capacity`, `roomType`,
@@ -82,9 +88,10 @@ that isn't in the data yet — those are marked TBD.
   API call), and only possible for the 6 spaces that have a `waitzId`. mguide.app's
   `/api/waitz` proxy shape (`{ id, name, busyness, trend, subLocs }`, bucketed at
   50/80) is a useful reference for our own shape even though we'll hit Waitz directly.
-- **Rating** — community rating/review, tied to either a `StudySpace` (a whole named
-  space) or a `RoomZone` (a specific clicked zone on a floor plan — the finer-grained
-  case). TBD, no data yet — this is user-generated content the app itself creates.
+- **Rating** and **Photo** — community review/photo, tied to a `RoomZone` where a
+  building has floor-plan data (the primary, fine-grained case per the product
+  design), or to a `StudySpace` directly where it doesn't. Both TBD, no data yet —
+  this is user-generated content the app itself creates.
 - **ContributedPin** — a crowdsourced submission (new space, updated barrier/sensory
   tag) tied to an authenticated User, pending or applied to a StudySpace/Building/
   Entrance. TBD, no data yet.

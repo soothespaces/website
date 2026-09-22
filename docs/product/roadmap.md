@@ -54,10 +54,13 @@ depends on Phase 1's Supabase schema and produces the data the other gaps need.
       building the Waitz-ID mapping for the 34 UM Library spaces, which doesn't exist
       yet
 - [ ] MPrint floor-plan viewer — start with the plain zoomable image, layer in
-      clickable per-zone reviews once the extraction pipeline is hardened (no
-      georeferencing needed for this — see
+      clickable per-zone reviews once the extraction pipeline is hardened (see
       [Features § Interactive 2D Map Viewer](features.md#interactive-2d-map-viewer)
       and [MPrint Room Extraction](../technical/mprint-extraction.md))
+- [ ] Decide + build the map↔floor transition shape: geographically-anchored
+      continuous zoom (needs the per-floor whole-image map anchor, not yet attempted)
+      vs. a panel/modal on building click (no anchoring needed, faster) — see
+      [Architecture](../technical/architecture.md)
 
 ## Phase 3 — Additional features (stretch)
 

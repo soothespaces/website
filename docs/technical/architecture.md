@@ -33,10 +33,22 @@ makes decisions — record them here and as ADRs under [decisions/](../decisions
   a Next.js route handler, or synced into Supabase on a schedule — TBD (see
   [Integrations](integrations.md)).
 - How much MPrint interior data to digitize: a validated OCR + flood-fill prototype
-  can auto-extract per-room polygons and numbers (see
+  can auto-extract clickable per-room zones (see
   [MPrint Room Extraction](mprint-extraction.md)), which changes the tradeoff from
   "cheap raster image vs. expensive full manual digitization" to "how much automation
-  hardening (georeferencing, OCR validation, per-building tuning) is worth doing" —
-  still TBD, but the fully-manual-or-nothing framing is outdated.
+  hardening (OCR validation, per-building tuning) is worth doing" — still TBD, but the
+  fully-manual-or-nothing framing is outdated.
 - Whether MPrint images are hot-linked from `mprint.umich.edu` at request time or
   mirrored into Supabase Storage/the repo — TBD.
+- **Map↔floor transition design.** The product intent is a seamless drill-down: zoom
+  into a building on the outdoor map, and — if the user wants that fine-grained view —
+  it opens onto the floor plan with individual clickable rooms, each carrying its own
+  reviews/photos. Two implementation shapes, not yet chosen between: (a) a real
+  geographically-anchored overlay (the floor-plan image placed at the building's map
+  coordinates via the map library's image-source support, so zooming in is
+  continuous — needs the per-floor whole-image anchor from
+  [MPrint Room Extraction](mprint-extraction.md), not yet attempted), or (b) a
+  panel/modal that opens on building click without being part of the same continuous
+  map surface (no anchoring needed, faster to build, less "seamless"). Room-level
+  click targets work the same way either way since they stay in the floor plan
+  image's own pixel space regardless of which shape (a)/(b) is chosen.

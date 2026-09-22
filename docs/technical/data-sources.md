@@ -402,10 +402,13 @@ mguide.app-derived spaces for the 7 buildings it covers.
 3. **Interior/per-floor maps: prototype pipeline validated, not yet production data.**
    A working OCR + flood-fill extraction pipeline exists and handled the hard case
    (a non-physical/dashed room boundary) correctly on a real test — see
-   [MPrint Room Extraction](mprint-extraction.md). What's missing: full building→tag
-   mapping beyond the 112 buildings with an `acronym`, georeferencing pixel polygons
-   to real lat/lng, OCR-error correction, and running it across more than 2 buildings
-   before trusting the output.
+   [MPrint Room Extraction](mprint-extraction.md). Per-room zones stay in the floor
+   plan image's own pixel space (that's sufficient for click-to-review — no per-room
+   lat/lng needed). What's missing: full building→tag mapping beyond the 112 buildings
+   with an `acronym`, anchoring each floor-plan *image as a whole* to the building's
+   real-world position (one calibration per floor, for a seamless map→floor zoom —
+   distinct from and much cheaper than per-room georeferencing), OCR-error correction,
+   and running the extraction across more than 2 buildings before trusting the output.
 4. **Accessibility data is better than it looked, but still disconnected across seven
    sources.** Building-level `rampAccess`/`elevatorAccess` prose (§ 8, official),
    entrance-level `wheelchair` tags (<10% coverage), `rooms.json`'s
@@ -471,8 +474,10 @@ mguide.app-derived spaces for the 7 buildings it covers.
 10. Harden the MPrint extraction prototype ([full writeup](mprint-extraction.md)):
     auto-calibrate the dilation radius per image instead of a fixed constant, validate
     OCR'd room numbers against `rooms.json`'s known list per building to catch
-    misreads, add georeferencing (pixel → lat/lng) via reference-point calibration per
-    building, and run it across more buildings (starting with the libraries from § 9)
-    before trusting the output at scale. Manual override entries (e.g. Greene Lounge =
+    misreads, anchor each floor-plan image as a whole to the building's real-world
+    position (one calibration per floor, for a seamless map→floor zoom — not per-room
+    georeferencing, which isn't needed), and run it across more buildings (starting
+    with the libraries from § 9) before trusting the output at scale. Manual override
+    entries (e.g. Greene Lounge =
     room 1808, confirmed by OCR position + photo) remain necessary for rooms
     `rooms.json` doesn't cover at all, not just a fallback for extraction failures.
