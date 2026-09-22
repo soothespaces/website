@@ -318,36 +318,100 @@ source to build on for buildings/accessibility/parking/photos long-term, even th
 mguide.app remains the only source found so far for entrances, pathways, per-room
 equipment, and restrooms.
 
+## 9. UM Library's own "Find Study Space" tool (best source yet, purpose-built)
+
+[lib.umich.edu/visit-and-study/study-spaces/find-study-space](https://www.lib.umich.edu/visit-and-study/study-spaces/find-study-space/)
+is the UM Library's own curated study-space finder — not reverse-engineered at all,
+the full dataset is sitting in the page's own HTML as a `<script id="fass-data"
+type="application/json">` tag ("fass" = Find A Study Space), the plainest and most
+legitimate way to get data from a page there is. 34 records:
+
+```jsonc
+{
+  "title": "Art, Architecture, and Engineering Library Floor 2 Computing Spaces",
+  "slug": "/visit-and-study/study-spaces/conversational-study-spaces/art-architecture-and-engineering-library-floor-2-computing-spaces",
+  "typeName": "node__location",
+  "bodySummary": "Connect to an external monitor or work with a group at a VizHub in this mixed seating space.\r\n",
+  "spaceFeatures": ["whiteboards", "external_monitors", "natural_light", "wheelchair_accessible"],
+  "noiseLevel": "conversational",
+  "building": "Art, Architecture, and Engineering Library",
+  "campus": "North Campus",
+  "imageUrl": "/_astro/aael-computing1_edited_1NJsot.webp",
+  "imageAlt": "Students working individually at a set of tables with external monitors and short privacy dividers.."
+}
+```
+
+This is **the best-fit source found so far** — it's the library's own accessibility/
+sensory taxonomy, purpose-built for almost exactly this project's premise:
+
+- **`spaceFeatures` vocabulary** (with counts across the 34 spaces): `natural_light`
+  (26), `wheelchair_accessible` (21), `all_gender_restroom_on_floor` (13),
+  `whiteboards` (10), `bookable` (9), `external_monitors` (7). **`natural_light` is the
+  first real source found for the lighting dimension** — every other gap analysis pass
+  said this had no source anywhere; now it does, officially. `wheelchair_accessible`
+  and `all_gender_restroom_on_floor` are tagged **per space**, not per building/
+  entrance like everything in §§ 2–4 — much more directly actionable (a user doesn't
+  have to cross-reference a building's entrance data to know if *this specific room*
+  works for them).
+- **`noiseLevel`**: a proper named 3-tier scale — `quiet` (17), `conversational` (10),
+  `low_noise` (7) — cleaner than mguide's `quiet`/`moderate`/`social` and it's the
+  library's own term for it.
+- **Real photos with alt text** (`imageUrl`/`imageAlt`), and a real one-line
+  description (`bodySummary`) per space — resolves the photo gap for library spaces
+  specifically, with better provenance than the studentlife.umich.edu photo endpoint.
+- There's also an icon map (`fass-icon-map`, SVG paths for each `spaceFeatures` value
+  plus `volume_up`/`cancel`) — worth reusing directly so our UI's accessibility icons
+  match the vocabulary UM Library itself already established, rather than inventing a
+  parallel one.
+
+Caveats: only 34 spaces across 7 libraries (Shapiro 11, Hatcher South 7, Hatcher North
+6, Art/Architecture/Engineering 5, Fine Arts 2, Music 2, Taubman Health Sciences 1) —
+libraries only, nothing for dorm lounges/other buildings, so it complements rather than
+replaces broader coverage efforts. No capacity or hours data (checked an individual
+detail page too — not there either). `building` is a name string, not our
+`buildingSlug` — needs mapping (also non-1:1: "Hatcher Library North" and "Hatcher
+Library South" are two `building` values here but one building/`buildingSlug` in our
+existing data).
+
+**Recommendation: use this as the primary seed for `StudySpace` records in libraries**
+— it's higher quality (official, purpose-curated, richer taxonomy) than the 24 generic
+mguide.app-derived spaces for the 7 buildings it covers.
+
 ## Gaps relative to what the app needs
 
-1. **Study-space coverage is still the biggest gap, though less blank than it looked.**
-   24 curated spaces across 17 buildings vs. 466 buildings total. § 8's `department`
-   records (named lounges/libraries per building, straight from UM's own map) are real
-   candidates to expand from — cheaper than pure manual curation since the names and
-   rough locations already exist — but still need enrichment (noise, amenities,
-   accessibility) to become full `StudySpace` records, and won't cover informal spaces
-   UM doesn't list as a department (a dorm hallway nook, an empty classroom).
-2. **Sensory/environmental taxonomy is now mostly a data-wiring problem, not a
-   sourcing problem.** `rooms.json`'s equipment tags (`assistive-listening`,
-   `tables-moveable`/`tables-fixed`) cover exactly what [§ 6](#6-additional-mguideapp-static-data-confirmed-live-not-yet-pulled-in)
-   found was missing, for classrooms. Still open: it only covers registrar classrooms,
-   not informal lounges/study spots (most of the 24 curated spaces aren't in it), and
-   lighting quality has no source anywhere — still needs a taxonomy decision and either
-   a manual survey or crowdsourcing.
+1. **Study-space coverage is still the biggest gap, though much less blank than it
+   looked.** For the 7 libraries § 9 covers, we now have 34 official, richly-tagged
+   spaces — better than starting from mguide's 24. Outside libraries, coverage is still
+   thin: 466 buildings total, and § 8's `department` records (named lounges per
+   building, straight from UM's own map) are real candidates to expand from — cheaper
+   than pure manual curation since names and rough locations already exist — but still
+   need enrichment (noise, `spaceFeatures`-style tags) to become full `StudySpace`
+   records, and won't cover informal spaces UM doesn't list as a department (a dorm
+   hallway nook, an empty classroom).
+2. **Sensory/environmental taxonomy is now solved for libraries, still open
+   elsewhere.** § 9's `spaceFeatures` (`natural_light`, `wheelchair_accessible`,
+   `all_gender_restroom_on_floor`, `whiteboards`, `bookable`, `external_monitors`) plus
+   its 3-tier `noiseLevel` is a complete, official, purpose-built taxonomy — including
+   `natural_light`, the one dimension nothing else had a source for. `rooms.json`'s
+   equipment tags (`assistive-listening`, `tables-moveable`/`tables-fixed`) add more,
+   for registrar classrooms. Neither covers informal lounges/dorm spaces outside those
+   two categories — still needs a decision on whether to extend the § 9 taxonomy there
+   via manual survey or crowdsourcing, rather than an unrelated new one.
 3. **Interior/per-floor maps are sourceable (MPrint, see § 5) but not yet structured
    data.** The images exist and the URL pattern is confirmed; what's missing is (a) a
    full building→tag mapping beyond the 112 buildings with an `acronym`, and (b) a
    decision on how much manual digitization (room hotspots) is worth doing vs. just
    showing the raster image as a reference layer under the pin-based map.
-4. **Accessibility data is better than it looked, but still disconnected across six
+4. **Accessibility data is better than it looked, but still disconnected across seven
    sources.** Building-level `rampAccess`/`elevatorAccess` prose (§ 8, official),
    entrance-level `wheelchair` tags (<10% coverage), `rooms.json`'s
    `wheelchair-instructor`/`assistive-listening` tags (classrooms only),
    `restrooms.json`'s accessible/changing-table flags, `pathways.geojson`'s route-level
-   `wheelchair` tags (27 yes / 3 no / 13,787 untagged), and `parking`'s
-   `accessiblespace` flag don't share a key or a data model today — keyed by slug,
-   buildingSlug, acronym, and raw geometry respectively. Unifying these into one
-   accessibility view per building/space is now the real work, more than sourcing is.
+   `wheelchair` tags (27 yes / 3 no / 13,787 untagged), `parking`'s `accessiblespace`
+   flag, and now § 9's per-space `wheelchair_accessible`/`all_gender_restroom_on_floor`
+   (the most directly usable of all of them, since it's already per-space) don't share
+   a key or a data model today. Unifying these into one accessibility view per
+   building/space is now the real work, more than sourcing is.
 5. **Waitz occupancy**: only 6/24 spaces have a `waitzId`. mguide.app proxies Waitz
    through its own backend rather than calling it from the browser (see § 7) — we still
    don't have Waitz's own API details (auth, rate limits), only confirmation that
@@ -360,26 +424,33 @@ equipment, and restrooms.
 
 ## Next Steps
 
-1. Pull down and commit the full mguide.app `/data/*` set into the repo as seed data
+1. Pull down and commit UM Library's `fass-data`/`fass-icon-map` (§ 9, 34 spaces) as
+   the primary `StudySpace` seed for the 7 libraries it covers — highest quality, do
+   this first. Adopt its `spaceFeatures`/`noiseLevel` vocabulary as *the* taxonomy
+   (including reusing its SVG icon set) rather than inventing a parallel one, since it
+   already does what [Gap 2](#gaps-relative-to-what-the-app-needs) needed.
+2. Pull down and commit the full mguide.app `/data/*` set into the repo as seed data
    (e.g. `supabase/seed/raw/`), not just the 4 files in the original upload — at
    minimum add `rooms.json`, `restrooms.json`, and `pathways.geojson` given § 6, plus
    `parking.geojson` and `dining.json` since they're low-effort adds. Keep each as its
    own file rather than re-concatenating.
-2. Also pull `apibuilder.studentlife.umich.edu`'s `building`, `department`, and
+3. Also pull `apibuilder.studentlife.umich.edu`'s `building`, `department`, and
    `parking` types (§ 8, official, `limit=-1&visible[eq][]=1`) and reconcile against
    the mguide-derived building set — decide whether the official 265 or mguide's 466
    is the base building list going forward, and treat the official `rampaccess`/
    `elevatoraccess`/`acronym` as the source of truth where the two disagree.
-3. Turn [Data Model](data-model.md)'s sketch into real Supabase SQL migrations,
+4. Turn [Data Model](data-model.md)'s sketch into real Supabase SQL migrations,
    informed by the actual fields above (in particular: keep `buildingSlug` as the
-   join key, and give `StudySpace` its own lat/lng or floor-relative position instead
-   of inheriting the building's).
-4. Write and run a seed script that loads buildings + polygons + entrances + the 24
-   curated spaces into Supabase, so the map has real content from day one.
+   join key — mapping § 9's `building` name strings to it, including the many-to-one
+   case of Hatcher North/South → one building — and give `StudySpace` its own lat/lng
+   or floor-relative position instead of inheriting the building's).
+5. Write and run a seed script that loads buildings + polygons + entrances + the § 9
+   library spaces + the 24 mguide spaces into Supabase, so the map has real content
+   from day one.
 6. Design how `rooms.json` (keyed by acronym), `restrooms.json` (keyed by slug),
    `pathways.geojson` (raw geometry), and `parking`'s `accessiblespace` flag join into
    the same `buildingSlug`-keyed schema as everything else, so accessibility data can
-   be queried per building/space instead of living in six disconnected shapes (gap 4).
+   be queried per building/space instead of living in seven disconnected shapes (gap 4).
 7. Build an MPrint discovery/mirroring script: for each building, try
    `{acronym-lowercased}_{n}.png` for increasing `n` until a fetch falls back to the
    app shell, record the resulting tag→floor-count mapping, and download the images
@@ -387,11 +458,11 @@ equipment, and restrooms.
    `mprint.umich.edu` from production. For the 354 buildings with no `acronym`, the tag
    is unknown and needs another discovery method (a real MPrint index, if one exists,
    or manual lookup for the buildings that actually need interior maps).
-8. Decide the lighting-quality taxonomy specifically — the one sensory dimension with
-   no source anywhere yet (noise and adaptive-furniture/assistive-listening now have
-   real data via `rooms.json`).
-9. Decide how to close the remaining study-space coverage gap: use `department`
-   records (§ 8) as seed candidates for named lounges/libraries, then more manual
+8. Decide how to extend § 9's `spaceFeatures`/`noiseLevel` taxonomy to non-library
+   spaces (dorm lounges, department-listed rooms) — manual survey or crowdsourcing,
+   since nothing sources it for those today.
+9. Decide how to close the remaining study-space coverage gap outside libraries: use
+   `department` records (§ 8) as seed candidates for named lounges, then more manual
    curation and the crowdsourced contribution flow for what's still missing.
 10. Decide how much MPrint digitization is worth doing for the semester: raster image
     as a reference layer (cheap) vs. manually hotspotted rooms (expensive, but matches

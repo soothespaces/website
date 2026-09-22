@@ -43,6 +43,21 @@ Two more data sources fill in accessibility gaps directly:
 an accessible-routing feature would run on). Not yet pulled into the repo — see
 [Data Sources § Next Steps](data-sources.md#next-steps).
 
+## UM Library's "Find Study Space" data
+
+The best-fit source found so far — see
+[Data Sources § 9](data-sources.md#9-um-librarys-own-find-study-space-tool-best-source-yet-purpose-built).
+34 official, library-curated study spaces embedded directly in
+[the library's own page](https://www.lib.umich.edu/visit-and-study/study-spaces/find-study-space/)
+as a `fass-data` JSON blob — no reverse engineering needed, just reading the page.
+Comes with exactly the sensory/accessibility taxonomy the product overview promises
+(`natural_light`, `wheelchair_accessible`, `all_gender_restroom_on_floor`, plus a
+`quiet`/`conversational`/`low_noise` scale) and an SVG icon set (`fass-icon-map`) worth
+reusing directly in our UI rather than inventing a parallel taxonomy. **Recommended as
+the primary `StudySpace` seed and the schema to standardize `spaceFeatures`/
+`noiseLevel` on**, for the 7 libraries it covers; other buildings still need the
+mguide.app-derived spaces and eventual crowdsourcing.
+
 ## Official UM Student Life campus map API
 
 `https://apibuilder.studentlife.umich.edu/api/1/type/{building|department|parking|bus-stops}`

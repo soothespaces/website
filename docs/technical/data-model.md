@@ -27,18 +27,30 @@ that isn't in the data yet — those are marked TBD.
   `entranceType`, `wheelchair`, `automatic`, `access`, `lit`, `covered`, `door`,
   `description`, `osmId`, point geometry. Sparse (e.g. only 96/1,601 have any
   `wheelchair` tag at all) — treat absence as "unknown," never as "no."
-- **StudySpace** — 24 curated records today (see [Data Sources § 1](data-sources.md#1-study-spaces-24-records)).
-  Fields: `slug`, `name`, `buildingSlug`, `floor` (a label, e.g. "2nd Floor"),
-  `lat`/`lng` (currently just the parent building's, not per-floor/room), `amenities`
-  (free-form list: wifi, outlets, computers, printing, groupRooms, whiteboards,
-  scanners), `noiseLevel` (quiet | moderate | social), `capacity`, `waitzId` (nullable
-  — only 6/24 set). TBD: lighting quality has no source anywhere yet. Adaptive
-  furniture and assistive listening now have a real source (`RoomEquipment` below) but
-  only for registrar classrooms, not most of today's 24 curated spaces — still needs
-  wiring together. The official `department` type (§ 8) — named lounges/libraries per
-  building, e.g. East Quad's `anderson-lounge`, `greene-lounge`, `benzinger-library` —
-  is a real candidate list to expand `StudySpace` coverage from, though each still
-  needs noise/amenity/accessibility enrichment to become a full record.
+- **StudySpace** — two sources, of different quality. **Primary: UM Library's own 34
+  official records** (see [Data Sources § 9](data-sources.md#9-um-librarys-own-find-study-space-tool-best-source-yet-purpose-built)),
+  fields `title`, `slug` (detail page path), `bodySummary` (description),
+  `spaceFeatures` (`natural_light`, `wheelchair_accessible`,
+  `all_gender_restroom_on_floor`, `whiteboards`, `bookable`, `external_monitors`),
+  `noiseLevel` (`quiet` | `conversational` | `low_noise`), `building` (a name string,
+  needs mapping to `buildingSlug` — not 1:1: Hatcher North/South are two `building`
+  values for one building), `campus`, `imageUrl`/`imageAlt`. This is the taxonomy to
+  standardize on — adopt `spaceFeatures`/`noiseLevel` as *the* schema fields rather
+  than inventing new ones, since it already covers what generic amenity/noise tags
+  didn't (lighting, per-space wheelchair/restroom accessibility). Only 7 libraries,
+  no capacity/hours. **Secondary: 24 mguide.app-derived records** (see
+  [Data Sources § 1](data-sources.md#1-study-spaces-24-records)) covering non-library
+  buildings the primary source doesn't touch — `slug`, `name`, `buildingSlug`, `floor`,
+  `lat`/`lng` (building-level), `amenities` (wifi/outlets/computers/printing/
+  groupRooms/whiteboards/scanners — generic, not the § 9 taxonomy), `noiseLevel`
+  (`quiet`/`moderate`/`social` — a different 3-tier scale than § 9's, needs
+  reconciling), `capacity`, `waitzId` (only 6/24 set). Migrating these onto the § 9
+  taxonomy (mapping generic amenities → `spaceFeatures` where possible, e.g. inferring
+  `wheelchair_accessible` isn't safe without real data) is TBD. The official
+  `department` type (§ 8) — named lounges/libraries per building, e.g. East Quad's
+  `anderson-lounge`, `greene-lounge`, `benzinger-library` — is a real candidate list to
+  expand coverage further, though each still needs § 9-style tagging to become a full
+  record.
 - **RoomEquipment** — from `rooms.json` (Registrar Schedule of Classes data), keyed by
   building acronym + room number, not `buildingSlug`/`StudySpace.slug` (needs a join).
   771 rooms across 77 buildings. Fields: `floor`, `type`, `capacity`, `roomType`,
