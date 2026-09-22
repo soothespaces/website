@@ -4,8 +4,9 @@ Core UI features from the initial concept. The interface overall is designed for
 legibility, ease of navigation, and strict WCAG adherence.
 
 Each feature below is marked with how ready the data is, based on
-[Data Sources](../technical/data-sources.md): ✅ **Possible now**, ⚠️ **Partially
-possible**, ❌ **Not sourced** (nothing blocks building it, but no data exists yet).
+[Data Sources](../technical/data-sources.md): ✅ **Possible now** (including features
+that are crowdsourced by design, where "no data yet" is expected, not a gap), or
+⚠️ **Partially possible** (real data exists but has real coverage/completeness limits).
 
 ## Interactive 2D Map Viewer
 
@@ -59,10 +60,11 @@ Clicking a map pin opens an interactive detail modal showing community ratings,
 verified amenities, maximum capacity, and live crowd density pulled from the Waitz
 integration.
 
-- ❌ **Community ratings.** No source anywhere — this is user-generated content the
-  app itself has to create (see Crowdsourced Contribution Flow below). Design the
-  empty state (a space with zero ratings) as a first-class case, not an afterthought,
-  since most spaces will start there.
+- ✅ **Community ratings — by design, not a gap.** These were never meant to come
+  from a data source; they're crowdsourced from day one (see Crowdsourced
+  Contribution Flow below), so "zero pre-existing ratings" is the correct starting
+  state, not a shortfall to fix. Design the empty state (a space with no ratings yet)
+  as a first-class case rather than an afterthought, since most spaces start there.
 - ✅ **Verified amenities.** Same data as the filtering panel above.
 - ⚠️ **Maximum capacity, partially.** Present on the 24 mguide-derived spaces; absent
   from the 34 official UM Library spaces (nothing in `fass-data` or the individual
@@ -108,9 +110,13 @@ how directly they serve the "not-only-you" premise:
   (§8, official) surfaced as their own info panel per building, not just a filter
   toggle — genuinely useful prose ("a ramp is located at the north entrance near the
   Diag") that a boolean filter would throw away.
-- **Reference floor-plan viewer.** Show the raw MPrint image for a building/floor as a
-  "here's the layout" viewer (§5) — the realistic, de-scoped version of the interior-
-  mapping ambition, achievable without the full digitization effort.
+- **Reference floor-plan viewer.** Display the raw MPrint PNG for a building/floor in a
+  zoomable/pannable image viewer — like looking at a mall directory photo. Nothing in
+  it is clickable or queryable (no per-room filtering, no tapping a room number to see
+  its amenities); it's orientation only. The realistic, de-scoped version of the
+  interior-mapping ambition (§5) — the fully interactive version, where each room is
+  its own clickable/filterable polygon like the outdoor building map, needs the manual
+  per-room hotspot digitization effort that isn't currently planned.
 - **Accessible-classroom/meeting-space finder.** `rooms.json`'s per-room equipment
   (§6) — `assistive-listening`, `wheelchair-instructor`, `tables-moveable` — could
   extend the app past informal lounges to help someone find a specific accessible
