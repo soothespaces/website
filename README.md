@@ -1,3 +1,9 @@
+A sensory-focused campus mapping application for finding study spaces based on
+environmental conditions (noise, lighting, accessibility) and real-time occupancy.
+
+See [docs/](docs/README.md) for the full project documentation — product overview,
+features, technical architecture, and decision log.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
