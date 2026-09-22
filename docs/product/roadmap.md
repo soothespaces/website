@@ -34,6 +34,37 @@ campus map API, and UM Library's own "Find Study Space" data.
 - [ ] Apply for our own Waitz API access rather than depending on mguide.app's
       `/api/waitz` proxy (see [ADR 0004](../decisions/0004-do-not-depend-on-mguide-waitz-proxy.md))
 
-## Phase 2 — TBD
+## Phase 2 — Core features
 
-- [ ]
+Ordered by the feasibility read in [Features](features.md): fully-data-ready features
+first, then partial ones with their workaround, ratings/crowdsourcing last since it
+depends on Phase 1's Supabase schema and produces the data the other gaps need.
+
+- [ ] Map viewer: building footprints + `StudySpace` pins (fully data-ready)
+- [ ] Multi-attribute filtering: noise level + `spaceFeatures`/amenities (fully
+      data-ready, pending the taxonomy-reconciliation decision from Phase 1)
+- [ ] WCAG display controls: high contrast, scalable text, reduced motion (zero data
+      dependency — can build in parallel with anything else)
+- [ ] Spot detail cards: amenities now, capacity where available (mguide spaces only),
+      ratings left as an explicit empty state until crowdsourcing ships
+- [ ] Crowdsourced contribution flow (auth + Supabase write path) — unblocks ratings
+      and further coverage growth
+- [ ] Live occupancy card — blocked on our own Waitz API access (Phase 1) and on
+      building the Waitz-ID mapping for the 34 UM Library spaces, which doesn't exist
+      yet
+- [ ] MPrint reference floor-plan viewer (raster image, not full interior mapping —
+      see [Features § Interactive 2D Map Viewer](features.md#interactive-2d-map-viewer))
+
+## Phase 3 — Additional features (stretch)
+
+From [Features § Additional Features Enabled by Available Data](features.md#additional-features-enabled-by-available-data),
+not in the original proposal but directly supported by sourced data:
+
+- [ ] Accessible route planning between buildings (`pathways.geojson`)
+- [ ] Gender-inclusive / wheelchair-accessible restroom finder
+- [ ] Accessible parking finder
+- [ ] "How to get in" building access cards (ramp/elevator directions)
+- [ ] Accessible-classroom/meeting-space finder (`rooms.json` equipment)
+- [ ] Real photos on space/building cards
+- [ ] Building history/context cards
+- [ ] Bus/transit directions to a space
