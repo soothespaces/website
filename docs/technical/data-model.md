@@ -51,6 +51,17 @@ that isn't in the data yet — those are marked TBD.
   `anderson-lounge`, `greene-lounge`, `benzinger-library` — is a real candidate list to
   expand coverage further, though each still needs § 9-style tagging to become a full
   record.
+- **RoomZone** — a clickable region on a specific MPrint floor-plan image, produced by
+  the extraction prototype (see [MPrint Room Extraction](mprint-extraction.md)).
+  Fields: `buildingSlug`, `mprintTag`, `floorNumber` (together identify the source
+  image), `roomNumber` (OCR'd label, e.g. "1808"), and a reference to that image's
+  label mask (a small raster the same dimensions as the floor plan — no polygon/
+  vector shape needed, since a zone only needs to be clickable on the displayed image
+  itself, not placed on the outdoor lat/lng map — see the linked doc). Where
+  `roomNumber` matches a `RoomEquipment` entry (below), that metadata applies; where
+  it doesn't (e.g. a named lounge like East Quad's Greene Lounge, room 1808), it needs
+  a manual override entry (name, type). This is what `Rating` (below) actually attaches
+  to for interior spaces, not `StudySpace` directly.
 - **RoomEquipment** — from `rooms.json` (Registrar Schedule of Classes data), keyed by
   building acronym + room number, not `buildingSlug`/`StudySpace.slug` (needs a join).
   771 rooms across 77 buildings. Fields: `floor`, `type`, `capacity`, `roomType`,
@@ -71,8 +82,9 @@ that isn't in the data yet — those are marked TBD.
   API call), and only possible for the 6 spaces that have a `waitzId`. mguide.app's
   `/api/waitz` proxy shape (`{ id, name, busyness, trend, subLocs }`, bucketed at
   50/80) is a useful reference for our own shape even though we'll hit Waitz directly.
-- **Rating** — community rating/review tied to a StudySpace. TBD, no data yet — this is
-  user-generated content the app itself creates.
+- **Rating** — community rating/review, tied to either a `StudySpace` (a whole named
+  space) or a `RoomZone` (a specific clicked zone on a floor plan — the finer-grained
+  case). TBD, no data yet — this is user-generated content the app itself creates.
 - **ContributedPin** — a crowdsourced submission (new space, updated barrier/sensory
   tag) tied to an authenticated User, pending or applied to a StudySpace/Building/
   Entrance. TBD, no data yet.

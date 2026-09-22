@@ -20,12 +20,14 @@ interactive, color-coded pins layered over the facilities.
 - ⚠️ **MPrint interior layouts, partially — better than it looked.** A raster
   reference image per floor works today (§5), for buildings whose MPrint tag is known
   (112/466 via `acronym`, more via probing). Beyond that: a prototype pipeline
-  (OCR + dilated flood fill) can auto-extract per-room polygons and numbers from these
+  (OCR + dilated flood fill) can auto-extract clickable per-room zones from these
   images, validated on a real floor plan — see
-  [MPrint Room Extraction](../technical/mprint-extraction.md). It isn't
-  production-ready (no georeferencing yet, tested on only 2 buildings), but the fully
-  interactive, clickable per-room map is no longer purely a "substantial manual
-  digitization effort" — it's a hardening problem now, not a from-scratch one.
+  [MPrint Room Extraction](../technical/mprint-extraction.md). The actual use case
+  (clicking a zone on the displayed floor plan to attach a sensory review, not
+  placing a room as a pin on the outdoor map) doesn't need georeferencing or clean
+  polygons at all, so this is closer to done than "interior mapping" first sounded —
+  the remaining work is OCR accuracy and per-image tuning, tested on only 2 buildings
+  so far, not a from-scratch manual effort.
 
 ## Multi-Attribute Filtering Panel
 
@@ -112,14 +114,15 @@ how directly they serve the "not-only-you" premise:
   (§8, official) surfaced as their own info panel per building, not just a filter
   toggle — genuinely useful prose ("a ramp is located at the north entrance near the
   Diag") that a boolean filter would throw away.
-- **Reference floor-plan viewer.** Display the raw MPrint PNG for a building/floor in a
-  zoomable/pannable image viewer — like looking at a mall directory photo. Nothing in
-  it is clickable or queryable; it's orientation only. This is the fallback/base
-  version, buildable immediately. The fully interactive version — each room its own
-  clickable/filterable polygon like the outdoor building map — has a validated
-  automated path now too (see
-  [MPrint Room Extraction](../technical/mprint-extraction.md)), not just a manual one,
-  though that path still needs hardening before it's trustworthy at scale.
+- **Interactive floor-plan viewer.** Display the raw MPrint PNG for a building/floor,
+  zoomable/pannable, with each room clickable to attach or read a sensory review
+  (noise, light, etc.) for that specific zone — like clicking a wing on a mall
+  directory. This has a validated automated path (see
+  [MPrint Room Extraction](../technical/mprint-extraction.md)): the zones only need to
+  be clickable on the image itself, not placed on the outdoor map, so no
+  georeferencing or clean polygon shapes are required — a plain zoomable image with no
+  clickable zones is the fallback if the extraction isn't ready in time, not a
+  separate feature to build twice.
 - **Accessible-classroom/meeting-space finder.** `rooms.json`'s per-room equipment
   (§6) — `assistive-listening`, `wheelchair-instructor`, `tables-moveable` — could
   extend the app past informal lounges to help someone find a specific accessible

@@ -53,8 +53,11 @@ depends on Phase 1's Supabase schema and produces the data the other gaps need.
 - [ ] Live occupancy card — blocked on our own Waitz API access (Phase 1) and on
       building the Waitz-ID mapping for the 34 UM Library spaces, which doesn't exist
       yet
-- [ ] MPrint reference floor-plan viewer (raster image, not full interior mapping —
-      see [Features § Interactive 2D Map Viewer](features.md#interactive-2d-map-viewer))
+- [ ] MPrint floor-plan viewer — start with the plain zoomable image, layer in
+      clickable per-zone reviews once the extraction pipeline is hardened (no
+      georeferencing needed for this — see
+      [Features § Interactive 2D Map Viewer](features.md#interactive-2d-map-viewer)
+      and [MPrint Room Extraction](../technical/mprint-extraction.md))
 
 ## Phase 3 — Additional features (stretch)
 

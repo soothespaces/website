@@ -6,6 +6,33 @@ tested in depth, but needs more validation across buildings before being trusted
 scale. This document records what was tried, what worked, what didn't, and why —
 treat every number here as evidence from a specific test, not a general guarantee.
 
+## The actual use case — simpler than it first sounds
+
+This isn't for placing precisely-georeferenced room pins on the outdoor campus map.
+The goal is: show the MPrint floor-plan image itself, let a user **click a zone on
+that image**, and attach/read a crowdsourced review of that zone's noise/light/etc —
+like clicking a wing on a mall directory. That reframes what "good enough" means:
+
+- **The segmentation doesn't need to be pixel-perfect.** It needs to divide the floor
+  into clickable zones that roughly match what a person looking at the image would
+  call "a room" — not survive a CAD audit.
+- **No georeferencing needed for this feature.** Zones only need to exist in the
+  *image's own pixel space*, since the image itself is the canvas being clicked on —
+  not the outdoor lat/lng map. (Georeferencing would still matter for a *different*,
+  not-yet-built feature — showing an interior room as a pin on the outdoor map — but
+  that's a separate, later feature, not a blocker for this one.)
+- **No polygon-vector step needed either.** The label mask this pipeline already
+  produces (which pixel belongs to which room) is directly usable as-is: keep it as a
+  small raster (e.g. an indexed PNG the same dimensions as the floor plan, one integer
+  per zone) shipped alongside the source image, and on click, look up the mask's value
+  at that pixel. No contour-tracing/polygon-simplification step is required — that
+  would only matter if the shape needed to be smooth or precisely drawn, which it
+  doesn't for a click target.
+
+This is a meaningfully smaller lift than "digitize the interior map" first sounded
+like. The rest of this document still applies — OCR accuracy and per-image tuning are
+still real work — but the finish line is closer than the original framing implied.
+
 ## The idea, and why it's plausible
 
 MPrint floor plans (see [Data Sources § 5](data-sources.md#5-mprint-interior-floor-plans-confirmed-separate-source))
@@ -99,11 +126,17 @@ sanity check worth keeping regardless of how the rest of the pipeline evolves.
 
 ## What this does NOT do yet
 
-- **No georeferencing.** Extracted polygons exist only in the image's own pixel
-  coordinate space. Turning that into real lat/lng for map placement needs a
-  per-building calibration (at least 2–3 known reference points, e.g. matched against
-  the building's footprint polygon or entrance coordinates) that hasn't been
-  attempted.
+- **No georeferencing — and that's fine for the click-to-review use case** (see
+  above). Extracted regions exist only in the image's own pixel coordinate space,
+  which is exactly what's needed to make zones clickable on the displayed floor-plan
+  image itself. Converting to real lat/lng would only be needed for a separate,
+  later feature (showing a room as a pin on the outdoor map), not this one.
+- **No exported polygon/vector shapes yet** — the script currently outputs a labeled
+  region per room number (component id + pixel area), not a traced boundary. For the
+  click-to-review use case that's actually sufficient as-is (ship the label mask,
+  hit-test by pixel lookup on click — see above); a polygon export would only be
+  worth adding if a smooth/simplified outline is wanted for rendering, which isn't a
+  requirement.
 - **No auto-calibrated dilation radius.** 6px worked for the East Quad test; whether
   that's right for every building depends on that drawing's line weight and door-gap
   size at whatever resolution it was rendered at. A real pipeline should measure
@@ -120,10 +153,14 @@ sanity check worth keeping regardless of how the rest of the pipeline evolves.
 
 ## Recommendation
 
-Worth pursuing as the real approach to MPrint digitization — the core mechanism
+Worth pursuing as the real approach to interactive floor plans — the core mechanism
 (OCR + dilated flood fill) is validated, not just theoretical, and correctly handles
 the specific hard case (dashed/non-physical boundaries) that seemed likely to break
-it going in. Treat its output as a first draft that needs the manual-override layer
-(for rooms outside `rooms.json`, like named lounges) and spot-checking, not as
+it going in. Because the actual use case (clickable zones on the displayed image,
+for crowdsourced sensory reviews) doesn't need georeferencing or clean vector
+polygons, the remaining work is smaller than it first looked: OCR validation against
+`rooms.json`, per-image dilation tuning, and running it across more buildings. Treat
+its output as a first draft that needs the manual-override layer (for rooms
+`rooms.json` doesn't cover at all, like named lounges) and spot-checking, not as
 ground truth to ingest blindly. See [Data Sources § Next Steps](data-sources.md#next-steps)
 and [Roadmap](../product/roadmap.md) for where this fits in sequencing.
