@@ -17,6 +17,7 @@ What we're building, for whom, and why.
 How it's built.
 
 - [Architecture](technical/architecture.md) — system design, frontend/backend/data flow
+- [Data Sources](technical/data-sources.md) — what data we actually have, and gaps
 - [Data Model](technical/data-model.md) — schema for spaces, amenities, ratings, tags
 - [Integrations](technical/integrations.md) — GeoJSON/MPrint ingestion, Waitz occupancy API
 - [Accessibility](technical/accessibility.md) — WCAG approach and testing checklist
