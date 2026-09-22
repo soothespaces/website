@@ -16,13 +16,28 @@ All four are keyed by `slug` (spaces reference `buildingSlug`; every `buildingSl
 the spaces array and every polygon's `slug` resolves to a record in the buildings
 array — checked, zero orphans either direction).
 
-**Provenance**: pulled from the API backing [mguide.app](https://mguide.app/), a third
--party UM campus map, which itself presumably sources from official UM facilities/OSM
-data (the field shapes — `buildingRecordNumber`, OSM `osmId` tags — support that). It's
-someone else's API, not an official UM data feed, so treat field completeness/accuracy
-as "best effort" and don't assume stability of the endpoint long-term — worth committing
-the raw drop into the repo (see [Next Steps](#next-steps)) precisely because it may not
-be re-fetchable later.
+**Provenance, now confirmed precisely**: this is a subset of the static data files that
+power [mguide.app](https://mguide.app/), a third-party UM campus map built with
+React + MapLibre GL. Its JS bundles (fetched and grepped directly — no browser needed)
+reveal the full picture:
+
+- Most of its data — buildings, footprints, entrances, study spots, dining, parking,
+  restrooms, pathways, transit, etc. — is served as **static JSON/GeoJSON files at
+  `https://mguide.app/data/*`**, same-origin, no auth, no CORS restriction. This is
+  presumably itself built from official UM facilities/OSM/Registrar data (field shapes
+  like `buildingRecordNumber` and OSM `osmId` support that), but mguide.app is the
+  immediate source, not UM directly.
+- A small amount of genuinely live data — real-time Waitz occupancy and campus safety
+  incidents — goes through mguide's own backend at `https://api.mguide.app`, which
+  itself proxies the upstream services rather than exposing them straight from the
+  browser. See [§ 7](#7-mguideapp-live-api-confirmed) for both.
+
+Since this is someone else's app, not an official UM data feed or a documented public
+API: treat field completeness/accuracy as "best effort," don't assume the endpoints are
+stable or intended for third-party use long-term, and be a considerate client if
+pulling more (mirror data rather than hot-linking or polling `/data/*` at request time
+in production — see [Next Steps](#next-steps)). Committing what we pull into the repo
+now matters precisely because none of this is guaranteed to still be there later.
 
 ## 1. Study spaces (24 records)
 
@@ -153,6 +168,107 @@ key needed to construct MPrint URLs for *some* buildings — but:
   a count, but hasn't been cross-checked against how many MPrint images actually
   exist per building) — needs the same probing approach as tag discovery.
 
+## 6. Additional mguide.app static data (confirmed live, not yet pulled in)
+
+Beyond the 4 files in the original upload, `https://mguide.app/data/` serves a lot
+more — confirmed live by direct fetch (all HTTP 200, no auth):
+
+| File | Size | Content |
+|---|---|---|
+| `rooms.json` | ~1.0MB | **Registrar classroom data — see below, directly fills the sensory/accessibility gap.** |
+| `restrooms.json` | ~40KB | **Gender-inclusive + wheelchair-accessible restroom finder — see below.** |
+| `pathways.geojson` | ~4.2MB | 13,817 walking-path segments (footway/path/cycleway/steps/pedestrian), tagged `wheelchair`/`surface`/`lit`/`covered` — the network an accessible-routing feature would run on. |
+| `parking.geojson` | ~133KB | Parking lot/structure footprints. |
+| `dining.json` | — | Dining hall/cafe locations and info. |
+| `classroom-codes.json` | ~29KB | Room-code reference data. |
+| `search-tags.json` | ~9KB | Search/autocomplete tag index. |
+| `academic-calendar.json` | — | Term dates. |
+| `blue-lights.geojson` | ~14KB | Campus emergency call-box locations (safety, not accessibility). |
+| `michigan-boundary.geojson`, `michigan-mask.geojson` | — | Campus boundary geometry, for map styling. |
+| `course-index.json`, `room-schedules.json` | — | Course/room scheduling data (registrar). |
+| `gtfs/*.json`, `theride/*.json` | — | Bus transit (routes, stops, shapes, schedules) — two GTFS feeds (campus bus + TheRide). |
+| `stop-amenities.json`, `stop-photos.json` | — | Transit stop detail. |
+
+Two of these are directly on-mission and worth prioritizing:
+
+**`rooms.json`** — keyed by building acronym (not slug; e.g. `"MLB"` for Modern
+Languages Building), sourced from the Registrar's Schedule of Classes room data. 771
+rooms across 77 buildings, each with `floor`, `type`, `capacity`, `roomType`, and an
+**`equipment` list** with real per-room accessibility/furniture attributes:
+
+```jsonc
+{
+  "MLB": {
+    "building": "modern-languages-building", "name": "Modern Languages Building", "floors": 4,
+    "rooms": {
+      "2011": {
+        "floor": 2, "type": "discussion", "capacity": 28, "roomType": "classroom",
+        "equipment": ["tables", "ethernet", "wheelchair-instructor", "instructor-computer",
+                      "whiteboard", "lecture-capture", "doc-camera", "projector",
+                      "tables-moveable", "sound-system"],
+        "equipmentDetail": { "wheelchair-instructor": { "name": "Wheelchair Access: Instructor",
+          "desc": "Room provides wheelchair access to instructor area." }, "...": "..." }
+      }
+    }
+  }
+}
+```
+
+Equipment vocabulary across all 771 rooms (with counts): `projector` (382),
+`instructor-computer` (343), `lecture-capture` (309), `wheelchair-instructor` (306),
+`doc-camera` (289), `sound-system` (287), `ethernet` (280), `chalkboard` (280),
+`tables` (256), `whiteboard` (179), `tables-moveable` (136), `tablet-arm` (115),
+`tables-fixed` (73), `assistive-listening` (41), plus microphone/camera/display tags.
+**`assistive-listening` and `tables-moveable`/`tables-fixed` are exactly the sensory/
+adaptive-furniture taxonomy [Gap 2](#gaps-relative-to-what-the-app-needs) said we
+didn't have** — this is real, structured, per-room data for it, not something to
+invent from scratch. Caveat: it only covers rooms in the Schedule of Classes (i.e.
+classrooms/conference rooms), not lounges or informal study areas, and it's keyed by
+acronym, so it needs the same acronym-coverage caveat as MPrint (§ 5).
+
+**`restrooms.json`** — keyed by building slug (87 buildings), sourced from Refuge
+Restrooms (`"source": "refuge-restrooms"`), a gender-inclusive restroom database:
+
+```jsonc
+{
+  "angell-hall": {
+    "buildingName": "Angell Hall",
+    "restrooms": [
+      { "floor": 5, "room": null, "accessible": false, "changingTable": false,
+        "directions": "5th floor of Angell, near the astronomy classrooms" }
+    ],
+    "source": "refuge-restrooms"
+  }
+}
+```
+
+Each restroom entry has a boolean `accessible` (wheelchair) and `changingTable` flag
+plus free-text `directions`. Directly relevant given the target audience includes users
+needing specific physical accommodations, not just study spaces.
+
+## 7. mguide.app live API (confirmed, via reverse-engineered bundle)
+
+`https://api.mguide.app` backs two runtime endpoints (found by grepping the fetch calls
+in mguide's JS, not by using a browser/devtools — reading the same minified bundle
+files `curl` already pulled down was enough):
+
+- **`GET /api/waitz`** — proxies Waitz occupancy server-side instead of calling Waitz
+  from the browser. Returns `{ data: [{ id, name, busyness, trend, subLocs: [...] }] }`.
+  mguide matches a space to its Waitz record by `id === waitzId`, or a slugified
+  `name`, or by searching each record's `subLocs`. Their busyness→level bucketing:
+  `>= 80` → `very-busy`, `>= 50` → `moderate`, else `low`. **This validates
+  [ADR 0003](../decisions/0003-supabase-as-backend.md)'s plan to proxy Waitz through a
+  Next.js route handler rather than calling it client-side** — mguide independently
+  made the same call, likely for the same reasons (hide any Waitz credentials, avoid
+  CORS, control caching).
+- **`GET /api/safety`** — campus safety/blue-light incident feed, polled with a 10s
+  timeout and cached in `localStorage`. Not relevant to this project's scope.
+- (`POST /api/feedback` also exists — crash/bug reporting, not relevant.)
+
+No official Waitz API details (auth, base URL, rate limits) were recovered this way,
+since mguide's own backend is the thing calling Waitz, not the browser — that part of
+[Integrations § Waitz](integrations.md) is still genuinely TBD for us.
+
 ## Gaps relative to what the app needs
 
 1. **Study-space coverage is the biggest gap.** 24 curated spaces across 17 buildings
@@ -160,53 +276,64 @@ key needed to construct MPrint URLs for *some* buildings — but:
    "quads," and anything Medical/Administrative/Athletic have zero entries. This has to
    grow substantially, likely combining more manual curation with the crowdsourced
    contribution flow from day one rather than after launch.
-2. **No sensory/environmental data beyond a single manual `noiseLevel` tag.** Nothing
-   for lighting quality, adaptive furniture, or other sensory dimensions the proposal
-   calls out as core — those need a defined taxonomy and a way to populate them (manual
-   survey, crowdsourced, or both).
+2. **Sensory/environmental taxonomy is now mostly a data-wiring problem, not a
+   sourcing problem.** `rooms.json`'s equipment tags (`assistive-listening`,
+   `tables-moveable`/`tables-fixed`) cover exactly what [§ 6](#6-additional-mguideapp-static-data-confirmed-live-not-yet-pulled-in)
+   found was missing, for classrooms. Still open: it only covers registrar classrooms,
+   not informal lounges/study spots (most of the 24 curated spaces aren't in it), and
+   lighting quality has no source anywhere — still needs a taxonomy decision and either
+   a manual survey or crowdsourcing.
 3. **Interior/per-floor maps are sourceable (MPrint, see § 5) but not yet structured
    data.** The images exist and the URL pattern is confirmed; what's missing is (a) a
    full building→tag mapping beyond the 112 buildings with an `acronym`, and (b) a
    decision on how much manual digitization (room hotspots) is worth doing vs. just
    showing the raster image as a reference layer under the pin-based map.
-4. **Accessibility data is real but thin and disconnected.** `rampAccess` (building
-   level, prose) and entrance `wheelchair` tags (point level, <10% coverage) don't
-   connect to each other and don't cover most buildings. Options: geocode/parse
-   `rampAccess` text against nearby entrance points, treat both as-is as "best
-   available" and let crowdsourcing fill gaps, or seek a more authoritative UM
-   accessibility dataset (Services for Students with Disabilities / Facilities may have
-   one).
-5. **No live data of any kind in this file** — expected, since Waitz occupancy is a
-   runtime API call, not a data dump. But only 6/24 spaces have a `waitzId` to call it
-   with.
-6. **No hours of operation, no photos.** Relevant for "can I use this space right now."
+4. **Accessibility data is better than it looked, but still disconnected across four
+   sources.** Building-level `rampAccess` prose, entrance-level `wheelchair` tags
+   (<10% coverage), `rooms.json`'s `wheelchair-instructor`/`assistive-listening` tags
+   (classrooms only), `restrooms.json`'s accessible/changing-table flags, and
+   `pathways.geojson`'s route-level `wheelchair` tags (27 yes / 3 no / 13,787 untagged)
+   don't share a key or a data model today — they're keyed by slug, buildingSlug,
+   acronym, and raw geometry respectively. Unifying these into one accessibility view
+   per building/space is now the real work, more than sourcing is.
+5. **Waitz occupancy**: only 6/24 spaces have a `waitzId`. mguide.app proxies Waitz
+   through its own backend rather than calling it from the browser (see § 7) — we still
+   don't have Waitz's own API details (auth, rate limits), only confirmation that
+   proxying server-side is the right shape, matching our existing plan.
+6. **No hours of operation, no photos** for study spaces specifically (`academic-
+   calendar.json` gives term dates, not building/room hours).
 7. **No user-generated content yet** — ratings, crowdsourced pins, accounts. That's the
    app's job to create, not something to source.
 
 ## Next Steps
 
-1. Commit this raw data drop into the repo as seed data (e.g. `supabase/seed/` or
-   `data/raw/`) instead of leaving it only as an upload, so it's versioned and
-   reproducible — split back into its 4 logical files rather than kept concatenated.
+1. Pull down and commit the full mguide.app `/data/*` set into the repo as seed data
+   (e.g. `supabase/seed/raw/`), not just the 4 files in the original upload — at
+   minimum add `rooms.json`, `restrooms.json`, and `pathways.geojson` given § 6, plus
+   `parking.geojson` and `dining.json` since they're low-effort adds. Keep each as its
+   own file rather than re-concatenating.
 2. Turn [Data Model](data-model.md)'s sketch into real Supabase SQL migrations,
    informed by the actual fields above (in particular: keep `buildingSlug` as the
    join key, and give `StudySpace` its own lat/lng or floor-relative position instead
    of inheriting the building's).
 3. Write and run a seed script that loads buildings + polygons + entrances + the 24
    curated spaces into Supabase, so the map has real content from day one.
-4. Build an MPrint discovery/mirroring script: for each building, try
+4. Design how `rooms.json` (keyed by acronym), `restrooms.json` (keyed by slug), and
+   `pathways.geojson` (raw geometry) join into the same `buildingSlug`-keyed schema as
+   everything else, so accessibility data can be queried per building/space instead of
+   living in four disconnected shapes (see gap 4).
+5. Build an MPrint discovery/mirroring script: for each building, try
    `{acronym-lowercased}_{n}.png` for increasing `n` until a fetch falls back to the
    app shell, record the resulting tag→floor-count mapping, and download the images
    (or at least their URLs) into the repo/Supabase Storage rather than hot-linking
    `mprint.umich.edu` from production. For the 354 buildings with no `acronym`, the tag
    is unknown and needs another discovery method (a real MPrint index, if one exists,
    or manual lookup for the buildings that actually need interior maps).
-5. Decide the sensory/environmental data taxonomy (noise, lighting, etc.) the product
-   overview promises, since current data only covers noise, and only coarsely.
-6. Decide how to close the study-space coverage gap: more manual curation before
+6. Decide the lighting-quality taxonomy specifically — the one sensory dimension with
+   no source anywhere yet (noise and adaptive-furniture/assistive-listening now have
+   real data via `rooms.json`).
+7. Decide how to close the study-space coverage gap: more manual curation before
    launch, prioritizing the crowdsourced contribution flow, or both.
-7. Decide the accessibility-data strategy (see gap 4) — this is arguably the most
-   product-critical open question, since accessibility is the app's whole premise.
 8. Decide how much MPrint digitization is worth doing for the semester: raster image
    as a reference layer (cheap) vs. manually hotspotted rooms (expensive, but matches
    the original "mapped interiors" pitch) — see [Architecture](architecture.md).

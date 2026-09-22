@@ -24,6 +24,21 @@ storage — see [Data Sources § Next Steps](data-sources.md#next-steps).
 Provides real-time crowd density used for live occupancy data in the
 [Real-Time Spot Detail Cards](../product/features.md#real-time-spot-detail-cards) and
 for the "not-only-you" filtering flow (letting users avoid overstimulating environments
-before traveling to them). Auth, rate limits, and polling/webhook strategy TBD. Of the
-24 curated study spaces sourced so far, only 6 have a `waitzId` to call the API with —
-see [Data Sources § 1](data-sources.md#1-study-spaces-24-records).
+before traveling to them). Waitz's own auth/rate limits/base URL are still TBD for us,
+but the shape of the integration is now validated: mguide.app (see
+[Data Sources § 7](data-sources.md#7-mguideapp-live-api-confirmed-via-reverse-engineered-bundle))
+proxies Waitz through its own backend (`GET /api/waitz` → `{ data: [{ id, name,
+busyness, trend, subLocs }] }`, bucketed into `low`/`moderate`/`very-busy` at 50/80)
+rather than calling it from the browser — matches our plan in
+[ADR 0003](../decisions/0003-supabase-as-backend.md) to do the same via a Next.js
+route handler. Of the 24 curated study spaces sourced so far, only 6 have a `waitzId`
+to call the API with — see [Data Sources § 1](data-sources.md#1-study-spaces-24-records).
+
+## Accessible restrooms and pathways
+
+Two more data sources fill in accessibility gaps directly:
+[`restrooms.json`](data-sources.md#6-additional-mguideapp-static-data-confirmed-live-not-yet-pulled-in)
+(gender-inclusive + wheelchair-accessible restrooms, via Refuge Restrooms) and
+`pathways.geojson` (13,817 OSM path segments tagged `wheelchair`/`surface`, the network
+an accessible-routing feature would run on). Not yet pulled into the repo — see
+[Data Sources § Next Steps](data-sources.md#next-steps).

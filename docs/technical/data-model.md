@@ -21,14 +21,30 @@ that isn't in the data yet — those are marked TBD.
   `lat`/`lng` (currently just the parent building's, not per-floor/room), `amenities`
   (free-form list: wifi, outlets, computers, printing, groupRooms, whiteboards,
   scanners), `noiseLevel` (quiet | moderate | social), `capacity`, `waitzId` (nullable
-  — only 6/24 set). TBD: lighting quality and other sensory attributes the product
-  overview promises aren't represented by any field yet; adaptive-furniture/physical-
-  clearance accessibility attributes are TBD too (not the same as the building's
-  `rampAccess`/entrance `wheelchair` tags, which describe getting into the building,
-  not the space itself).
+  — only 6/24 set). TBD: lighting quality has no source anywhere yet. Adaptive
+  furniture and assistive listening now have a real source (`RoomEquipment` below) but
+  only for registrar classrooms, not most of today's 24 curated spaces — still needs
+  wiring together.
+- **RoomEquipment** — from `rooms.json` (Registrar Schedule of Classes data), keyed by
+  building acronym + room number, not `buildingSlug`/`StudySpace.slug` (needs a join).
+  771 rooms across 77 buildings. Fields: `floor`, `type`, `capacity`, `roomType`,
+  `equipment` (list, e.g. `wheelchair-instructor`, `assistive-listening`,
+  `tables-moveable`/`tables-fixed`, `whiteboard`, `projector`, ...) with a human-
+  readable `equipmentDetail` per tag. See [Data Sources § 6](data-sources.md#6-additional-mguideapp-static-data-confirmed-live-not-yet-pulled-in).
+  Only covers classrooms/conference rooms in the course catalog, not informal lounges.
+- **Restroom** — from `restrooms.json` (Refuge Restrooms), keyed by `buildingSlug`, 87
+  buildings. Fields: `floor`, `room`, `accessible` (wheelchair, boolean),
+  `changingTable` (boolean), `directions` (free text). Gender-inclusive by source.
+- **PathSegment** — from `pathways.geojson` (OSM), 13,817 line-segment features not
+  currently tied to any building. Fields: `type` (footway | path | cycleway | steps |
+  pedestrian), `wheelchair`, `surface`, `lit`, `covered`, line geometry. The network an
+  accessible-routing feature would run on; `wheelchair` coverage is sparse (27 yes / 3
+  no / rest untagged).
 - **OccupancyReading** — live crowd density for a space, sourced from Waitz (see
-  [Integrations](integrations.md)). TBD — not in the static data by nature (it's a
-  runtime API call), and only possible for the 6 spaces that have a `waitzId`.
+  [Integrations](integrations.md)). Not in the static data by nature (it's a runtime
+  API call), and only possible for the 6 spaces that have a `waitzId`. mguide.app's
+  `/api/waitz` proxy shape (`{ id, name, busyness, trend, subLocs }`, bucketed at
+  50/80) is a useful reference for our own shape even though we'll hit Waitz directly.
 - **Rating** — community rating/review tied to a StudySpace. TBD, no data yet — this is
   user-generated content the app itself creates.
 - **ContributedPin** — a crowdsourced submission (new space, updated barrier/sensory
