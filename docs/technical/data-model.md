@@ -52,11 +52,13 @@ that isn't in the data yet — those are marked TBD.
   expand coverage further, though each still needs § 9-style tagging to become a full
   record.
 - **FloorPlan** — one MPrint image (`buildingSlug` + `mprintTag` + `floorNumber`), plus
-  its **map anchor**: the calibration (a handful of real-world corner coordinates)
-  that places the image as a whole at the building's position on the outdoor map, for
-  a seamless map→floor zoom (see [MPrint Room Extraction](mprint-extraction.md)). TBD,
-  not yet attempted — without it the floor plan can still be shown (e.g. on building
-  click, as a panel), just not as a continuous geographic zoom.
+  its **map anchor**: `corners`, the lat/lng of the image's 4 corners (top-left,
+  top-right, bottom-right, bottom-left), produced by the manual alignment tool from
+  [ADR 0005](../decisions/0005-manual-floor-plan-alignment-tool.md) and consumed
+  directly by MapLibre GL's `image` source type (which places a raster from exactly
+  those 4 points, handling rotation/skew itself — no transform matrix needs storing).
+  This is what makes the map→floor zoom geographically continuous (see
+  [Architecture](architecture.md)); not yet populated for any building.
 - **RoomZone** — a clickable region within a `FloorPlan`, produced by the extraction
   prototype. **This is the primary unit user-generated content attaches to** —
   ratings, photos, whatever — not a side effect of a coarser `StudySpace` record.
