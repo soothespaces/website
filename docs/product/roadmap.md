@@ -29,8 +29,9 @@ campus map API, and UM Library's own "Find Study Space" data.
       spaces (dorm lounges, department-listed rooms) via survey or crowdsourcing
 - [ ] Build an MPrint discovery/mirroring script (tag→floor-count mapping beyond the
       112 buildings with an `acronym`, download images rather than hot-linking)
-- [ ] Decide how much MPrint digitization to do: raster reference image vs. manually
-      hotspotted clickable rooms
+- [ ] Harden the validated MPrint room-extraction prototype ([writeup](../technical/mprint-extraction.md)):
+      auto-calibrate dilation radius, validate OCR against `rooms.json`, add
+      georeferencing, run across more buildings before trusting the output
 - [ ] Apply for our own Waitz API access rather than depending on mguide.app's
       `/api/waitz` proxy (see [ADR 0004](../decisions/0004-do-not-depend-on-mguide-waitz-proxy.md))
 

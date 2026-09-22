@@ -159,11 +159,13 @@ key needed to construct MPrint URLs for *some* buildings — but:
   point, not a complete or guaranteed-unique mapping. Full coverage requires either
   probing each candidate URL (HTTP 200 vs. app-shell fallback) or finding an actual
   MPrint building index/API.
-- **These are raster images, not vector geometry.** They're excellent for showing a
-  user "here's what this floor looks like" (zoomable/pannable, like a scanned map), but
-  there's no structured per-room polygon data — turning a specific room number into a
-  clickable, filterable map pin means manually digitizing hotspot regions per room per
-  floor, not just dropping the image in.
+- **These are raster images, not vector geometry** — but a prototype pipeline
+  (OCR + dilated flood fill) can extract per-room polygons and numbers from them
+  automatically, validated on a real floor plan including the hard case (a room with
+  a non-physical/dashed boundary). Not production-ready and not yet tested beyond 2
+  buildings — see [MPrint Room Extraction](mprint-extraction.md) for the full writeup,
+  what worked, what didn't, and what's still missing (georeferencing, OCR validation,
+  broader building coverage).
 - Floor count per building isn't given anywhere in our data (`floors` in dataset #3 is
   a count, but hasn't been cross-checked against how many MPrint images actually
   exist per building) — needs the same probing approach as tag discovery.
@@ -397,11 +399,13 @@ mguide.app-derived spaces for the 7 buildings it covers.
    for registrar classrooms. Neither covers informal lounges/dorm spaces outside those
    two categories — still needs a decision on whether to extend the § 9 taxonomy there
    via manual survey or crowdsourcing, rather than an unrelated new one.
-3. **Interior/per-floor maps are sourceable (MPrint, see § 5) but not yet structured
-   data.** The images exist and the URL pattern is confirmed; what's missing is (a) a
-   full building→tag mapping beyond the 112 buildings with an `acronym`, and (b) a
-   decision on how much manual digitization (room hotspots) is worth doing vs. just
-   showing the raster image as a reference layer under the pin-based map.
+3. **Interior/per-floor maps: prototype pipeline validated, not yet production data.**
+   A working OCR + flood-fill extraction pipeline exists and handled the hard case
+   (a non-physical/dashed room boundary) correctly on a real test — see
+   [MPrint Room Extraction](mprint-extraction.md). What's missing: full building→tag
+   mapping beyond the 112 buildings with an `acronym`, georeferencing pixel polygons
+   to real lat/lng, OCR-error correction, and running it across more than 2 buildings
+   before trusting the output.
 4. **Accessibility data is better than it looked, but still disconnected across seven
    sources.** Building-level `rampAccess`/`elevatorAccess` prose (§ 8, official),
    entrance-level `wheelchair` tags (<10% coverage), `rooms.json`'s
@@ -464,6 +468,11 @@ mguide.app-derived spaces for the 7 buildings it covers.
 9. Decide how to close the remaining study-space coverage gap outside libraries: use
    `department` records (§ 8) as seed candidates for named lounges, then more manual
    curation and the crowdsourced contribution flow for what's still missing.
-10. Decide how much MPrint digitization is worth doing for the semester: raster image
-    as a reference layer (cheap) vs. manually hotspotted rooms (expensive, but matches
-    the original "mapped interiors" pitch) — see [Architecture](architecture.md).
+10. Harden the MPrint extraction prototype ([full writeup](mprint-extraction.md)):
+    auto-calibrate the dilation radius per image instead of a fixed constant, validate
+    OCR'd room numbers against `rooms.json`'s known list per building to catch
+    misreads, add georeferencing (pixel → lat/lng) via reference-point calibration per
+    building, and run it across more buildings (starting with the libraries from § 9)
+    before trusting the output at scale. Manual override entries (e.g. Greene Lounge =
+    room 1808, confirmed by OCR position + photo) remain necessary for rooms
+    `rooms.json` doesn't cover at all, not just a fallback for extraction failures.

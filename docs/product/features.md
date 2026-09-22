@@ -17,13 +17,15 @@ interactive, color-coded pins layered over the facilities.
 - ✅ **Building footprints and pins.** 466 (mguide) or 265 (official) building
   polygons, and two real `StudySpace` sources — 34 official UM Library spaces (§9) and
   24 mguide-derived spaces (§1) — are enough to render a real map with real pins today.
-- ⚠️ **MPrint interior layouts, partially.** Confirmed working as a raster reference
-  image per floor (§5), but only for buildings whose MPrint tag is known (112/466 via
-  `acronym`, more via probing) — and it's an image, not vector geometry. The original
-  idea of a fully interactive, clickable per-room interior map is **not** achievable
-  without a separate, substantial manual digitization effort (drawing hotspot regions
-  per room per floor). A raster "here's the floor" viewer is the realistic MVP scope —
-  see [Architecture](../technical/architecture.md)'s open questions.
+- ⚠️ **MPrint interior layouts, partially — better than it looked.** A raster
+  reference image per floor works today (§5), for buildings whose MPrint tag is known
+  (112/466 via `acronym`, more via probing). Beyond that: a prototype pipeline
+  (OCR + dilated flood fill) can auto-extract per-room polygons and numbers from these
+  images, validated on a real floor plan — see
+  [MPrint Room Extraction](../technical/mprint-extraction.md). It isn't
+  production-ready (no georeferencing yet, tested on only 2 buildings), but the fully
+  interactive, clickable per-room map is no longer purely a "substantial manual
+  digitization effort" — it's a hardening problem now, not a from-scratch one.
 
 ## Multi-Attribute Filtering Panel
 
@@ -112,11 +114,12 @@ how directly they serve the "not-only-you" premise:
   Diag") that a boolean filter would throw away.
 - **Reference floor-plan viewer.** Display the raw MPrint PNG for a building/floor in a
   zoomable/pannable image viewer — like looking at a mall directory photo. Nothing in
-  it is clickable or queryable (no per-room filtering, no tapping a room number to see
-  its amenities); it's orientation only. The realistic, de-scoped version of the
-  interior-mapping ambition (§5) — the fully interactive version, where each room is
-  its own clickable/filterable polygon like the outdoor building map, needs the manual
-  per-room hotspot digitization effort that isn't currently planned.
+  it is clickable or queryable; it's orientation only. This is the fallback/base
+  version, buildable immediately. The fully interactive version — each room its own
+  clickable/filterable polygon like the outdoor building map — has a validated
+  automated path now too (see
+  [MPrint Room Extraction](../technical/mprint-extraction.md)), not just a manual one,
+  though that path still needs hardening before it's trustworthy at scale.
 - **Accessible-classroom/meeting-space finder.** `rooms.json`'s per-room equipment
   (§6) — `assistive-listening`, `wheelchair-instructor`, `tables-moveable` — could
   extend the app past informal lounges to help someone find a specific accessible

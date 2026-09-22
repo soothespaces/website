@@ -20,6 +20,7 @@ How it's built.
 - [Data Sources](technical/data-sources.md) — what data we actually have, and gaps
 - [Data Model](technical/data-model.md) — schema for spaces, amenities, ratings, tags
 - [Integrations](technical/integrations.md) — GeoJSON/MPrint ingestion, Waitz occupancy API
+- [MPrint Room Extraction](technical/mprint-extraction.md) — prototype findings for auto-extracting room polygons from floor plans
 - [Accessibility](technical/accessibility.md) — WCAG approach and testing checklist
 
 ## Decisions
