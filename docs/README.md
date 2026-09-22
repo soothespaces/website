@@ -28,6 +28,7 @@ file per significant technical decision, kept even after the decision is superse
 
 - [0001 — Record architecture decisions](decisions/0001-record-architecture-decisions.md)
 - [0002 — Next.js, TypeScript, Tailwind, Vercel](decisions/0002-nextjs-typescript-tailwind-vercel.md)
+- [0003 — Supabase as the only backend](decisions/0003-supabase-as-backend.md)
 
 ## Conventions
 

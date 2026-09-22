@@ -13,6 +13,8 @@ data store:
 - **Rating** — community rating/review tied to a StudySpace.
 - **ContributedPin** — a crowdsourced submission (new space, updated barrier/sensory
   tag) tied to an authenticated User, pending or applied to a StudySpace.
-- **User** — authentication identity for the crowdsourced contribution flow.
+- **User** — authentication identity for the crowdsourced contribution flow, via
+  Supabase Auth (Google OAuth, restricted to `@umich.edu` accounts — see
+  [ADR 0003](../decisions/0003-supabase-as-backend.md)).
 
 Fill in concrete schemas (fields, types, relationships) once the data store is chosen.
