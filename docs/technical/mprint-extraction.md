@@ -1,9 +1,12 @@
 # MPrint Room Extraction — Prototype Findings
 
-Status: **validated spike, not production-ready.** A real, working pipeline exists
-(`scripts/mprint/extract_rooms.py`) and produces good results on the one building
-tested in depth, but needs more validation across buildings before being trusted at
-scale. This document records what was tried, what worked, what didn't, and why —
+Status: **segmentation validated; labeling is done by reading, not OCR.** The
+flood-fill segmentation (`scripts/mprint/extract_rooms.py`, now
+`scripts/mprint/label_rooms.py`) works on the buildings tested. OCR of room numbers
+does not hold up on low-resolution plans, so numbers are read visually from
+numbered-region tiles instead (see
+[Labeling by reading instead of OCR](#labeling-by-reading-instead-of-ocr)). We need
+fewer than 30 floors, so this is cheaper than making OCR reliable. This document records what was tried, what worked, what didn't, and why —
 treat every number here as evidence from a specific test, not a general guarantee.
 
 ## The actual use case — simpler than it first sounds, with one caveat
@@ -98,7 +101,7 @@ Ran on two real MPrint images, using `pytesseract` (Tesseract 5) for OCR and
   by more than 2 distinct room numbers" (see heuristic below) — plausibly a real
   connected corridor loop, not inspected further.
 
-### UM Library, floor 3 (`ulib_3.png`, 2200×3400px, a different building)
+### Shapiro Library, floor 3 (`ulib_3.png`, 2200×3400px, a different building)
 
 - Sanity-checked to see if the same fixed dilation radius generalizes to a different
   drawing. Result is mixed, and worth reading carefully:
@@ -134,6 +137,48 @@ one room-number label, not several. `extract_rooms.py` surfaces this automatical
 `componentsNeedingReview`. It caught a real case in the East Quad test; it's a cheap
 sanity check worth keeping regardless of how the rest of the pipeline evolves.
 
+## Labeling by reading instead of OCR
+
+Tested on Shapiro floor 2 (`ulib_2.png`, 1185×1854px) on 2026-09-28. Room numbers there
+are about 7px tall. Tesseract read **2 of the 12** LibCal-bookable rooms (`2122`–`2144`)
+with whole-page OCR, and did no better per room, per word, or upscaled. Reading the
+same plan by eye gets all of them. So the work is split: code does the geometry, and a
+reader (Claude, or a teammate) supplies the numbers.
+
+`scripts/mprint/label_rooms.py`:
+
+1. **`sheet`** flood-fills the plan and renders zoomed tiles (2×, about 600px of
+   plan per tile) with each region tinted and its ID in red, placed off-centre so it
+   doesn't cover the room's own label.
+2. **Read** the tiles and write `scripts/mprint/labels/<image>.json`, mapping region
+   ID → room number, or `null` for exterior canopies, open-to-below and vestibules.
+   Several regions can share a number when a dashed line or a stair splits a room.
+   Context helps the reader: floor 2 numbers start with 2, and neighbouring rooms
+   step through the numbers in order (`2122`, `2124`, `2126`, …).
+3. **`verify`** redraws the plan with the assigned numbers in blue beside the plan's
+   own black labels, which catches ID transcription mistakes. It also refuses to run
+   if any region is unlabeled or any label names a region that doesn't exist.
+4. **`export`** writes the hit-test mask (`<stem>_rooms.png`, pixel value = room
+   index) and `<stem>_rooms.json` (room number, region IDs, centroid, bbox). It fills
+   the holes each room's own printed number leaves, and grows rooms back over the
+   wall band that dilation removed, so a click on the number or next to a wall still
+   lands in the room.
+
+Region IDs depend on the exact image and parameters, so the labels file records the
+image's sha256, `dilation` and `wall`, and every step checks them.
+
+**Parameters.** `--wall 200` (not 128) is needed on Shapiro: some interior walls are
+drawn in grey, and at 128, rooms `2122` and `2124` merged. `--dilation 8` closes the
+study-room doorways onto the open floor. At 4 and 6, several rooms leaked into the
+`2000` hall and out through the entrance. The cost is that closets under about
+150px after dilation (`2054A`, `2026B`) drop out, and `2170A` merges into `2170B`.
+That's fine for study spaces. Re-run `sheet` with a smaller dilation if a small
+room matters.
+
+**Result on Shapiro floor 2:** 64 regions → 49 rooms. All 12 LibCal rooms are in
+their own region, and spot-check clicks on printed labels and near walls resolve to
+the right room. It took about 6 tile reads plus one verify pass.
+
 ## What this does NOT do yet
 
 - **No whole-image anchoring to the map yet.** Extracted regions exist only in the
@@ -144,20 +189,17 @@ sanity check worth keeping regardless of how the rest of the pipeline evolves.
   calibration, not per-room, and it hasn't been attempted. Without it, the floor
   plan can still be shown (e.g. in a panel/modal on building click), just not as a
   geographically continuous zoom.
-- **No exported polygon/vector shapes yet** — the script currently outputs a labeled
-  region per room number (component id + pixel area), not a traced boundary. For the
-  click-to-review use case that's actually sufficient as-is (ship the label mask,
-  hit-test by pixel lookup on click — see above); a polygon export would only be
-  worth adding if a smooth/simplified outline is wanted for rendering, which isn't a
-  requirement.
+- **No polygon/vector export.** `label_rooms.py export` writes the label mask, which
+  is all click-to-check-in needs. Traced outlines are only worth adding if we want
+  smooth room outlines for rendering.
 - **No auto-calibrated dilation radius.** 6px worked for the East Quad test; whether
   that's right for every building depends on that drawing's line weight and door-gap
   size at whatever resolution it was rendered at. A real pipeline should measure
   typical wall-line thickness per image (e.g. via a distance transform) and derive
   the dilation radius from that, rather than hardcoding a constant.
-- **No OCR validation/correction.** Misreads (like `3020A` → `30200`) need to be
-  caught — cross-checking against the known room-number list in `rooms.json` for that
-  building (where available) is the obvious first pass.
+- **OCR is no longer on the critical path.** Misreads like `3020A` → `30200` are why
+  numbers are now read by eye. `extract_rooms.py`'s OCR is kept as a cross-check
+  only.
 - **Not run across more than 2 buildings.** Two data points is a spike, not coverage.
   Before relying on this for real content, run it across the buildings that actually
   matter first (the libraries from [Data Sources § 9](data-sources.md#9-um-librarys-own-find-study-space-tool-best-source-yet-purpose-built),
@@ -167,12 +209,13 @@ sanity check worth keeping regardless of how the rest of the pipeline evolves.
 ## Recommendation
 
 Worth pursuing as the real approach to interactive floor plans — the core mechanism
-(OCR + dilated flood fill) is validated, not just theoretical, and correctly handles
+(dilated flood fill, labeled by reading) is validated, not just theoretical, and correctly handles
 the specific hard case (dashed/non-physical boundaries) that seemed likely to break
 it going in. Because the actual use case (clickable zones on the displayed image,
 for crowdsourced sensory reviews) doesn't need georeferencing or clean vector
-polygons, the remaining work is smaller than it first looked: OCR validation against
-`rooms.json`, per-image dilation tuning, and running it across more buildings. Treat
+polygons, the remaining work is smaller than it first looked: labeling the remaining floors
+(fewer than 30, with `label_rooms.py`), whole-image anchoring, and per-image dilation
+tuning. Treat
 its output as a first draft that needs the manual-override layer (for rooms
 `rooms.json` doesn't cover at all, like named lounges) and spot-checking, not as
 ground truth to ingest blindly. See [Data Sources § Next Steps](data-sources.md#next-steps)

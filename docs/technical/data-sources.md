@@ -441,10 +441,11 @@ Duderstadt (`dc`), Mason Hall (`mh`), G.G. Brown (`ggbl`), FMCRB (`fmcrb`), LBME
 building list is behind its login (`/api/queues`). Shapiro's floor 2 plan shows every
 LibCal room (`2122`–`2144`) as a labeled room, but the labels are only about 7px tall
 at the plan's 1185×1854 resolution. Tesseract found **2 of 12** with whole-page OCR,
-and did no better per room, per word, or upscaled. So bookable rooms are matched by
-**tagging by hand**: in the alignment tool, click a room zone and pick its LibCal item
-from that building's list. That's about 40 rooms and 13 seat groups across the 7
-buildings above, roughly an hour of work, and better than trusting OCR for the join.
+and did no better per room, per word, or upscaled. Instead, room numbers are
+**read visually from numbered-region tiles** (`scripts/mprint/label_rooms.py`; see
+[MPrint Room Extraction](mprint-extraction.md#labeling-by-reading-instead-of-ocr)).
+Shapiro floor 2 is done this way, and all 12 LibCal rooms land in their own region.
+The LibCal join is then an exact match on building + room number.
 
 **Deep links.** `/space/{id}?date=YYYY-MM-DD` opens the item on that date.
 `?date=YYYY-MM-DD HH:MM` also sets `autoCreateBookingDate`, which (per the page's own
