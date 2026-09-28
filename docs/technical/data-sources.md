@@ -421,6 +421,45 @@ seats returned 437 slots across 18 items for one day.
   app deep-links to the item's LibCal page (`/space/{id}` or `/seat/{id}`) and never
   books on anyone's behalf.
 
+**Inventory check (2026-09-28).** Scraping every location above with
+`/{spaces|seats}?lid={lid}&gid=0&c=-1` returns **224 unique items**. Without
+`gid=0&c=-1`, locations with several capacity options (e.g. Duderstadt) list nothing.
+Titles are `\u`-escaped JS strings, and each item also carries `thumbnail` (a photo)
+and `filterIds`. A grid poll at 12:23 on a Monday read 100 items free, 40 booked, 51
+closed, and 33 with no slots that day.
+
+| Title contains | Items | Examples |
+|---|---|---|
+| A room number | 134 | Shapiro `2122`–`2144`, `3042`, `3046`; Mason Hall `2407`…; DC `2340`…; LBME `1210`, `1300B`; FXB `1133B`; Hatcher carrels `Carrel 3-01 (3001)` (91) |
+| A seat in a numbered room | 33 | `GGBL 2502 - Collaboration 1`, `NCRC 028-G129 Seat 01`, `CSRB 2204 Seat 1` |
+| No room number | 57 | Soundproof booths `BOOTH1`–`BOOTH4`, CVGA game stations, `VIZHUB01`, Anatomage tables |
+
+**Matching to MPrint plans.** MPrint plans exist for Shapiro (tag `ulib`, not `ugl`),
+Duderstadt (`dc`), Mason Hall (`mh`), G.G. Brown (`ggbl`), FMCRB (`fmcrb`), LBME
+(`lbme`) and FXB (`fxb`). No tag was found for Hatcher, BBB, NCRC, CSRB, or Taubman
+(tried `hatch`, `hgl`, `hatcher`, `bbb`, `ncrc`, `csrb`, `thl` and variants). MPrint's
+building list is behind its login (`/api/queues`). Shapiro's floor 2 plan shows every
+LibCal room (`2122`–`2144`) as a labeled room, but the labels are only about 7px tall
+at the plan's 1185×1854 resolution. Tesseract found **2 of 12** with whole-page OCR,
+and did no better per room, per word, or upscaled. So bookable rooms are matched by
+**tagging by hand**: in the alignment tool, click a room zone and pick its LibCal item
+from that building's list. That's about 40 rooms and 13 seat groups across the 7
+buildings above, roughly an hour of work, and better than trusting OCR for the join.
+
+**Deep links.** `/space/{id}?date=YYYY-MM-DD` opens the item on that date.
+`?date=YYYY-MM-DD HH:MM` also sets `autoCreateBookingDate`, which (per the page's own
+script) loads the grid through `/spaces/availability/grid/pre-create` and pre-selects
+that slot. The student then only confirms and signs in. Not yet tried end to end in a
+browser.
+
+**One-click booking.** The public endpoints need the student's own UM login session
+(SSO with Duo) at submit time, and we can't hold or reuse that. The only legitimate
+path is the official API's `POST /1.1/space/reserve` (patron `fname`/`lname`/`email`
+plus `bookings: [{ id, to }]`), using API credentials the Library's LibCal admin would
+issue with booking permission. That would supersede part of
+[ADR 0008](../decisions/0008-libcal-availability-read-only.md) and needs a new ADR if
+granted.
+
 ## Gaps relative to what the app needs
 
 1. **Study-space coverage is still the biggest gap, though much less blank than it
