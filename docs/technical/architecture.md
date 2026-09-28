@@ -28,7 +28,8 @@ makes decisions — record them here and as ADRs under [decisions/](../decisions
 
 ## Open questions
 
-- Map rendering library (e.g. MapLibre GL, Leaflet, Mapbox GL) — TBD.
+- ~~Map rendering library~~: decided, MapLibre GL + react-map-gl + OpenStreetMap
+  ([ADR 0006](../decisions/0006-maplibre-react-map-gl-osm.md)).
 - Whether the Waitz occupancy API is called directly from the client, proxied through
   a Next.js route handler, or synced into Supabase on a schedule — TBD (see
   [Integrations](integrations.md)).
