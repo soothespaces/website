@@ -1,117 +1,142 @@
-# MVP Scope & Prioritized Reach Features
+# MVP Scope & Reach Goals
 
-Distilled from the 2026-09-27 planning meeting and the team's "Project MVP Scope" notes,
-checked against what the data actually supports (see [Features](features.md) and
-[Data Sources](../technical/data-sources.md)). The MVP is what must work for the
-**lo-fi prototype peer review (Oct 23)** and demo video (Oct 28). Everything else is a
-reach feature, ranked by how much it helps the target users compared with what it
-costs. Dates are in [Roadmap](roadmap.md).
+This is the final scope: what must work for the **lo-fi prototype (build done Fri Oct
+16)** and the reach goals after that, ranked by how much they help target users
+compared with what they cost. Each item names one owner (see
+[Work Breakdown](work-breakdown.md)). Dates are in [Roadmap](roadmap.md).
 
-## Decisions made in the meeting
+Sources: the 2026-09-27 planning meeting, the team's "Project MVP Scope" notes, peer
+feedback (Catherine Fan), and what the data actually supports
+([Features](features.md), [Data Sources](../technical/data-sources.md)).
 
-- **Website only**, responsive and **mobile-first**: breakpoints change the layout
-  (for example, the nav collapses to a hamburger menu). Phone and desktop both work.
-- **Auth**: Supabase + Google OAuth, `@umich.edu` accounts only, passwordless. No
-  email/password or other providers, since each one adds complexity
+## Decisions
+
+- **Website only**, responsive and **mobile-first**, working at every screen size.
+- **Auth**: Supabase + Google OAuth, `@umich.edu` accounts only, passwordless
   ([ADR 0003](../decisions/0003-supabase-as-backend.md)).
-- **Guests can browse** without an account. Actions that need an account prompt a
-  sign-in.
-- **Map stack**: MapLibre GL + `react-map-gl` + OpenStreetMap data, with the required
-  OSM attribution shown on the map ([ADR 0006](../decisions/0006-maplibre-react-map-gl-osm.md)).
-- **Reviews are anonymous, written only by `@umich.edu` users, and have no free
-  text.** They're chip toggles and short scales, because typing is the biggest
-  barrier to leaving a review. Reviews never ask about a diagnosis or disability.
-  They describe the *space* (for example, "is this ADHD-friendly") instead of the
-  reviewer.
-- **Reviews are timestamped**, which is what makes busyness-by-day/hour possible later.
-- **Design**: monochrome (black, grey, white) with one accent color, all set through
-  Tailwind design tokens so contrast and colorblind modes can swap colors in later.
-  Minimal, low-stimulation.
-- **List view alongside the map**, and some users (for example, screen-reader users)
-  can make it the default.
-- **Floor-plan pipeline stays in Python.** It runs offline as a batch job that writes
-  static assets (floor-plan images and room masks) to Supabase Storage. It never runs
-  inside the web app, so a TypeScript rewrite would add nothing, and the working
-  prototype is already Python ([MPrint Room Extraction](../technical/mprint-extraction.md)).
+- **Anyone can browse and read aggregated check-in data. Only `@umich.edu` users can
+  submit a check-in** ([ADR 0007](../decisions/0007-anonymous-check-ins-public-aggregates.md)).
+  Public pages only ever show aggregates. Raw submissions and who made them are
+  never readable by other users.
+- **Map stack**: MapLibre GL + react-map-gl + OpenStreetMap
+  ([ADR 0006](../decisions/0006-maplibre-react-map-gl-osm.md)).
+- **Design**: monochrome with one accent color, built on Tailwind design tokens.
+  Minimal and low-stimulation.
+- **List view alongside the map**, which users can set as their default.
+- **Floor-plan pipeline stays in Python**. It's an offline batch job that writes
+  images and room masks to Supabase Storage.
 
-## Open question for the team
+## Terminology: "check-in", not "review"
 
-- **Should guests be able to *read* reviews?** The meeting put "view reviews" behind
-  login, but reviews are anonymous, so login protects nobody's privacy. It does leave
-  guests with little to look at. The recommendation, and what this plan assumes, is
-  that **reading is public and writing requires login**. Confirm or overrule.
+"Review" suggests writing, and there's no free text anywhere. Use **check-in**:
 
-## MVP (lo-fi prototype, working build by Fri Oct 16)
+- It suggests something quick that you do while you're there, which is what we want.
+  The busyness-by-hour feature depends on data from people who are actually in the
+  space.
+- It explains why every submission is timestamped.
+- It doesn't suggest stars or a written opinion.
 
-The build has to be done by **Oct 16**, not the Oct 23 peer review, because fall
-break is Oct 17–20. Treat Oct 21–22 as buffer for fixes only. Items are listed
-roughly in build-dependency order, and every one has the data it needs today.
+UI copy: button **"Check in"**. Aggregates: **"Based on 14 check-ins"**. Avoid
+"report", which sounds like flagging abuse.
 
-1. **App shell**: header with logo and nav, footer linking placeholder Privacy
-   Policy and Terms of Service pages, a landing page (what it is, why it helps, CTA to
-   sign up or explore), design tokens, and a responsive layout. Signed-in and
-   returning users go straight to the map.
-2. **Map view**: building footprints and study-space pins, seeded from UM Library's 34
-   official spaces plus the 24 mguide-derived spaces.
-3. **Space detail panel**: the official features (natural light, wheelchair
-   accessible, all-gender restroom on floor, …), noise level, photo, and aggregated
-   community ratings.
-4. **List view**: the same spaces and filters as the map, in an accessible list.
-5. **Filters**: noise level plus `spaceFeatures` chips.
-6. **Sign-in**: Google OAuth restricted to `@umich.edu`, with a sign-in prompt on
-   "add review".
-7. **Chip-based reviews**: anonymous and timestamped, covering noise, light, busyness,
-   and focus-friendliness (5-point, "very friendly" to "very hostile"), plus feature
-   chips a reviewer can confirm. Results show as aggregates on the detail panel.
-8. **Accessibility settings**: light/dark theme, high contrast, font size, reduced
-   motion. Guests' settings live in localStorage, with a banner suggesting they sign
-   up to keep them.
-9. **Floor-plan pilot**: one or two buildings (Shapiro, and possibly East Quad) with a
-   floor switcher and clickable room zones from the extraction pipeline. Rooms can be
-   reviewed individually. **This is the riskiest MVP item and also what sets the
-   project apart.** Fallback: show the floor plan as a plain image in a panel if the
-   aligned map overlay isn't ready.
+**Check-in form** (the Accounts & Community owner finalizes this in Phase 1; it
+reuses UM Library's taxonomy where one exists):
 
-**Not in the MVP, on purpose:** live Waitz occupancy (we still need our own API key,
-[ADR 0004](../decisions/0004-do-not-depend-on-mguide-waitz-proxy.md), so spaces show
-"live data unavailable"), busyness patterns, and floor plans beyond the pilot.
+| Dimension | Input |
+|---|---|
+| Noise | quiet / low noise / conversational / loud |
+| Light | dim / moderate / bright, plus a "natural light" chip |
+| Busyness | empty / some seats / half full / mostly full / packed |
+| Easy to focus? | very easy → very hard (5-point) |
+| Features present | chips: outlets, whiteboards, step-free access, all-gender restroom nearby, … |
+| When | defaults to now; "I was here earlier today" lets the user pick a time |
 
-## Reach features, in priority order
+## Where busyness data can come from
+
+The question was whether Google's live busyness data can cover buildings that have
+no Waitz ID.
+
+| Source | Coverage | Legitimate? | Verdict |
+|---|---|---|---|
+| **Waitz** | A small number of UM buildings/floors | Yes, with our own key ([ADR 0004](../decisions/0004-do-not-depend-on-mguide-waitz-proxy.md)) | **Use** where available |
+| **Google Popular Times / live busyness** | Whole buildings Google has enough traffic data for; never rooms or floors | **No official API.** The Places API doesn't expose it. The libraries that exist (e.g. `populartimes`) scrape Google Maps' internal endpoints, which breaks Google's terms and gets blocked | **Don't build on it** |
+| **BestTime.app** | Public venues (whole buildings); forecasts plus some live signal | Yes; commercial API, free test tier, paid plans | **Possible P3.** Building-level only, and there's a cost. Try the free tier on a few buildings before committing |
+| **Our own check-ins** | Any space or room anyone checks in to | Yes (it's our own data) | **Primary source outside Waitz buildings**: recent check-ins now (P1), patterns by weekday and hour later (P2) |
+| **Class schedules** (Registrar `room-schedules.json`) | Buildings with scheduled classrooms | Yes | **P2 heuristic**: classes starting or ending in a building predict foot traffic, and it also powers "classroom free now" |
+| **Campus Wi-Fi device counts** (UM ITS / Library) | Potentially every building. Waitz itself likely runs on this kind of signal | Only with campus approval | **Ask early** (external comms). Approval could take months, so don't depend on it |
+
+Bottom line: no legitimate source gives Google-quality live busyness for buildings
+without Waitz. Where there's no Waitz, show the **most recent check-ins with their
+age** ("Busy, 25 min ago · 3 check-ins"). Show "no recent data" when there's nothing,
+and never guess.
+
+## Peer feedback and what changed
+
+| Feedback | Response |
+|---|---|
+| Real need; "not-only-you" is well met by community feedback, list view, and high contrast | No change. These stay in the MVP. |
+| "APIs can provide light and noise levels" | **No API provides these.** That's the whole reason for check-ins. The only official source is UM Library's tags (34 spaces). The planning doc should say this explicitly. |
+| Historical tracking + active data collection, possibly with campus approval | Check-in timestamps give historical patterns (P2). Requesting campus Wi-Fi/occupancy data is a P1 outreach task. |
+| Busyness from Google Maps | Assessed above: no legitimate API. BestTime is a paid P3 option. |
+| Physical noise-sensing hardware | Out of scope (hardware, approvals, upkeep). **Software substitute (P2):** an optional microphone reading during a check-in. It's computed on the device, only a relative level is sent, and no audio is ever recorded or uploaded. |
+| Predict busyness/noise from history | P2 is a simple weekday × hour aggregate. ML stays P3; it needs far more data than we'll have. |
+| "Influence the present day" | **P1 "right now" view**: sort and filter by live Waitz data and recent check-ins. |
+| Prioritize the people who really need it | **P1 "My needs" profile**: saved preferences (quiet, dim, step-free, all-gender restroom, …) that set default filters and ranking. It's stored like a setting and never tied to a diagnosis or shown publicly. |
+| Business partnerships | Not an engineering item. Campus partners come first: Services for Students with Disabilities, the Library, and ITS for data access and recruiting testers. Off-campus businesses are listed under "considered, not planned". |
+
+## MVP: lo-fi prototype, build complete Fri Oct 16
+
+Fall break is Oct 17–20, so Oct 21–22 is for fixes only.
+
+| # | Item | Owner |
+|---|---|---|
+| 1 | Design tokens + base components (button, chip, toggle, sheet/panel, banner) | Mark |
+| 2 | App shell: header/nav, footer, landing page, Privacy/ToS placeholder pages, responsive layout. Signed-in and returning users go straight to the map | Mark |
+| 3 | Accessibility settings: light/dark, high contrast, font size, reduced motion. Guests' settings stored in localStorage, with a sign-up banner | Mark |
+| 4 | Map view: building footprints + study-space pins (34 official library spaces + 24 mguide spaces) | Calvin |
+| 5 | Space detail panel: official features, noise, photo, plus slots for check-in data and the floor-plan entry point | Calvin |
+| 6 | List view + filters (noise level, `spaceFeatures`), sharing filter state with the map | Calvin |
+| 7 | Sign-in: Google OAuth restricted to `@umich.edu`, with a sign-in prompt on "Check in" | Gjonpjer |
+| 8 | Check-ins: the form above, anonymous storage, public aggregates shown in the detail panel | Gjonpjer |
+| 9 | Floor-plan pilot: Shapiro (and possibly East Quad), floor switcher, clickable room zones, checking in to a room. **Fallback:** the floor plan as a plain image in a panel | Tanner |
+
+Not in the MVP, on purpose: live Waitz (still waiting on the key), busyness history,
+and floor plans beyond the pilot.
+
+## Reach goals
 
 ### P1: by usability testing (Nov 13)
 
-These make the MVP something people can properly test.
-
-1. **WCAG audit pass** (axe/Lighthouse on every core page) plus colorblind modes.
-   Accessibility is the core promise of the product, so this can't slip to December.
-2. **Floor plans for all 7 library buildings**: harden the pipeline, build the
-   internal alignment tool ([ADR 0005](../decisions/0005-manual-floor-plan-alignment-tool.md)),
-   then align building by building.
-3. **Live Waitz occupancy** for spaces that have a Waitz ID, if we have the key by then.
-4. **Synced settings** for signed-in users.
+| Item | Owner |
+|---|---|
+| WCAG audit pass (axe/Lighthouse on core pages) + colorblind modes | Mark |
+| Synced settings for signed-in users | Mark |
+| Campus outreach: SSD / Library / ITS for data access and recruiting usability-test participants | Mark |
+| "My needs" profile: saved preferences that set default filters and ranking | Calvin |
+| Search (spaces, buildings, room numbers) | Calvin |
+| "Right now": live Waitz where available, plus recent check-ins with their age; sort by current conditions | Gjonpjer |
+| Floor plans for all 7 library buildings: harden the pipeline, build the alignment tool ([ADR 0005](../decisions/0005-manual-floor-plan-alignment-tool.md)) | Tanner |
 
 ### P2: by the final demo (Dec 11)
 
-5. **Busyness by weekday and hour**, built from review timestamps: a simple
-   aggregate histogram, not ML, broken down by week of term. For the demo, seed it
-   with **simulated review data**, because we won't have hundreds of real reviewers.
-6. **"Is this classroom free right now?"**, using Registrar schedule data
-   (`rooms.json`, `room-schedules.json`), which we already have. The meeting called
-   availability the most useful add-on, and classrooms are the part we can actually
-   get.
-7. **Accessibility layer**: accessible entrances, ramp and elevator directions per
-   building, and all-gender/accessible restrooms. All of this data is already sourced.
-8. **Floor plans beyond libraries** (priority dorm lounges and study areas).
-9. **User photos on spaces and rooms.** These need a moderation plan first, because
-   anonymous uploads can contain inappropriate content or bystanders' faces.
+| Item | Owner |
+|---|---|
+| Busyness patterns by weekday × hour (and week of term) from check-ins, seeded with simulated data for the demo | Gjonpjer |
+| Optional microphone noise sample during a check-in (on-device, relative level only) | Gjonpjer |
+| Classroom "free right now" from Registrar schedules | Calvin |
+| Accessibility layer: accessible entrances, ramp/elevator directions, all-gender/accessible restrooms | Calvin |
+| Floor plans beyond libraries, starting with dorm lounges (named from `department` records) | Tanner |
+| Onboarding and demo polish; final demo video | Mark |
+| User photos on spaces/rooms, **only if a moderation plan exists by Nov 18** | Gjonpjer |
 
-### P3: stretch, after the course if time allows
+### P3: stretch
 
-10. **Accessible (step-free) route planning** between buildings.
-11. **Private study-room booking/availability.** Every library runs its own booking
-    system, so this first needs research into whether any of them has a usable API.
-12. **Google Popular Times.** The API key costs money and the terms are restrictive;
-    our own review-based pattern (#5) is the substitute.
-13. **ML busyness prediction** (week of term, midterm weeks, …). It needs far more
-    telemetry than we'll have.
-14. **2.5D building extrusion**, as visual polish.
+Step-free route planning · private study-room booking aggregation (needs research into
+each library's booking system) · BestTime building-level forecasts · ML busyness
+prediction · 2.5D building extrusion.
+
+### Considered, not planned
+
+Physical noise sensors (hardware and approvals), Google Popular Times scraping
+(against Google's terms), off-campus business partnerships (outside the
+campus-focused scope; worth mentioning as future work in the planning doc).

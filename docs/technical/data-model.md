@@ -90,10 +90,13 @@ that isn't in the data yet — those are marked TBD.
   API call), and only possible for the 6 spaces that have a `waitzId`. mguide.app's
   `/api/waitz` proxy shape (`{ id, name, busyness, trend, subLocs }`, bucketed at
   50/80) is a useful reference for our own shape even though we'll hit Waitz directly.
-- **Rating** and **Photo** — community review/photo, tied to a `RoomZone` where a
-  building has floor-plan data (the primary, fine-grained case per the product
-  design), or to a `StudySpace` directly where it doesn't. Both TBD, no data yet —
-  this is user-generated content the app itself creates.
+- **CheckIn**: a structured, timestamped community contribution with no free text
+  (noise, light, busyness, how easy it is to focus, features present, time visited).
+  It targets exactly one `RoomZone` or one `StudySpace`. Anonymous: raw rows,
+  including `user_id`, are never readable by clients; only aggregates are public
+  ([ADR 0007](../decisions/0007-anonymous-check-ins-public-aggregates.md)). The form
+  is defined in [MVP Scope](../product/mvp-scope.md#terminology-check-in-not-review).
+  **Photo** (P2, conditional on a moderation plan) would attach to the same targets.
 - **ContributedPin** — a crowdsourced submission (new space, updated barrier/sensory
   tag) tied to an authenticated User, pending or applied to a StudySpace/Building/
   Entrance. TBD, no data yet.

@@ -52,29 +52,27 @@ and quiz windows (Oct 14–16, Nov 4–6, Dec 2–4). Classes end Dec 14.
 
 ### Phase 3: MVP build / lo-fi prototype (Oct 5 → Oct 16) → M3, M4, M5
 
-The 9 MVP items in [MVP Scope](mvp-scope.md#mvp-lo-fi-prototype-working-build-by-fri-oct-16):
-app shell and landing page, map view, detail panel, list view, filters, sign-in,
-chip-based reviews, accessibility settings, and the floor-plan pilot. Oct 21–22 is
+The 9 MVP items in [MVP Scope](mvp-scope.md#mvp-lo-fi-prototype-build-complete-fri-oct-16),
+split by owner and in the order set out in [Work Breakdown](work-breakdown.md#sequencing-to-oct-16):
+design system and shell, map/list/detail/filters, sign-in and check-ins, and the
+floor-plan pilot. Oct 21–22 is
 for fixes only, and Oct 23–28 goes to the write-up and demo video.
 
 ### Phase 4: Iterate & usability testing (Oct 28 → Nov 13) → M6
 
-P1 reach features: WCAG audit pass + colorblind modes, floor plans for all 7 library
-buildings, live Waitz occupancy (if the key has been granted), synced settings.
-Run usability tests with target users.
+The P1 reach goals in [MVP Scope](mvp-scope.md#p1-by-usability-testing-nov-13), one
+owner each. Run usability tests with target users recruited through campus outreach.
 
 ### Phase 5: Testing & debugging (Nov 13 → Nov 18) → M7
 
 Fix what usability testing found, write automated tests for the core flows, run an
 accessibility regression pass, and write the report.
 
-### Phase 6: Reach features & polish (Nov 18 → Dec 4) → M8
+### Phase 6: Reach goals & polish (Nov 18 → Dec 4) → M8
 
-P2 reach features, in priority order: busyness-by-hour from reviews (seeded with
-simulated data), classroom free-now, accessibility layer (entrances, ramp/elevator,
-restrooms), floor plans beyond libraries, user photos (only if a moderation plan
-exists). Thanksgiving takes a week out of this window, so plan roughly 1.5 working
-weeks, not 2.5.
+The P2 reach goals in [MVP Scope](mvp-scope.md#p2-by-the-final-demo-dec-11), in
+priority order. Thanksgiving takes a week out of this window, so plan roughly 1.5
+working weeks, not 2.5.
 
 ### Phase 7: Final demo prep (Dec 4 → Dec 11) → M9, M10
 
