@@ -2,7 +2,7 @@
 
 This is the final scope: what must work for the **lo-fi prototype (build done Fri Oct
 16)** and the reach goals after that, ranked by how much they help target users
-compared with what they cost. Each item names one owner (see
+compared with what they cost. Each item names the work package it belongs to (see
 [Work Breakdown](work-breakdown.md)). Dates are in [Roadmap](roadmap.md).
 
 Sources: the 2026-09-27 planning meeting, the team's "Project MVP Scope" notes, peer
@@ -39,7 +39,7 @@ feedback (Catherine Fan), and what the data actually supports
 UI copy: button **"Check in"**. Aggregates: **"Based on 14 check-ins"**. Avoid
 "report", which sounds like flagging abuse.
 
-**Check-in form** (the Accounts & Community owner finalizes this in Phase 1; it
+**Check-in form** (WP4 finalizes this in Phase 1; it
 reuses UM Library's taxonomy where one exists):
 
 | Dimension | Input |
@@ -86,54 +86,60 @@ and never guess.
 
 ## MVP: lo-fi prototype, build complete Fri Oct 16
 
-Fall break is Oct 17–20, so Oct 21–22 is for fixes only.
+Fall break is Oct 17–20, so Oct 21–22 is for fixes only. Packages are defined in
+[Work Breakdown](work-breakdown.md).
 
-| # | Item | Owner |
+| # | Item | Package |
 |---|---|---|
-| 1 | Design tokens + base components (button, chip, toggle, sheet/panel, banner) | Mark |
-| 2 | App shell: header/nav, footer, landing page, Privacy/ToS placeholder pages, responsive layout. Signed-in and returning users go straight to the map | Mark |
-| 3 | Accessibility settings: light/dark, high contrast, font size, reduced motion. Guests' settings stored in localStorage, with a sign-up banner | Mark |
-| 4 | Map view: building footprints + study-space pins (34 official library spaces + 24 mguide spaces) | Calvin |
-| 5 | Space detail panel: official features, noise, photo, plus slots for check-in data and the floor-plan entry point | Calvin |
-| 6 | List view + filters (noise level, `spaceFeatures`), sharing filter state with the map | Calvin |
-| 7 | Sign-in: Google OAuth restricted to `@umich.edu`, with a sign-in prompt on "Check in" | Gjonpjer |
-| 8 | Check-ins: the form above, anonymous storage, public aggregates shown in the detail panel | Gjonpjer |
-| 9 | Floor-plan pilot: Shapiro (and possibly East Quad), floor switcher, clickable room zones, checking in to a room. **Fallback:** the floor plan as a plain image in a panel | Tanner |
+| 1 | Design tokens + base components | WP1 |
+| 2 | App shell: header/nav, footer, landing page, Privacy/ToS placeholder pages, responsive layout. Returning users go straight to the map | WP1 |
+| 3 | Settings: light/dark, high contrast, font size, reduced motion, default view. Guests' settings in localStorage, with a sign-up banner | WP2 |
+| 4 | Map view: building footprints + study-space pins (34 official library spaces + 24 mguide spaces) | WP3 |
+| 5 | Space detail panel: official features, noise, photo, plus slots for other packages | WP3 |
+| 6 | List view + filters (noise level, `spaceFeatures`), sharing state with the map | WP3 |
+| 7 | Sign-in: Google OAuth restricted to `@umich.edu`, with a sign-in prompt on "Check in" | WP4 |
+| 8 | Check-ins: the form above, anonymous storage, public aggregates in the detail panel | WP4 |
+| 9 | Floor-plan pilot: Shapiro (and possibly East Quad), floor switcher, clickable room zones, checking in to a room. **Fallback:** the floor plan as a plain image in a panel | WP5 |
 
-Not in the MVP, on purpose: live Waitz (still waiting on the key), busyness history,
-and floor plans beyond the pilot.
+Not in the MVP, on purpose: room availability and busyness (both start in P1),
+floor plans beyond the pilot.
 
 ## Reach goals
 
 ### P1: by usability testing (Nov 13)
 
-| Item | Owner |
+| Item | Package |
 |---|---|
-| WCAG audit pass (axe/Lighthouse on core pages) + colorblind modes | Mark |
-| Synced settings for signed-in users | Mark |
-| Campus outreach: SSD / Library / ITS for data access and recruiting usability-test participants | Mark |
-| "My needs" profile: saved preferences that set default filters and ranking | Calvin |
-| Search (spaces, buildings, room numbers) | Calvin |
-| "Right now": live Waitz where available, plus recent check-ins with their age; sort by current conditions | Gjonpjer |
-| Floor plans for all 7 library buildings: harden the pipeline, build the alignment tool ([ADR 0005](../decisions/0005-manual-floor-plan-alignment-tool.md)) | Tanner |
+| **Room and seat availability from LibCal**: "available now" badge and filter, deep link to book, matched to floor-plan rooms by room number ([ADR 0008](../decisions/0008-libcal-availability-read-only.md)) | WP6 |
+| "Right now" busyness: live Waitz where available, plus recent check-ins with their age | WP7 |
+| WCAG audit pass + colorblind modes | WP2 |
+| "My needs" profile: saved preferences that set default filters and ranking | WP2 (stores it) + WP3 (applies it) |
+| Synced settings for signed-in users | WP2 |
+| Search (spaces, buildings, room numbers) | WP3 |
+| Floor plans for all 7 library buildings: pipeline hardening + alignment tool ([ADR 0005](../decisions/0005-manual-floor-plan-alignment-tool.md)) | WP5 |
+| Campus outreach: Library (official LibCal API credentials), SSD, ITS (occupancy data), usability-test recruiting | Non-engineering |
+
+LibCal availability moved up from the old P3 "private room booking" item. The research
+showed booking is unified across three LibCal instances and availability is readable
+today, so the biggest risk ("every library has its own system") turned out not to
+apply.
 
 ### P2: by the final demo (Dec 11)
 
-| Item | Owner |
+| Item | Package |
 |---|---|
-| Busyness patterns by weekday × hour (and week of term) from check-ins, seeded with simulated data for the demo | Gjonpjer |
-| Optional microphone noise sample during a check-in (on-device, relative level only) | Gjonpjer |
-| Classroom "free right now" from Registrar schedules | Calvin |
-| Accessibility layer: accessible entrances, ramp/elevator directions, all-gender/accessible restrooms | Calvin |
-| Floor plans beyond libraries, starting with dorm lounges (named from `department` records) | Tanner |
-| Onboarding and demo polish; final demo video | Mark |
-| User photos on spaces/rooms, **only if a moderation plan exists by Nov 18** | Gjonpjer |
+| Busyness patterns by weekday × hour (and week of term) from check-ins, seeded with simulated data for the demo | WP7 |
+| Classroom "free right now" from Registrar schedules (same badge and filter as LibCal) | WP6 |
+| Accessibility layer: accessible entrances, ramp/elevator directions, all-gender/accessible restrooms | WP3 |
+| Floor plans beyond libraries, starting with dorm lounges | WP5 |
+| Optional microphone noise sample during a check-in (on-device, relative level only) | WP4 |
+| Onboarding and demo polish; final demo video | WP1 + non-engineering |
+| User photos on spaces/rooms, **only if a moderation plan exists by Nov 18** | WP4 |
 
 ### P3: stretch
 
-Step-free route planning · private study-room booking aggregation (needs research into
-each library's booking system) · BestTime building-level forecasts · ML busyness
-prediction · 2.5D building extrusion.
+Step-free route planning · BestTime building-level forecasts · ML busyness prediction
+· 2.5D building extrusion.
 
 ### Considered, not planned
 

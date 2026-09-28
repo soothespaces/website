@@ -53,7 +53,7 @@ and quiz windows (Oct 14–16, Nov 4–6, Dec 2–4). Classes end Dec 14.
 ### Phase 3: MVP build / lo-fi prototype (Oct 5 → Oct 16) → M3, M4, M5
 
 The 9 MVP items in [MVP Scope](mvp-scope.md#mvp-lo-fi-prototype-build-complete-fri-oct-16),
-split by owner and in the order set out in [Work Breakdown](work-breakdown.md#sequencing-to-oct-16):
+split by work package and in the order set out in [Work Breakdown](work-breakdown.md#sequencing-to-the-lo-fi-build-oct-16):
 design system and shell, map/list/detail/filters, sign-in and check-ins, and the
 floor-plan pilot. Oct 21–22 is
 for fixes only, and Oct 23–28 goes to the write-up and demo video.

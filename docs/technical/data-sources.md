@@ -379,6 +379,48 @@ existing data).
 — it's higher quality (official, purpose-curated, richer taxonomy) than the 24 generic
 mguide.app-derived spaces for the 7 buildings it covers.
 
+## 10. LibCal: bookable rooms and seats (unified, live availability)
+
+UM's reservable study space runs on Springshare **LibCal**, and
+[studyspaces.umich.edu](https://studyspaces.umich.edu/) links out to exactly three
+LibCal instances. Location IDs (`lid`), checked against each instance's `/spaces` page
+on 2026-09-28:
+
+| Instance | Locations (`lid`) |
+|---|---|
+| `umich.libcal.com` (Library) | Shapiro 2761, Hatcher 3509, Hatcher 2nd Floor Study Spaces 23105, Hatcher Microforms 14410, Hatcher Donor Carrels 14566, Taubman Health Sciences 4183, CVGA 4004, Study Rooms 5040 |
+| `umich-nc.libcal.com` (North Campus) | Duderstadt 11261, BBB 11258, GG Brown 11265, FMCRB 11359, LBME 14919, NCRC 11414, CSRB 15851, FXB 23054, Collaboration Computers 30547 |
+| `umich-cc.libcal.com` (Central Campus) | SOAS 21968, SOAS Free Rooms 46354 (rooms in Mason Hall, etc.) |
+
+**Availability endpoint.** The JSON seen in the browser's network tab comes from
+`POST https://{instance}/spaces/availability/grid`. This is the call the public booking
+page itself makes; the `jquery.min.js` fetch is unrelated. It's form-encoded with
+`lid`, `gid` (0 = all), `eid` (-1 = all), `seat` (1 for `/seats` pages, 0 for
+`/spaces` rooms), `start`/`end` (`YYYY-MM-DD`), `pageIndex`, `pageSize`. Confirmed
+working from a plain server-side POST with no cookies or auth. For example, Duderstadt
+seats returned 437 slots across 18 items for one day.
+
+- Each slot is `{ start, end, itemId, checksum, className? }` in 30-minute steps,
+  local time (America/Detroit, no offset).
+  **`className: "s-lc-eq-checkout"` means booked. No `className` means available.
+  No slot at all means closed or not bookable.** "Available now" is a slot covering
+  the current time with no `className`.
+- **Item metadata** (name, capacity, grouping, booking URL) isn't in the grid
+  response. It's embedded in the `/spaces?lid=…` or `/seats?lid=…` page HTML as
+  `resources.push({ id, title, url, eid, seatId, gid, lid, grouping, capacity })`.
+  Titles include **room numbers and capacity**, e.g. `"2nd Floor - 2122 - Study Room
+  (Capacity 5)"` (Shapiro) and `"2407 Mason Hall (Capacity 30)"`. That means
+  bookable rooms can be joined to floor-plan `RoomZone`s by building + room number,
+  the same key the extraction pipeline produces.
+- **Official route:** LibCal has a documented REST API that uses OAuth client
+  credentials issued by the institution's LibCal admin. We don't have credentials.
+  Ask the Library for read-only access (outreach task), and until then read the
+  public grid endpoint under the rules in
+  [ADR 0008](../decisions/0008-libcal-availability-read-only.md).
+- **Booking stays on LibCal.** Reservations need the student's own UM login, so the
+  app deep-links to the item's LibCal page (`/space/{id}` or `/seat/{id}`) and never
+  books on anyone's behalf.
+
 ## Gaps relative to what the app needs
 
 1. **Study-space coverage is still the biggest gap, though much less blank than it

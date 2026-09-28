@@ -10,8 +10,8 @@ What we're building, for whom, and why.
 
 - [Overview](product/overview.md) — problem statement, the idea, target audience
 - [Features](product/features.md) — UI/UX feature specs
-- [MVP Scope](product/mvp-scope.md) — MVP for the lo-fi prototype + prioritized reach goals, with owners
-- [Work Breakdown](product/work-breakdown.md) — who owns which slice end to end, contracts between slices
+- [MVP Scope](product/mvp-scope.md) — MVP for the lo-fi prototype + prioritized reach goals, by work package
+- [Work Breakdown](product/work-breakdown.md) — work packages (end-to-end slices) and the contracts between them
 - [Roadmap](product/roadmap.md) — phases, course deadlines, milestones
 
 ## Technical
@@ -37,6 +37,7 @@ file per significant technical decision, kept even after the decision is superse
 - [0005 — Manual alignment tool for georeferencing MPrint floor plans](decisions/0005-manual-floor-plan-alignment-tool.md)
 - [0006 — MapLibre GL + react-map-gl + OpenStreetMap](decisions/0006-maplibre-react-map-gl-osm.md)
 - [0007 — Anonymous check-ins, public aggregates only](decisions/0007-anonymous-check-ins-public-aggregates.md)
+- [0008 — Room availability from LibCal: read-only, cached, deep-link to book](decisions/0008-libcal-availability-read-only.md)
 
 ## Conventions
 
