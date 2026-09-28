@@ -103,7 +103,7 @@ Packages are defined in [Work Breakdown](work-breakdown.md).
 | # | Item (full scope, by Nov 6) | Lo-fi cut (Oct 16) | Package |
 |---|---|---|---|
 | 1 | Design tokens + base components | Tokens + button, chip, panel | WP1 |
-| 2 | App shell: header/nav, footer, landing page, Privacy/ToS placeholder pages, responsive layout. Returning users go straight to the map | Header + landing stub | WP1 |
+| 2 | App shell: header/nav, footer, landing page, Privacy/ToS placeholder pages, responsive layout. Returning users go straight to the map | Header + landing stub | WP2 |
 | 3 | Settings: light/dark, high contrast, font size, reduced motion, default view. Guests' settings in localStorage, with a sign-up banner | Light/dark only | WP2 |
 | 4 | Map view: building footprints + study-space pins (34 official library spaces + 24 mguide spaces) | Yes | WP3 |
 | 5 | Space detail panel: official features, noise, photo, plus slots for other packages | Yes | WP3 |
@@ -157,7 +157,7 @@ apply.
 | Accessibility layer: accessible entrances, ramp/elevator directions, all-gender/accessible restrooms | WP3 |
 | Floor plans beyond libraries, starting with dorm lounges | WP5 |
 | Optional microphone noise sample during a check-in (on-device, relative level only) | WP4 |
-| Onboarding and demo polish; final demo video | WP1 + non-engineering |
+| Onboarding and demo polish; final demo video | WP2 + WP1 + non-engineering |
 | User photos on spaces/rooms, **only if a moderation plan exists by Nov 18** | WP4 |
 
 ### P3: stretch

@@ -6,35 +6,55 @@ its scripts. The goal is that nobody hands work across layers, and packages only
 each other through a small set of agreed contracts (below), so they can be built in
 parallel and joined at the end.
 
-**Assignment is deliberately deferred.** One person can own more than one package, and
-packages that only start after the MVP (WP6, WP7) can be picked up by whoever frees up
-first. The only owner ideas so far: **WP1 → Tanner, WP2 → Mark.** Scope per phase
-(MVP / P1 / P2) is defined in [MVP Scope](mvp-scope.md).
+One person can own more than one package. Scope per phase (MVP / P1 / P2) is defined
+in [MVP Scope](mvp-scope.md).
+
+## Leads
+
+Proposed leads, which are also the project leads in Linear (see
+[Roadmap § Gantt in Linear](roadmap.md#gantt-in-linear)). Roles are loose guidance;
+leads can swap by agreement, flagged in the weekly scope check.
+
+| Package | Lead | Why |
+|---|---|---|
+| WP1 Design System | Tanner | Owns the visual language; small package, so it pairs with WP5 |
+| WP2 Shell, Accessibility & Preferences | Mark | Front-end; the settings and audit work is also the story external comms tells |
+| WP3 Places & Discovery | Calvin | Seed data, schema and map: the most backend-heavy UI package |
+| WP4 Accounts & Check-ins | Gjonpjer | Auth, RLS and aggregate views are all Supabase work |
+| WP5 Indoor Maps | Tanner | Python pipeline + overlay; starts slower while WP1 lands first |
+| WP6 Availability (post-MVP) | Calvin | Joins against WP3's `spaces`; also takes P1 search |
+| WP7 Busyness (post-MVP) | Gjonpjer | Reads WP4's check-in aggregates |
+
+Non-package work in Linear: tool setup (Calvin), A3 User Requirements document
+(Gjonpjer), contextual interviews and usability testing (Mark), wireframes and check-in
+form (Tanner), automated tests and A5 report (Gjonpjer), test fixes (Tanner, triaging to
+owners).
 
 ## Packages
 
-### WP1: Design System & App Shell
+### WP1: Design System
 
-The visual language and everything outside the map.
+The visual language, used by every other package.
 
 | | |
 |---|---|
-| **MVP** | Design tokens (monochrome + one accent, light/dark variants) in the Tailwind config. Base components: button, chip, toggle, slider/scale, sheet/panel, banner, dialog. App shell: header/nav, footer, landing page, Privacy/ToS placeholder pages, responsive layout. Returning users go straight to the map |
-| **P1/P2** | Onboarding, demo polish, component states the other packages need |
-| **Owns** | `src/components/ui/`, the Tailwind tokens, marketing and legal routes |
+| **MVP** | Design tokens (monochrome + one accent, light/dark variants) in the Tailwind config. Base components: button, chip, toggle, slider/scale, sheet/panel, banner, dialog |
+| **P1/P2** | Demo polish, component states the other packages need |
+| **Owns** | `src/components/ui/`, the Tailwind tokens |
 | **Provides** | Tokens and components, used by every other package |
 | **Starts first** | Everyone depends on it. Target: tokens + base components merged by Fri Oct 3 |
 
-### WP2: Accessibility & Preferences
+### WP2: Shell, Accessibility & Preferences
 
-How the app adapts to each user.
+The frame around the map, and how the app adapts to each user.
 
 | | |
 |---|---|
-| **MVP** | Settings page: light/dark, high contrast, font size, reduced motion. Guests' settings in localStorage, with a sign-up banner. Default view (map or list) |
+| **MVP** | App shell: header/nav, footer, landing page, Privacy/ToS placeholder pages, responsive layout. Returning users go straight to the map. Settings page: light/dark, high contrast, font size, reduced motion. Guests' settings in localStorage, with a sign-up banner. Default view (map or list) |
 | **P1** | Colorblind modes. WCAG audit pass (axe/Lighthouse) across every package's pages. Synced settings for signed-in users. **"My needs" profile**: saved preferences (quiet, dim, step-free, all-gender restroom, …) |
-| **Owns** | Settings route, `useSettings()`, the `user_settings` table, the accessibility audit checklist |
-| **Provides** | `useSettings()`, including the `needs` object that WP3 reads to set default filters and ranking |
+| **P2** | Onboarding |
+| **Owns** | Layout, marketing and legal routes, settings route, `useSettings()`, the `user_settings` table, the accessibility audit checklist |
+| **Provides** | The app shell, `useSettings()`, including the `needs` object that WP3 reads to set default filters and ranking |
 | **Consumes** | WP1 tokens (contrast and colorblind modes swap token values, so WP1 and WP2 agree the token structure together in week 1). WP4 `useSession()` for synced settings |
 
 ### WP3: Places & Discovery

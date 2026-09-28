@@ -11,7 +11,7 @@ What we're building, for whom, and why.
 - [Overview](product/overview.md) — problem statement, the idea, target audience
 - [Features](product/features.md) — UI/UX feature specs
 - [MVP Scope](product/mvp-scope.md) — MVP for the lo-fi prototype + prioritized reach goals, by work package
-- [Work Breakdown](product/work-breakdown.md) — work packages (end-to-end slices) and the contracts between them
+- [Work Breakdown](product/work-breakdown.md) — work packages (end-to-end slices), their leads, and the contracts between them
 - [Roadmap](product/roadmap.md) — phases, course deadlines, milestones
 
 ## Technical

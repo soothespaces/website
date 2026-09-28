@@ -133,20 +133,43 @@ Linear's timeline shows projects (not issues), with milestones as dated diamonds
 finish-to-start dependency lines. So the Gantt is built from projects in the
 **Soothe Spaces** team, in two layers:
 
-- **Phase projects** (9), named `1 · Start-up & self-education` … `9 · Wrap-up`, with
-  the dates above and the effort estimate in the description. They carry the
-  milestones (each attached to the phase it falls in) and the dependency lines.
-  Lead: PM.
-- **Task projects**, for phases where people work in parallel, one per owner-sized
-  piece of work (e.g. `4 · WP3 Places & discovery`, `3 · Contextual interviews`,
-  `7 · Usability testing`). The **lead is the individual owner**, which is how the
-  chart shows who owns what. Issues live here, assigned to individuals.
+- **Phase projects** (9, grey), named `Phase 1 · Start-up & self-education` …
+  `Phase 9 · Wrap-up & final reporting`, with the dates above and the effort estimate
+  in the description. They carry the milestones (each attached to the phase it falls
+  in) and the dependency lines. Lead: Tanner (PM).
+- **Task projects** (16), one per owner-sized piece of work. The **lead is the
+  individual owner**, and each person has one color, which is how the chart shows who
+  owns what. Issues live here, assigned to individuals.
+
+| Task project | Lead | Dates | Phase |
+|---|---|---|---|
+| Tool setup & infra | Calvin | Sep 28 → Oct 3 | 1 |
+| A3 User Requirements doc | Gjonpjer | Oct 1 → Oct 14 | 2 |
+| Contextual interviews & personas | Mark | Oct 1 → Oct 12 | 3 |
+| Wireframes & check-in form | Tanner | Oct 1 → Oct 9 | 3 |
+| WP1 · Design system | Tanner | Oct 1 → Oct 16 | 4 |
+| WP2 · Shell, accessibility & preferences | Mark | Oct 2 → Nov 6 | 4–6 |
+| WP3 · Places & discovery | Calvin | Oct 2 → Nov 6 | 4–6 |
+| WP4 · Accounts & check-ins | Gjonpjer | Oct 2 → Nov 6 | 4–6 |
+| WP5 · Indoor maps (Shapiro pilot) | Tanner | Oct 2 → Nov 6 | 4–6 |
+| Usability testing | Mark | Nov 2 → Nov 13 | 6–7 |
+| Automated tests & A5 report | Gjonpjer | Nov 9 → Nov 18 | 7 |
+| Test fixes | Tanner | Nov 19 → Dec 8 | 8 |
+| WP6 · Room availability + search | Calvin | Nov 19 → Dec 4 | 8 |
+| WP7 · Busyness | Gjonpjer | Nov 19 → Dec 4 | 8 |
+| WP5 · Library floor plans | Tanner | Nov 19 → Dec 4 | 8 |
+| WP2 · Needs profile & settings sync | Mark | Nov 19 → Dec 4 | 8 |
+
+Colors: Tanner blue, Mark green, Calvin orange, Gjonpjer purple, phases grey.
+
+**Dependencies are drawn by hand.** Linear's API has no field for project
+dependencies, so in the timeline drag from the end of one bar to the start of the next:
+Phase 1 → 4 → 5 → 6 → 7 → 8 → 9.
 
 **Page 1** of the submission is the timeline filtered to phase projects (the top-level
 view: phases, milestones, dependencies). **Page 2** is the full timeline including
 task projects, which shows the per-person breakdown and what runs in parallel.
-Keep project names short so they stay readable at month zoom. Because it's live in
-Linear, later status reports only need a fresh screenshot.
+Because it's live in Linear, later status reports only need a fresh screenshot.
 
 ## Re-planning cadence
 
