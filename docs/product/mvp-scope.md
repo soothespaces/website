@@ -1,8 +1,9 @@
 # MVP Scope & Reach Goals
 
-This is the final scope: what must work for the **lo-fi prototype (build done Fri Oct
-16)** and the reach goals after that, ranked by how much they help target users
-compared with what they cost. Each item names the work package it belongs to (see
+This is the final scope: the MVP, which must work as a lo-fi build by **Fri Oct 16**
+and at full quality by **Fri Nov 6** (the Minimum Requirement Deliverable), and the
+reach goals after that, ranked by how much they help target users compared with what
+they cost. Each item names the work package it belongs to (see
 [Work Breakdown](work-breakdown.md)). Dates are in [Roadmap](roadmap.md).
 
 Sources: the 2026-09-27 planning meeting, the team's "Project MVP Scope" notes, peer
@@ -84,47 +85,70 @@ and never guess.
 | Prioritize the people who really need it | **P1 "My needs" profile**: saved preferences (quiet, dim, step-free, all-gender restroom, …) that set default filters and ranking. It's stored like a setting and never tied to a diagnosis or shown publicly. |
 | Business partnerships | Not an engineering item. Campus partners come first: Services for Students with Disabilities, the Library, and ITS for data access and recruiting testers. Off-campus businesses are listed under "considered, not planned". |
 
-## MVP: lo-fi prototype, build complete Fri Oct 16
+## MVP
 
-Fall break is Oct 17–20, so Oct 21–22 is for fixes only. Packages are defined in
-[Work Breakdown](work-breakdown.md).
+The MVP has two checkpoints, which are two of the assignment's required milestones
+(see [Roadmap](roadmap.md#strategic-milestones)):
 
-| # | Item | Package |
-|---|---|---|
-| 1 | Design tokens + base components | WP1 |
-| 2 | App shell: header/nav, footer, landing page, Privacy/ToS placeholder pages, responsive layout. Returning users go straight to the map | WP1 |
-| 3 | Settings: light/dark, high contrast, font size, reduced motion, default view. Guests' settings in localStorage, with a sign-up banner | WP2 |
-| 4 | Map view: building footprints + study-space pins (34 official library spaces + 24 mguide spaces) | WP3 |
-| 5 | Space detail panel: official features, noise, photo, plus slots for other packages | WP3 |
-| 6 | List view + filters (noise level, `spaceFeatures`), sharing state with the map | WP3 |
-| 7 | Sign-in: Google OAuth restricted to `@umich.edu`, with a sign-in prompt on "Check in" | WP4 |
-| 8 | Check-ins: the form above, anonymous storage, public aggregates in the detail panel | WP4 |
-| 9 | Floor-plan pilot: Shapiro (and possibly East Quad), floor switcher, clickable room zones, checking in to a room. **Fallback:** the floor plan as a plain image in a panel | WP5 |
+- **★ Preliminary Solution, Fri Oct 16 (lo-fi build).** The core flow works end to
+  end, roughness allowed: open the map, pick a space, see its details, sign in, check
+  in, open the Shapiro floor plan. Fall break is Oct 17–20, so Oct 21–22 is for fixes
+  only.
+- **★ Minimum Requirement Deliverable, Fri Nov 6.** All 9 items at full quality with
+  real data, lo-fi feedback fixed, WCAG audit passing on core pages. This is the build
+  that usability testing starts on (Nov 9).
+
+Packages are defined in [Work Breakdown](work-breakdown.md).
+
+| # | Item (full scope, by Nov 6) | Lo-fi cut (Oct 16) | Package |
+|---|---|---|---|
+| 1 | Design tokens + base components | Tokens + button, chip, panel | WP1 |
+| 2 | App shell: header/nav, footer, landing page, Privacy/ToS placeholder pages, responsive layout. Returning users go straight to the map | Header + landing stub | WP1 |
+| 3 | Settings: light/dark, high contrast, font size, reduced motion, default view. Guests' settings in localStorage, with a sign-up banner | Light/dark only | WP2 |
+| 4 | Map view: building footprints + study-space pins (34 official library spaces + 24 mguide spaces) | Yes | WP3 |
+| 5 | Space detail panel: official features, noise, photo, plus slots for other packages | Yes | WP3 |
+| 6 | List view + filters (noise level, `spaceFeatures`), sharing state with the map | Noise filter only | WP3 |
+| 7 | Sign-in: Google OAuth restricted to `@umich.edu`, with a sign-in prompt on "Check in" | Yes | WP4 |
+| 8 | Check-ins: the form above, anonymous storage, public aggregates in the detail panel | Form + save + simple counts | WP4 |
+| 9 | Floor-plan pilot: Shapiro (and possibly East Quad), floor switcher, clickable room zones, checking in to a room, shown as a map overlay | One Shapiro floor as an image with clickable rooms, in a panel (the fallback path) | WP5 |
+
+For item 9, the Nov 6 overlay can use Shapiro's corners aligned by hand; the reusable
+alignment tool is P1.
 
 Not in the MVP, on purpose: room availability and busyness (both start in P1),
 floor plans beyond the pilot.
 
 ## Reach goals
 
-### P1: by usability testing (Nov 13)
+The capacity check in [Roadmap](roadmap.md#working-hours-available) (about 375
+team-hours, at an assumed 10 h/person/week) leaves roughly 75 h after testing, in
+Phase 8 (Nov 19 → Dec 4), for fixes from usability testing **plus** reach goals. So:
+P1 is what Phase 8 aims for, in priority order after test fixes. P2 happens only if
+capacity allows. Isolated packages (WP6 is server-only) can start earlier if someone
+has slack before Nov 6.
+
+### P1: Phase 8 (Nov 19 → Dec 4), in priority order after test fixes
 
 | Item | Package |
 |---|---|
 | **Room and seat availability from LibCal**: "available now" badge and filter, deep link to book, matched to floor-plan rooms by room number ([ADR 0008](../decisions/0008-libcal-availability-read-only.md)) | WP6 |
 | "Right now" busyness: live Waitz where available, plus recent check-ins with their age | WP7 |
-| WCAG audit pass + colorblind modes | WP2 |
 | "My needs" profile: saved preferences that set default filters and ranking | WP2 (stores it) + WP3 (applies it) |
-| Synced settings for signed-in users | WP2 |
+| Colorblind modes | WP2 |
 | Search (spaces, buildings, room numbers) | WP3 |
 | Floor plans for all 7 library buildings: pipeline hardening + alignment tool ([ADR 0005](../decisions/0005-manual-floor-plan-alignment-tool.md)) | WP5 |
-| Campus outreach: Library (official LibCal API credentials), SSD, ITS (occupancy data), usability-test recruiting | Non-engineering |
+| Synced settings for signed-in users | WP2 |
+
+Campus outreach isn't in this list because it starts now, in Phase 1: Library
+(official LibCal API credentials), SSD (recruiting for contextual interviews and
+usability testing), ITS (occupancy data).
 
 LibCal availability moved up from the old P3 "private room booking" item. The research
 showed booking is unified across three LibCal instances and availability is readable
 today, so the biggest risk ("every library has its own system") turned out not to
 apply.
 
-### P2: by the final demo (Dec 11)
+### P2: only if capacity allows before feature complete (Dec 4)
 
 | Item | Package |
 |---|---|
