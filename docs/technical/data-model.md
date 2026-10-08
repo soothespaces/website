@@ -104,5 +104,6 @@ that isn't in the data yet — those are marked TBD.
   Supabase Auth (Google OAuth, restricted to `@umich.edu` accounts — see
   [ADR 0003](../decisions/0003-supabase-as-backend.md)).
 
-Concrete schemas (fields, types, relationships, RLS policies) still need writing as
-Supabase SQL migrations — see [Data Sources § Next Steps](data-sources.md#next-steps).
+Concrete schemas (fields, types, relationships, RLS policies) are proposed in
+[Supabase Backend Plan](supabase-backend.md) and still need writing as Supabase SQL
+migrations — see also [Data Sources § Next Steps](data-sources.md#next-steps).

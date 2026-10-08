@@ -1,7 +1,9 @@
 # Data Sources
 
 Status: analysis of the first data drop (`data.json`, 2.7MB, not yet committed to the
-repo — see [Next Steps](#next-steps)), plus MPrint interior floor plans confirmed as a
+repo — see [Next Steps](#next-steps); still true on 2026-10-08, and each of its four
+parts is a live mguide.app file, see
+[Supabase Backend Plan § Seed data](supabase-backend.md#seed-data)), plus MPrint interior floor plans confirmed as a
 separate, usable source. It's actually four separate top-level JSON values
 concatenated in one file, not one JSON document:
 
