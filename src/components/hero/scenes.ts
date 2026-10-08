@@ -12,7 +12,7 @@ export type Stroke = {
   // (a round table) instead of a solid line.
   radius: number;
   // Walls block sound and light; furniture is only drawn.
-  kind: "wall" | "furniture";
+  kind: "wall" | "furniture" | "furniture-fade";
 };
 
 // A group of people talking, as a rounded box around their table. Rings
@@ -87,34 +87,41 @@ function ringSeating(cx: number, cy: number, radius: number, count: number, star
   });
 }
 
+function faded(...strokes: Stroke[]): Stroke[] {
+  return strokes.map((stroke) => ({ ...stroke, kind: "furniture-fade" }));
+}
+
 // An open commons on a library's main floor. Two groups talk at round
 // tables in the lower half. Their sound reaches the quiet table in the top
 // left through a wide gap, while two simple dividers cast acoustic shadows.
 export const COMMONS: StudyScene = {
   id: "commons",
-  bounds: { x: -0.5, y: -0.5, width: 24, height: 19.8 },
+  bounds: { x: -0.5, y: -0.5, width: 24, height: 16.5 },
   margin: 9,
   strokes: [
     // Only the dividers matter here; the surrounding room is deliberately
     // left open instead of drawing a full floor plan around the tables.
-    wall(-3, 8.2, 2, 8.2),
-    wall(13.5, 0, 13.5, 8.2, 0.12),
-    wall(13.5, 8.2, 27, 8.2, 0.12),
+    wall(-3, 7.5, 2, 7.5),
+    wall(13.5, -2, 13.5, 7.5, 0.12),
+    wall(13.5, 7.5, 27, 7.5, 0.12),
 
-    // The quiet table.
-    ...rect(8.4, 3.9, 2.4, 1.6),
-    ...benchSeating(8.4, 3.9, 2.4, 1.6, 2),
-    // The two talking groups.
-    roundTable(5.8, 14.6, 1.1),
-    ...ringSeating(5.8, 14.6, 1.65, 5, -Math.PI / 2),
-    roundTable(17.4, 14.4, 1.35),
-    ...ringSeating(17.4, 14.4, 1.9, 6, -Math.PI / 2),
+    // Two quiet rectangular tables, faded with the scene-edge vignette.
+    ...faded(...rect(3.8, 3.7, 2.4, 1.6), ...benchSeating(3.8, 3.7, 2.4, 1.6, 2)),
+    ...faded(...rect(8.4, 3.7, 2.4, 1.6), ...benchSeating(8.4, 3.7, 2.4, 1.6, 2)),
+    // Four circular tables in a row. Only the middle pair emits sound; the
+    // outer pair fades into the left and right edges.
+    ...faded(roundTable(-0.2, 12.6, 1.15), ...ringSeating(-0.2, 12.6, 1.75, 5, -Math.PI / 2)),
+    roundTable(5.8, 12.6, 1.15),
+    ...ringSeating(5.8, 12.6, 1.75, 5, -Math.PI / 2),
+    roundTable(17.4, 12.6, 1.15),
+    ...ringSeating(17.4, 12.6, 1.75, 5, -Math.PI / 2),
+    ...faded(roundTable(23.2, 12.6, 1.15), ...ringSeating(23.2, 12.6, 1.75, 5, -Math.PI / 2)),
   ],
   sound: [
-    { at: [5.8, 14.6], halfSize: [1.15, 1.15], rounding: 1.15 },
-    { at: [17.4, 14.4], halfSize: [1.4, 1.4], rounding: 1.4 },
+    { at: [5.8, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
+    { at: [17.4, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
   ],
-  pin: [9.6, 3.9],
+  pin: [9.6, 3.7],
   chipSide: "right",
   chip: {
     eyebrow: "Example space",

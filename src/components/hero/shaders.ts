@@ -56,12 +56,14 @@ void main() {
   vec2 p = uOffset + vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y) * uPx;
   float walls = 1e5;
   float furniture = 1e5;
+  float fadedFurniture = 1e5;
   for (int i = 0; i < SEG_COUNT; i++) {
     float d = strokeDist(i, p);
     if (i < WALL_COUNT) walls = min(walls, d);
-    else furniture = min(furniture, d);
+    else if (i < FADE_FURNITURE_START) furniture = min(furniture, d);
+    else fadedFurniture = min(fadedFurniture, d);
   }
-  fragColor = vec4(coverage(walls), coverage(furniture), 0.0, 1.0);
+  fragColor = vec4(coverage(walls), coverage(furniture), coverage(fadedFurniture), 1.0);
 }
 `;
 
@@ -213,6 +215,8 @@ void main() {
   vec2 sample_ = field(p);
   float d = sample_.x;
   float shadow = sample_.y;
+  vec2 edgeDist = min(p - uBounds.xy, uBounds.zw - p);
+  float vignette = smoothstep(0.0, 5.0, min(edgeDist.x, edgeDist.y));
 
   float x = d / SPACING - uTime * (SPEED / SPACING);
   float ring = floor(x + 0.5);
@@ -223,7 +227,8 @@ void main() {
   float strength = mix(0.6, 1.0, hash(ring + 17.0));
   float falloff = smoothstep(0.0, 0.4, d)
     / (ATTENUATION.x + ATTENUATION.y * d + ATTENUATION.z * d * d);
-  float ringAlpha = line * strength * falloff * mix(LEAK, 1.0, shadow) * uAlpha.w * mask;
+  float ringAlpha = line * strength * falloff * mix(LEAK, 1.0, shadow)
+    * uAlpha.w * mask * vignette;
 
   // A faint one-meter dot grid on the floor of the room itself.
   vec2 cell = abs(fract(p) - 0.5);
@@ -236,6 +241,7 @@ void main() {
   vec4 color = vec4(0.0);
   over(color, uFg, grid);
   over(color, uAccent, ringAlpha);
+  over(color, uFg, ink.b * uAlpha.y * mask * vignette);
   over(color, uFg, ink.g * uAlpha.y * mask);
   over(color, uFg, ink.r * uAlpha.x * mask);
   fragColor = color;
