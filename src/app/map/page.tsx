@@ -10,7 +10,9 @@ export default function MapPage() {
   return (
     <CampusMapProvider>
       <h1 className="sr-only">Campus map</h1>
-      <div className="relative min-h-80 flex-1">
+      {/* Fills the first screen below the header (4rem plus its 1px border),
+          even when a footer follows. */}
+      <div className="relative min-h-[calc(100dvh-4rem-1px)] flex-1">
         <CampusMap />
       </div>
     </CampusMapProvider>

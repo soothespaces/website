@@ -39,8 +39,16 @@ export default function CampusMap({ children }: { children?: ReactNode }) {
         touchPitch={false}
         maxPitch={0}
         onLoad={(event) => {
-          event.target.touchZoomRotate.disableRotation();
-          event.target.keyboard.disableRotation();
+          const map = event.target;
+          map.touchZoomRotate.disableRotation();
+          map.keyboard.disableRotation();
+          // Some styles reference sprite images they don't ship (OpenFreeMap's
+          // "wood-pattern"); a blank stand-in keeps the console quiet.
+          map.on("styleimagemissing", ({ id }) => {
+            if (!map.hasImage(id)) {
+              map.addImage(id, { width: 1, height: 1, data: new Uint8Array(4) });
+            }
+          });
         }}
         locale={{ "Map.Title": "Campus map" }}
         style={{ width: "100%", height: "100%" }}
