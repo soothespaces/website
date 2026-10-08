@@ -1,13 +1,12 @@
 # Supabase Backend Plan
 
-Status: **proposal, 2026-10-08.** Nothing here is migrated yet. This turns
+Status: **implemented on the feature branch, 2026-10-08; not deployed yet.** This turns
 [Data Model](data-model.md), the contracts in [Work Breakdown](../product/work-breakdown.md#contracts-agree-on-these-in-one-meeting-on-wed-oct-1)
 and ADRs [0003](../decisions/0003-supabase-as-backend.md),
 [0007](../decisions/0007-anonymous-check-ins-public-aggregates.md) and
 [0008](../decisions/0008-libcal-availability-read-only.md) into one layout: schemas,
-tables, RLS, functions, Storage, seed pipeline, and who writes which migration. SQL
-below is meant to be copied into migrations once agreed. Each package still writes
-its own migrations.
+tables, RLS, functions, Storage, seed pipeline, and who owns each migration. The
+implementation is under `supabase/migrations/`; SQL below documents it.
 
 Already done outside the repo: the Supabase project (`doinwugtdzxxrmvcmemm`), the
 Google provider turned on, and email sign-up turned off
@@ -23,7 +22,7 @@ that applies migrations to a throwaway database.
 | 2 | App shell | None | | |
 | 3 | Settings | `user_settings` table (shape agreed now, sync is P1) | Not needed: localStorage | Table exists, unused until P1 |
 | 4 | Map | `buildings` (footprint, center), `spaces` (position) | Yes | Yes |
-| 5 | Detail panel | `spaces` fields, `check_in_summary()`, "has floor plans" lookup | Yes | Yes |
+| 5 | Detail panel | `spaces` fields, `photos` + `photos` bucket, `check_in_summary()`, "has floor plans" lookup | Yes (Library photos) | Yes |
 | 6 | List + filters | `spaces.noise_level`, `spaces.features`, `check_in_overview()` | Noise only | All filters |
 | 7 | Sign-in | `@umich.edu` gate (auth hook + callback check), redirect URLs | Yes | Yes |
 | 8 | Check-ins | `private.check_ins`, `submit_check_in()`, summary functions | Save + counts | Full form, distributions |
@@ -49,10 +48,10 @@ mistaken grant or policy still can't leak rows. Clients write through one
 `security definer` function, which also gives us a single place for the domain check,
 rate limit and time-window check. (Worth recording as ADR 0010 once agreed.)
 
-All SQL in this doc was applied to a plain Postgres 16 with stubbed Supabase roles and
-`auth.uid()`/`auth.jwt()`, and checked against the cases under
-[Tests worth having](#tests-worth-having-before-nov-6). It still needs a run through
-`supabase db start` once it's split into real migration files.
+The migrations were applied in order to a clean Postgres database with stubbed
+Supabase roles and `auth.uid()`/`auth.jwt()`. The pgTAP suite passed all 26 checks,
+`supabase db lint` reported no schema errors, and generated TypeScript types compile.
+CI applies and tests them against the complete local Supabase stack.
 
 Grants are written explicitly in every migration. Supabase now lets projects stop
 auto-granting new `public` tables to `anon`/`authenticated` (see `auto_expose_new_tables`
@@ -669,22 +668,23 @@ Timestamps fix the order, since later files reference earlier tables.
 
 ```
 supabase/migrations/
-  20261009000100_base.sql                  shared   private schema, enums
-  20261009000200_auth_umich_only.sql       WP4      before_user_created hook
-  20261009000300_buildings_spaces.sql      WP3      tables, RLS, grants
-  20261009000400_floor_plans.sql           WP5      tables, RLS, grants, floor-plans bucket
-  20261009000500_check_ins.sql             WP4      private.check_ins, submit_check_in()
-  20261009000600_check_in_aggregates.sql   WP4      check_in_summary(), check_in_overview()
-  20261009000700_user_settings.sql         WP2      table, owner-only RLS
+  20261008193000_base.sql                  shared   private schema, enums
+  20261008193100_auth_umich_only.sql       WP4      before_user_created hook
+  20261008193200_places.sql                WP3      buildings/spaces, RLS, grants
+  20261008193300_floor_plans.sql           WP5      tables, RLS, floor-plans bucket
+  20261008193400_check_ins.sql             WP4      private.check_ins, submit_check_in()
+  20261008193500_check_in_aggregates.sql   WP4      check_in_summary(), check_in_overview()
+  20261008193600_user_settings.sql         WP2      table, owner-only RLS
+  20261008193700_photos.sql                WP3      metadata, RLS, photos bucket
 supabase/tests/
-  rls.test.sql                             WP4      pgTAP, run by `supabase test db`
+  mvp_backend.test.sql                     shared   pgTAP, run by `supabase test db`
 ```
 
 After each merge, run `npm run db:types` so `src/types/supabase.ts` matches.
 
-### Tests worth having before Nov 6
+### Database tests
 
-Add `npx supabase test db` to the existing migrations workflow and cover:
+The migrations workflow runs `npx supabase test db`. The suite covers:
 
 - `anon` can select `spaces` but can't insert, update or delete it.
 - `anon` and `authenticated` get a permission error on `private.check_ins`.
