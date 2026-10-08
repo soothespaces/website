@@ -59,22 +59,36 @@ export function LandingHero({ scene, children }: { scene: StudyScene; children: 
         >
           <figcaption className="sr-only">
             Illustration: sound spreading from two group tables across an open
-            commons, partly blocked by a partition, reaching a quiet table.
+            commons and reaching a quiet table, while walls keep it out of a
+            closed room.
           </figcaption>
-          <div
-            className="absolute flex -translate-x-1/2 flex-col items-center"
-            style={{ left: `${pinLeft}%`, top: `${pinTop}%` }}
-          >
-            <span className="size-3 -translate-y-1/2 rounded-full border-2 border-card bg-primary shadow-sm" />
-            <span className="-mt-1 h-9 w-px bg-primary/60" />
-            <SpaceChip {...scene.chip} />
-          </div>
+          {scene.chipSide === "right" ? (
+            <div
+              className="absolute right-0 flex -translate-x-1.5 -translate-y-1/2 items-center"
+              style={{ left: `${pinLeft}%`, top: `${pinTop}%` }}
+            >
+              <span className="size-3 shrink-0 rounded-full border-2 border-card bg-primary shadow-sm" />
+              <span className="-ml-1 h-px w-6 shrink-0 bg-primary/60 sm:w-10" />
+              <div className="min-w-0 flex-1">
+                <SpaceChip {...scene.chip} />
+              </div>
+            </div>
+          ) : (
+            <div
+              className="absolute flex -translate-x-1/2 flex-col items-center"
+              style={{ left: `${pinLeft}%`, top: `${pinTop}%` }}
+            >
+              <span className="size-3 -translate-y-1/2 rounded-full border-2 border-card bg-primary shadow-sm" />
+              <span className="-mt-1 h-9 w-px bg-primary/60" />
+              <SpaceChip {...scene.chip} />
+            </div>
+          )}
           {reducedMotion ? null : (
             <button
               type="button"
               onClick={() => setPlaying((p) => !p)}
               aria-pressed={!playing}
-              className="absolute top-0 right-0 inline-flex size-9 items-center justify-center rounded-full border border-input bg-card/80 text-muted-foreground hover:text-foreground"
+              className="absolute right-0 bottom-0 inline-flex size-9 items-center justify-center rounded-full border border-input bg-card/80 text-muted-foreground hover:text-foreground"
             >
               <PlayPauseIcon playing={playing} />
               <span className="sr-only">Pause animation</span>

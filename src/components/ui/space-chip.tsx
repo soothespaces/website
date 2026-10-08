@@ -38,7 +38,7 @@ function TagIcon({ icon }: { icon: NonNullable<SpaceChipTag["icon"]> }) {
 export function SpaceChip({ name, eyebrow, tags, footnote, className = "" }: SpaceChipProps) {
   return (
     <div
-      className={`flex w-max max-w-64 flex-col gap-2 rounded-xl border border-border bg-card/95 px-3.5 py-3 text-card-foreground shadow-sm ${className}`}
+      className={`flex w-max max-w-[min(16rem,100%)] flex-col gap-2 rounded-xl border border-border bg-card/95 px-3.5 py-3 text-card-foreground shadow-sm ${className}`}
     >
       <div className="flex flex-col">
         {eyebrow ? (

@@ -32,6 +32,9 @@ export type StudyScene = {
   strokes: Stroke[];
   sound: SoundSource[];
   pin: Vec2;
+  // Which side of the pin the chip sits on. Pick the side with the least
+  // going on, so the chip doesn't cover the effect.
+  chipSide: "below" | "right";
   chip: SpaceChipProps;
 };
 
@@ -85,63 +88,56 @@ function ringSeating(cx: number, cy: number, radius: number, count: number, star
   });
 }
 
-// An open commons on a library's main floor. A partition splits it between
-// two talking groups, a closed group room takes one corner, and the third
-// table, the one the chip points at, is quiet itself but hears both.
+// An open commons on a library's main floor. Two groups talk at round
+// tables in the lower half. Their sound reaches the quiet table in the top
+// left through a wide gap, but not the closed room in the top right.
 export const COMMONS: StudyScene = {
   id: "commons",
-  bounds: { x: -0.5, y: -0.5, width: 27, height: 16 },
-  margin: 10,
+  bounds: { x: -0.5, y: -0.5, width: 24, height: 19.8 },
+  margin: 9,
   strokes: [
     // Exterior wall along the top, running past both neighbors.
-    wall(-16, 0, 42, 0, EXTERIOR),
-    // The commons: a door on each side and a wide opening onto the corridor.
-    wall(0, 0, 0, 9.6),
-    wall(0, 11.4, 0, 15),
-    wall(0, 15, 5.5, 15),
-    wall(9.5, 15, 26, 15),
-    wall(26, 0, 26, 2.4),
-    wall(26, 4.2, 26, 15),
-    // The partition between the two groups, open at the bottom.
-    wall(12.5, 0, 12.5, 7.8, 0.12),
-    // A closed group study room in the bottom-right corner.
-    wall(19, 10, 26, 10),
-    wall(19, 10, 19, 15),
+    wall(-16, 0, 40, 0, EXTERIOR),
+    // The commons: doors on both sides and an opening onto the corridor.
+    wall(0, 0, 0, 12),
+    wall(0, 13.8, 0, 18.8),
+    wall(0, 18.8, 9, 18.8),
+    wall(12.5, 18.8, 23, 18.8),
+    wall(23, 0, 23, 11),
+    wall(23, 12.6, 23, 18.8),
+    // A short stub off the left wall, and the closed room in the top right.
+    wall(0, 8.2, 2, 8.2),
+    wall(13.5, 0, 13.5, 8.2, 0.12),
+    wall(13.5, 8.2, 23, 8.2, 0.12),
     // Neighboring rooms along the same corridor.
-    wall(-16, 15, -4.2, 15),
-    wall(-2.8, 15, 0, 15),
-    wall(-8, 0, -8, 15),
-    wall(26, 15, 30, 15),
-    wall(31.4, 15, 42, 15),
-    wall(34, 0, 34, 15),
+    wall(-16, 18.8, -4.2, 18.8),
+    wall(-2.8, 18.8, 0, 18.8),
+    wall(-8, 0, -8, 18.8),
+    wall(23, 18.8, 27, 18.8),
+    wall(28.4, 18.8, 40, 18.8),
+    wall(31, 0, 31, 18.8),
     // Rooms across the corridor.
-    wall(-16, 19, 3, 19),
-    wall(5, 19, 20, 19),
-    wall(22, 19, 42, 19),
-    wall(4, 19, 4, 30),
-    wall(21, 19, 21, 30),
+    wall(-16, 22.8, 3, 22.8),
+    wall(5, 22.8, 20, 22.8),
+    wall(22, 22.8, 40, 22.8),
+    wall(4, 22.8, 4, 34),
+    wall(21, 22.8, 21, 34),
 
-    ...rect(6, 4.8, 3.4, 1.3),
-    ...benchSeating(6, 4.8, 3.4, 1.3, 3),
-    roundTable(19.4, 5, 1.0),
-    ...ringSeating(19.4, 5, 1.55, 5, -Math.PI / 2),
-    ...rect(14.8, 11.6, 1.6, 1.0),
-    chair(14.3, 12.55),
-    chair(15.3, 12.55),
-    // A rolling whiteboard.
-    {
-      a: [24.6, 5.6],
-      b: [24.6, 8.4],
-      halfWidth: 0.07,
-      radius: 0,
-      kind: "furniture",
-    },
+    // The quiet table.
+    ...rect(8.4, 3.9, 2.4, 1.6),
+    ...benchSeating(8.4, 3.9, 2.4, 1.6, 2),
+    // The two talking groups.
+    roundTable(5.8, 14.6, 1.1),
+    ...ringSeating(5.8, 14.6, 1.65, 5, -Math.PI / 2),
+    roundTable(17.4, 14.4, 1.35),
+    ...ringSeating(17.4, 14.4, 1.9, 6, -Math.PI / 2),
   ],
   sound: [
-    { at: [6, 4.8], halfSize: [1.75, 0.7], rounding: 0.45 },
-    { at: [19.4, 5], halfSize: [1.05, 1.05], rounding: 1.05 },
+    { at: [5.8, 14.6], halfSize: [1.15, 1.15], rounding: 1.15 },
+    { at: [17.4, 14.4], halfSize: [1.4, 1.4], rounding: 1.4 },
   ],
-  pin: [14.8, 11.6],
+  pin: [9.6, 3.9],
+  chipSide: "right",
   chip: {
     eyebrow: "Example space",
     name: "Commons, level 1",

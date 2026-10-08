@@ -82,7 +82,9 @@ const int STEP_COUNT = 128;
 const float MIN_HIT_DIST = 0.01;
 const float MAX_TRACE_DIST = 0.4;
 const float SHADOW_SOFTNESS = 0.3; // the lower, the sharper
-// How close, in meters, the two fields get before they merge.
+// How close, in meters, the two fields get before they merge. Where a wall
+// blocks either source the blend shrinks to nothing, so fields only merge
+// where both can be heard, never through a wall.
 const float BLEND = 1.6;
 
 float sourceDist(vec2 p, int i) {
@@ -133,8 +135,9 @@ void main() {
     float di = max(sourceDist(p, i), 0.0);
     float si = heard(p, i);
     // Polynomial smooth min; the same weight blends the shadows.
-    float h = clamp(0.5 + 0.5 * (d - di) / BLEND, 0.0, 1.0);
-    d = mix(d, di, h) - BLEND * h * (1.0 - h);
+    float k = max(BLEND * si * shadow, 1e-3);
+    float h = clamp(0.5 + 0.5 * (d - di) / k, 0.0, 1.0);
+    d = mix(d, di, h) - k * h * (1.0 - h);
     shadow = mix(shadow, si, h);
   }
   fragColor = vec4(encode(max(d, 0.0)), shadow, 1.0);
