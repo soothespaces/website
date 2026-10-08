@@ -57,3 +57,12 @@ The accent is sage (#3D6B4F light, #8CC7A1 dark), picked on 2026-10-08 from
 [five previewed options](https://claude.ai/artifact/GWR5mSYCizeRbnVknfVLYb).
 Green next to red is the hardest pair for red-green colorblindness, so the
 colorblind-safe palette swaps sage for Okabe-Ito blue and red for vermillion.
+
+## Logo
+
+[`src/components/logo.tsx`](../../src/components/logo.tsx) has the mark (a book
+with a bookmark) and the "Soothe Spaces" wordmark. The wordmark is Newsreader
+600, converted to an SVG path so no serif font loads. It is the only serif on
+the site, so don't use Newsreader anywhere else. The mark is drawn in tokens
+(book `foreground`, pages `background`, bookmark `primary`), so it follows every
+mode. `/styleguide` shows it at 16, 32 and 64px.

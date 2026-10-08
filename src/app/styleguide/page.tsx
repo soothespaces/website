@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { LogoMark, Wordmark } from "@/components/logo";
 import { ModeSwitcher } from "./mode-switcher";
 
 export const metadata: Metadata = {
@@ -55,6 +56,24 @@ export default function StyleGuidePage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section aria-labelledby="logo" className="flex flex-col gap-3">
+        <h2 id="logo" className="text-xl font-medium">
+          Logo
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          The only serif on the site. The mark at 16, 32 and 64 pixels.
+        </p>
+        <div className="flex items-end gap-6">
+          <LogoMark className="size-4" />
+          <LogoMark className="size-8" />
+          <LogoMark className="size-16" />
+          <div className="flex items-center gap-3">
+            <LogoMark className="size-9" />
+            <Wordmark className="h-6 w-auto" />
+          </div>
+        </div>
       </section>
 
       <section aria-labelledby="type" className="flex flex-col gap-3">

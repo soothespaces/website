@@ -44,5 +44,13 @@
     :focus-visible {
       outline-color: Highlight;
     }
+    /* Token colors are ignored here, so redraw the logo in system colors. */
+    .logo-pages {
+      fill: Canvas;
+    }
+    .logo-bookmark {
+      fill: CanvasText;
+      stroke: Canvas;
+    }
   }
 }
