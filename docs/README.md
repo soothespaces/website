@@ -21,6 +21,7 @@ How it's built.
 - [Architecture](technical/architecture.md) — system design, frontend/backend/data flow
 - [Data Sources](technical/data-sources.md) — what data we actually have, and gaps
 - [Data Model](technical/data-model.md) — schema for spaces, amenities, ratings, tags
+- [Supabase Backend Plan](technical/supabase-backend.md) — schemas, tables, RLS, auth gate, Storage, seed pipeline and migration owners for the MVP
 - [Integrations](technical/integrations.md) — GeoJSON/MPrint ingestion, Waitz occupancy API
 - [MPrint Room Extraction](technical/mprint-extraction.md) — prototype findings for auto-extracting room polygons from floor plans
 - [Accessibility](technical/accessibility.md) — WCAG approach and testing checklist

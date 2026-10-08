@@ -35,3 +35,6 @@ jobs:
 
       - name: Lint the resulting schema
         run: npx supabase db lint --local --fail-on error
+
+      - name: Test RLS and database behavior
+        run: npx supabase test db
