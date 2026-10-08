@@ -1,0 +1,63 @@
+/*
+ * MapLibre's controls ship with hard-coded white surfaces and a blue focus
+ * glow. Restyle them with design tokens so they follow every display mode.
+ * The icons are dark SVG background images, so dark themes invert them.
+ */
+
+.maplibregl-ctrl.maplibregl-ctrl-group {
+  background: var(--card);
+  border-radius: 0.375rem;
+  box-shadow: 0 0 0 1px var(--input);
+}
+
+.maplibregl-ctrl-group button {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.maplibregl-ctrl-group button + button {
+  border-top: 1px solid var(--border);
+}
+
+@media (hover: hover) {
+  .maplibregl-ctrl button:not(:disabled):hover {
+    background-color: var(--accent);
+  }
+}
+
+.maplibregl-ctrl-group button:focus:focus-visible,
+.maplibregl-ctrl-attrib-button:focus-visible {
+  box-shadow: none;
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.maplibregl-ctrl-attrib-button:focus:not(:focus-visible) {
+  box-shadow: none;
+}
+
+/* The canvas clips anything outside it, so draw its focus ring inside. */
+.maplibregl-canvas:focus-visible {
+  outline-offset: -2px;
+}
+
+.maplibregl-ctrl.maplibregl-ctrl-attrib {
+  background-color: color-mix(in srgb, var(--card) 85%, transparent);
+  color: var(--muted-foreground);
+}
+
+.maplibregl-ctrl-attrib a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* Transparent so the inversion below doesn't flip its background too. */
+.maplibregl-ctrl-attrib-button,
+.maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-button {
+  background-color: transparent;
+}
+
+[data-map-theme="dark"] .maplibregl-ctrl-icon,
+[data-map-theme="dark"] .maplibregl-ctrl-attrib-button {
+  filter: invert(1);
+}
