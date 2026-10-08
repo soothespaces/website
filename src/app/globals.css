@@ -45,8 +45,8 @@
       outline-color: Highlight;
     }
     /* Token colors are ignored here, so redraw the logo in system colors. */
-    .logo-pages {
-      fill: Canvas;
+    .logo-shade {
+      display: none;
     }
     .logo-bookmark {
       fill: CanvasText;

@@ -66,11 +66,11 @@ export default function StyleGuidePage() {
           The only serif on the site. The mark at 16, 32 and 64 pixels.
         </p>
         <div className="flex items-end gap-6">
-          <LogoMark className="size-4" />
-          <LogoMark className="size-8" />
-          <LogoMark className="size-16" />
+          <LogoMark className="h-4 w-auto" />
+          <LogoMark className="h-8 w-auto" />
+          <LogoMark className="h-16 w-auto" />
           <div className="flex items-center gap-3">
-            <LogoMark className="size-9" />
+            <LogoMark className="h-9 w-auto" />
             <Wordmark className="h-6 w-auto" />
           </div>
         </div>

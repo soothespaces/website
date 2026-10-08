@@ -41,6 +41,7 @@
   --border: #e5e5e5; /* decorative dividers only */
   --input: #737373; /* borders that identify a control */
   --ring: #3d6b4f;
+  --logo-gap: transparent; /* outline around the logo bookmark */
 }
 
 /* Dark */
@@ -65,6 +66,7 @@
   --border: #262626;
   --input: #8a8a8a;
   --ring: #8cc7a1;
+  --logo-gap: var(--background);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -89,6 +91,7 @@
     --border: #262626;
     --input: #8a8a8a;
     --ring: #8cc7a1;
+  --logo-gap: var(--background);
   }
 }
 
@@ -163,6 +166,7 @@
   --border: #ffffff;
   --input: #ffffff;
   --ring: #ffffff;
+  --logo-gap: var(--background);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -186,6 +190,7 @@
     --border: #ffffff;
     --input: #ffffff;
     --ring: #ffffff;
+  --logo-gap: var(--background);
   }
 }
 
@@ -210,6 +215,7 @@
     --border: #ffffff;
     --input: #ffffff;
     --ring: #ffffff;
+  --logo-gap: var(--background);
   }
 }
 
@@ -234,6 +240,7 @@
     --border: #ffffff;
     --input: #ffffff;
     --ring: #ffffff;
+  --logo-gap: var(--background);
   }
 }
 

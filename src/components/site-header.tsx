@@ -9,7 +9,7 @@ export function SiteHeader() {
           href="/"
           className="flex items-center gap-3 rounded-sm text-foreground"
         >
-          <LogoMark className="size-9 shrink-0" />
+          <LogoMark className="h-9 w-auto shrink-0" />
           <Wordmark className="h-6 w-auto" />
           <span className="sr-only">Soothe Spaces, home</span>
         </Link>

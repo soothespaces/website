@@ -4,37 +4,43 @@
  * the serif is reserved for the logo (see docs/technical/design-system.md).
  *
  * Colors come from tokens, so the logo follows every display mode: the book
- * is the text color, the pages are the background, the bookmark is primary.
- * A background-colored gap keeps the bookmark distinct where it overlaps the
- * book, which matters in dark mode (light sage on a light book).
+ * is the text color, the pages are a cutout, the bookmark is primary. In dark
+ * modes --logo-gap outlines the bookmark so light sage stays distinct on the
+ * light book; in light modes it is transparent, matching the artwork.
  */
 
 export function LogoMark({ className }: { className?: string }) {
+  // Paths are traced from the approved concept art (2048px), so coordinates
+  // are in that image's pixels.
   return (
     <svg
-      viewBox="0 0 32 32"
+      viewBox="250 96 1486 1856"
       className={className}
       aria-hidden="true"
       focusable="false"
     >
+      {/* Book, with the pages cut out so the background shows through. */}
       <path
-        className="logo-book"
         fill="currentColor"
-        d="M8 6h17a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V9a3 3 0 0 1 3-3Z"
+        fillRule="evenodd"
+        d="M 436.5 218.7 C 399.9 221.9, 366 234.3, 336.5 255.2 C 325.7 262.9, 307.1 280.5, 298.4 291.4 C 278.7 316, 265.6 343.5, 258.2 375.9 L 255.5 387.5 255.2 1074.5 C 254.9 1691.9, 255.1 1762.6, 256.5 1772.5 C 265.1 1833.6, 301.7 1887.9, 355.7 1919.6 C 380 1933.9, 407 1943, 434.2 1945.9 C 440.9 1946.7, 636.7 1947, 1067.4 1947 L 1690.8 1947 1697.6 1944.9 C 1710.5 1941, 1721.5 1931.5, 1727.3 1919.3 C 1730.4 1912.7, 1730.5 1912.2, 1730.5 1898.4 L 1730.5 1884.4 1726.7 1876.7 C 1723.9 1871, 1720.5 1866.4, 1714.1 1859.7 C 1689.7 1834, 1678.2 1816.2, 1669.7 1791 C 1663.2 1772, 1661.6 1762, 1661.6 1740 C 1661.5 1717.4, 1662.9 1707.5, 1669.1 1688.7 C 1676.3 1666.5, 1687.2 1648, 1704.2 1629.1 C 1724 1607.1, 1726.1 1604, 1729.4 1593.1 C 1730.9 1588.1, 1731 1534.4, 1731 961.7 C 1731 338.1, 1731 335.8, 1729 325.9 C 1723.6 299.7, 1711.7 277.7, 1692 258 C 1672.8 238.7, 1651.8 227.1, 1624.2 220.8 L 1614.5 218.5 1027.5 218.4 C 704.6 218.4, 438.7 218.5, 436.5 218.7 M 447.1 1628.1 C 410.8 1632.3, 377.9 1656.3, 362 1690.3 C 341.8 1733.3, 350.6 1783.5, 384.2 1817.1 C 402.3 1835.2, 424.6 1845.6, 450.3 1848 C 458 1848.8, 634.9 1849, 1021.8 1848.8 C 1518.5 1848.5, 1582.2 1848.3, 1583.1 1847 C 1584.4 1844.9, 1583.8 1842.3, 1578.5 1827.5 C 1573 1812.2, 1568.9 1796.8, 1565.8 1779.8 C 1563.8 1768.8, 1563.6 1764.3, 1563.6 1738.5 C 1563.6 1711.5, 1563.8 1708.5, 1566.2 1695 C 1569.4 1677.4, 1574.6 1659.2, 1580.7 1644.5 C 1586.2 1630.9, 1586.2 1630.8, 1585 1629 C 1584.2 1627.7, 1520.1 1627.5, 1019.3 1627.4 C 707.8 1627.3, 451.2 1627.6, 447.1 1628.1"
       />
+      {/* Fold where the bookmark tucks behind the cover: primary, shaded. */}
+      <path fill="var(--primary)" d="M 944 107.8 C 943.2 108.1, 942.2 108.8, 941.8 109.4 C 941.4 110, 941 133.9, 941 162.5 C 941 191.1, 941.4 215, 941.8 215.6 C 942.2 216.2, 943.4 217, 944.4 217.3 C 946.7 218.2, 1053.2 218.2, 1056.6 217.4 C 1059.8 216.6, 1060.7 213.3, 1058.4 210.4 C 1057.3 209.1, 1036.3 189.3, 1011.5 166.4 C 942.4 102.4, 947.3 106.7, 944 107.8" />
       <path
-        className="logo-pages"
-        fill="var(--background)"
-        d="M9.5 23.5H28v3H9.5a1.5 1.5 0 0 1 0-3Z"
+        className="logo-shade"
+        fill="#000"
+        fillOpacity="0.35"
+        d="M 944 107.8 C 943.2 108.1, 942.2 108.8, 941.8 109.4 C 941.4 110, 941 133.9, 941 162.5 C 941 191.1, 941.4 215, 941.8 215.6 C 942.2 216.2, 943.4 217, 944.4 217.3 C 946.7 218.2, 1053.2 218.2, 1056.6 217.4 C 1059.8 216.6, 1060.7 213.3, 1058.4 210.4 C 1057.3 209.1, 1036.3 189.3, 1011.5 166.4 C 942.4 102.4, 947.3 106.7, 944 107.8"
       />
       <path
         className="logo-bookmark"
         fill="var(--primary)"
-        stroke="var(--background)"
-        strokeWidth="1.25"
+        stroke="var(--logo-gap)"
+        strokeWidth="72"
         strokeLinejoin="round"
         paintOrder="stroke"
-        d="M9 2h7.5v13.5l-3.75-3.25L9 15.5Z"
+        d="M 582 102.6 C 563 107.6, 548.3 122, 542.3 141.5 C 540.6 147.3, 540.5 160.9, 540.5 503 C 540.5 698.5, 540.8 859.7, 541.2 861.1 C 542.1 864.3, 545 865.2, 548.3 863.5 C 549.6 862.9, 570.9 846.6, 595.6 827.4 C 665.5 773, 728.9 724.1, 734.3 720.3 C 736.6 718.7, 739.5 717.6, 741.4 717.6 C 744.9 717.6, 740.1 714, 915.4 849.6 C 934.2 864.1, 938 866.2, 940.1 862.9 C 941.3 861, 941.2 104.9, 940 103 C 938.6 100.8, 590.4 100.3, 582 102.6"
       />
     </svg>
   );

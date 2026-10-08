@@ -61,8 +61,10 @@ colorblind-safe palette swaps sage for Okabe-Ito blue and red for vermillion.
 ## Logo
 
 [`src/components/logo.tsx`](../../src/components/logo.tsx) has the mark (a book
-with a bookmark) and the "Soothe Spaces" wordmark. The wordmark is Newsreader
+with a bookmark, traced from the approved concept art) and the "Soothe Spaces"
+wordmark. The wordmark is Newsreader
 600, converted to an SVG path so no serif font loads. It is the only serif on
 the site, so don't use Newsreader anywhere else. The mark is drawn in tokens
-(book `foreground`, pages `background`, bookmark `primary`), so it follows every
-mode. `/styleguide` shows it at 16, 32 and 64px.
+(book `foreground`, pages cut out, bookmark `primary`), so it follows every
+mode. In dark modes `--logo-gap` outlines the bookmark so it stays distinct on
+the light book. `/styleguide` shows it at 16, 32 and 64px.
