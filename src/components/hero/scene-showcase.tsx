@@ -78,7 +78,7 @@ export function SceneShowcase({
               style={{ left: `${pinLeft}%`, top: `${pinTop}%` }}
             >
               <span className="size-3 shrink-0 rounded-full border-2 border-card bg-primary shadow-sm" />
-              <span className="-ml-1 h-px w-6 shrink-0 bg-primary/60 sm:w-10" />
+              <span className="-ml-1 h-px w-6 shrink-0 bg-primary/60 sm:w-20" />
               <div className="min-w-0 flex-1">
                 <SpaceChip {...scene.chip} />
               </div>
