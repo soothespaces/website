@@ -71,6 +71,7 @@ declare
     case when target_kind = 'space' then target_id end;
   target_room uuid :=
     case when target_kind = 'room' then target_id end;
+  visit_time timestamptz := coalesce(submit_check_in.visited_at, now());
 begin
   if requesting_user is null
     or lower(coalesce(auth.jwt() ->> 'email', ''))
@@ -85,8 +86,29 @@ begin
       using errcode = '22023';
   end if;
 
-  if submit_check_in.visited_at > now() + interval '5 minutes'
-    or submit_check_in.visited_at < now() - interval '24 hours'
+  -- Only listed spaces, and rooms on listed floor plans, accept check-ins.
+  if not (
+    exists (
+      select 1
+      from public.spaces
+      where spaces.id = target_space
+        and spaces.is_listed
+    )
+    or exists (
+      select 1
+      from public.room_zones
+      join public.floor_plans
+        on floor_plans.id = room_zones.floor_plan_id
+      where room_zones.id = target_room
+        and floor_plans.is_listed
+    )
+  ) then
+    raise exception 'Unknown or unlisted check-in target'
+      using errcode = 'P0002';
+  end if;
+
+  if visit_time > now() + interval '5 minutes'
+    or visit_time < now() - interval '24 hours'
   then
     raise exception 'visited_at must be within the last 24 hours'
       using errcode = '22023';
@@ -129,7 +151,7 @@ begin
     requesting_user,
     target_space,
     target_room,
-    submit_check_in.visited_at,
+    visit_time,
     submit_check_in.noise,
     submit_check_in.light,
     submit_check_in.natural_light,

@@ -19,6 +19,23 @@ as $$
       when 'room' then check_ins.room_zone_id = check_in_summary.target_id
       else false
     end
+    -- Unlisted spaces and floor plans don't publish aggregates.
+    and (
+      exists (
+        select 1
+        from public.spaces
+        where spaces.id = check_ins.space_id
+          and spaces.is_listed
+      )
+      or exists (
+        select 1
+        from public.room_zones
+        join public.floor_plans
+          on floor_plans.id = room_zones.floor_plan_id
+        where room_zones.id = check_ins.room_zone_id
+          and floor_plans.is_listed
+      )
+    )
     and check_ins.visited_at > now() - least(
       greatest(
         coalesce(check_in_summary.since, interval '90 days'),
@@ -132,6 +149,23 @@ as $$
     when 'room' then check_ins.room_zone_id is not null
     else false
   end
+  -- Unlisted spaces and floor plans don't publish aggregates.
+  and (
+    exists (
+      select 1
+      from public.spaces
+      where spaces.id = check_ins.space_id
+        and spaces.is_listed
+    )
+    or exists (
+      select 1
+      from public.room_zones
+      join public.floor_plans
+        on floor_plans.id = room_zones.floor_plan_id
+      where room_zones.id = check_ins.room_zone_id
+        and floor_plans.is_listed
+    )
+  )
   group by coalesce(check_ins.space_id, check_ins.room_zone_id);
 $$;
 

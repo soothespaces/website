@@ -5,7 +5,7 @@ create extension if not exists pgtap with schema extensions;
 grant usage on schema extensions to anon, authenticated;
 set local search_path = public, extensions;
 
-select plan(26);
+select plan(32);
 
 insert into auth.users (id, email)
 values
@@ -33,6 +33,16 @@ values (
   'um_library',
   'quiet',
   '{natural_light,outlets}'
+);
+
+insert into public.spaces (id, slug, building_slug, name, source, is_listed)
+values (
+  '77777777-7777-7777-7777-777777777777',
+  'shapiro-3',
+  'shapiro',
+  'Shapiro Floor 3',
+  'um_library',
+  false
 );
 
 insert into public.floor_plans (
@@ -120,6 +130,39 @@ select ok(
   'anon cannot submit check-ins'
 );
 
+-- Postgres grants EXECUTE on new functions to PUBLIC, so every function in
+-- public must revoke it explicitly. These fail if one is left callable.
+select is(
+  array(
+    select p.proname::text
+    from pg_proc as p
+    where p.pronamespace = 'public'::regnamespace
+      and has_function_privilege('anon', p.oid, 'execute')
+      and not exists (
+        select 1 from pg_depend as d
+        where d.objid = p.oid and d.deptype = 'e'
+      )
+    order by 1
+  ),
+  array['check_in_overview', 'check_in_summary'],
+  'anon can execute only the public aggregate functions'
+);
+select is(
+  array(
+    select p.proname::text
+    from pg_proc as p
+    where p.pronamespace = 'public'::regnamespace
+      and has_function_privilege('authenticated', p.oid, 'execute')
+      and not exists (
+        select 1 from pg_depend as d
+        where d.objid = p.oid and d.deptype = 'e'
+      )
+    order by 1
+  ),
+  array['check_in_overview', 'check_in_summary', 'submit_check_in'],
+  'authenticated can execute only the aggregates and submit_check_in'
+);
+
 select is(
   public.hook_before_user_created(
     '{"user":{"email":"Student@UMICH.EDU"}}'
@@ -198,6 +241,25 @@ select throws_ok(
   'You checked in here in the last hour',
   'the hourly rate limit rejects a second check-in'
 );
+select throws_ok(
+  $$select public.submit_check_in(
+    target_kind => 'space',
+    target_id => '77777777-7777-7777-7777-777777777777',
+    noise => 'quiet'
+  )$$,
+  'P0002',
+  'Unknown or unlisted check-in target',
+  'unlisted spaces reject check-ins'
+);
+select lives_ok(
+  $$select public.submit_check_in(
+    target_kind => 'room',
+    target_id => '55555555-5555-5555-5555-555555555555',
+    light => 'bright',
+    visited_at => null
+  )$$,
+  'a null visited_at defaults to now'
+);
 
 reset role;
 set local role authenticated;
@@ -239,6 +301,26 @@ select is(
 );
 
 reset role;
+update public.spaces
+set is_listed = false
+where id = '33333333-3333-3333-3333-333333333333';
+set local role anon;
+
+select is(
+  public.check_in_summary(
+    'space',
+    '33333333-3333-3333-3333-333333333333'
+  ) ->> 'count',
+  '0',
+  'unlisted spaces publish no aggregate'
+);
+select is(
+  (select count(*) from public.check_in_overview('space')),
+  0::bigint,
+  'the overview omits unlisted spaces'
+);
+
+reset role;
 
 select throws_ok(
   $$insert into public.photos (
@@ -269,8 +351,8 @@ select throws_ok(
 
 select is(
   (select count(*) from private.check_ins),
-  1::bigint,
-  'only one raw check-in was stored'
+  2::bigint,
+  'only the two accepted check-ins were stored'
 );
 
 select * from finish();
