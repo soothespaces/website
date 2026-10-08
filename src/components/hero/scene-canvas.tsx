@@ -15,7 +15,7 @@ import {
 const START_TIME = 40;
 const MAX_DPR = 2;
 const FIELD_TEXELS_PER_METER = 10;
-const SOURCE_SLOTS = 2;
+const SOURCE_SLOTS = 3;
 
 type Rgb = [number, number, number];
 

@@ -108,18 +108,18 @@ export const COMMONS: StudyScene = {
     // Two quiet rectangular tables, faded with the scene-edge vignette.
     ...faded(...rect(1.2, 3.7, 2.4, 1.6), ...benchSeating(1.2, 3.7, 2.4, 1.6, 2)),
     ...faded(...rect(8.4, 3.7, 2.4, 1.6), ...benchSeating(8.4, 3.7, 2.4, 1.6, 2)),
-    // Four circular tables in a row. Only the middle pair emits sound; the
-    // outer pair fades into the left and right edges.
-    ...faded(roundTable(-0.2, 12.6, 1.15), ...ringSeating(-0.2, 12.6, 1.75, 5, -Math.PI / 2)),
+    // Three evenly spaced circular tables, all emitting sound.
     roundTable(7.6, 12.6, 1.15),
     ...ringSeating(7.6, 12.6, 1.75, 5, -Math.PI / 2),
     roundTable(15.4, 12.6, 1.15),
     ...ringSeating(15.4, 12.6, 1.75, 5, -Math.PI / 2),
-    ...faded(roundTable(23.2, 12.6, 1.15), ...ringSeating(23.2, 12.6, 1.75, 5, -Math.PI / 2)),
+    roundTable(23.2, 12.6, 1.15),
+    ...ringSeating(23.2, 12.6, 1.75, 5, -Math.PI / 2),
   ],
   sound: [
     { at: [7.6, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
     { at: [15.4, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
+    { at: [23.2, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
   ],
   pin: [9.6, 3.7],
   chipSide: "right",
