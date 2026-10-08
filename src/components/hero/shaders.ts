@@ -121,9 +121,11 @@ uniform vec4 uAlpha; // walls, furniture, floor grid, rings
 out vec4 fragColor;
 
 const float SPEED = ${SPEED.toFixed(3)};
-const float RING_WIDTH = 0.035;
-const float TAIL = 0.35;
+const float RING_WIDTH = 0.045;
 const float DECAY = 4.5;
+// How far apart, in meters, rings from different sources start to merge.
+const float BLEND = 0.4;
+const float SILENT = 1e3;
 
 float hash(float n) {
   return fract(sin(n * 91.3458) * 47453.5453);
@@ -139,25 +141,32 @@ float edge(float d, float halfWidth) {
   return 1.0 - smoothstep(halfWidth, halfWidth + uPx * 1.5, d);
 }
 
-float rings(vec2 p, vec4 source) {
+// Distance from p to this source's nearest ring, and how loud that ring is.
+vec2 ring(vec2 p, vec4 source, float heard) {
   float r = length(p - source.xy);
   float period = source.z;
   float wavelength = period * SPEED;
   float q = (uTime - r / SPEED) / period;
   float k = floor(q);
   float f = q - k;
-  float halfWidth = max(RING_WIDTH, uPx * 0.75);
 
-  // Just behind ring k: its line plus a fading tail. Just ahead of ring
-  // k + 1: a crisp leading edge.
-  float behind = f * wavelength;
-  float ahead = (1.0 - f) * wavelength;
-  float trail = max(edge(behind, halfWidth), 0.12 * exp(-behind / TAIL));
-  float lead = edge(ahead, halfWidth);
-  float wave = burst(k, source.w) * trail + burst(k + 1.0, source.w) * lead;
+  // Ring k has already passed p; ring k + 1 hasn't reached it yet.
+  vec2 passed = vec2(f * wavelength, burst(k, source.w));
+  vec2 coming = vec2((1.0 - f) * wavelength, burst(k + 1.0, source.w));
+  passed.x += step(passed.y, 0.0) * SILENT;
+  coming.x += step(coming.y, 0.0) * SILENT;
+  vec2 nearest = passed.x < coming.x ? passed : coming;
 
   float falloff = exp(-r / DECAY) * smoothstep(0.25, 1.4, r);
-  return wave * falloff;
+  // Rings fully behind a wall leave the field, so they don't pull audible
+  // rings into a blend.
+  return vec2(nearest.x + step(heard, 0.03) * SILENT, nearest.y * falloff * heard);
+}
+
+// Polynomial smooth min over the distance, blending loudness by the same weight.
+vec2 smin(vec2 a, vec2 b) {
+  float h = clamp(0.5 + 0.5 * (b.x - a.x) / BLEND, 0.0, 1.0);
+  return vec2(mix(b.x, a.x, h) - BLEND * h * (1.0 - h), mix(b.y, a.y, h));
 }
 
 float boxDist(vec2 p, vec4 box) {
@@ -183,9 +192,11 @@ void main() {
   vec4 ink = texture(uInk, gl_FragCoord.xy / uRes);
   vec4 heard = texture(uVisibility, (p - uWorldMin) / uWorldSize);
 
-  float sound = 0.0;
-  for (int i = 0; i < SOURCE_COUNT; i++) sound += rings(p, uSources[i]) * heard[i];
-  float ringAlpha = (1.0 - exp(-sound * 1.6)) * uAlpha.w * mask;
+  vec2 sound = vec2(SILENT, 0.0);
+  for (int i = 0; i < SOURCE_COUNT; i++) sound = smin(sound, ring(p, uSources[i], heard[i]));
+  float halfWidth = max(RING_WIDTH, uPx * 0.75);
+  float loudness = clamp(sound.y * 1.8, 0.0, 1.0);
+  float ringAlpha = edge(sound.x, halfWidth) * loudness * uAlpha.w * mask;
 
   // A faint one-meter dot grid on the floor of the room itself.
   vec2 cell = abs(fract(p) - 0.5);

@@ -177,7 +177,7 @@ export function SceneCanvas({
         colors.uAccent.value = readColor(probe, "--primary");
         colors.uAlpha.value = prefersMoreContrast()
           ? [0.85, 0.5, 0.18, 0.95]
-          : [0.38, 0.2, 0.09, 0.62];
+          : [0.38, 0.2, 0.09, 0.85];
       };
 
       const layout = () => {
