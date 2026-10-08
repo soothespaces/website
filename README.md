@@ -57,12 +57,17 @@ Open [http://localhost:3000](http://localhost:3000).
   `src/lib/supabase/server.ts` (Server Components, Server Functions, Route
   Handlers). `src/proxy.ts` refreshes the auth session cookie on each request
   (Next 16 renamed `middleware.ts` to `proxy.ts`).
-- **Schema changes** go through the Supabase MCP server's `apply_migration`, or the
-  CLI. Either way, commit the migration SQL to `supabase/migrations/` so the repo
-  is the record of the schema (see [ADR 0003](docs/decisions/0003-supabase-as-backend.md)).
-  After applying one through MCP, save the same SQL as
-  `supabase/migrations/<timestamp>_<name>.sql` using the version MCP reports
-  (check with `list_migrations`).
+- **Schema changes** are migration files in `supabase/migrations/`, shipped in a PR:
+  1. Create one with `npx supabase migration new <name>` and write the SQL.
+  2. Open a PR. The **Supabase migrations** workflow applies every migration to a
+     throwaway Postgres and lints the result, so broken SQL fails the PR.
+  3. Merge to `main`. The Supabase GitHub integration ("Deploy to production") applies
+     the new migrations to the production database.
+
+  Don't apply schema changes straight to production (dashboard SQL editor or the MCP
+  server's `apply_migration`): the deploy would then try to re-run them, and the repo
+  stops being the record of the schema ([ADR 0003](docs/decisions/0003-supabase-as-backend.md)).
+  The MCP server is still the way to read the schema, run queries, and check logs.
 - **Types:** `src/types/supabase.ts` is generated. Regenerate after a schema change
   with `npm run db:types` (needs `npx supabase login` once), or with the MCP
   server's `generate_typescript_types`.

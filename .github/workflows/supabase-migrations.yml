@@ -1,0 +1,37 @@
+# Applies every migration in supabase/migrations/ to a throwaway local
+# Postgres, so a broken migration fails the PR instead of the production
+# deploy. Deploying to production is done by the Supabase GitHub integration
+# ("Deploy to production" on merge to main), not by this workflow.
+name: Supabase migrations
+
+on:
+  pull_request:
+    paths:
+      - "supabase/**"
+      - ".github/workflows/supabase-migrations.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: supabase-migrations-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Installs the Supabase CLI pinned in package.json.
+      - run: npm ci
+
+      - name: Apply migrations to a local database
+        run: npx supabase db start
+
+      - name: Lint the resulting schema
+        run: npx supabase db lint --local --fail-on error
