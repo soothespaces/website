@@ -43,12 +43,17 @@ borders and the focus ring 3:1).
 
 | Mode | Text | Muted text | Primary | Destructive | Control border |
 |---|---|---|---|---|---|
-| Light | 17.9 | 7.8 | 6.7 | 6.5 | 4.7 |
-| Dark | 16.9 | 7.9 | 7.8 | 7.2 | 5.7 |
-| High contrast, light | 21 | 15.1 | 10.6 | 10.0 | 21 |
-| High contrast, dark | 21 | 16.7 | 11.7 | 10.5 | 21 |
+| Light | 17.9 | 7.8 | 6.2 | 6.5 | 4.7 |
+| Dark | 16.9 | 7.9 | 10.2 | 7.2 | 5.7 |
+| High contrast, light | 21 | 15.1 | 10.1 | 10.0 | 21 |
+| High contrast, dark | 21 | 16.7 | 13.6 | 10.5 | 21 |
 | Colorblind-safe, light | 17.9 | 7.8 | 7.1 | 7.1 | 4.7 |
 | Colorblind-safe, dark | 16.9 | 7.9 | 8.6 | 9.6 | 5.7 |
 
 Text on a primary or destructive fill has the same ratio as the fill against
-the background. The accent hue is a placeholder until the team picks one.
+the background.
+
+The accent is sage (#3D6B4F light, #8CC7A1 dark), picked on 2026-10-08 from
+[five previewed options](https://claude.ai/artifact/GWR5mSYCizeRbnVknfVLYb).
+Green next to red is the hardest pair for red-green colorblindness, so the
+colorblind-safe palette swaps sage for Okabe-Ito blue and red for vermillion.
