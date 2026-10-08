@@ -1,69 +1,151 @@
-import Image from "next/image";
+import Link from "next/link";
+import { FootnoteRef } from "@/components/footnote-ref";
+import { ROUTES } from "@/lib/site";
+
+const CONDITIONS = [
+  {
+    title: "Noise",
+    body: "From silent floors to places where talking is fine.",
+  },
+  {
+    title: "Light",
+    body: "Dim, moderate or bright, and whether there's natural light.",
+  },
+  {
+    title: "Busyness",
+    body: "How full a space was at the latest check-in, and how long ago that was.",
+  },
+  {
+    title: "Access",
+    body: "Step-free entry, all-gender restrooms nearby, outlets and whiteboards.",
+  },
+];
+
+const STEPS = [
+  {
+    title: "Browse",
+    body: "Open the map or the list and filter out anything too loud, too bright or too crowded.",
+  },
+  {
+    title: "Pick a space",
+    body: "See its official features and what other students have reported recently.",
+  },
+  {
+    title: "Check in",
+    body: "Signed in with your @umich.edu account, tell others what it's like right now. It takes a few taps.",
+  },
+];
+
+const buttonBase =
+  "inline-flex min-h-11 items-center justify-center rounded-md px-5 font-medium";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-4 py-12 sm:py-16">
+      <section aria-labelledby="hero" className="flex max-w-2xl flex-col gap-6">
+        <h1 id="hero" className="text-4xl sm:text-5xl">
+          Find a study space that feels right.
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          Search campus by noise, light, crowding and access, before you walk
+          over. Starting with U-M Library study spaces
+          <FootnoteRef id="library-spaces" />.
+        </p>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Link
+            href={ROUTES.map}
+            className={`${buttonBase} bg-primary text-primary-foreground hover:bg-primary/90`}
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Open the map
+          </Link>
+          <Link
+            href="#how-it-works"
+            className={`${buttonBase} border border-input hover:bg-accent`}
           >
-            Documentation
-          </a>
+            How it works
+          </Link>
         </div>
-      </main>
+      </section>
+
+      <section aria-labelledby="conditions" className="flex flex-col gap-6">
+        <h2 id="conditions" className="text-2xl">
+          Filter by how a space feels
+        </h2>
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {CONDITIONS.map((item) => (
+            <li
+              key={item.title}
+              className="flex flex-col gap-2 rounded-lg border border-border bg-card p-5 text-card-foreground"
+            >
+              <h3 className="text-lg">{item.title}</h3>
+              <p className="text-muted-foreground">{item.body}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section
+        id="how-it-works"
+        aria-labelledby="how-it-works-heading"
+        className="flex scroll-mt-4 flex-col gap-6"
+      >
+        <h2 id="how-it-works-heading" className="text-2xl">
+          How it works
+        </h2>
+        <ol className="grid gap-4 sm:grid-cols-3">
+          {STEPS.map((step, index) => (
+            <li key={step.title} className="flex flex-col gap-2">
+              <span className="flex size-8 items-center justify-center rounded-full border border-input text-sm font-semibold">
+                {index + 1}
+              </span>
+              <h3 className="text-lg">{step.title}</h3>
+              <p className="text-muted-foreground">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section
+        aria-labelledby="privacy"
+        className="flex flex-col gap-3 rounded-lg bg-muted p-6 sm:p-8"
+      >
+        <h2 id="privacy" className="text-2xl">
+          Anonymous by design
+        </h2>
+        <p className="max-w-2xl text-muted-foreground">
+          Check-ins describe the space, never the person. Nobody can see who
+          checked in where; everyone sees the same totals.
+        </p>
+        <Link
+          href={ROUTES.privacy}
+          className="self-start rounded-sm text-primary underline underline-offset-4"
+        >
+          Read the privacy policy
+        </Link>
+      </section>
+
+      <section aria-labelledby="get-started" className="flex flex-col items-start gap-4">
+        <h2 id="get-started" className="text-2xl">
+          Ready to find somewhere quiet?
+        </h2>
+        <p className="text-muted-foreground">
+          Browsing is open to everyone. Sign up only when you want to check in.
+        </p>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Link
+            href={ROUTES.map}
+            className={`${buttonBase} bg-primary text-primary-foreground hover:bg-primary/90`}
+          >
+            Open the map
+          </Link>
+          <Link
+            href={ROUTES.signIn}
+            className={`${buttonBase} border border-input hover:bg-accent`}
+          >
+            Sign up
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }
