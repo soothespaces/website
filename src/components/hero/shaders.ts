@@ -160,7 +160,7 @@ uniform vec3 uAccent;
 uniform vec4 uAlpha; // walls, furniture, floor grid, rings
 out vec4 fragColor;
 
-const float SPACING = 0.85; // meters between rings
+const float SPACING = 0.7; // meters between rings
 const float SPEED = 0.55; // meters per second
 const float RING_WIDTH = 0.03;
 // Falls off like a light: 1 / (constant + linear * d + quadratic * d^2).
