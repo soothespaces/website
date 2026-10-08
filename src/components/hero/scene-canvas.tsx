@@ -164,7 +164,6 @@ export function SceneCanvas({
         uAccent: { value: [0, 0, 0] as Rgb },
         uAlpha: { value: [0.4, 0.2, 0.1, 0.75] },
       };
-      const rightFade = { value: 0.8 };
       const time = { value: START_TIME };
       const compositeMesh = new Mesh(gl, {
         geometry,
@@ -180,7 +179,6 @@ export function SceneCanvas({
             value: [bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height],
           },
           uFade: { value: margin * 0.8 },
-          uRightFade: rightFade,
           uTime: time,
         }),
       });
@@ -199,7 +197,6 @@ export function SceneCanvas({
         const canvasBox = container.getBoundingClientRect();
         const stageBox = stage.getBoundingClientRect();
         if (canvasBox.width === 0 || stageBox.width === 0) return;
-        rightFade.value = window.innerWidth - stageBox.right >= 48 ? 5 : 0.8;
         renderer.dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
         renderer.setSize(canvasBox.width, canvasBox.height);
         const metersPerCssPx = bounds.width / stageBox.width;
