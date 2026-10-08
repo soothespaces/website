@@ -66,8 +66,8 @@ void main() {
 `;
 
 // Scene space, drawn once per scene. Everything here is static, so the whole
-// field is baked: the smooth min of the distances to the sound sources
-// (packed into RG) and how much of that sound gets past the walls (B).
+// field is baked: the minimum distance to the sound sources (packed into RG)
+// and how much of the nearest source's sound gets past the walls (B).
 export const FIELD_FRAGMENT = /* glsl */ `#version 300 es
 precision highp float;
 ${SEGMENTS}
@@ -82,10 +82,6 @@ const int STEP_COUNT = 128;
 const float MIN_HIT_DIST = 0.01;
 const float MAX_TRACE_DIST = 0.4;
 const float SHADOW_SOFTNESS = 0.3; // the lower, the sharper
-// How close, in meters, the two fields get before they merge. Where a wall
-// blocks either source the blend shrinks to nothing, so fields only merge
-// where both can be heard, never through a wall.
-const float BLEND = 1.6;
 
 float sourceDist(vec2 p, int i) {
   float r = uSourceRounding[i];
@@ -134,11 +130,12 @@ void main() {
   for (int i = 0; i < SOURCE_COUNT; i++) {
     float di = max(sourceDist(p, i), 0.0);
     float si = heard(p, i);
-    // Polynomial smooth min; the same weight blends the shadows.
-    float k = max(BLEND * si * shadow, 1e-3);
-    float h = clamp(0.5 + 0.5 * (d - di) / k, 0.0, 1.0);
-    d = mix(d, di, h) - k * h * (1.0 - h);
-    shadow = mix(shadow, si, h);
+    // A strict min makes the nearest source own this texel. Its shadow owns
+    // the texel too, so the distance and attenuation never disagree.
+    if (di < d) {
+      d = di;
+      shadow = si;
+    }
   }
   fragColor = vec4(encode(max(d, 0.0)), shadow, 1.0);
 }
