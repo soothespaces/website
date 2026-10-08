@@ -524,18 +524,90 @@ from one check-in shows that person's answers, though not who they are.
 (`room_zones.space_id`)? Proposed: no for the MVP. Show them separately, and let the
 space summary include rooms later if testing shows sparse data.
 
-## Storage (WP5)
+## Storage (WP5, WP3)
 
 | Bucket | Public | Contents | Written by |
 |---|---|---|---|
-| `floor-plans` | Yes | `{building_slug}/{floor_number}/plan.png` and `mask.png` | Import script, secret key |
-| `space-photos` | Yes | Mirrored Library `imageUrl` photos, so the app doesn't hot-link | Seed script, secret key |
+| `floor-plans` | Yes | `{building_slug}/{floor_number}/plan.png` and `mask.png` | WP5 import script, secret key |
+| `photos` | Yes | Building and space photos, pre-resized (see [Photos](#photos)) | WP3 photo script, secret key |
 
 Public buckets serve through the CDN URL with no `storage.objects` policies, and with
 no insert policies only the secret key can write. Create buckets in a migration
 (`insert into storage.buckets ...`) so production gets them, and also under
 `[storage.buckets.*]` in `config.toml` for local. User photos (P2) would need a
 separate **private** bucket with moderation; they don't belong in either bucket above.
+
+### Photos
+
+**Decision: resize once in a script, store in Supabase Storage, serve the files
+straight from Supabase's CDN, and keep one row per photo in `public.photos`.** Photos
+are data about buildings, like footprints, so they live next to that data instead of
+in the app's code.
+
+| Option | Verdict |
+|---|---|
+| Commit to `public/`, served by Vercel | **No** for building photos. Git keeps every version forever, so a few hundred photos bloat every clone. Adding a photo needs a code change and a deploy. There's no link to a building row. Fine for a handful of UI images (landing hero, empty states). |
+| Supabase Storage + Vercel resizing (`next/image` default) | **Works, but has a hard cap.** Vercel Hobby includes 5,000 image transformations a month. Past that, new images return HTTP 402 and show their `alt` text instead. Each width × format of each photo counts, and so does each re-check after the cache goes stale. |
+| Supabase Storage + Supabase resizing | **Not available.** Image transformations are Pro-only. |
+| **Supabase Storage, pre-resized** | **Chosen.** No transformations at request time, so no quota to hit. Costs 1 GB storage and 5 GB cached egress on the Free plan. 200 photos × 3 widths × about 80 KB is about 50 MB stored. About 120 KB per detail-panel view is roughly 40,000 photo views a month inside the free egress. |
+| Hot-link the original URLs | **No.** Links break, pages slow down, and the source site sees every visitor's IP, which cuts against our privacy promise. |
+
+**Script** (`scripts/photos/`, WP3), run locally with the secret key:
+
+1. Read `scripts/photos/photos.json`, a committed list of entries:
+   `{ building_slug | space_slug, source_url, alt, credit, license }`.
+2. Download each photo. Use `sharp` to auto-rotate it and strip EXIF (EXIF can include
+   the photographer's GPS location), then write WebP at widths 480, 960 and 1600
+   (never upscaled), quality 75.
+3. Upload to `photos/{buildings|spaces}/{slug}/{photo_id}-{width}.webp` with
+   `cacheControl: '31536000'`. Every re-export gets a new `photo_id`, so the long
+   cache is never wrong.
+4. Upsert the `public.photos` row.
+
+```sql
+create table public.photos (
+  id            uuid primary key default gen_random_uuid(),
+  building_slug text references public.buildings (slug) on update cascade,
+  space_id      uuid references public.spaces (id),
+  path_prefix   text not null,          -- photos/buildings/shapiro/<id>; files are <prefix>-<width>.webp
+  widths        smallint[] not null,    -- widths actually generated, e.g. {480,960,1600}
+  width         integer not null,       -- original size, for aspect ratio (no layout shift)
+  height        integer not null,
+  alt           text not null check (length(trim(alt)) > 0),
+  credit        text not null,          -- "University of Michigan Library", "Jane Doe / Wikimedia Commons"
+  license       text not null,          -- "UM, used with credit", "CC BY-SA 4.0", ...
+  source_url    text not null,
+  sort_order    smallint not null default 0,
+  is_listed     boolean not null default true,
+  constraint one_subject check (num_nonnulls(building_slug, space_id) = 1)
+);
+create index on public.photos (building_slug, sort_order) where building_slug is not null;
+create index on public.photos (space_id, sort_order) where space_id is not null;
+-- RLS and grants: same "public read, no client writes" pattern as `spaces`.
+```
+
+`alt` is required: for this app, a photo without alt text is a bug. The Library's
+`fass-data` ships `imageAlt` for its 34 spaces. Every other photo needs alt text
+written as it's added.
+
+**Rendering:** use `next/image` with a custom `loader` that returns the nearest
+generated width (`${base}/${path_prefix}-${w}.webp`), so Vercel never transforms
+anything. Use `sizes` that match the panel layout, `width`/`height` from the row so
+nothing shifts while it loads, and lazy loading by default. Show `credit` under the
+photo, linked to `source_url` when the license requires attribution.
+
+**Which photos we may use:**
+
+| Source | OK? | Notes |
+|---|---|---|
+| UM Library `fass-data` `imageUrl` (§ 9) | Yes, with credit | UM's own photos of its spaces, with alt text already written |
+| `mapproxy.studentlife.umich.edu/image.php?d={slug}` (§ 8) | Yes, with credit | UM's official campus map photos |
+| Wikimedia Commons | Yes | Follow each file's license (usually CC BY or CC BY-SA): credit the author and name the license |
+| Photos the team takes | Yes | Best for interiors, and lets us control what's shown |
+| Google Maps or SerpApi photos, Yelp, news sites, blogs | **No** | Uploaders or publishers hold the copyright, and Google's terms forbid re-hosting |
+
+The `license` and `credit` columns are `not null`, so an unlicensed photo can't get in
+by accident.
 
 ## Seed data
 
