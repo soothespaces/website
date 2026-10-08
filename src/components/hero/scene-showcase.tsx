@@ -33,7 +33,17 @@ function PlayPauseIcon({ playing }: { playing: boolean }) {
   );
 }
 
-export function LandingHero({ scene, children }: { scene: StudyScene; children: ReactNode }) {
+// A study spot drawn as a top-down floor plan, with its chip pinned to it.
+// `children` is the copy beside it; `labelledBy` is the id of its heading.
+export function SceneShowcase({
+  scene,
+  labelledBy,
+  children,
+}: {
+  scene: StudyScene;
+  labelledBy: string;
+  children: ReactNode;
+}) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [playing, setPlaying] = useState(true);
   const reducedMotion = useReducedMotion();
@@ -42,7 +52,7 @@ export function LandingHero({ scene, children }: { scene: StudyScene; children: 
   const pinTop = ((pin[1] - bounds.y) / bounds.height) * 100;
 
   return (
-    <section aria-labelledby="hero" className="relative isolate overflow-hidden">
+    <section aria-labelledby={labelledBy} className="relative isolate overflow-hidden">
       <SceneCanvas
         scene={scene}
         stageRef={stageRef}
@@ -50,7 +60,7 @@ export function LandingHero({ scene, children }: { scene: StudyScene; children: 
         reducedMotion={reducedMotion}
         className="absolute inset-0 -z-10 size-full"
       />
-      <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 pt-12 pb-28 sm:pt-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-6 lg:pt-24 lg:pb-32">
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-16 sm:py-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-6 lg:py-24">
         <div className="flex max-w-xl flex-col gap-6">{children}</div>
         <figure
           ref={stageRef}
