@@ -88,7 +88,7 @@ export function HeaderFrame({ account }: { account: ReactNode }) {
             className="flex min-w-0 items-center gap-2 rounded-sm text-foreground sm:gap-3"
           >
             <LogoMark className="h-8 w-auto shrink-0 sm:h-9" />
-            <Wordmark className="hidden h-5 w-auto min-[22rem]:block sm:h-6" />
+            <Wordmark className="hidden h-6 w-auto min-[22rem]:block sm:h-7.5" />
             <span className="sr-only">Soothe Spaces, home</span>
           </Link>
 

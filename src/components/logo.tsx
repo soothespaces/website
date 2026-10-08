@@ -42,9 +42,13 @@ export function LogoMark({ className }: { className?: string }) {
 }
 
 export function Wordmark({ className }: { className?: string }) {
+  // The viewBox is padded above the ascenders so its middle sits halfway
+  // between cap height (-1381) and the baseline (0), not at the descender-
+  // weighted middle of the ink. Centering it with items-center then lines
+  // the letters up with the mark.
   return (
     <svg
-      viewBox="70 -1450 12230 1950"
+      viewBox="70 -1881 12230 2381"
       className={`fill-current ${className ?? ""}`}
       aria-hidden="true"
       focusable="false"

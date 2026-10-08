@@ -71,7 +71,7 @@ export default function StyleGuidePage() {
           <LogoMark className="h-16 w-auto" />
           <div className="flex items-center gap-3">
             <LogoMark className="h-9 w-auto" />
-            <Wordmark className="h-6 w-auto" />
+            <Wordmark className="h-7.5 w-auto" />
           </div>
         </div>
       </section>
