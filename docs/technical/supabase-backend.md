@@ -650,6 +650,13 @@ MVP tables beyond what's above.
   nothing stored. "Recent check-ins" is `check_in_summary(..., since => '3 hours')`.
   Weekday × hour patterns (P2) are a `check_in_patterns()` function over the same
   table. Simulated demo data goes in a separate seed file, never production.
+  If the team adopts Google popular times via SerpApi
+  ([Data Sources § 11](data-sources.md#11-serpapi-google-maps-data-through-a-paid-scraping-api-researched-2026-10-08)),
+  a monthly script fills `public.building_popular_times` (`building_slug`,
+  `weekday` 0–6, `hour` 0–23, `busyness` 0–100, `fetched_at`; PK
+  `(building_slug, weekday, hour)`; public read) plus a `google_place_id` column on
+  `buildings`. The app reads only this table, never SerpApi. The key stays in the
+  script's environment as `SERPAPI_API_KEY`, never `NEXT_PUBLIC_*`.
 - **WP2 needs profile and sync:** already covered by `user_settings.settings.needs`.
 - **WP3 search:** across about 60 spaces and 470 buildings, client-side filtering is
   enough. Add `pg_trgm` indexes only if search moves server-side.

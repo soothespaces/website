@@ -463,6 +463,94 @@ issue with booking permission. That would supersede part of
 [ADR 0008](../decisions/0008-libcal-availability-read-only.md) and needs a new ADR if
 granted.
 
+## 11. SerpApi: Google Maps data through a paid scraping API (researched 2026-10-08)
+
+[SerpApi](https://serpapi.com/) runs Google searches for you and returns parsed JSON.
+The team has a free key: **250 searches a month, at most 50 an hour**. Cached repeats
+(same parameters within 1 hour) are free. Researched from SerpApi's docs only; no calls
+made yet.
+
+### What it returns that we don't have
+
+| Engine | Useful fields | Gap it fills | Granularity |
+|---|---|---|---|
+| `google_maps` (`type=search`) | `place_id`, `data_id`, `gps_coordinates`, `operating_hours`, `type` | Finds the Google place for each building (one-time lookup) | Building |
+| `google_maps` (`place_id=…`) | **`popular_times.graph_results`**: a 0–100 `busyness_score` per weekday per hour. **`live_busyness_score`** and `live_hash.info` ("Less busy than usual") for the current hour. `hours`, `extensions.accessibility` ("Wheelchair accessible entrance/restroom/seating"), `at_this_place` (cafes and offices inside), image thumbnails | Busyness ([Gap 5](#gaps-relative-to-what-the-app-needs)), hours (Gap 6), building accessibility (Gap 4) | Building |
+| `google_maps_reviews` | Reviews filtered by `query` (e.g. `quiet`, `loud`, `outlets`) or by `topics` (keyword + mention count), `sort_by=newestFirst` | Hints for noise and amenity tags on spaces with no Library data | Building |
+| `google_maps_photos` | User photos by category | Little: Library and studentlife photos already cover this (§§ 8–9) | Building |
+| `google_maps_directions` | `travel_mode=3` (transit) with `route=4` (wheelchair accessible) | P3 step-free route planning, transit only | Route |
+
+**Google does have popular times for UM buildings.** A public mirror of Google's data
+shows Shapiro's full weekly curve (for example, Tuesday 2–3 PM at 99–100%, 3 AM at
+around 10%). Which other buildings have it (Hatcher, Duderstadt, the Union, the other
+libraries) is unverified until we run the lookups.
+
+### Limits
+
+- **Building level only.** Google has one place per building, so it can say "Shapiro is
+  busy", never "Shapiro floor 2 is busy" or anything about a room. Waitz (floor level,
+  6 spaces) and check-ins (space and room level) stay the finer-grained sources.
+- **Live busyness doesn't fit any affordable plan.** Each refresh is one search.
+  Polling 20 buildings hourly for 16 open hours a day is about 9,600 searches a month,
+  more than the $75 Developer plan's 5,000. The free tier covers about 8 live lookups a
+  day.
+- **Typical curves are cheap.** They change slowly, so one lookup per building per
+  month is enough: about 30 searches for the libraries plus the main non-library study
+  buildings, plus about 30 one-time searches to find place IDs.
+- **Reviews are other people's text** with names attached. Use them offline, to
+  suggest tags a person then confirms. Never display or store reviewer names.
+- **Google photos belong to whoever uploaded them.** Don't re-host them.
+
+### Legal and dependency risk
+
+- [MVP Scope](../product/mvp-scope.md#where-busyness-data-can-come-from) rejected
+  Popular Times because there's no official API and DIY scrapers break Google's terms
+  and get blocked. SerpApi solves the blocking, not the terms question. It scrapes
+  Google so we don't have to, and only its paid plans from $150/month include its
+  "U.S. Legal Shield".
+- **Google is suing SerpApi** (*Google LLC v. SerpApi, LLC*, N.D. Cal.
+  4:25-cv-10826, filed 2025-12-19). The court dismissed the original DMCA claims on
+  2026-07-20, with prejudice for search results that don't involve copyrighted works.
+  Google filed a narrower amended complaint on 2026-08-10, SerpApi moved to dismiss
+  it, and the hearing was 2026-09-29. No ruling was public as of 2026-10-08. The suit
+  targets SerpApi, not its customers. The risk to us is that the service gets
+  restricted or shut down mid-semester.
+- The official Google Places API is no substitute for busyness: it doesn't expose
+  popular times. It does have hours, accessibility options and photos, but Google Maps
+  Platform terms forbid showing its content on a non-Google map, and our map is
+  MapLibre ([ADR 0006](../decisions/0006-maplibre-react-map-gl-osm.md)).
+
+### Recommendation
+
+1. **Use it for typical busyness, snapshotted.** Monthly, one script fetches
+   `popular_times` for about 20–30 buildings and writes them to a
+   `building_popular_times` table (see
+   [Supabase Backend Plan](supabase-backend.md#later-packages-p1p2)). The app never
+   calls SerpApi at runtime, so a SerpApi outage or injunction costs us freshness, not
+   the feature. That's the same reasoning as
+   [ADR 0004](../decisions/0004-do-not-depend-on-mguide-waitz-proxy.md). This gives
+   WP7's weekday × hour view real data from day one instead of the planned simulated
+   data. Label it in the UI ("Typical for this building, from Google Maps") and keep
+   it separate from check-in data.
+2. **Don't use it for live busyness.** It costs too much per refresh, and it would make
+   SerpApi a runtime dependency. Recent check-ins stay the "right now" source outside
+   Waitz buildings.
+3. **Use Google `hours` only for non-library buildings.** For the libraries, the
+   Library's own hours page
+   ([lib.umich.edu/locations-and-hours/hours-view](https://www.lib.umich.edu/locations-and-hours/hours-view))
+   is official and lists every space inside a building separately (e.g. Shapiro's
+   Clark Commons vs. Askwith Media Library). It's a better source than Google.
+4. **Optionally, use reviews and accessibility extensions as curation input.** For the
+   24 mguide spaces and future non-library spaces, a teammate reviews the suggested
+   tags and confirms them before they become `spaces.features` / `noise_level`. Never
+   import them blindly.
+5. This changes an MVP Scope decision, so it needs a new ADR ("Typical busyness from
+   Google popular times via SerpApi, snapshotted, building level") if the team agrees.
+
+Budget check for the free tier: about 30 place-ID lookups once, about 30 popular-times
+snapshots a month, and about 60–90 review queries once for curation. That's under 250
+in the first month and about 30 a month after.
+
 ## Gaps relative to what the app needs
 
 1. **Study-space coverage is still the biggest gap, though much less blank than it
