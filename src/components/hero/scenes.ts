@@ -12,7 +12,7 @@ export type Stroke = {
   // (a round table) instead of a solid line.
   radius: number;
   // Walls block sound and light; furniture is only drawn.
-  kind: "wall" | "furniture" | "furniture-fade";
+  kind: "wall" | "furniture" | "furniture-fade" | "furniture-highlight";
 };
 
 // A group of people talking, as a rounded box around their table. Rings
@@ -91,6 +91,10 @@ function faded(...strokes: Stroke[]): Stroke[] {
   return strokes.map((stroke) => ({ ...stroke, kind: "furniture-fade" }));
 }
 
+function highlighted(...strokes: Stroke[]): Stroke[] {
+  return strokes.map((stroke) => ({ ...stroke, kind: "furniture-highlight" }));
+}
+
 // An open commons on a library's main floor. Two groups talk at round
 // tables in the lower half. Their sound reaches the quiet table in the top
 // left through a wide gap, while two simple dividers cast acoustic shadows.
@@ -105,23 +109,23 @@ export const COMMONS: StudyScene = {
     wall(13.5, -2, 13.5, 7.5),
     wall(13.5, 7.5, 27, 7.5),
 
-    // Two quiet rectangular tables, faded with the scene-edge vignette.
+    // Two quiet rectangular tables. The selected one stays crisp and uses a
+    // stronger ink layer; the peripheral one fades with the vignette.
     ...faded(...rect(1.2, 3.7, 2.4, 1.6), ...benchSeating(1.2, 3.7, 2.4, 1.6, 2)),
-    ...faded(...rect(8.4, 3.7, 2.4, 1.6), ...benchSeating(8.4, 3.7, 2.4, 1.6, 2)),
+    ...highlighted(...rect(8.4, 3.7, 2.4, 1.6), ...benchSeating(8.4, 3.7, 2.4, 1.6, 2)),
     // Three evenly spaced circular tables, all emitting sound.
     roundTable(7.6, 12.6, 1.15),
     ...ringSeating(7.6, 12.6, 1.75, 5, -Math.PI / 2),
     roundTable(15.4, 12.6, 1.15),
     ...ringSeating(15.4, 12.6, 1.75, 5, -Math.PI / 2),
-    roundTable(23.2, 12.6, 1.15),
-    ...ringSeating(23.2, 12.6, 1.75, 5, -Math.PI / 2),
+    ...faded(roundTable(23.2, 12.6, 1.15), ...ringSeating(23.2, 12.6, 1.75, 5, -Math.PI / 2)),
   ],
   sound: [
     { at: [7.6, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
     { at: [15.4, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
     { at: [23.2, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
   ],
-  pin: [9.6, 3.7],
+  pin: [8.4, 3.7],
   chipSide: "right",
   chip: {
     eyebrow: "Example space",
@@ -132,5 +136,6 @@ export const COMMONS: StudyScene = {
       { label: "Whiteboards" },
     ],
     footnote: "Based on 14 check-ins",
+    accentBorder: true,
   },
 };

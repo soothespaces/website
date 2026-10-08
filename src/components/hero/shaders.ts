@@ -57,13 +57,20 @@ void main() {
   float walls = 1e5;
   float furniture = 1e5;
   float fadedFurniture = 1e5;
+  float highlightedFurniture = 1e5;
   for (int i = 0; i < SEG_COUNT; i++) {
     float d = strokeDist(i, p);
     if (i < WALL_COUNT) walls = min(walls, d);
     else if (i < FADE_FURNITURE_START) furniture = min(furniture, d);
-    else fadedFurniture = min(fadedFurniture, d);
+    else if (i < HIGHLIGHT_FURNITURE_START) fadedFurniture = min(fadedFurniture, d);
+    else highlightedFurniture = min(highlightedFurniture, d);
   }
-  fragColor = vec4(coverage(walls), coverage(furniture), coverage(fadedFurniture), 1.0);
+  fragColor = vec4(
+    coverage(walls),
+    coverage(furniture),
+    coverage(fadedFurniture),
+    coverage(highlightedFurniture)
+  );
 }
 `;
 
@@ -247,6 +254,7 @@ void main() {
   over(color, uAccent, ringAlpha);
   over(color, uFg, ink.b * uAlpha.y * mask * vignette);
   over(color, uFg, ink.g * uAlpha.y * mask);
+  over(color, uFg, ink.a * min(uAlpha.y * 2.5, 0.65) * mask);
   over(color, uFg, ink.r * uAlpha.x * mask * vignette);
   fragColor = color;
 }

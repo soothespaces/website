@@ -37,7 +37,8 @@ function packScene(scene: StudyScene) {
   const walls = scene.strokes.filter((s) => s.kind === "wall");
   const furniture = scene.strokes.filter((s) => s.kind === "furniture");
   const fadedFurniture = scene.strokes.filter((s) => s.kind === "furniture-fade");
-  const strokes = [...walls, ...furniture, ...fadedFurniture];
+  const highlightedFurniture = scene.strokes.filter((s) => s.kind === "furniture-highlight");
+  const strokes = [...walls, ...furniture, ...fadedFurniture, ...highlightedFurniture];
   const sources = scene.sound.slice(0, SOURCE_SLOTS);
   const boxes = sources.map((s) => [s.at[0], s.at[1], s.halfSize[0], s.halfSize[1]]);
   const rounding = sources.map((s) => s.rounding);
@@ -50,6 +51,7 @@ function packScene(scene: StudyScene) {
       SEG_COUNT: strokes.length,
       WALL_COUNT: walls.length,
       FADE_FURNITURE_START: walls.length + furniture.length,
+      HIGHLIGHT_FURNITURE_START: walls.length + furniture.length + fadedFurniture.length,
       SOURCE_COUNT: sources.length,
       SOURCE_SLOTS,
     },
