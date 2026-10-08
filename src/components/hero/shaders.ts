@@ -1,7 +1,8 @@
 // GLSL for the hero scenes. Scene sizes are compiled in as #defines, so each
 // scene gets its own programs.
 
-export const SPEED = 1.15; // meters per second
+// The baked distance is packed into two 8-bit channels, up to this many meters.
+export const MAX_DISTANCE = 100;
 
 const SEGMENTS = /* glsl */ `
 uniform vec4 uSegA[SEG_COUNT]; // endpoints a.xy, b.xy
@@ -64,48 +65,88 @@ void main() {
 }
 `;
 
-// Scene space, drawn once per scene: how much of each source reaches a
-// point. Sound bends around corners, so the shadows are deliberately soft.
-export const VISIBILITY_FRAGMENT = /* glsl */ `#version 300 es
+// Scene space, drawn once per scene. Everything here is static, so the whole
+// field is baked: the smooth min of the distances to the sound sources
+// (packed into RG) and how much of that sound gets past the walls (B).
+export const FIELD_FRAGMENT = /* glsl */ `#version 300 es
 precision highp float;
 ${SEGMENTS}
+uniform vec4 uSourceBox[SOURCE_SLOTS]; // center.xy, half size
+uniform float uSourceRounding[SOURCE_SLOTS];
 uniform vec2 uWorldMin;
 uniform vec2 uWorldSize;
-uniform vec4 uSources[SOURCE_SLOTS];
 in vec2 vUv;
 out vec4 fragColor;
 
-float visibility(vec2 p, vec2 source) {
-  vec2 toSource = source - p;
-  float len = length(toSource);
-  if (len < 1e-3) return 1.0;
-  vec2 dir = toSource / len;
-  float lit = 1.0;
-  float t = 0.0;
-  for (int i = 0; i < 96; i++) {
-    float h = wallDist(p + dir * t);
+const int STEP_COUNT = 128;
+const float MIN_HIT_DIST = 0.01;
+const float MAX_TRACE_DIST = 0.4;
+const float SHADOW_SOFTNESS = 0.3; // the lower, the sharper
+// How close, in meters, the two fields get before they merge.
+const float BLEND = 1.6;
+
+float sourceDist(vec2 p, int i) {
+  float r = uSourceRounding[i];
+  vec2 q = abs(p - uSourceBox[i].xy) - uSourceBox[i].zw + r;
+  return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
+}
+
+vec2 towardSource(vec2 p, int i) {
+  vec2 e = vec2(0.01, 0.0);
+  return -normalize(vec2(
+    sourceDist(p + e.xy, i) - sourceDist(p - e.xy, i),
+    sourceDist(p + e.yx, i) - sourceDist(p - e.yx, i)
+  ));
+}
+
+// Soft shadow, sphere tracing from p to the nearest point of the source.
+// A ray that enters a wall counts as fully blocked: the walls are too thin
+// for the trace to go deep enough inside them on its own.
+float heard(vec2 p, int i) {
+  float distToSource = sourceDist(p, i);
+  if (distToSource <= 0.0) return 1.0;
+  vec2 rayDir = towardSource(p, i);
+  float res = 1.0;
+  float t = MIN_HIT_DIST;
+  for (int s = 0; s < STEP_COUNT; s++) {
+    float h = wallDist(p + rayDir * t);
     if (h < 0.0) return 0.0;
-    float along = max(min(t, len - t), 0.15);
-    lit = min(lit, h / (0.32 * along));
-    t += clamp(h, 0.02, 0.6);
-    if (t >= len) break;
+    res = min(res, h / (SHADOW_SOFTNESS * t));
+    t += clamp(h, MIN_HIT_DIST, MAX_TRACE_DIST);
+    if (t > distToSource) break;
   }
-  return smoothstep(0.0, 1.0, clamp(lit, 0.0, 1.0));
+  res = clamp(res, 0.0, 1.0);
+  return res * res * (3.0 - 2.0 * res);
+}
+
+vec2 encode(float d) {
+  float v = floor(clamp(d / ${MAX_DISTANCE.toFixed(1)}, 0.0, 1.0) * 65535.0 + 0.5);
+  float high = floor(v / 256.0);
+  return vec2(high, v - high * 256.0) / 255.0;
 }
 
 void main() {
   vec2 p = uWorldMin + vUv * uWorldSize;
-  vec4 v = vec4(0.0);
-  for (int i = 0; i < SOURCE_COUNT; i++) v[i] = visibility(p, uSources[i].xy);
-  fragColor = v;
+  float d = 1e4;
+  float shadow = 1.0;
+  for (int i = 0; i < SOURCE_COUNT; i++) {
+    float di = max(sourceDist(p, i), 0.0);
+    float si = heard(p, i);
+    // Polynomial smooth min; the same weight blends the shadows.
+    float h = clamp(0.5 + 0.5 * (d - di) / BLEND, 0.0, 1.0);
+    d = mix(d, di, h) - BLEND * h * (1.0 - h);
+    shadow = mix(shadow, si, h);
+  }
+  fragColor = vec4(encode(max(d, 0.0)), shadow, 1.0);
 }
 `;
 
-// Every frame: rings from each source, under the baked walls.
+// Every frame: the baked field's contour lines, moving outward over time.
 export const COMPOSITE_FRAGMENT = /* glsl */ `#version 300 es
 precision highp float;
 uniform sampler2D uInk;
-uniform sampler2D uVisibility;
+uniform highp sampler2D uField;
+uniform vec2 uFieldSize;
 uniform vec2 uRes;
 uniform vec2 uOffset;
 uniform float uPx;
@@ -114,59 +155,39 @@ uniform vec2 uWorldSize;
 uniform vec4 uBounds; // min.xy, max.xy
 uniform float uFade;
 uniform float uTime;
-uniform vec4 uSources[SOURCE_SLOTS]; // position, period, seed
 uniform vec3 uFg;
 uniform vec3 uAccent;
 uniform vec4 uAlpha; // walls, furniture, floor grid, rings
 out vec4 fragColor;
 
-const float SPEED = ${SPEED.toFixed(3)};
-const float RING_WIDTH = 0.045;
-const float DECAY = 4.5;
-// How far apart, in meters, rings from different sources start to merge.
-const float BLEND = 0.4;
-const float SILENT = 1e3;
+const float SPACING = 0.85; // meters between rings
+const float SPEED = 0.55; // meters per second
+const float RING_WIDTH = 0.03;
+// Falls off like a light: 1 / (constant + linear * d + quadratic * d^2).
+const vec3 ATTENUATION = vec3(1.0, 0.18, 0.02);
+// How much still comes through a wall.
+const float LEAK = 0.06;
 
 float hash(float n) {
   return fract(sin(n * 91.3458) * 47453.5453);
 }
 
-// Speech comes in bursts: some rings are skipped, the rest vary in strength.
-float burst(float k, float seed) {
-  float on = step(0.32, hash(k * 1.731 + seed * 13.17));
-  return on * mix(0.45, 1.0, hash(k * 0.917 + seed * 3.71));
+vec2 texel(ivec2 c) {
+  vec4 t = texelFetch(uField, clamp(c, ivec2(0), ivec2(uFieldSize) - 1), 0) * 255.0;
+  return vec2((t.x * 256.0 + t.y) / 65535.0 * ${MAX_DISTANCE.toFixed(1)}, t.z / 255.0);
 }
 
-float edge(float d, float halfWidth) {
-  return 1.0 - smoothstep(halfWidth, halfWidth + uPx * 1.5, d);
-}
-
-// Distance from p to this source's nearest ring, and how loud that ring is.
-vec2 ring(vec2 p, vec4 source, float heard) {
-  float r = length(p - source.xy);
-  float period = source.z;
-  float wavelength = period * SPEED;
-  float q = (uTime - r / SPEED) / period;
-  float k = floor(q);
-  float f = q - k;
-
-  // Ring k has already passed p; ring k + 1 hasn't reached it yet.
-  vec2 passed = vec2(f * wavelength, burst(k, source.w));
-  vec2 coming = vec2((1.0 - f) * wavelength, burst(k + 1.0, source.w));
-  passed.x += step(passed.y, 0.0) * SILENT;
-  coming.x += step(coming.y, 0.0) * SILENT;
-  vec2 nearest = passed.x < coming.x ? passed : coming;
-
-  float falloff = exp(-r / DECAY) * smoothstep(0.25, 1.4, r);
-  // Rings fully behind a wall leave the field, so they don't pull audible
-  // rings into a blend.
-  return vec2(nearest.x + step(heard, 0.03) * SILENT, nearest.y * falloff * heard);
-}
-
-// Polynomial smooth min over the distance, blending loudness by the same weight.
-vec2 smin(vec2 a, vec2 b) {
-  float h = clamp(0.5 + 0.5 * (b.x - a.x) / BLEND, 0.0, 1.0);
-  return vec2(mix(b.x, a.x, h) - BLEND * h * (1.0 - h), mix(b.y, a.y, h));
+// Bilinear filtering by hand, since the packed bytes can't be filtered.
+vec2 field(vec2 p) {
+  vec2 st = (p - uWorldMin) / uWorldSize * uFieldSize - 0.5;
+  vec2 i = floor(st);
+  vec2 f = st - i;
+  ivec2 c = ivec2(i);
+  vec2 a = texel(c);
+  vec2 b = texel(c + ivec2(1, 0));
+  vec2 d = texel(c + ivec2(0, 1));
+  vec2 e = texel(c + ivec2(1, 1));
+  return mix(mix(a, b, f.x), mix(d, e, f.x), f.y);
 }
 
 float boxDist(vec2 p, vec4 box) {
@@ -189,20 +210,29 @@ void main() {
     return;
   }
 
-  vec4 ink = texture(uInk, gl_FragCoord.xy / uRes);
-  vec4 heard = texture(uVisibility, (p - uWorldMin) / uWorldSize);
+  vec2 sample_ = field(p);
+  float d = sample_.x;
+  float shadow = sample_.y;
 
-  vec2 sound = vec2(SILENT, 0.0);
-  for (int i = 0; i < SOURCE_COUNT; i++) sound = smin(sound, ring(p, uSources[i], heard[i]));
-  float halfWidth = max(RING_WIDTH, uPx * 0.75);
-  float loudness = clamp(sound.y * 1.8, 0.0, 1.0);
-  float ringAlpha = edge(sound.x, halfWidth) * loudness * uAlpha.w * mask;
+  float x = d / SPACING - uTime * (SPEED / SPACING);
+  float ring = floor(x + 0.5);
+  float aa = max(fwidth(d), 1e-4);
+  float halfWidth = max(RING_WIDTH, aa * 0.6);
+  float line = 1.0 - smoothstep(halfWidth, halfWidth + aa * 1.2, abs(x - ring) * SPACING);
+
+  float strength = mix(0.6, 1.0, hash(ring + 17.0));
+  float falloff = smoothstep(0.0, 0.4, d)
+    / (ATTENUATION.x + ATTENUATION.y * d + ATTENUATION.z * d * d);
+  float ringAlpha = line * strength * falloff * mix(LEAK, 1.0, shadow) * uAlpha.w * mask;
 
   // A faint one-meter dot grid on the floor of the room itself.
   vec2 cell = abs(fract(p) - 0.5);
-  float dot_ = edge(length(0.5 - cell), max(0.03, uPx * 0.6));
-  float grid = dot_ * uAlpha.z * (1.0 - smoothstep(-1.0, 0.0, outside));
+  float dotDist = length(0.5 - cell);
+  float dotRadius = max(0.03, uPx * 0.6);
+  float grid = (1.0 - smoothstep(dotRadius, dotRadius + uPx * 1.5, dotDist)) * uAlpha.z
+    * (1.0 - smoothstep(-1.0, 0.0, outside));
 
+  vec4 ink = texture(uInk, gl_FragCoord.xy / uRes);
   vec4 color = vec4(0.0);
   over(color, uFg, grid);
   over(color, uAccent, ringAlpha);

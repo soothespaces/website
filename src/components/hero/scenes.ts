@@ -15,11 +15,12 @@ export type Stroke = {
   kind: "wall" | "furniture";
 };
 
+// A group of people talking, as a rounded box around their table. Rings
+// start at its edge.
 export type SoundSource = {
   at: Vec2;
-  // Seconds between rings. Each source gets its own so they never sync up.
-  period: number;
-  seed: number;
+  halfSize: Vec2;
+  rounding: number;
 };
 
 export type StudyScene = {
@@ -41,10 +42,6 @@ const CHAIR = 0.2;
 
 function wall(ax: number, ay: number, bx: number, by: number, halfWidth = INTERIOR): Stroke {
   return { a: [ax, ay], b: [bx, by], halfWidth, radius: 0, kind: "wall" };
-}
-
-function column(x: number, y: number, radius = 0.28): Stroke {
-  return { a: [x, y], b: [x, y], halfWidth: radius, radius: 0, kind: "wall" };
 }
 
 function rect(cx: number, cy: number, width: number, height: number): Stroke[] {
@@ -88,57 +85,63 @@ function ringSeating(cx: number, cy: number, radius: number, count: number, star
   });
 }
 
-// An open commons on a library's main floor: group tables, talking allowed,
-// a wide opening onto the corridor and doors through to the next rooms.
+// An open commons on a library's main floor. A partition splits it between
+// two talking groups, a closed group room takes one corner, and the third
+// table, the one the chip points at, is quiet itself but hears both.
 export const COMMONS: StudyScene = {
   id: "commons",
-  bounds: { x: -0.5, y: -0.5, width: 25, height: 15 },
+  bounds: { x: -0.5, y: -0.5, width: 27, height: 16 },
   margin: 10,
   strokes: [
     // Exterior wall along the top, running past both neighbors.
-    wall(-16, 0, 40, 0, EXTERIOR),
-    // The commons: a door on the left, a wide opening onto the corridor,
-    // a door through to the reading room on the right.
-    wall(0, 0, 0, 8.4),
-    wall(0, 10.4, 0, 14),
-    wall(0, 14, 9.4, 14),
-    wall(14.6, 14, 24, 14),
-    wall(24, 0, 24, 3),
-    wall(24, 4.8, 24, 14),
+    wall(-16, 0, 42, 0, EXTERIOR),
+    // The commons: a door on each side and a wide opening onto the corridor.
+    wall(0, 0, 0, 9.6),
+    wall(0, 11.4, 0, 15),
+    wall(0, 15, 5.5, 15),
+    wall(9.5, 15, 26, 15),
+    wall(26, 0, 26, 2.4),
+    wall(26, 4.2, 26, 15),
+    // The partition between the two groups, open at the bottom.
+    wall(12.5, 0, 12.5, 7.8, 0.12),
+    // A closed group study room in the bottom-right corner.
+    wall(19, 10, 26, 10),
+    wall(19, 10, 19, 15),
     // Neighboring rooms along the same corridor.
-    wall(-16, 14, -4.2, 14),
-    wall(-2.8, 14, 0, 14),
-    wall(-8, 0, -8, 14),
-    wall(24, 14, 28, 14),
-    wall(29.4, 14, 40, 14),
-    wall(32, 0, 32, 14),
+    wall(-16, 15, -4.2, 15),
+    wall(-2.8, 15, 0, 15),
+    wall(-8, 0, -8, 15),
+    wall(26, 15, 30, 15),
+    wall(31.4, 15, 42, 15),
+    wall(34, 0, 34, 15),
     // Rooms across the corridor.
-    wall(-16, 18.5, 3, 18.5),
-    wall(5, 18.5, 18, 18.5),
-    wall(20, 18.5, 40, 18.5),
-    wall(4, 18.5, 4, 30),
-    wall(22, 18.5, 22, 30),
-    column(8, 7),
-    column(16, 7),
+    wall(-16, 19, 3, 19),
+    wall(5, 19, 20, 19),
+    wall(22, 19, 42, 19),
+    wall(4, 19, 4, 30),
+    wall(21, 19, 21, 30),
 
-    ...rect(6.4, 4.6, 3.4, 1.3),
-    ...benchSeating(6.4, 4.6, 3.4, 1.3, 3),
-    roundTable(16.8, 8.4, 1.0),
-    ...ringSeating(16.8, 8.4, 1.55, 5, -Math.PI / 2),
+    ...rect(6, 4.8, 3.4, 1.3),
+    ...benchSeating(6, 4.8, 3.4, 1.3, 3),
+    roundTable(19.4, 5, 1.0),
+    ...ringSeating(19.4, 5, 1.55, 5, -Math.PI / 2),
+    ...rect(14.8, 11.6, 1.6, 1.0),
+    chair(14.3, 12.55),
+    chair(15.3, 12.55),
     // A rolling whiteboard.
     {
-      a: [22.3, 3.4],
-      b: [22.3, 6.2],
+      a: [24.6, 5.6],
+      b: [24.6, 8.4],
       halfWidth: 0.07,
       radius: 0,
       kind: "furniture",
     },
   ],
   sound: [
-    { at: [6.4, 4.6], period: 2.3, seed: 1.3 },
-    { at: [16.8, 8.4], period: 2.6, seed: 4.1 },
+    { at: [6, 4.8], halfSize: [1.75, 0.7], rounding: 0.45 },
+    { at: [19.4, 5], halfSize: [1.05, 1.05], rounding: 1.05 },
   ],
-  pin: [10.6, 11.4],
+  pin: [14.8, 11.6],
   chip: {
     eyebrow: "Example space",
     name: "Commons, level 1",

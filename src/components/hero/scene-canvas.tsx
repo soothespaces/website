@@ -5,8 +5,8 @@ import type { StudyScene } from "./scenes";
 import {
   COMPOSITE_FRAGMENT,
   INK_FRAGMENT,
+  FIELD_FRAGMENT,
   VERTEX,
-  VISIBILITY_FRAGMENT,
   withDefines,
 } from "./shaders";
 
@@ -14,8 +14,8 @@ import {
 // screen in the first frame. It's also the frame shown with reduced motion.
 const START_TIME = 40;
 const MAX_DPR = 2;
-const VISIBILITY_TEXELS_PER_METER = 8;
-const SOURCE_SLOTS = 4;
+const FIELD_TEXELS_PER_METER = 10;
+const SOURCE_SLOTS = 2;
 
 type Rgb = [number, number, number];
 
@@ -37,8 +37,12 @@ function packScene(scene: StudyScene) {
   const walls = scene.strokes.filter((s) => s.kind === "wall");
   const strokes = [...walls, ...scene.strokes.filter((s) => s.kind !== "wall")];
   const sources = scene.sound.slice(0, SOURCE_SLOTS);
-  const padded = [...sources.map((s) => [s.at[0], s.at[1], s.period, s.seed])];
-  while (padded.length < SOURCE_SLOTS) padded.push([0, 0, 1, 0]);
+  const boxes = sources.map((s) => [s.at[0], s.at[1], s.halfSize[0], s.halfSize[1]]);
+  const rounding = sources.map((s) => s.rounding);
+  while (boxes.length < SOURCE_SLOTS) {
+    boxes.push([0, 0, 0, 0]);
+    rounding.push(0);
+  }
   return {
     defines: {
       SEG_COUNT: strokes.length,
@@ -48,7 +52,8 @@ function packScene(scene: StudyScene) {
     },
     segA: strokes.map((s) => [s.a[0], s.a[1], s.b[0], s.b[1]]),
     segB: strokes.map((s) => [s.radius, s.halfWidth]),
-    sources: padded,
+    sourceBox: boxes,
+    sourceRounding: rounding,
   };
 }
 
@@ -124,21 +129,26 @@ export function SceneCanvas({
           depthWrite: false,
         });
 
-      const visibilityTarget = new RenderTarget(gl, {
-        width: Math.min(1024, Math.ceil(worldSize[0] * VISIBILITY_TEXELS_PER_METER)),
-        height: Math.min(1024, Math.ceil(worldSize[1] * VISIBILITY_TEXELS_PER_METER)),
+      // The packed distance can't be filtered; the composite pass
+      // interpolates it itself.
+      const fieldTarget = new RenderTarget(gl, {
+        width: Math.min(1024, Math.ceil(worldSize[0] * FIELD_TEXELS_PER_METER)),
+        height: Math.min(1024, Math.ceil(worldSize[1] * FIELD_TEXELS_PER_METER)),
         depth: false,
+        minFilter: gl.NEAREST,
+        magFilter: gl.NEAREST,
       });
-      const visibilityMesh = new Mesh(gl, {
+      const fieldMesh = new Mesh(gl, {
         geometry,
-        program: program(VISIBILITY_FRAGMENT, {
+        program: program(FIELD_FRAGMENT, {
           ...segments,
+          uSourceBox: { value: packed.sourceBox },
+          uSourceRounding: { value: packed.sourceRounding },
           uWorldMin: { value: worldMin },
           uWorldSize: { value: worldSize },
-          uSources: { value: packed.sources },
         }),
       });
-      renderer.render({ scene: visibilityMesh, target: visibilityTarget });
+      renderer.render({ scene: fieldMesh, target: fieldTarget });
 
       const inkTarget = new RenderTarget(gl, { width: 1, height: 1, depth: false });
       const inkMesh = new Mesh(gl, {
@@ -158,7 +168,8 @@ export function SceneCanvas({
           ...view,
           ...colors,
           uInk: { value: inkTarget.texture },
-          uVisibility: { value: visibilityTarget.texture },
+          uField: { value: fieldTarget.texture },
+          uFieldSize: { value: [fieldTarget.width, fieldTarget.height] },
           uWorldMin: { value: worldMin },
           uWorldSize: { value: worldSize },
           uBounds: {
@@ -166,7 +177,6 @@ export function SceneCanvas({
           },
           uFade: { value: margin * 0.8 },
           uTime: time,
-          uSources: { value: packed.sources },
         }),
       });
 
@@ -284,8 +294,8 @@ export function SceneCanvas({
         document.removeEventListener("visibilitychange", update);
         canvas.removeEventListener("webglcontextlost", onContextLost);
         canvas.removeEventListener("webglcontextrestored", onContextRestored);
-        for (const mesh of [visibilityMesh, inkMesh, compositeMesh]) mesh.program.remove();
-        for (const target of [visibilityTarget, inkTarget]) {
+        for (const mesh of [fieldMesh, inkMesh, compositeMesh]) mesh.program.remove();
+        for (const target of [fieldTarget, inkTarget]) {
           gl.deleteFramebuffer(target.buffer);
           for (const texture of target.textures) gl.deleteTexture(texture.texture);
         }

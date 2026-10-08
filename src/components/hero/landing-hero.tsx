@@ -58,14 +58,15 @@ export function LandingHero({ scene, children }: { scene: StudyScene; children: 
           style={{ aspectRatio: `${bounds.width} / ${bounds.height}` }}
         >
           <figcaption className="sr-only">
-            Illustration: sound spreading from group tables across an open commons.
+            Illustration: sound spreading from two group tables across an open
+            commons, partly blocked by a partition, reaching a quiet table.
           </figcaption>
           <div
             className="absolute flex -translate-x-1/2 flex-col items-center"
             style={{ left: `${pinLeft}%`, top: `${pinTop}%` }}
           >
             <span className="size-3 -translate-y-1/2 rounded-full border-2 border-card bg-primary shadow-sm" />
-            <span className="-mt-1 h-4 w-px bg-primary/60" />
+            <span className="-mt-1 h-9 w-px bg-primary/60" />
             <SpaceChip {...scene.chip} />
           </div>
           {reducedMotion ? null : (
