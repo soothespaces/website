@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Collapsible } from "radix-ui";
-import { useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { NAV_LINKS, ROUTES } from "@/lib/site";
 import { LogoMark, Wordmark } from "./logo";
 
@@ -62,10 +62,22 @@ function MenuIcon({ open }: { open: boolean }) {
 // server (it reads the session) and passed in, so it stays a Server Component.
 export function HeaderFrame({ account }: { account: ReactNode }) {
   const pathname = usePathname();
+  const headerRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   // Tracking the page the menu was opened on closes it after any navigation.
   const [openOn, setOpenOn] = useState<string | null>(null);
   const open = openOn === pathname;
+
+  // The menu floats over the page, so a press anywhere outside the header
+  // dismisses it.
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(event: PointerEvent) {
+      if (!headerRef.current?.contains(event.target as Node)) setOpenOn(null);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [open]);
 
   return (
     <Collapsible.Root
@@ -74,7 +86,8 @@ export function HeaderFrame({ account }: { account: ReactNode }) {
       onOpenChange={(next) => setOpenOn(next ? pathname : null)}
     >
       <header
-        className="border-b border-border"
+        ref={headerRef}
+        className="relative z-40 border-b border-border bg-background"
         onKeyDown={(event) => {
           if (event.key === "Escape" && open) {
             setOpenOn(null);
@@ -112,7 +125,7 @@ export function HeaderFrame({ account }: { account: ReactNode }) {
           </div>
         </div>
 
-        <Collapsible.Content className="border-t border-border md:hidden">
+        <Collapsible.Content className="absolute inset-x-0 top-full border-y border-border bg-background shadow-lg md:hidden">
           <nav aria-label="Main" className="mx-auto w-full max-w-5xl px-4 py-2">
             <NavLinks
               pathname={pathname}
