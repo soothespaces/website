@@ -8,23 +8,67 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+This repo uses npm (there's a `package-lock.json`), so use `npm`, not yarn.
+
+### 1. Install
+
+```bash
+npm install
+```
+
+### 2. Pull env vars from Vercel
+
+The app talks to the production Supabase project, and its settings live in the
+Vercel project (`soothespaces`, team `tanner-s-projects`). You need to be a member
+of that Vercel team. One-time setup:
+
+```bash
+npx vercel login
+npx vercel link        # pick tanner-s-projects / soothespaces
+```
+
+Then, any time the env vars change:
+
+```bash
+npm run env:pull       # = vercel env pull .env.local --environment=production
+```
+
+This writes `.env.local` (git-ignored). The Supabase vars are only set for the
+Production environment in Vercel, which is why the script passes
+`--environment=production`. Vars marked Sensitive in Vercel (service role key,
+DB password) come down empty; the app doesn't need them. The two it reads are
+listed in [`.env.example`](.env.example):
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (the newer name for the anon key; safe in
+  the browser because Row Level Security decides what it can read and write)
+
+### 3. Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supabase
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Clients:** `src/lib/supabase/client.ts` (Client Components) and
+  `src/lib/supabase/server.ts` (Server Components, Server Functions, Route
+  Handlers). `src/proxy.ts` refreshes the auth session cookie on each request
+  (Next 16 renamed `middleware.ts` to `proxy.ts`).
+- **Schema changes** go through the Supabase MCP server's `apply_migration`, or the
+  CLI. Either way, commit the migration SQL to `supabase/migrations/` so the repo
+  is the record of the schema (see [ADR 0003](docs/decisions/0003-supabase-as-backend.md)).
+  After applying one through MCP, save the same SQL as
+  `supabase/migrations/<timestamp>_<name>.sql` using the version MCP reports
+  (check with `list_migrations`).
+- **Types:** `src/types/supabase.ts` is generated. Regenerate after a schema change
+  with `npm run db:types` (needs `npx supabase login` once), or with the MCP
+  server's `generate_typescript_types`.
+- **Local stack (optional):** `supabase/config.toml` is there so `npx supabase start`
+  can run a local Postgres in Docker, but day-to-day development uses the
+  production project.
 
 ## Learn More
 
