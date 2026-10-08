@@ -156,6 +156,7 @@ uniform vec2 uWorldMin;
 uniform vec2 uWorldSize;
 uniform vec4 uBounds; // min.xy, max.xy
 uniform float uFade;
+uniform float uRightFade;
 uniform float uTime;
 uniform vec3 uFg;
 uniform vec3 uAccent;
@@ -219,7 +220,7 @@ void main() {
   vec2 fromMax = uBounds.zw - p;
   float vignette = min(
     min(smoothstep(0.0, 5.0, fromMin.x), smoothstep(0.0, 5.0, fromMin.y)),
-    min(smoothstep(0.0, 0.8, fromMax.x), smoothstep(0.0, 5.0, fromMax.y))
+    min(smoothstep(0.0, uRightFade, fromMax.x), smoothstep(0.0, 5.0, fromMax.y))
   );
 
   float x = d / SPACING - uTime * (SPEED / SPACING);
