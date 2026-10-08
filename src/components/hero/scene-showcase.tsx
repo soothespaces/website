@@ -64,7 +64,7 @@ export function SceneShowcase({
         <div className="flex max-w-xl flex-col gap-6">{children}</div>
         <figure
           ref={stageRef}
-          className="relative w-full"
+          className="relative w-full translate-x-[6%]"
           style={{ aspectRatio: `${bounds.width} / ${bounds.height}` }}
         >
           <figcaption className="sr-only">

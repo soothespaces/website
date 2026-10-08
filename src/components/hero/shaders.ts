@@ -206,7 +206,7 @@ void over(inout vec4 dst, vec3 color, float alpha) {
 void main() {
   vec2 p = uOffset + vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y) * uPx;
   float outside = boxDist(p, uBounds);
-  float mask = 1.0 - smoothstep(0.0, uFade, outside);
+  float mask = (1.0 - smoothstep(0.0, uFade, outside)) * step(p.x, uBounds.z);
   if (mask <= 0.0) {
     fragColor = vec4(0.0);
     return;
@@ -215,8 +215,12 @@ void main() {
   vec2 sample_ = field(p);
   float d = sample_.x;
   float shadow = sample_.y;
-  vec2 edgeDist = min(p - uBounds.xy, uBounds.zw - p);
-  float vignette = smoothstep(0.0, 5.0, min(edgeDist.x, edgeDist.y));
+  vec2 fromMin = p - uBounds.xy;
+  vec2 fromMax = uBounds.zw - p;
+  float vignette = min(
+    min(smoothstep(0.0, 5.0, fromMin.x), smoothstep(0.0, 5.0, fromMin.y)),
+    min(smoothstep(0.0, 0.8, fromMax.x), smoothstep(0.0, 5.0, fromMax.y))
+  );
 
   float x = d / SPACING - uTime * (SPEED / SPACING);
   float ring = floor(x + 0.5);
@@ -243,7 +247,7 @@ void main() {
   over(color, uAccent, ringAlpha);
   over(color, uFg, ink.b * uAlpha.y * mask * vignette);
   over(color, uFg, ink.g * uAlpha.y * mask);
-  over(color, uFg, ink.r * uAlpha.x * mask);
+  over(color, uFg, ink.r * uAlpha.x * mask * vignette);
   fragColor = color;
 }
 `;
