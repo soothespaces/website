@@ -1,0 +1,280 @@
+/*
+ * Design tokens.
+ *
+ * Components only use the semantic variables below (through the Tailwind
+ * classes mapped in globals.css: bg-background, text-muted-foreground,
+ * bg-primary, bg-destructive, ...). Names follow shadcn/ui so its components
+ * drop in unchanged; `primary` is our one accent color.
+ *
+ * Each display setting is a data-* attribute on <html>. "System" means the
+ * attribute is absent, and the matching media query decides instead:
+ *
+ *   data-theme     light | dark      prefers-color-scheme
+ *   data-contrast  normal | more     prefers-contrast
+ *   data-palette   cvd               (opt-in only)
+ *   data-text      112 | 125 | 150   (browser zoom still applies on top)
+ *
+ * Contrast against the page background: text >= 4.5:1 (AA), control borders
+ * and the focus ring >= 3:1, high contrast and the colorblind palette >= 7:1.
+ * See docs/technical/design-system.md for the measured ratios.
+ */
+
+/* Light (default) */
+:root {
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: #171717;
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --popover: #ffffff;
+  --popover-foreground: #171717;
+  --muted: #f5f5f5;
+  --muted-foreground: #525252;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #171717;
+  --accent: #f5f5f5; /* shadcn's hover surface, not the brand accent */
+  --accent-foreground: #171717;
+  --primary: #1d4ed8; /* placeholder accent hue */
+  --primary-foreground: #ffffff;
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+  --border: #e5e5e5; /* decorative dividers only */
+  --input: #737373; /* borders that identify a control */
+  --ring: #1d4ed8;
+}
+
+/* Dark */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card: #171717;
+  --card-foreground: #ededed;
+  --popover: #171717;
+  --popover-foreground: #ededed;
+  --muted: #262626;
+  --muted-foreground: #a3a3a3;
+  --secondary: #262626;
+  --secondary-foreground: #ededed;
+  --accent: #262626;
+  --accent-foreground: #ededed;
+  --primary: #60a5fa;
+  --primary-foreground: #0a0a0a;
+  --destructive: #f87171;
+  --destructive-foreground: #0a0a0a;
+  --border: #262626;
+  --input: #8a8a8a;
+  --ring: #60a5fa;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --card: #171717;
+    --card-foreground: #ededed;
+    --popover: #171717;
+    --popover-foreground: #ededed;
+    --muted: #262626;
+    --muted-foreground: #a3a3a3;
+    --secondary: #262626;
+    --secondary-foreground: #ededed;
+    --accent: #262626;
+    --accent-foreground: #ededed;
+    --primary: #60a5fa;
+    --primary-foreground: #0a0a0a;
+    --destructive: #f87171;
+    --destructive-foreground: #0a0a0a;
+    --border: #262626;
+    --input: #8a8a8a;
+    --ring: #60a5fa;
+  }
+}
+
+/* High contrast, light: no muted grays, every border is a control border. */
+:root[data-contrast="more"] {
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --muted: #ffffff;
+  --muted-foreground: #262626;
+  --secondary: #ffffff;
+  --secondary-foreground: #000000;
+  --accent: #e5e5e5;
+  --accent-foreground: #000000;
+  --primary: #0033a0;
+  --primary-foreground: #ffffff;
+  --destructive: #8b0000;
+  --destructive-foreground: #ffffff;
+  --border: #000000;
+  --input: #000000;
+  --ring: #000000;
+}
+
+@media (prefers-contrast: more) {
+  :root:not([data-contrast="normal"]) {
+    --background: #ffffff;
+    --foreground: #000000;
+    --card: #ffffff;
+    --card-foreground: #000000;
+    --popover: #ffffff;
+    --popover-foreground: #000000;
+    --muted: #ffffff;
+    --muted-foreground: #262626;
+    --secondary: #ffffff;
+    --secondary-foreground: #000000;
+    --accent: #e5e5e5;
+    --accent-foreground: #000000;
+    --primary: #0033a0;
+    --primary-foreground: #ffffff;
+    --destructive: #8b0000;
+    --destructive-foreground: #ffffff;
+    --border: #000000;
+    --input: #000000;
+    --ring: #000000;
+  }
+}
+
+/*
+ * High contrast, dark. Four selectors cover explicit and system values of
+ * both settings; each is more specific than the single-setting rules above.
+ */
+:root[data-theme="dark"][data-contrast="more"] {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #000000;
+  --card-foreground: #ffffff;
+  --popover: #000000;
+  --popover-foreground: #ffffff;
+  --muted: #000000;
+  --muted-foreground: #e5e5e5;
+  --secondary: #000000;
+  --secondary-foreground: #ffffff;
+  --accent: #262626;
+  --accent-foreground: #ffffff;
+  --primary: #9cc3ff;
+  --primary-foreground: #000000;
+  --destructive: #ff9c9c;
+  --destructive-foreground: #000000;
+  --border: #ffffff;
+  --input: #ffffff;
+  --ring: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-contrast="more"] {
+    --background: #000000;
+    --foreground: #ffffff;
+    --card: #000000;
+    --card-foreground: #ffffff;
+    --popover: #000000;
+    --popover-foreground: #ffffff;
+    --muted: #000000;
+    --muted-foreground: #e5e5e5;
+    --secondary: #000000;
+    --secondary-foreground: #ffffff;
+    --accent: #262626;
+    --accent-foreground: #ffffff;
+    --primary: #9cc3ff;
+    --primary-foreground: #000000;
+    --destructive: #ff9c9c;
+    --destructive-foreground: #000000;
+    --border: #ffffff;
+    --input: #ffffff;
+    --ring: #ffffff;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root[data-theme="dark"]:not([data-contrast="normal"]) {
+    --background: #000000;
+    --foreground: #ffffff;
+    --card: #000000;
+    --card-foreground: #ffffff;
+    --popover: #000000;
+    --popover-foreground: #ffffff;
+    --muted: #000000;
+    --muted-foreground: #e5e5e5;
+    --secondary: #000000;
+    --secondary-foreground: #ffffff;
+    --accent: #262626;
+    --accent-foreground: #ffffff;
+    --primary: #9cc3ff;
+    --primary-foreground: #000000;
+    --destructive: #ff9c9c;
+    --destructive-foreground: #000000;
+    --border: #ffffff;
+    --input: #ffffff;
+    --ring: #ffffff;
+  }
+}
+
+@media (prefers-color-scheme: dark) and (prefers-contrast: more) {
+  :root:not([data-theme="light"]):not([data-contrast="normal"]) {
+    --background: #000000;
+    --foreground: #ffffff;
+    --card: #000000;
+    --card-foreground: #ffffff;
+    --popover: #000000;
+    --popover-foreground: #ffffff;
+    --muted: #000000;
+    --muted-foreground: #e5e5e5;
+    --secondary: #000000;
+    --secondary-foreground: #ffffff;
+    --accent: #262626;
+    --accent-foreground: #ffffff;
+    --primary: #9cc3ff;
+    --primary-foreground: #000000;
+    --destructive: #ff9c9c;
+    --destructive-foreground: #000000;
+    --border: #ffffff;
+    --input: #ffffff;
+    --ring: #ffffff;
+  }
+}
+
+/*
+ * Colorblind-safe palette (Okabe-Ito blue and vermillion). Only the accent
+ * and destructive colors change. Values clear 7:1 so they also hold up in
+ * high contrast. Declared last so it wins over the rules above.
+ */
+:root[data-palette="cvd"] {
+  --primary: #005a9c;
+  --primary-foreground: #ffffff;
+  --destructive: #9a3a00;
+  --destructive-foreground: #ffffff;
+  --ring: #005a9c;
+}
+
+:root[data-palette="cvd"][data-theme="dark"] {
+  --primary: #56b4e9;
+  --primary-foreground: #000000;
+  --destructive: #f5a06e;
+  --destructive-foreground: #000000;
+  --ring: #56b4e9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="cvd"]:not([data-theme="light"]) {
+    --primary: #56b4e9;
+    --primary-foreground: #000000;
+    --destructive: #f5a06e;
+    --destructive-foreground: #000000;
+    --ring: #56b4e9;
+  }
+}
+
+/* Text size. Everything is in rem, so the root size scales the whole UI. */
+:root[data-text="112"] {
+  font-size: 112.5%;
+}
+:root[data-text="125"] {
+  font-size: 125%;
+}
+:root[data-text="150"] {
+  font-size: 150%;
+}
