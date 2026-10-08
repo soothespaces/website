@@ -36,12 +36,15 @@ npm run env:pull       # = vercel env pull .env.local --environment=production
 This writes `.env.local` (git-ignored). The Supabase vars are only set for the
 Production environment in Vercel, which is why the script passes
 `--environment=production`. Vars marked Sensitive in Vercel (service role key,
-DB password) come down empty; the app doesn't need them. The two it reads are
+DB password) come down empty; the app doesn't need them. The ones it reads are
 listed in [`.env.example`](.env.example):
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (the newer name for the anon key; safe in
   the browser because Row Level Security decides what it can read and write)
+- `NEXT_PUBLIC_MAPTILER_KEY` (map tiles; restrict it to our domains in the MapTiler
+  dashboard). Optional: without it the map falls back to OpenFreeMap's keyless
+  OSM styles, which look different but work the same.
 
 ### 3. Run
 
