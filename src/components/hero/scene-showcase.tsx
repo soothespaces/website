@@ -69,8 +69,8 @@ export function SceneShowcase({
         >
           <figcaption className="sr-only">
             Illustration: sound spreading from two group tables across an open
-            commons and reaching a quiet table, while walls keep it out of a
-            closed room.
+            commons and reaching a quiet table, with two dividing walls casting
+            acoustic shadows.
           </figcaption>
           {scene.chipSide === "right" ? (
             <div

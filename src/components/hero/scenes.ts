@@ -38,7 +38,6 @@ export type StudyScene = {
   chip: SpaceChipProps;
 };
 
-const EXTERIOR = 0.15;
 const INTERIOR = 0.09;
 const FURNITURE = 0.045;
 const CHAIR = 0.2;
@@ -90,38 +89,17 @@ function ringSeating(cx: number, cy: number, radius: number, count: number, star
 
 // An open commons on a library's main floor. Two groups talk at round
 // tables in the lower half. Their sound reaches the quiet table in the top
-// left through a wide gap, but not the closed room in the top right.
+// left through a wide gap, while two simple dividers cast acoustic shadows.
 export const COMMONS: StudyScene = {
   id: "commons",
   bounds: { x: -0.5, y: -0.5, width: 24, height: 19.8 },
   margin: 9,
   strokes: [
-    // Exterior wall along the top, running past both neighbors.
-    wall(-16, 0, 40, 0, EXTERIOR),
-    // The commons: doors on both sides and an opening onto the corridor.
-    wall(0, 0, 0, 12),
-    wall(0, 13.8, 0, 18.8),
-    wall(0, 18.8, 9, 18.8),
-    wall(12.5, 18.8, 23, 18.8),
-    wall(23, 0, 23, 11),
-    wall(23, 12.6, 23, 18.8),
-    // A short stub off the left wall, and the closed room in the top right.
-    wall(0, 8.2, 2, 8.2),
+    // Only the dividers matter here; the surrounding room is deliberately
+    // left open instead of drawing a full floor plan around the tables.
+    wall(-3, 8.2, 2, 8.2),
     wall(13.5, 0, 13.5, 8.2, 0.12),
-    wall(13.5, 8.2, 23, 8.2, 0.12),
-    // Neighboring rooms along the same corridor.
-    wall(-16, 18.8, -4.2, 18.8),
-    wall(-2.8, 18.8, 0, 18.8),
-    wall(-8, 0, -8, 18.8),
-    wall(23, 18.8, 27, 18.8),
-    wall(28.4, 18.8, 40, 18.8),
-    wall(31, 0, 31, 18.8),
-    // Rooms across the corridor.
-    wall(-16, 22.8, 3, 22.8),
-    wall(5, 22.8, 20, 22.8),
-    wall(22, 22.8, 40, 22.8),
-    wall(4, 22.8, 4, 34),
-    wall(21, 22.8, 21, 34),
+    wall(13.5, 8.2, 27, 8.2, 0.12),
 
     // The quiet table.
     ...rect(8.4, 3.9, 2.4, 1.6),
