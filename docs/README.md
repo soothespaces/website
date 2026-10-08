@@ -39,6 +39,7 @@ file per significant technical decision, kept even after the decision is superse
 - [0006 — MapLibre GL + react-map-gl + OpenStreetMap](decisions/0006-maplibre-react-map-gl-osm.md)
 - [0007 — Anonymous check-ins, public aggregates only](decisions/0007-anonymous-check-ins-public-aggregates.md)
 - [0008 — Room availability from LibCal: read-only, cached, deep-link to book](decisions/0008-libcal-availability-read-only.md)
+- [0009 — Radix primitives for interactive UI](decisions/0009-radix-primitives.md)
 
 ## Conventions
 

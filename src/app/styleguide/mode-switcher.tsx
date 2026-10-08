@@ -1,5 +1,6 @@
 "use client";
 
+import { RadioGroup } from "radix-ui";
 import { useState } from "react";
 
 // Preview-only controls for the style guide. They set the same data-*
@@ -51,12 +52,15 @@ const SETTINGS: Setting[] = [
   },
 ];
 
-export function ModeSwitcher() {
-  const [values, setValues] = useState<Record<string, string | null>>({});
+// Radix needs string values; this one stands for "no attribute".
+const UNSET = "unset";
 
-  function choose(attr: Setting["attr"], value: string | null) {
+export function ModeSwitcher() {
+  const [values, setValues] = useState<Record<string, string>>({});
+
+  function choose(attr: Setting["attr"], value: string) {
     const root = document.documentElement;
-    if (value === null) root.removeAttribute(`data-${attr}`);
+    if (value === UNSET) root.removeAttribute(`data-${attr}`);
     else root.setAttribute(`data-${attr}`, value);
     setValues((v) => ({ ...v, [attr]: value }));
   }
@@ -64,21 +68,33 @@ export function ModeSwitcher() {
   return (
     <div className="flex flex-wrap gap-6">
       {SETTINGS.map((setting) => (
-        <fieldset key={setting.attr} className="flex flex-col gap-1">
-          <legend className="mb-1 font-medium">{setting.legend}</legend>
-          {setting.options.map((option) => (
-            <label key={option.label} className="flex items-center gap-2">
-              <input
-                type="radio"
-                name={setting.attr}
-                checked={(values[setting.attr] ?? null) === option.value}
-                onChange={() => choose(setting.attr, option.value)}
-                className="accent-primary"
-              />
-              {option.label}
-            </label>
-          ))}
-        </fieldset>
+        <div key={setting.attr} className="flex flex-col gap-1">
+          <span id={`mode-${setting.attr}`} className="mb-1 font-medium">
+            {setting.legend}
+          </span>
+          <RadioGroup.Root
+            aria-labelledby={`mode-${setting.attr}`}
+            value={values[setting.attr] ?? UNSET}
+            onValueChange={(value) => choose(setting.attr, value)}
+            className="flex flex-col gap-1"
+          >
+            {setting.options.map((option) => {
+              const id = `mode-${setting.attr}-${option.value ?? UNSET}`;
+              return (
+                <div key={option.label} className="flex items-center gap-2">
+                  <RadioGroup.Item
+                    id={id}
+                    value={option.value ?? UNSET}
+                    className="flex size-4 items-center justify-center rounded-full border border-input bg-background data-[state=checked]:border-primary"
+                  >
+                    <RadioGroup.Indicator className="size-2 rounded-full bg-primary" />
+                  </RadioGroup.Item>
+                  <label htmlFor={id}>{option.label}</label>
+                </div>
+              );
+            })}
+          </RadioGroup.Root>
+        </div>
       ))}
     </div>
   );

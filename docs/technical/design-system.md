@@ -17,8 +17,27 @@ Full rationale: [design-system doc](https://claude.ai/code/artifact/eea24662-bb9
 - Never use color alone: destructive actions carry an icon or a verb ("Delete
   check-in"), and scales carry text labels.
 - Sizes in `rem` (Tailwind's `text-*` already are). Never `px` font sizes.
+- Interactive components (radio groups, dialogs, menus, popovers) are built on
+  [Radix primitives](https://www.radix-ui.com/primitives) from the `radix-ui`
+  package ([ADR 0009](../decisions/0009-radix-primitives.md)). Style Radix state
+  with `data-[state=...]` variants.
 - Don't remove the global focus ring. If a component needs a different one, it
   must still be 2px and at least 3:1 against its surroundings.
+
+## Typography
+
+"Swiss, clarified", picked on 2026-10-08 from the
+[type preview](https://claude.ai/artifact/Nh8f7sKkmNeVMoMo1LShuT):
+
+- Inter 4 everywhere (`font-sans`), self-hosted from
+  [`src/app/fonts`](../../src/app/fonts) because Google Fonts' copy drops its
+  alternate glyphs. Its optical-size axis gives large headings the tighter
+  display cut automatically.
+- `--font-sans--font-feature-settings` turns on `ss02`, `cv05`, `cv08` and
+  `zero`: a serifed I, a tailed l and a slashed zero, so I, l, 1, O and 0 can't
+  be confused.
+- Headings are semibold with -0.02em tracking (a base style in `globals.css`).
+- No serif anywhere except the logo.
 
 ## Modes
 
