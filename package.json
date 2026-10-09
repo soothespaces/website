@@ -9,6 +9,8 @@
     "lint": "eslint",
     "env:pull": "npx vercel env pull .env.local --environment=production",
     "db:types": "supabase gen types typescript --project-id doinwugtdzxxrmvcmemm --schema public > src/types/supabase.ts",
+    "campus-map:fetch": "node scripts/campus-map/fetch.mjs",
+    "campus-map:style": "node scripts/campus-map/style.mjs",
     "seed:fetch": "node scripts/seed/fetch.mjs",
     "seed:build": "node scripts/seed/build.mjs",
     "photos:import": "node scripts/photos/import.mjs"

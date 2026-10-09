@@ -308,6 +308,22 @@ Migration `20261009140000_hours_and_google.sql`.
 
 All three are public read with no client writes, like `buildings`.
 
+### Building entrances (added 2026-10-09)
+
+Migration `20261009150000_building_entrances.sql`. **`public.building_entrances`** has
+one row per exterior door from the U-M Facilities & Operations campus map
+([Data Sources § 13](data-sources.md#13-u-m-facilities-campus-map-found-2026-10-09)):
+position, `accessible` and `automatic` (FO rates every door on both), `keypad`,
+`floor_label` as FO writes it (`01`, `0G`, `0B`), `location_description` (FO's
+plain-language "east section of the building, 120 feet west of Lurie Tower…") and
+survey `notes` ("More than 5 lbs of force required to open"). Doors carry FO's building
+record number, which matches `buildings.official_id` or `extra->>'buildingRecordNumber'`;
+the seed links 1,281 of 2,653 doors (655 of the 890 accessible ones) to a building
+slug. The rest are on buildings we don't list (housing, off-campus offices) and keep the
+record number and FO's `building_name`. `id` is FO's GlobalID; the seed replaces every
+`source = 'fo_campus_map'` row on each run and leaves `manual` rows alone. Public read,
+no client writes.
+
 ## RLS and grants
 
 Every table in `public` has RLS enabled. Policies use `(select auth.uid())` rather
@@ -740,8 +756,14 @@ supabase/migrations/
   20261008193500_check_in_aggregates.sql   WP4      check_in_summary(), check_in_overview()
   20261008193600_user_settings.sql         WP2      table, owner-only RLS
   20261008193700_photos.sql                WP3      metadata, RLS, photos bucket
+  20261009120000_bookable_items.sql        WP6      LibCal rooms and seats
+  20261009130000_photo_placement.sql       WP3      photo kind, floor, position, heading
+  20261009140000_hours_and_google.sql      WP3      opening_hours, google_places, popular times
+  20261009150000_building_entrances.sql    WP3      exterior doors from the FO campus map
 supabase/tests/
   mvp_backend.test.sql                     shared   pgTAP, run by `supabase test db`
+  bookable_items.test.sql, photo_placement.test.sql, hours_and_google.test.sql,
+  building_entrances.test.sql              per-migration checks
 ```
 
 After each merge, run `npm run db:types` so `src/types/supabase.ts` matches.

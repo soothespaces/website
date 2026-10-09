@@ -580,6 +580,38 @@ section with directions and seating details. `scripts/seed/fetch.mjs` snapshots 
 this into `raw/umich-library-cms.json` and `raw/umich-library-space-pages.json`; the seed
 uses the hours and descriptions. Matching rooms to spaces (for capacity) is still open.
 
+## 13. U-M Facilities campus map (found 2026-10-09)
+
+https://map.fo.umich.edu/ (the Facilities & Parking Map, built by FO Information
+Services) is an ArcGIS Maps SDK app. The page itself sits behind a Cloudflare bot check,
+but all of its data comes from a public ArcGIS Server 11.5 with no authentication:
+`https://gisapi.fo.umich.edu/arcgis/rest/services/`. Any layer answers
+`query?where=1=1&outFields=…&outSR=4326&f=geojson`, 2,000 features per page.
+
+- **`CampusAccessibility/MapServer`:** exterior doors in three layers (3 automatic
+  accessible: 402, 4 manual accessible: 488, 5 non-accessible: 1,763) and curb ramps
+  (2: 940 lines, attributes empty). Door fields that carry data: `Accessible`
+  (`Automatic`, `Manual`, `AutoNonAcc`, `ManNonAcc`), `BldRecNbr`, `Floor`, `Keypad`,
+  `Comments` (survey notes) and `AltText` (where the door is, in words). The layers
+  publish no coded-value domains; `InExt`, `cCure`, `Type` and `Swing` are nearly
+  constant and aren't used. FO surveyed the doors against the 2010 ADA Standards and
+  ANSI A117.1 (2017) and labels them "for general information and planning purposes only".
+- **`BaseMap/cMapBase_TC_NoLabels_WM/MapServer`:** the campus basemap as 20 vector
+  layers (buildings by type, sidewalks by material, water, lawns, athletic fields and
+  markings, parking lots, walls, fences, 15,776 trees, and so on) with their colors in
+  each layer's `drawingInfo.renderer`. `BldRecNbr` on doors equals `loc_ObjectNum` here.
+- Not pulled yet: the label overlay and gray/high-contrast basemap variants,
+  `SearchBuildingsParking_BuildingswithAltText` (building descriptions and alt text),
+  `CommonLocations` (68 named outdoor spaces), parking permits, EV chargers, bike lanes
+  and parking, construction areas.
+
+`scripts/campus-map/fetch.mjs` snapshots the doors into
+`scripts/campus-map/raw/accessibility.json` (seeded as `public.building_entrances`)
+and the basemap and curb ramps into `public/campus-map/*.geojson`;
+`scripts/campus-map/style.mjs` turns the renderers into MapLibre layers in
+`public/campus-map/style.json`. The container can't reach `gisapi.fo.umich.edu`, so the
+**Campus map snapshot** workflow runs the fetch on a GitHub runner.
+
 ## Gaps relative to what the app needs
 
 1. **Study-space coverage is still the biggest gap, though much less blank than it

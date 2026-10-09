@@ -86,6 +86,69 @@ export type Database = {
           },
         ];
       };
+      building_entrances: {
+        Row: {
+          accessible: boolean;
+          automatic: boolean;
+          building_name: string | null;
+          building_record_number: string | null;
+          building_slug: string | null;
+          floor_label: string | null;
+          fo_object_id: number | null;
+          id: string;
+          keypad: boolean;
+          lat: number;
+          lng: number;
+          location_description: string | null;
+          notes: string | null;
+          source: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          accessible: boolean;
+          automatic: boolean;
+          building_name?: string | null;
+          building_record_number?: string | null;
+          building_slug?: string | null;
+          floor_label?: string | null;
+          fo_object_id?: number | null;
+          id: string;
+          keypad?: boolean;
+          lat: number;
+          lng: number;
+          location_description?: string | null;
+          notes?: string | null;
+          source?: string;
+          updated_at?: string;
+        };
+        Update: {
+          accessible?: boolean;
+          automatic?: boolean;
+          building_name?: string | null;
+          building_record_number?: string | null;
+          building_slug?: string | null;
+          floor_label?: string | null;
+          fo_object_id?: number | null;
+          id?: string;
+          keypad?: boolean;
+          lat?: number;
+          lng?: number;
+          location_description?: string | null;
+          notes?: string | null;
+          source?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "building_entrances_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: false;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+        ];
+      };
       building_popular_times: {
         Row: {
           building_slug: string;
