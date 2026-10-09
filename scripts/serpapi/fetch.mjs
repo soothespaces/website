@@ -56,14 +56,16 @@ const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // § 11): any object with a username loses it and the fields that point back
 // to the person.
 const IDENTITY = ["username", "contributor_id", "user_thumbnail", "user_review_count", "user_photo_count", "link", "images"];
-function scrub(value) {
-  if (Array.isArray(value)) return value.map(scrub);
+// Review summaries carry the reviewer's avatar as their thumbnail.
+function scrub(value, inReviews = false) {
+  if (Array.isArray(value)) return value.map((v) => scrub(v, inReviews));
   if (value && typeof value === "object") {
     const out = {};
     const person = "username" in value;
     for (const [k, v] of Object.entries(value)) {
       if (person && IDENTITY.includes(k)) continue;
-      out[k] = scrub(v);
+      if (inReviews && k === "thumbnail") continue;
+      out[k] = scrub(v, inReviews || k === "user_reviews");
     }
     return out;
   }
@@ -136,6 +138,15 @@ budget = Math.min(
 );
 console.log(`This run may spend up to ${budget} searches (plan.json max ${plan.max}).`);
 
+// plan.place_id_lookup: buildings already saved from a search whose place
+// should be fetched again by place_id (Google's place view can carry more,
+// like popular times, than the place a search opens).
+const followups = targets.filter((t) => {
+  if (!plan.place_id_lookup?.includes(t.slug)) return false;
+  const path = join(RAW, "places", `${t.slug}.json`);
+  return existsSync(path);
+});
+
 const todo = targets.filter(
   (t) =>
     (!plan.only?.length || plan.only.includes(t.slug)) &&
@@ -145,6 +156,26 @@ const todo = targets.filter(
 console.log(`${todo.length} buildings to look up.`);
 
 try {
+  for (const target of followups) {
+    const path = join(RAW, "places", `${target.slug}.json`);
+    const saved = JSON.parse(await readFile(path, "utf8"));
+    if (saved.resolved_by?.startsWith("place_id lookup")) continue;
+    const body = await search(target.slug, { place_id: saved.place.place_id });
+    if (!body.place_results) {
+      console.log(`${target.slug}: place_id lookup returned no place (${body.error ?? "no place_results"}); kept the saved one.`);
+      continue;
+    }
+    const days = Object.keys(body.place_results.popular_times?.graph_results ?? {}).length;
+    await write(path, {
+      ...saved,
+      fetched_at: new Date().toISOString(),
+      search_ids: [...saved.search_ids, body.search_metadata?.id ?? null],
+      resolved_by: `place_id lookup after: ${saved.resolved_by}`,
+      place: scrub(body.place_results),
+    });
+    console.log(`${target.slug}: refetched by place_id, ${days ? `popular times for ${days} days` : "no popular times"}`);
+  }
+
   for (const target of todo) {
     // Never start a building that couldn't be finished if Google lists
     // candidates instead of opening the place.
