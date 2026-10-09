@@ -67,6 +67,14 @@ def map_features(collection: dict, names: dict[str, str] | None = None) -> list[
     return out
 
 
+def publish_footprint(footprint: str) -> str:
+    """Copy the footprint the sheet was fitted to where the alignment editor can load it."""
+    dest = PUBLIC / "footprints" / Path(footprint).name
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text((HERE / footprint).read_text())
+    return "/" + dest.relative_to(PUBLIC.parent).as_posix()
+
+
 def run(entry: dict, sheets: Path, previews: Path | None) -> dict:
     sheet = entry["sheet"]
     image = fetch(sheet, sheets)
@@ -74,17 +82,33 @@ def run(entry: dict, sheets: Path, previews: Path | None) -> dict:
                    entry.get("close", 0), entry.get("up", 0.0))
     preview = fit.pop("_preview")
     fit["footprint"] = entry["footprint"]
+    fit["aligned"] = "auto"
+    manual_path = HERE / "manual" / f"{sheet}.json"
+    if manual_path.exists():
+        # Corners someone set by hand in the alignment editor (/admin/floors)
+        # replace the automatic fit; "fit" keeps the automatic fit's numbers.
+        manual = json.loads(manual_path.read_text())
+        if (manual["width"], manual["height"]) != (fit["width"], fit["height"]):
+            sys.exit(f"{manual_path} is for a {manual['width']}×{manual['height']} sheet; {sheet} is {fit['width']}×{fit['height']}")
+        fit.update(corners=manual["corners"], usable=True, aligned="manual",
+                   alignedBy=manual.get("alignedBy"), alignedAt=manual.get("alignedAt"))
     alignment = HERE / "alignments" / f"{sheet}.json"
     alignment.write_text(json.dumps(fit, indent=1) + "\n")
     if previews:
         render_fit(preview["plan"], preview["footprint"], preview["dropped"], previews / f"{sheet}_fit.png")
 
+    props = json.loads((HERE / entry["footprint"]).read_text()).get("properties") or {}
     record = {
         "building": entry["building"],
+        "buildingName": props.get("Label") or props.get("ObjectName") or entry["building"],
         "floor": entry["floor"],
         "sheet": sheet,
         "sha256": fit["sha256"],
         "corners": fit["corners"],
+        "width": fit["width"],
+        "height": fit["height"],
+        "footprint": publish_footprint(entry["footprint"]),
+        "aligned": fit["aligned"],
         "usable": fit["usable"],
         "fitMedianMeters": fit["fit"]["medianMeters"],
         "labeled": "labels" in entry or "readings" in entry,
