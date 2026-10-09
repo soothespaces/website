@@ -76,7 +76,8 @@ void main() {
 
 // Scene space, drawn once per scene. Everything here is static, so the whole
 // field is baked: the smooth-min distance to the sound sources (packed into RG)
-// and the sound intensity that reaches each point (B, gamma encoded).
+// the sound intensity that reaches each point (B, gamma encoded) and how
+// steep the distance field is there (A).
 export const FIELD_FRAGMENT = /* glsl */ `#version 300 es
 precision highp float;
 ${SEGMENTS}
@@ -143,15 +144,20 @@ void main() {
   vec2 p = uWorldMin + vUv * uWorldSize;
   float d = 1e4;
   float shadow = 1.0;
+  vec2 grad = vec2(0.0);
   float intensity = 0.0;
   for (int i = 0; i < SOURCE_COUNT; i++) {
-    float di = max(sourceDist(p, i), 0.0);
+    float raw = sourceDist(p, i);
+    float di = max(raw, 0.0);
     float si = heard(p, i);
-    // Polynomial smooth min; the same weight blends the shadows.
+    vec2 gi = raw > 0.0 ? -towardSource(p, i) : vec2(0.0);
+    // Polynomial smooth min; the same weight blends the shadows and the
+    // gradients (the smooth min's gradient is exactly that blend).
     float k = max(BLEND * si * shadow, 1e-3);
     float h = clamp(0.5 + 0.5 * (d - di) / k, 0.0, 1.0);
     d = mix(d, di, h) - k * h * (1.0 - h);
     shadow = mix(shadow, si, h);
+    grad = mix(grad, gi, h);
 
     // Inverse square law, measured from the source's center and normalized
     // to 1 at its edge. Uncorrelated sources add intensities.
@@ -162,7 +168,7 @@ void main() {
   fragColor = vec4(
     encode(max(d, 0.0)),
     pow(clamp(intensity, 0.0, 1.0), 1.0 / GAMMA),
-    1.0
+    min(length(grad), 1.0)
   );
 }
 `;
@@ -194,21 +200,21 @@ float hash(float n) {
   return fract(sin(n * 91.3458) * 47453.5453);
 }
 
-vec2 texel(ivec2 c) {
+vec3 texel(ivec2 c) {
   vec4 t = texelFetch(uField, clamp(c, ivec2(0), ivec2(uFieldSize) - 1), 0) * 255.0;
-  return vec2((t.x * 256.0 + t.y) / 65535.0 * ${MAX_DISTANCE.toFixed(1)}, t.z / 255.0);
+  return vec3((t.x * 256.0 + t.y) / 65535.0 * ${MAX_DISTANCE.toFixed(1)}, t.zw / 255.0);
 }
 
 // Bilinear filtering by hand, since the packed bytes can't be filtered.
-vec2 field(vec2 p) {
+vec3 field(vec2 p) {
   vec2 st = (p - uWorldMin) / uWorldSize * uFieldSize - 0.5;
   vec2 i = floor(st);
   vec2 f = st - i;
   ivec2 c = ivec2(i);
-  vec2 a = texel(c);
-  vec2 b = texel(c + ivec2(1, 0));
-  vec2 d = texel(c + ivec2(0, 1));
-  vec2 e = texel(c + ivec2(1, 1));
+  vec3 a = texel(c);
+  vec3 b = texel(c + ivec2(1, 0));
+  vec3 d = texel(c + ivec2(0, 1));
+  vec3 e = texel(c + ivec2(1, 1));
   return mix(mix(a, b, f.x), mix(d, e, f.x), f.y);
 }
 
@@ -232,10 +238,13 @@ void main() {
     return;
   }
 
-  vec2 sample_ = field(p);
+  vec3 sample_ = field(p);
   float d = sample_.x;
   // Already gamma encoded, so linear intensity reads as perceived brightness.
   float level = sample_.y;
+  // Where the fields meet, the smooth min flattens out, so a fixed band of
+  // distance would cover more floor there and smear into a blob.
+  float slope = max(sample_.z, 0.05);
   vec2 fromMin = p - uBounds.xy;
   vec2 fromMax = uBounds.zw - p;
   float vignette = min(
@@ -245,9 +254,9 @@ void main() {
 
   float x = d / SPACING - uTime * (SPEED / SPACING);
   float ring = floor(x + 0.5);
-  float aa = max(fwidth(d), 1e-4);
-  float halfWidth = max(RING_WIDTH, aa * 0.6);
-  float line = 1.0 - smoothstep(halfWidth, halfWidth + aa * 1.2, abs(x - ring) * SPACING);
+  float fromRing = abs(x - ring) * SPACING / slope; // meters of floor
+  float halfWidth = max(RING_WIDTH, uPx * 0.6);
+  float line = 1.0 - smoothstep(halfWidth, halfWidth + uPx * 1.2, fromRing);
 
   float strength = mix(0.6, 1.0, hash(ring + 17.0));
   float ringAlpha = line * strength * smoothstep(0.0, 0.4, d) * level
