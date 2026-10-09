@@ -1,0 +1,32 @@
+{
+  "_comment": "Buildings to look up on Google Maps through SerpApi (see fetch.mjs). query is what you'd type into Google Maps; lat/lng (ours) bias the search and check the match.",
+  "targets": [
+    { "slug": "harold-t-and-vivian-b-shapiro-library", "query": "Shapiro Library, 919 S University Ave, Ann Arbor, MI", "lat": 42.2757, "lng": -83.73721 },
+    { "slug": "harlan-h-hatcher-graduate-library", "query": "Hatcher Graduate Library, 913 S University Ave, Ann Arbor, MI", "lat": 42.27615, "lng": -83.73813 },
+    { "slug": "james-and-anne-duderstadt-center", "query": "Duderstadt Center, 2281 Bonisteel Blvd, Ann Arbor, MI", "lat": 42.29111, "lng": -83.71589 },
+    { "slug": "earl-v-moore-building", "query": "Earl V. Moore Building, 1100 Baits Dr, Ann Arbor, MI", "lat": 42.29014, "lng": -83.72101 },
+    { "slug": "tappan-hall", "query": "Tappan Hall, 855 S University Ave, Ann Arbor, MI", "lat": 42.27551, "lng": -83.73926 },
+    { "slug": "alfred-a-taubman-health-sciences-library", "query": "Taubman Health Sciences Library, 1135 Catherine St, Ann Arbor, MI", "lat": 42.2836, "lng": -83.73449 },
+    { "slug": "gerald-r-ford-library-1", "query": "Gerald R. Ford Presidential Library, 1000 Beal Ave, Ann Arbor, MI", "lat": 42.28852, "lng": -83.71227 },
+    { "slug": "wilbur-k-pierpont-commons", "query": "Pierpont Commons, 2101 Bonisteel Blvd, Ann Arbor, MI", "lat": 42.2912, "lng": -83.71751 },
+    { "slug": "south-quadrangle", "query": "South Quad, 600 E Madison St, Ann Arbor, MI", "lat": 42.27372, "lng": -83.74203 },
+    { "slug": "north-quadrangle-residential-and-academic-complex", "query": "North Quad, 105 S State St, Ann Arbor, MI", "lat": 42.28055, "lng": -83.74019 },
+    { "slug": "stephen-m-ross-school-of-business-building", "query": "Ross School of Business, 701 Tappan Ave, Ann Arbor, MI", "lat": 42.27257, "lng": -83.73765 },
+    { "slug": "art-and-architecture-building", "query": "Art and Architecture Building, 2000 Bonisteel Blvd, Ann Arbor, MI", "lat": 42.28963, "lng": -83.71692 },
+    { "slug": "alvin-m-arvella-d-bentley-historical-library", "query": "Bentley Historical Library, 1150 Beal Ave, Ann Arbor, MI", "lat": 42.28956, "lng": -83.71242 },
+    { "slug": "samuel-trask-dana-building", "query": "Dana Building, 440 Church St, Ann Arbor, MI", "lat": 42.27733, "lng": -83.73661 },
+    { "slug": "weiser-hall", "query": "Weiser Hall, 500 Church St, Ann Arbor, MI", "lat": 42.27646, "lng": -83.73508 },
+    { "slug": "east-quadrangle", "query": "East Quad, 701 E University Ave, Ann Arbor, MI", "lat": 42.27274, "lng": -83.73519 },
+    { "slug": "william-w-cook-legal-research-library", "query": "University of Michigan Law Library, 801 Monroe St, Ann Arbor, MI", "lat": 42.27378, "lng": -83.73926 },
+    { "slug": "palmer-commons", "query": "Palmer Commons, 100 Washtenaw Ave, Ann Arbor, MI", "lat": 42.28081, "lng": -83.73388 },
+    { "slug": "michigan-union", "query": "Michigan Union, 530 S State St, Ann Arbor, MI", "lat": 42.27523, "lng": -83.74155 },
+    { "slug": "michigan-league", "query": "Michigan League, 911 N University Ave, Ann Arbor, MI", "lat": 42.27927, "lng": -83.73749 },
+    { "slug": "mason-hall", "query": "Mason Hall, 419 S State St, Ann Arbor, MI", "lat": 42.27711, "lng": -83.73951 },
+    { "slug": "angell-hall", "query": "Angell Hall, 435 S State St, Ann Arbor, MI", "lat": 42.27681, "lng": -83.73991 },
+    { "slug": "bob-and-betty-beyster-building", "query": "Bob and Betty Beyster Building, 2260 Hayward St, Ann Arbor, MI", "lat": 42.29297, "lng": -83.71611 },
+    { "slug": "george-g-gg-brown-laboratories", "query": "G.G. Brown Laboratory, 2350 Hayward St, Ann Arbor, MI", "lat": 42.29328, "lng": -83.71408 },
+    { "slug": "biological-sciences-building", "query": "Biological Sciences Building, 1105 N University Ave, Ann Arbor, MI", "lat": 42.27892, "lng": -83.7345 },
+    { "slug": "central-campus-classroom-building", "query": "Central Campus Classroom Building, 1225 Geddes Ave, Ann Arbor, MI", "lat": 42.27801, "lng": -83.73396 },
+    { "slug": "trotter-multicultural-center-1", "query": "Trotter Multicultural Center, 428 S State St, Ann Arbor, MI", "lat": 42.2771, "lng": -83.74109 }
+  ]
+}
