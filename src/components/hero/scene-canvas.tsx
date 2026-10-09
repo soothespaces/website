@@ -38,14 +38,12 @@ function prefersMoreContrast() {
   return matchMedia("(prefers-contrast: more)").matches;
 }
 
-// Each source wanders in phase and loudness on its own, like an uncorrelated
-// voice, which slowly moves where its waves cancel out against the others'.
+// Each source lags the one before it by half a wavelength, and wanders a
+// little in loudness on its own.
 function spin(i: number, t: number): [number, number] {
   const seed = i * 2.39996;
-  const phase =
-    seed * 3 + 1.1 * Math.sin(0.21 * t + seed) + 0.7 * Math.sin(0.53 * t + 2.3 * seed);
   const gain = 0.8 + 0.2 * Math.sin(0.41 * t + 1.7 * seed);
-  const angle = phase - ANGULAR_SPEED * t;
+  const angle = -i * Math.PI - ANGULAR_SPEED * t;
   return [gain * Math.cos(angle), gain * Math.sin(angle)];
 }
 
