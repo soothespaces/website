@@ -42,6 +42,16 @@ const SOURCES = [
   },
 ];
 
+// LibCal locations from docs/technical/data-sources.md § 10. Item metadata
+// (title, capacity, booking URL) is embedded in each location's /spaces and
+// /seats page as resources.push({...}) calls. Availability is never stored
+// (ADR 0008), so the grid endpoint isn't fetched here.
+const LIBCAL = {
+  "umich.libcal.com": [2761, 3509, 23105, 14410, 14566, 4183, 4004, 5040],
+  "umich-nc.libcal.com": [11261, 11258, 11265, 11359, 14919, 11414, 15851, 23054, 30547],
+  "umich-cc.libcal.com": [21968, 46354],
+};
+
 function scriptJson(html, id) {
   const match = html.match(
     new RegExp(`<script[^>]*id="${id}"[^>]*>([\\s\\S]*?)</script>`),
@@ -66,6 +76,27 @@ for (const source of SOURCES) {
   console.log(`${source.file}: ${body.length} bytes`);
 }
 
+const libcal = [];
+for (const [instance, lids] of Object.entries(LIBCAL)) {
+  for (const lid of lids) {
+    for (const kind of ["spaces", "seats"]) {
+      const url = `https://${instance}/${kind}?lid=${lid}&gid=0&c=-1`;
+      const res = await fetch(url, { headers: { "user-agent": UA } });
+      if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
+      const html = await res.text();
+      const location = clean(html.match(/<title>([\s\S]*?)<\/title>/)?.[1]);
+      const items = libcalResources(html);
+      console.log(`${url}: ${items.length} items (${location})`);
+      if (items.length) libcal.push({ instance, lid, kind, url, location, items });
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+  }
+}
+await writeFile(join(RAW, "libcal-items.json"), JSON.stringify(libcal, null, 2) + "\n");
+rows.push(
+  `| \`libcal-items.json\` | https://{instance}/{spaces,seats}?lid={lid}&gid=0&c=-1 | LibCal bookable rooms and seats: the resources.push({...}) items on each location page, ${libcal.reduce((n, l) => n + l.items.length, 0)} items |`,
+);
+
 await writeFile(
   join(RAW, "SOURCES.md"),
   [
@@ -80,3 +111,100 @@ await writeFile(
     "",
   ].join("\n"),
 );
+
+function clean(text) {
+  return text ? text.replace(/\s+/g, " ").trim() : null;
+}
+
+// Pulls every resources.push({...}) object literal out of a LibCal page. The
+// literals are plain data (strings, numbers, arrays), so they're parsed rather
+// than evaluated; one that doesn't parse is kept as raw text to inspect.
+function libcalResources(html) {
+  const items = [];
+  const marker = "resources.push(";
+  for (let at = html.indexOf(marker); at !== -1; at = html.indexOf(marker, at + 1)) {
+    const start = at + marker.length;
+    try {
+      const parser = literalParser(html, start);
+      items.push(parser.value());
+    } catch (error) {
+      items.push({ unparsed: html.slice(start, html.indexOf(");", start)), error: error.message });
+    }
+  }
+  return items;
+}
+
+function literalParser(text, start) {
+  let i = start;
+  const ws = () => {
+    while (/\s/.test(text[i])) i++;
+  };
+  const fail = (what) => {
+    throw new Error(`expected ${what} at ${i - start}: ${text.slice(i, i + 20)}`);
+  };
+  const string = () => {
+    const quote = text[i++];
+    let out = "";
+    while (text[i] !== quote) {
+      if (i >= text.length) fail("closing quote");
+      if (text[i] === "\\") {
+        const c = text[++i];
+        if (c === "u") {
+          out += String.fromCharCode(parseInt(text.slice(i + 1, i + 5), 16));
+          i += 5;
+          continue;
+        }
+        out += { n: "\n", t: "\t", r: "\r", b: "\b", f: "\f" }[c] ?? c;
+        i++;
+        continue;
+      }
+      out += text[i++];
+    }
+    i++;
+    return out;
+  };
+  const value = () => {
+    ws();
+    const c = text[i];
+    if (c === "{") {
+      i++;
+      const obj = {};
+      for (;;) {
+        ws();
+        if (text[i] === "}") break;
+        let key;
+        if (text[i] === '"' || text[i] === "'") key = string();
+        else {
+          const m = text.slice(i).match(/^[A-Za-z_$][\w$]*/) ?? fail("key");
+          key = m[0];
+          i += key.length;
+        }
+        ws();
+        if (text[i++] !== ":") fail("colon");
+        obj[key] = value();
+        ws();
+        if (text[i] === ",") i++;
+      }
+      i++;
+      return obj;
+    }
+    if (c === "[") {
+      i++;
+      const arr = [];
+      for (;;) {
+        ws();
+        if (text[i] === "]") break;
+        arr.push(value());
+        ws();
+        if (text[i] === ",") i++;
+      }
+      i++;
+      return arr;
+    }
+    if (c === '"' || c === "'") return string();
+    const m = text.slice(i).match(/^(-?\d+(?:\.\d+)?|true|false|null)/) ?? fail("value");
+    i += m[0].length;
+    return JSON.parse(m[0]);
+  };
+  return { value };
+}
