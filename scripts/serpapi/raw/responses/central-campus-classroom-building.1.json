@@ -1,0 +1,297 @@
+{
+  "search_metadata": {
+    "id": "6ac9567173d22467fa4dca54",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/qzm0v5dankyO_9qKxLrNGT3faNOCA6bpGNv00BLYYRo/6ac9567173d22467fa4dca54.json",
+    "markdown_endpoint": "https://serpapi.com/searches/qzm0v5dankyO_9qKxLrNGT3faNOCA6bpGNv00BLYYRo/6ac9567173d22467fa4dca54.md",
+    "created_at": "2026-10-09 21:02:41 UTC",
+    "processed_at": "2026-10-09 21:02:41 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/Central+Campus+Classroom+Building%2C+1225+Geddes+Ave%2C+Ann+Arbor%2C+MI/@42.27801,-83.73396,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/qzm0v5dankyO_9qKxLrNGT3faNOCA6bpGNv00BLYYRo/6ac9567173d22467fa4dca54.html",
+    "prettify_html_file": "https://serpapi.com/searches/qzm0v5dankyO_9qKxLrNGT3faNOCA6bpGNv00BLYYRo/6ac9567173d22467fa4dca54.prettify",
+    "total_time_taken": 6.86
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "Central Campus Classroom Building, 1225 Geddes Ave, Ann Arbor, MI",
+    "ll": "@42.27801,-83.73396,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Showing results for type: \"place\" instead of type: \"search\"",
+    "query_displayed": "Central Campus Classroom Building, 1225 Geddes Ave, Ann Arbor, MI"
+  },
+  "place_results": {
+    "title": "Central Campus Classroom Building",
+    "place_id": "ChIJC1U4gIOvPIgRVCri6_IuYrk",
+    "data_id": "0x883caf838038550b:0xb9622ef2ebe22a54",
+    "data_cid": "13358291065608743508",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf838038550b%3A0xb9622ef2ebe22a54&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883caf838038550b%3A0xb9622ef2ebe22a54&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2777056,
+      "longitude": -83.7342877
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJC1U4gIOvPIgRVCri6_IuYrk",
+    "provider_id": "/g/11pttkcq3p",
+    "thumbnail": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=30sEI5lW0-eLPeqHk14Zfw&cb_client=search.gws-prod.grass&w=86&h=86&yaw=53.119984&pitch=0&thumbfov=100",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/tvx4bnicHc1LDoIwFEDR3XRGPwEMmDSOTDRx4MzEiSnlQRsLrX2V6nbclbvxM7nDc98vk1LANWOYIkBaLORgH-CwCIqO3o8OVLBItZ_YIlgy96mblXWboGZve1ly3O5rd-IFHI5w211FdR4y0d1FOwtzkggqakPH_BWj7-kYFSLJslkR88tTZVmXVIi2bSoSbNJGcvL_DH6RgvMPwMM50A",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 4
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 0
+      },
+      {
+        "stars": 4,
+        "amount": 3
+      },
+      {
+        "stars": 5,
+        "amount": 17
+      }
+    ],
+    "rating": 4.2,
+    "reviews": 24,
+    "unclaimed_listing": true,
+    "type": [
+      "Public university"
+    ],
+    "type_ids": [
+      "public_university"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      },
+      {
+        "parking": [
+          "Paid parking lot"
+        ]
+      }
+    ],
+    "address": "1225 Geddes Ave, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "website": "https://cccb.provost.umich.edu/",
+    "open_state": "Open · Closes 10 PM",
+    "plus_code": "77H8+37 Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "7 AM–10 PM"
+      },
+      {
+        "saturday": "9 AM–6 PM"
+      },
+      {
+        "sunday": "9 AM–10 PM"
+      },
+      {
+        "monday": "7 AM–10 PM"
+      },
+      {
+        "tuesday": "7 AM–10 PM"
+      },
+      {
+        "wednesday": "7 AM–10 PM"
+      },
+      {
+        "thursday": "7 AM–10 PM"
+      }
+    ],
+    "images": [
+      {
+        "title": "All",
+        "thumbnail": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=30sEI5lW0-eLPeqHk14Zfw&cb_client=maps_sv.tactile.gps&w=224&h=298&yaw=53.117844&pitch=0&thumbfov=100",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/ZsubpnicHc1LCsIwFADA22TXfNoUqxBcCQou3AluShpfm2DaRPNM9DreytsIzgXm-7GIMW0YS_gAwOygRPcCn6qo6RTC5EFHl6gJM8uCoX3Ow6Kd30a9BHdVDU-7Q-vPvILjCe77m5CXsRAz9MY7WFDNOqY-ZYraoPNAp5hIUXUtiVX1uiNvXVTbUCFWnZQkOjRWcfJ_xpCV4PwHt9o5iA"
+      },
+      {
+        "title": "Street View & 360°",
+        "thumbnail": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=30sEI5lW0-eLPeqHk14Zfw&cb_client=maps_sv.tactile.gps&w=224&h=298&yaw=53.117844&pitch=0&thumbfov=100",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/ZsubpnicHc1LCsIwFADA22TXfNoUqxBcCQou3AluShpfm2DaRPNM9DreytsIzgXm-7GIMW0YS_gAwOygRPcCn6qo6RTC5EFHl6gJM8uCoX3Ow6Kd30a9BHdVDU-7Q-vPvILjCe77m5CXsRAz9MY7WFDNOqY-ZYraoPNAp5hIUXUtiVX1uiNvXVTbUCFWnZQkOjRWcfJ_xpCV4PwHt9o5iA"
+      }
+    ],
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"Conveniently located next to the CCTC.\""
+        },
+        {
+          "snippet": "\"Nobody was at the front desk.\""
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 1,
+          "description": "MBath sent me here. Terrible bathroom. :(",
+          "date": "a year ago",
+          "date_iso8601": "2025-09-28T21:22:03+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "One of the best buildings to have a class in. Beautiful, sleek, modern design. Wouldn't study in here personally but I can see why people do. Lots of natural lighting, and the lecture halls are clean and have the big desks so you can comfortably rest your laptop and tablet. Brand new. Conveniently located next to the CCTC.",
+          "date": "3 years ago",
+          "date_iso8601": "2023-02-06T03:12:50+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "I sat in every seat of CCCB 1420, and I can confirm that they are all functional and comfy.",
+          "date": "a year ago",
+          "date_iso8601": "2025-01-30T03:16:38+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Very central, very campus, very classroom",
+          "date": "2 months ago",
+          "date_iso8601": "2026-07-11T20:53:47+00:00"
+        },
+        {
+          "rating": 1,
+          "description": "MBath sent me here. Terrible bathroom. :(",
+          "date": "a year ago",
+          "date_iso8601": "2025-09-28T21:21:11+00:00"
+        },
+        {
+          "rating": 1,
+          "description": "Nobody was at the front desk.",
+          "date": "10 months ago",
+          "date_iso8601": "2025-11-20T17:49:25+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Beautiful new classroom building",
+          "date": "4 years ago",
+          "date_iso8601": "2022-02-09T03:51:36+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Clean",
+          "date": "3 years ago",
+          "date_iso8601": "2023-01-09T21:25:24+00:00"
+        }
+      ]
+    },
+    "people_also_search_for": [
+      {
+        "search_term": "People also search for",
+        "local_results": [
+          {
+            "position": 1,
+            "title": "University of Michigan Center for the Study of Complex Systems",
+            "data_id": "0x0:0xa8f248f2557ad0a6",
+            "data_cid": "12173872948389269670",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xa8f248f2557ad0a6&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xa8f248f2557ad0a6&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.276517899999995,
+              "longitude": -83.7350438
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xa8f248f2557ad0a6%218m2%213d42.276517899999995%214d-83.7350438&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 2,
+            "thumbnail": "https://www.google.com/maps/vt/data=gIU420ev7z1rHinBuQgZGAGzOeJ8r7RpG1vsJYa8Y2gqeQwumcpcN2iiuqSp3PGe4wAd6kZjCjLTt1Bujp1yekpip5v7QYBACahu3Nf5d1yFcnXFLDtULIr9eMf-_haOGn_FieDs8x3sccKO-so4Ko1zAycC9AC-",
+            "type": [
+              "Academic department"
+            ]
+          },
+          {
+            "position": 2,
+            "title": "Michigan Union",
+            "data_id": "0x0:0xfc4758afcea7328a",
+            "data_cid": "18178595933013881482",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xfc4758afcea7328a&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xfc4758afcea7328a&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2750492,
+              "longitude": -83.74166489999999
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xfc4758afcea7328a%218m2%213d42.2750492%214d-83.74166489999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.7,
+            "reviews": 236,
+            "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmMMVBuWLZNTYAowt5HaH2zkfrA99YUwXirpGxvYhIfZ-f_yrpLJqdPKiBWdoJFgfvLzkv_2kMfZbaHtG2ydoeltZnoUQ9Di8vizbT1LiQk1OqJMKPUrB8K2IQgpMzUKpip5a9DV1vSXwPfn=w156-h156-n-k-no",
+            "type": [
+              "Student union",
+              "Community center",
+              "Academic department"
+            ]
+          },
+          {
+            "position": 3,
+            "title": "Central Student Government",
+            "data_id": "0x0:0xc86d0d19f53d9b5",
+            "data_cid": "902638374074177973",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xc86d0d19f53d9b5&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xc86d0d19f53d9b5&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2749434,
+              "longitude": -83.74141829999999
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xc86d0d19f53d9b5%218m2%213d42.2749434%214d-83.74141829999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 1,
+            "thumbnail": "https://www.google.com/maps/vt/data=7WPjBtSNISBZ9jPnHPCWABhebGqwmzlLNStQLCQRNF-74_ZyRT5SXcmZmjTTOU0kyreUvUSQiSZNMOFu-d95Uzay1dcIKCIBg5-jZHoOg7cbAbUUIxMSlDm7db4XqjuFJdUPvqThaFPnmG8-9_TGMwZOhevV91rw",
+            "type": [
+              "Non-profit organization"
+            ]
+          },
+          {
+            "position": 4,
+            "title": "Chrysler Center",
+            "data_id": "0x0:0x15bfc1c9024e0b05",
+            "data_cid": "1567184264419478277",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x15bfc1c9024e0b05&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x15bfc1c9024e0b05&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.290588,
+              "longitude": -83.716668
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x15bfc1c9024e0b05%218m2%213d42.290588%214d-83.716668&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 2,
+            "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmO8wHWCNHUMRiVJn7NlwuIQPoBkxiQNP4YWKQXfFBx10z1q73lrANgi7HIvKNqiIGxtjpSPB6xKuHQImYmn1VhNdWN3EOxt9XHF6mCYK3cxpZeMZwPfhVgi1rkvbwdMIMAla2YX=w156-h156-n-k-no",
+            "type": [
+              "Academic department"
+            ]
+          },
+          {
+            "position": 5,
+            "title": "Climate and Space Research Building (CSRB)",
+            "data_id": "0x0:0x12dda6582a04a0b7",
+            "data_cid": "1359425560128037047",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x12dda6582a04a0b7&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x12dda6582a04a0b7&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2943931,
+              "longitude": -83.7115146
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x12dda6582a04a0b7%218m2%213d42.2943931%214d-83.7115146&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.4,
+            "reviews": 13,
+            "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmOOGvkT_AgNjYvH2HIRklKzNZ6SNdCNQm6_oI7kbzPkkTu0NGL4CUplq7AfrbFjCyblas9ZG3lQ-GWDEVb6r5xtN2-0poSDlJz6prY8vA_ix73McgetwN9B1GLrt7F1tnif3VYvlA=w156-h156-n-k-no",
+            "type": [
+              "Research institute",
+              "College",
+              "Public university",
+              "University"
+            ]
+          }
+        ]
+      }
+    ],
+    "web_results_link": "https://www.google.com/search?q=local+guide+program&ibp=gwp;0,26,OjUKMyIvQ2VudHJhbCBDYW1wdXMgQ2xhc3Nyb29tIEJ1aWxkaW5nIEFubiBBcmJvciwgTUkoAg&pcl=lp",
+    "serpapi_web_results_link": "https://serpapi.com/search.json?device=desktop&engine=google&google_domain=google.com&ibp=gwp%3B0%2C26%2COjUKMyIvQ2VudHJhbCBDYW1wdXMgQ2xhc3Nyb29tIEJ1aWxkaW5nIEFubiBBcmJvciwgTUkoAg&q=local+guide+program"
+  }
+}

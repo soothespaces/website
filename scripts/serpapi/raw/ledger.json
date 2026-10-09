@@ -51,5 +51,367 @@
     "status": "Success",
     "error": null,
     "file": "responses/harold-t-and-vivian-b-shapiro-library.3.json"
+  },
+  {
+    "at": "2026-10-09T21:01:37.955Z",
+    "slug": "harlan-h-hatcher-graduate-library",
+    "params": {
+      "type": "search",
+      "q": "Hatcher Graduate Library, 913 S University Ave, Ann Arbor, MI",
+      "ll": "@42.27615,-83.73813,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9563102706ac9af7dcef9",
+    "status": "Success",
+    "error": null,
+    "file": "responses/harlan-h-hatcher-graduate-library.1.json"
+  },
+  {
+    "at": "2026-10-09T21:01:41.276Z",
+    "slug": "james-and-anne-duderstadt-center",
+    "params": {
+      "type": "search",
+      "q": "Duderstadt Center, 2281 Bonisteel Blvd, Ann Arbor, MI",
+      "ll": "@42.29111,-83.71589,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac956330676dcc929d39c23",
+    "status": "Success",
+    "error": null,
+    "file": "responses/james-and-anne-duderstadt-center.1.json"
+  },
+  {
+    "at": "2026-10-09T21:01:43.601Z",
+    "slug": "earl-v-moore-building",
+    "params": {
+      "type": "search",
+      "q": "Earl V. Moore Building, 1100 Baits Dr, Ann Arbor, MI",
+      "ll": "@42.29014,-83.72101,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac95636c4f20f9b0216e148",
+    "status": "Success",
+    "error": null,
+    "file": "responses/earl-v-moore-building.1.json"
+  },
+  {
+    "at": "2026-10-09T21:01:45.662Z",
+    "slug": "tappan-hall",
+    "params": {
+      "type": "search",
+      "q": "Tappan Hall, 855 S University Ave, Ann Arbor, MI",
+      "ll": "@42.27551,-83.73926,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac956393a9206a87138e90c",
+    "status": "Success",
+    "error": null,
+    "file": "responses/tappan-hall.1.json"
+  },
+  {
+    "at": "2026-10-09T21:01:47.624Z",
+    "slug": "alfred-a-taubman-health-sciences-library",
+    "params": {
+      "type": "search",
+      "q": "Taubman Health Sciences Library, 1135 Catherine St, Ann Arbor, MI",
+      "ll": "@42.2836,-83.73449,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9563bd649a948c88ba049",
+    "status": "Success",
+    "error": null,
+    "file": "responses/alfred-a-taubman-health-sciences-library.1.json"
+  },
+  {
+    "at": "2026-10-09T21:01:50.386Z",
+    "slug": "gerald-r-ford-library-1",
+    "params": {
+      "type": "search",
+      "q": "Gerald R. Ford Presidential Library, 1000 Beal Ave, Ann Arbor, MI",
+      "ll": "@42.28852,-83.71227,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9563d03610a977c9e225a",
+    "status": "Success",
+    "error": null,
+    "file": "responses/gerald-r-ford-library-1.1.json"
+  },
+  {
+    "at": "2026-10-09T21:01:52.805Z",
+    "slug": "wilbur-k-pierpont-commons",
+    "params": {
+      "type": "search",
+      "q": "Pierpont Commons, 2101 Bonisteel Blvd, Ann Arbor, MI",
+      "ll": "@42.2912,-83.71751,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9563f8681808925a125ed",
+    "status": "Success",
+    "error": null,
+    "file": "responses/wilbur-k-pierpont-commons.1.json"
+  },
+  {
+    "at": "2026-10-09T21:01:55.140Z",
+    "slug": "south-quadrangle",
+    "params": {
+      "type": "search",
+      "q": "South Quad, 600 E Madison St, Ann Arbor, MI",
+      "ll": "@42.27372,-83.74203,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac956423d06ea6408f28369",
+    "status": "Success",
+    "error": null,
+    "file": "responses/south-quadrangle.1.json"
+  },
+  {
+    "at": "2026-10-09T21:01:57.617Z",
+    "slug": "north-quadrangle-residential-and-academic-complex",
+    "params": {
+      "type": "search",
+      "q": "North Quad, 105 S State St, Ann Arbor, MI",
+      "ll": "@42.28055,-83.74019,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac95644a9fcce68c5968004",
+    "status": "Success",
+    "error": null,
+    "file": "responses/north-quadrangle-residential-and-academic-complex.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:00.983Z",
+    "slug": "stephen-m-ross-school-of-business-building",
+    "params": {
+      "type": "search",
+      "q": "Ross School of Business, 701 Tappan Ave, Ann Arbor, MI",
+      "ll": "@42.27257,-83.73765,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac956471bd4f0285198b3f9",
+    "status": "Success",
+    "error": null,
+    "file": "responses/stephen-m-ross-school-of-business-building.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:03.358Z",
+    "slug": "art-and-architecture-building",
+    "params": {
+      "type": "search",
+      "q": "Art and Architecture Building, 2000 Bonisteel Blvd, Ann Arbor, MI",
+      "ll": "@42.28963,-83.71692,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9564aa89e020c4317f97c",
+    "status": "Success",
+    "error": null,
+    "file": "responses/art-and-architecture-building.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:06.879Z",
+    "slug": "alvin-m-arvella-d-bentley-historical-library",
+    "params": {
+      "type": "search",
+      "q": "Bentley Historical Library, 1150 Beal Ave, Ann Arbor, MI",
+      "ll": "@42.28956,-83.71242,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9564cafaa6758b2a1d87d",
+    "status": "Success",
+    "error": null,
+    "file": "responses/alvin-m-arvella-d-bentley-historical-library.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:08.953Z",
+    "slug": "samuel-trask-dana-building",
+    "params": {
+      "type": "search",
+      "q": "Dana Building, 440 Church St, Ann Arbor, MI",
+      "ll": "@42.27733,-83.73661,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac956503d0e4e5e57c650fd",
+    "status": "Success",
+    "error": null,
+    "file": "responses/samuel-trask-dana-building.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:14.775Z",
+    "slug": "weiser-hall",
+    "params": {
+      "type": "search",
+      "q": "Weiser Hall, 500 Church St, Ann Arbor, MI",
+      "ll": "@42.27646,-83.73508,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac95652970121f3d1f68c53",
+    "status": "Success",
+    "error": null,
+    "file": "responses/weiser-hall.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:16.883Z",
+    "slug": "east-quadrangle",
+    "params": {
+      "type": "search",
+      "q": "East Quad, 701 E University Ave, Ann Arbor, MI",
+      "ll": "@42.27274,-83.73519,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac95658cbcccf2bad7c97d4",
+    "status": "Success",
+    "error": null,
+    "file": "responses/east-quadrangle.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:19.751Z",
+    "slug": "william-w-cook-legal-research-library",
+    "params": {
+      "type": "search",
+      "q": "University of Michigan Law Library, 801 Monroe St, Ann Arbor, MI",
+      "ll": "@42.27378,-83.73926,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9565ab7942f2243e63866",
+    "status": "Success",
+    "error": null,
+    "file": "responses/william-w-cook-legal-research-library.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:22.630Z",
+    "slug": "palmer-commons",
+    "params": {
+      "type": "search",
+      "q": "Palmer Commons, 100 Washtenaw Ave, Ann Arbor, MI",
+      "ll": "@42.28081,-83.73388,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9565d45a66ac226ebceb4",
+    "status": "Success",
+    "error": null,
+    "file": "responses/palmer-commons.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:24.828Z",
+    "slug": "michigan-league",
+    "params": {
+      "type": "search",
+      "q": "Michigan League, 911 N University Ave, Ann Arbor, MI",
+      "ll": "@42.27927,-83.73749,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9566010ceed25c0732bb6",
+    "status": "Success",
+    "error": null,
+    "file": "responses/michigan-league.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:27.663Z",
+    "slug": "mason-hall",
+    "params": {
+      "type": "search",
+      "q": "Mason Hall, 419 S State St, Ann Arbor, MI",
+      "ll": "@42.27711,-83.73951,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac95662421b089a8f505a7f",
+    "status": "Success",
+    "error": null,
+    "file": "responses/mason-hall.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:29.691Z",
+    "slug": "angell-hall",
+    "params": {
+      "type": "search",
+      "q": "Angell Hall, 435 S State St, Ann Arbor, MI",
+      "ll": "@42.27681,-83.73991,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac95665ce7719c73d7e4ecf",
+    "status": "Success",
+    "error": null,
+    "file": "responses/angell-hall.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:32.127Z",
+    "slug": "bob-and-betty-beyster-building",
+    "params": {
+      "type": "search",
+      "q": "Bob and Betty Beyster Building, 2260 Hayward St, Ann Arbor, MI",
+      "ll": "@42.29297,-83.71611,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac956673d40b6783609e9e1",
+    "status": "Success",
+    "error": null,
+    "file": "responses/bob-and-betty-beyster-building.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:34.689Z",
+    "slug": "bob-and-betty-beyster-building",
+    "params": {
+      "place_id": "ChIJL6vg9duvPIgRGc36d26mBqg"
+    },
+    "http_status": 200,
+    "search_id": "6ac95669b7942f24a281108e",
+    "status": "Success",
+    "error": null,
+    "file": "responses/bob-and-betty-beyster-building.2.json"
+  },
+  {
+    "at": "2026-10-09T21:02:37.063Z",
+    "slug": "george-g-gg-brown-laboratories",
+    "params": {
+      "type": "search",
+      "q": "G.G. Brown Laboratory, 2350 Hayward St, Ann Arbor, MI",
+      "ll": "@42.29328,-83.71408,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9566cec900d74a2d9a42c",
+    "status": "Success",
+    "error": null,
+    "file": "responses/george-g-gg-brown-laboratories.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:39.491Z",
+    "slug": "biological-sciences-building",
+    "params": {
+      "type": "search",
+      "q": "Biological Sciences Building, 1105 N University Ave, Ann Arbor, MI",
+      "ll": "@42.27892,-83.7345,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9566e41ffc87a3e74aea7",
+    "status": "Success",
+    "error": null,
+    "file": "responses/biological-sciences-building.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:47.949Z",
+    "slug": "central-campus-classroom-building",
+    "params": {
+      "type": "search",
+      "q": "Central Campus Classroom Building, 1225 Geddes Ave, Ann Arbor, MI",
+      "ll": "@42.27801,-83.73396,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9567173d22467fa4dca54",
+    "status": "Success",
+    "error": null,
+    "file": "responses/central-campus-classroom-building.1.json"
+  },
+  {
+    "at": "2026-10-09T21:02:50.244Z",
+    "slug": "trotter-multicultural-center-1",
+    "params": {
+      "type": "search",
+      "q": "Trotter Multicultural Center, 428 S State St, Ann Arbor, MI",
+      "ll": "@42.2771,-83.74109,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9567971a90d95788dcbc2",
+    "status": "Success",
+    "error": null,
+    "file": "responses/trotter-multicultural-center-1.1.json"
   }
 ]

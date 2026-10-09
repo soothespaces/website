@@ -1,0 +1,157 @@
+{
+  "search_metadata": {
+    "id": "6ac9565ab7942f2243e63866",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/knXNw7CyCSBA5EVGRzbvTFh4EQSp2MwUXCRIK9S5n9E/6ac9565ab7942f2243e63866.json",
+    "markdown_endpoint": "https://serpapi.com/searches/knXNw7CyCSBA5EVGRzbvTFh4EQSp2MwUXCRIK9S5n9E/6ac9565ab7942f2243e63866.md",
+    "created_at": "2026-10-09 21:02:18 UTC",
+    "processed_at": "2026-10-09 21:02:18 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/University+of+Michigan+Law+Library%2C+801+Monroe+St%2C+Ann+Arbor%2C+MI/@42.27378,-83.73926,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/knXNw7CyCSBA5EVGRzbvTFh4EQSp2MwUXCRIK9S5n9E/6ac9565ab7942f2243e63866.html",
+    "prettify_html_file": "https://serpapi.com/searches/knXNw7CyCSBA5EVGRzbvTFh4EQSp2MwUXCRIK9S5n9E/6ac9565ab7942f2243e63866.prettify",
+    "total_time_taken": 1.28
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "University of Michigan Law Library, 801 Monroe St, Ann Arbor, MI",
+    "ll": "@42.27378,-83.73926,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Showing results for type: \"place\" instead of type: \"search\"",
+    "query_displayed": "University of Michigan Law Library, 801 Monroe St, Ann Arbor, MI"
+  },
+  "place_results": {
+    "title": "University of Michigan Law Library",
+    "place_id": "ChIJV_QNt0euPIgRjkAwO5XG2Wo",
+    "data_id": "0x883cae47b70df457:0x6ad9c6953b30408e",
+    "data_cid": "7699403382212018318",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae47b70df457%3A0x6ad9c6953b30408e&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae47b70df457%3A0x6ad9c6953b30408e&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.273756,
+      "longitude": -83.739072
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJV_QNt0euPIgRjkAwO5XG2Wo",
+    "provider_id": "/g/11c3tfxgrn",
+    "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmPRG7lOVesyMTrvXAgkjdAFwRLTG3R8Y91KVsOaUjMk9tnsYwcTR_dYKTGpxW73I2lRGyx0FmqwC9kQj0Wuiniz_utIl2XHhl5OAzTDfDoP_UJvM_ISeoJcDMgDLwxpVy9k6siILztats1c=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/90ylUnicHcTdboIwGADQJ0KKZHMs2QWRiCgE11WUK0JqLT-lZXyFAi-5673Nkp2L8_tTad3Du22Lyt1wpbhgI7CBKqmZ1BuqOpsPJYBFwfb3Uy-6Cw53Is0YLAkZprvP2-bhHwyOSejit9xzzhmk5bVJWk9LyA0luHjkZxL2823nRluBw2VGh-7b7L32s0G3sZb1Wow6Etv7sRIvqb-S4BmoS3E9TUkRfTF1okHCg9jMfbZ47SvUUbzqUoNDP4yDELKq_6kl_wB8jknO",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 4
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 1
+      },
+      {
+        "stars": 4,
+        "amount": 3
+      },
+      {
+        "stars": 5,
+        "amount": 46
+      }
+    ],
+    "rating": 4.6,
+    "reviews": 54,
+    "type": [
+      "Law library",
+      "Law school"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot",
+          "Wheelchair accessible restroom",
+          "Wheelchair accessible seating"
+        ]
+      }
+    ],
+    "address": "Legal Research Building, 801 Monroe St, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "website": "https://michigan.law.umich.edu/law-library",
+    "phone": "(734) 764-9324",
+    "open_state": "Open · Closes 8 PM",
+    "plus_code": "77F6+G9 Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "8 AM–8 PM"
+      },
+      {
+        "saturday": "8 AM–8 PM"
+      },
+      {
+        "sunday": "8 AM–8 PM"
+      },
+      {
+        "monday": "8 AM–8 PM"
+      },
+      {
+        "tuesday": "8 AM–8 PM"
+      },
+      {
+        "wednesday": "8 AM–8 PM"
+      },
+      {
+        "thursday": "8 AM–8 PM"
+      }
+    ],
+    "serpapi_posts_link": "https://serpapi.com/search.json?data_id=0x883cae47b70df457%3A0x6ad9c6953b30408e&engine=google_maps_posts",
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"A great location to sit down and work if you need some peace and quite.\""
+        },
+        {
+          "snippet": "\"Visit it at night--the grounds are beautiful during that time!\""
+        },
+        {
+          "snippet": "\"The library's atmosphere is inspiring, with a sense of history and scholarship.\""
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "The University of Michigan Law Library in Ann Arbor is a breathtaking architectural marvel that feels like stepping into Hogwarts! The Legal Research Building, particularly the iconic Reading Room, is the heart of the Law Quad and a true masterpiece of Collegiate Gothic design.\nWith its soaring 50-foot ceilings, intricate stained glass windows, and massive oak tables, it is one of the most beautiful study spaces in the world. The attention to detail—from the ornate stonework to the warm, historic lighting—creates an atmosphere of quiet grandeur that is both inspiring and serene. Even if you aren't a law student, walking through the Quad and seeing the library’s limestone exterior is a highlight of any visit to the U of M campus. It’s a stunning blend of history and academic prestige!",
+          "date": "9 months ago",
+          "date_iso8601": "2026-01-07T05:24:02+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "The University of Michigan Law Library is a great spot for law students and scholars. With over 1 million volumes, it's a hub of legal knowledge. The vibe is quiet and focused, perfect for research and study. Natural light pours in, making it a comfortable spot to spend hours. The library's atmosphere is inspiring, with a sense of history and scholarship. It's a fantastic resource for anyone interested in law, and definitely worth visiting 📚📖👓",
+          "date": "a year ago",
+          "date_iso8601": "2025-03-04T00:56:37+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "The best place on U-M’s campus to study. It’s so serene, quiet, and overall relaxing. Most people will study here or just find it nice and quiet. Would always recommend.",
+          "date": "4 years ago",
+          "date_iso8601": "2022-09-14T19:16:27+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Visit it at night--the grounds are beautiful during that time! My camera can't do it justice :) Make sure to go to the southeast corner to see the moat--it's bigger than you'd expect!",
+          "date": "10 years ago",
+          "date_iso8601": "2016-09-27T01:37:24+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "I use to come here often as a student and then when I was working on my masters. Still majestic iconic eternal. Things have changed a lot in Ann Arbor but it's still the best place to be in Michigan.",
+          "date": "11 months ago",
+          "date_iso8601": "2025-10-11T12:34:46+00:00"
+        }
+      ]
+    }
+  }
+}

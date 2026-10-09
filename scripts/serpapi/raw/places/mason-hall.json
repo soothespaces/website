@@ -1,0 +1,890 @@
+{
+  "slug": "mason-hall",
+  "query": "Mason Hall, 419 S State St, Ann Arbor, MI",
+  "fetched_at": "2026-10-09T21:02:29.167Z",
+  "search_ids": [
+    "6ac95662421b089a8f505a7f"
+  ],
+  "resolved_by": "search opened the place",
+  "distance_from_ours_m": 8,
+  "place": {
+    "title": "Mason Hall",
+    "place_id": "ChIJoUiiM0euPIgRAVpxoKTgXkA",
+    "data_id": "0x883cae4733a248a1:0x405ee0a4a0715a01",
+    "data_cid": "4638391663909231105",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae4733a248a1%3A0x405ee0a4a0715a01&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae4733a248a1%3A0x405ee0a4a0715a01&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2770876,
+      "longitude": -83.73941239999999
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJoUiiM0euPIgRAVpxoKTgXkA",
+    "provider_id": "/g/11bxf45xgq",
+    "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLd5FykACCa-n--MorcWxSPukSZsO0Sz_fjXir76ncWk4-RxS5-XaXi6kCjbaYR6cI9Ts2Yn_lpzDjVUstNgBY4NHc8fOgJdIxLXGeFJL5v5AkLawGWBD14zc0azAD03_8OXnmJc=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/8uQqknicHcRRboIwGADgE1XKBHQmeygQFcLEiJPiC6m_WKTQGlqVccGdwdss8Xv4Xn-1MTe9sKy2nk64Uryt7rrqQUlTSTMB1Vm8Z1oj0BYhvuiSs7v8FSQIGJIIfase8iHb3kV21CnOxvLS0Gs_8yTkwkG7IXMRZfTqiaA5sWLnQfS51x-FLNvbGDaHH2023C-czRrml5TH52hI6Kpaxon7cIlI2HOV-6HtjIDZSEI8LecplV0MX08bY4zq94DkP32ARFY",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 1
+      },
+      {
+        "stars": 2,
+        "amount": 1
+      },
+      {
+        "stars": 3,
+        "amount": 5
+      },
+      {
+        "stars": 4,
+        "amount": 6
+      },
+      {
+        "stars": 5,
+        "amount": 17
+      }
+    ],
+    "rating": 4.2,
+    "reviews": 30,
+    "type": [
+      "Academic department"
+    ],
+    "type_ids": [
+      "university_department"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot",
+          "Wheelchair accessible restroom",
+          "Wheelchair accessible seating"
+        ]
+      },
+      {
+        "crowd": [
+          "LGBTQ+ friendly",
+          "Transgender safespace"
+        ]
+      }
+    ],
+    "address": "419 S State St Mason Hall, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "open_state": "Open · Closes 12 AM",
+    "plus_code": "77G6+R6 Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "Open 24 hours"
+      },
+      {
+        "saturday": "Closed"
+      },
+      {
+        "sunday": "Closed"
+      },
+      {
+        "monday": "Open 24 hours"
+      },
+      {
+        "tuesday": "Open 24 hours"
+      },
+      {
+        "wednesday": "Open 24 hours"
+      },
+      {
+        "thursday": "Open 24 hours"
+      }
+    ],
+    "images": [
+      {
+        "title": "All",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9SmX3J5_0g80DY675vfKFkp_8tMP4G3cRDBnSAiTHEheWPyIqAipawzs2-EwCVrLzuSVHbZY7Dc_HU7XDk2uvZXptBjDfhIXTmvcpqh0x0FyG1x0g93Rjh2Q-xcyB1DcwAvHfns=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/BeMZNHicHcRJDoIwFADQE1UKqKCJC7AqjlFwQDdEf6BFpFRbJi_oGbyNiW_xvh-mlJBDTXsws0OLgj7iUsYvKLiKuepAkWtUSAQSSc3ZnNJ2EOShuehFmNqYnPtWr0qW00xEtlpvuzMTfOLywEn33oTFp207fzqpuNZvaaBJPT6-Vu8yOHq3y9kiEHkHKySZUVaXUCj3ThI2D_d5BeLJcIOn7UxvMB2Y_p0ZO9RA6-oEaqfyEi5HtY4xRuw_IP4DIkNElg"
+      },
+      {
+        "title": "Street View & 360°",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9Q_N4w6W1UDs-n6BqxCJQAS4jzttUpkpMCoOqJ2puKXJ5Q7_YeD6Ra8618Sic4XsM6Tc5p2_4QRlz9CYSoi6f6BOJmMciAD4qxMEyCIPZw2PbNBvbp31xm8mGbGQoqUCl5RcaIc=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/rTZJLnicHcRLDoIwFADAE1U-loomLqAYIwa0IPGzIfKCgAIttgp6Qc_gbUycxXw_pVJCzjStLsejgvOizh8yvwNvVd6qEfBGK4REIJHUnHBfvaYsDXFP9kbiSdQStxuoz5wYX99KJeImAso3nW-Kx_rgW2ySHnOPRGebGHZcAT7IgOzAEmaKWVS_p_QY84pciLvxmwAqx8PdECxedLU99eY2C91nJsbG0NjNMlsy3iW0tiI4r2DeG7quo_I_oPYH_BZDkQ"
+      }
+    ],
+    "user_reviews": {
+      "most_relevant": [
+        {
+          "rating": 3,
+          "description": "campus bldg management, wanting to see the best for THEE u of m. the bldg is always too cold; no one who can control the temp will listen to feedback. there are many bugs in the rooms and halls. brown water is just disappointing. what about power washing the walls outside around entrances and sitting areas?  replace missing bathroom stall hooks. let's do better. love to u of m",
+          "date": "Edited a year ago",
+          "date_iso8601": "2025-07-31T13:46:59+00:00"
+        },
+        {
+          "rating": 3,
+          "description": "Honestly, just feels like your average classroom building. A lot of classrooms, no lecture halls. Very average. Classrooms for the most part are fine but the bathrooms are getting run down. Plus, one elevator for the entire building is a little low but it's fine.",
+          "date": "3 years ago",
+          "date_iso8601": "2023-02-06T03:07:34+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "Lots of classrooms. Some of which are getting run down. For the amount of use this building gets, maintenance is doing a good job. Very friendly maintenance guy named Cam. There's also the fishbowl which is a nice campus study place. Very high traffic building.",
+          "date": "8 years ago",
+          "date_iso8601": "2018-05-28T22:39:46+00:00"
+        },
+        {
+          "rating": 3,
+          "description": "Building is OK, but rooms feel old and very mid—reminds me of an old high school (because it is, from what I've heard). Not the best. Posting Wall area is nice though.",
+          "date": "2 years ago",
+          "date_iso8601": "2024-02-05T20:12:30+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Lots of classrooms. Some of which are getting run down. For the amount of use this building gets, maintenance is doing a good job. There's also the fishbowl which is a nice campus study place. Very high traffic building.",
+          "date": "8 years ago",
+          "date_iso8601": "2018-06-10T01:24:43+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Great hall at UMich. Newnan Advising Center and Computer Lab are all helpful. Some classes are here also.",
+          "date": "8 years ago",
+          "date_iso8601": "2018-08-13T21:13:15+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "Class building. You do classes here. My only complaint is that many of the classes are not cooled/heated well, and dont all have good tech in them",
+          "date": "8 years ago",
+          "date_iso8601": "2018-09-07T18:53:51+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Awesome place for students to come and get some studies done along with their classes in the same building.",
+          "date": "8 years ago",
+          "date_iso8601": "2018-05-08T19:38:30+00:00"
+        }
+      ]
+    },
+    "people_also_search_for": [
+      {
+        "search_term": "People also search for",
+        "local_results": [
+          {
+            "position": 1,
+            "title": "Angell Hall",
+            "data_id": "0x0:0xf6b752a395b00d4a",
+            "data_cid": "17777768916612812106",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xf6b752a395b00d4a&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xf6b752a395b00d4a&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2766233,
+              "longitude": -83.73971010000001
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xf6b752a395b00d4a%218m2%213d42.2766233%214d-83.73971010000001&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.4,
+            "reviews": 49,
+            "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLf-cP9129BOiR3hn6RXnAPELdz8xRtXjueMHCG89JTd6nDQP-7MQwEimQ4XdqZcKoUrpm0o9xvOGnezk4lygZ3Y51NrJwfD5wXXouEqo10j965qkrVoWiRbD06xyBPCZrHCT4j4=w156-h156-n-k-no",
+            "type": [
+              "Academic department",
+              "Auditorium"
+            ]
+          },
+          {
+            "position": 2,
+            "title": "Block M",
+            "data_id": "0x0:0xc2d7afaf78104562",
+            "data_cid": "14039883531519280482",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xc2d7afaf78104562&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xc2d7afaf78104562&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2769414,
+              "longitude": -83.7382157
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xc2d7afaf78104562%218m2%213d42.2769414%214d-83.7382157&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.2,
+            "reviews": 5,
+            "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLcJrd9ISv0QiXls91s_trD6gsxbKjeSSORpYjhJ1iZLOaVLE_-FkSTphg9-BM1SyXrBqKUMyJE8fGVQQvziO_X-M5CsizM6E6xXBqEWcDsgQdvn4765U3beRboK9GxyNnrkDrau=w156-h156-n-k-no",
+            "type": [
+              "Cultural landmark"
+            ]
+          },
+          {
+            "position": 3,
+            "title": "LSA Honors 1330 Mason Hall",
+            "data_id": "0x0:0x20a3431e96d562d7",
+            "data_cid": "2351797229076177623",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x20a3431e96d562d7&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x20a3431e96d562d7&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2771818,
+              "longitude": -83.7392734
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x20a3431e96d562d7%218m2%213d42.2771818%214d-83.7392734&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4,
+            "reviews": 5,
+            "thumbnail": "https://www.google.com/maps/vt/data=4CRtJ_ujE_UyC2x08ujhkeIKUkGJk7IXQv1dBcC3gVgRGEvPXx7GuXgaGE6fu49xZjEHW58L1pufQuuNZWpCitIkmE0RsQxd2Ioqvb3TfnZu4wfGlNvTIWBh2HvyYcrtwgiF3MdMmywXPSd4_0gh6XtU4o75Ugu_",
+            "type": [
+              "Graduate school",
+              "School"
+            ]
+          },
+          {
+            "position": 4,
+            "title": "Alumni Hall",
+            "data_id": "0x0:0xd3be70f50ed0514d",
+            "data_cid": "15257756785395650893",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xd3be70f50ed0514d&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xd3be70f50ed0514d&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2754056,
+              "longitude": -83.740128
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xd3be70f50ed0514d%218m2%213d42.2754056%214d-83.740128&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 1,
+            "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLcJnLhEWKnxoUj3Ed9QQfZqrcM_VVfaHwRneb-49mDe8lQL9z5qXN-S71xVwIuK1CimVGuPFR1AR-0LAMf7H2KVT4HiHpOoOW-b2Cv-2DVbb99L4qqjHUhRrKCuBFDp6_em6pJP=w156-h156-n-k-no",
+            "type": [
+              "Art museum"
+            ]
+          },
+          {
+            "position": 5,
+            "title": "Haven Hall",
+            "data_id": "0x0:0x1fcdb2cb0540594c",
+            "data_cid": "2291684370437658956",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x1fcdb2cb0540594c&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x1fcdb2cb0540594c&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.276339,
+              "longitude": -83.739384
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x1fcdb2cb0540594c%218m2%213d42.276339%214d-83.739384&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 2.8,
+            "reviews": 6,
+            "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLe963zoAzsaJZk12nwL04_2ng7XrNcDaOihCVIkd_nKRldPFQlXmF8NjGWWSQJUMwG1qrQSm_0lcr2D6quMJUFjmxumeMgazMOVtXr3tEM9eBX89vO8mcJ4OLUj1kA3VBTQBuU=w156-h156-n-k-no",
+            "type": [
+              "Academic department",
+              "Public university"
+            ]
+          }
+        ]
+      }
+    ],
+    "popular_times": {
+      "current_day": "friday",
+      "live_hash": {
+        "info": "Now: Usually not too busy"
+      },
+      "graph_results": {
+        "monday": [
+          {
+            "time": "12 AM",
+            "info": "Usually not busy",
+            "busyness_score": 14
+          },
+          {
+            "time": "1 AM",
+            "info": "Usually not busy",
+            "busyness_score": 9
+          },
+          {
+            "time": "2 AM",
+            "info": "Usually not busy",
+            "busyness_score": 9
+          },
+          {
+            "time": "3 AM",
+            "info": "Usually not busy",
+            "busyness_score": 11
+          },
+          {
+            "time": "4 AM",
+            "info": "Usually not busy",
+            "busyness_score": 5
+          },
+          {
+            "time": "5 AM",
+            "info": "Usually not busy",
+            "busyness_score": 6
+          },
+          {
+            "time": "6 AM",
+            "info": "Usually not busy",
+            "busyness_score": 10
+          },
+          {
+            "time": "7 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 20
+          },
+          {
+            "time": "8 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 40
+          },
+          {
+            "time": "9 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 61
+          },
+          {
+            "time": "10 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 77
+          },
+          {
+            "time": "11 AM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 87
+          },
+          {
+            "time": "12 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 87
+          },
+          {
+            "time": "1 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 86
+          },
+          {
+            "time": "2 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 86
+          },
+          {
+            "time": "3 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 81
+          },
+          {
+            "time": "4 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 71
+          },
+          {
+            "time": "5 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 57
+          },
+          {
+            "time": "6 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 49
+          },
+          {
+            "time": "7 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 41
+          },
+          {
+            "time": "8 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 39
+          },
+          {
+            "time": "9 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 33
+          },
+          {
+            "time": "10 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 29
+          },
+          {
+            "time": "11 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 27
+          }
+        ],
+        "tuesday": [
+          {
+            "time": "12 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 22
+          },
+          {
+            "time": "1 AM",
+            "info": "Usually not busy",
+            "busyness_score": 16
+          },
+          {
+            "time": "2 AM",
+            "info": "Usually not busy",
+            "busyness_score": 10
+          },
+          {
+            "time": "3 AM",
+            "info": "Usually not busy",
+            "busyness_score": 8
+          },
+          {
+            "time": "4 AM",
+            "info": "Usually not busy",
+            "busyness_score": 12
+          },
+          {
+            "time": "5 AM",
+            "info": "Usually not busy",
+            "busyness_score": 8
+          },
+          {
+            "time": "6 AM",
+            "info": "Usually not busy",
+            "busyness_score": 9
+          },
+          {
+            "time": "7 AM",
+            "info": "Usually not busy",
+            "busyness_score": 18
+          },
+          {
+            "time": "8 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 34
+          },
+          {
+            "time": "9 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 54
+          },
+          {
+            "time": "10 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 65
+          },
+          {
+            "time": "11 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 79
+          },
+          {
+            "time": "12 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 82
+          },
+          {
+            "time": "1 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 81
+          },
+          {
+            "time": "2 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 79
+          },
+          {
+            "time": "3 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 68
+          },
+          {
+            "time": "4 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 56
+          },
+          {
+            "time": "5 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 51
+          },
+          {
+            "time": "6 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 46
+          },
+          {
+            "time": "7 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 41
+          },
+          {
+            "time": "8 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 40
+          },
+          {
+            "time": "9 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 39
+          },
+          {
+            "time": "10 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 33
+          },
+          {
+            "time": "11 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 27
+          }
+        ],
+        "wednesday": [
+          {
+            "time": "12 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 21
+          },
+          {
+            "time": "1 AM",
+            "info": "Usually not busy",
+            "busyness_score": 20
+          },
+          {
+            "time": "2 AM",
+            "info": "Usually not busy",
+            "busyness_score": 17
+          },
+          {
+            "time": "3 AM",
+            "info": "Usually not busy",
+            "busyness_score": 15
+          },
+          {
+            "time": "4 AM",
+            "info": "Usually not busy",
+            "busyness_score": 5
+          },
+          {
+            "time": "5 AM",
+            "info": "Usually not busy",
+            "busyness_score": 6
+          },
+          {
+            "time": "6 AM",
+            "info": "Usually not busy",
+            "busyness_score": 9
+          },
+          {
+            "time": "7 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 21
+          },
+          {
+            "time": "8 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 35
+          },
+          {
+            "time": "9 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 49
+          },
+          {
+            "time": "10 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 57
+          },
+          {
+            "time": "11 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 68
+          },
+          {
+            "time": "12 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 76
+          },
+          {
+            "time": "1 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 77
+          },
+          {
+            "time": "2 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 81
+          },
+          {
+            "time": "3 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 80
+          },
+          {
+            "time": "4 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 70
+          },
+          {
+            "time": "5 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 64
+          },
+          {
+            "time": "6 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 49
+          },
+          {
+            "time": "7 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 42
+          },
+          {
+            "time": "8 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 32
+          },
+          {
+            "time": "9 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 24
+          },
+          {
+            "time": "10 PM",
+            "info": "Usually not busy",
+            "busyness_score": 16
+          },
+          {
+            "time": "11 PM",
+            "info": "Usually not busy",
+            "busyness_score": 13
+          }
+        ],
+        "thursday": [
+          {
+            "time": "12 AM",
+            "info": "Usually not busy",
+            "busyness_score": 10
+          },
+          {
+            "time": "1 AM",
+            "info": "Usually not busy",
+            "busyness_score": 9
+          },
+          {
+            "time": "2 AM",
+            "info": "Usually not busy",
+            "busyness_score": 7
+          },
+          {
+            "time": "3 AM",
+            "info": "Usually not busy",
+            "busyness_score": 6
+          },
+          {
+            "time": "4 AM",
+            "info": "Usually not busy",
+            "busyness_score": 11
+          },
+          {
+            "time": "5 AM",
+            "info": "Usually not busy",
+            "busyness_score": 10
+          },
+          {
+            "time": "6 AM",
+            "info": "Usually not busy",
+            "busyness_score": 12
+          },
+          {
+            "time": "7 AM",
+            "info": "Usually not busy",
+            "busyness_score": 20
+          },
+          {
+            "time": "8 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 35
+          },
+          {
+            "time": "9 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 57
+          },
+          {
+            "time": "10 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 67
+          },
+          {
+            "time": "11 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 78
+          },
+          {
+            "time": "12 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 86
+          },
+          {
+            "time": "1 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 92
+          },
+          {
+            "time": "2 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 100
+          },
+          {
+            "time": "3 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 96
+          },
+          {
+            "time": "4 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 76
+          },
+          {
+            "time": "5 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 63
+          },
+          {
+            "time": "6 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 51
+          },
+          {
+            "time": "7 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 42
+          },
+          {
+            "time": "8 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 35
+          },
+          {
+            "time": "9 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 30
+          },
+          {
+            "time": "10 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 33
+          },
+          {
+            "time": "11 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 27
+          }
+        ],
+        "friday": [
+          {
+            "time": "12 AM",
+            "info": "Usually not busy",
+            "busyness_score": 20
+          },
+          {
+            "time": "1 AM",
+            "info": "Usually not busy",
+            "busyness_score": 13
+          },
+          {
+            "time": "2 AM",
+            "info": "Usually not busy",
+            "busyness_score": 11
+          },
+          {
+            "time": "3 AM",
+            "info": "Usually not busy",
+            "busyness_score": 12
+          },
+          {
+            "time": "4 AM",
+            "info": "Usually not busy",
+            "busyness_score": 11
+          },
+          {
+            "time": "5 AM",
+            "info": "Usually not busy",
+            "busyness_score": 11
+          },
+          {
+            "time": "6 AM",
+            "info": "Usually not busy",
+            "busyness_score": 15
+          },
+          {
+            "time": "7 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 26
+          },
+          {
+            "time": "8 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 41
+          },
+          {
+            "time": "9 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 56
+          },
+          {
+            "time": "10 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 62
+          },
+          {
+            "time": "11 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 67
+          },
+          {
+            "time": "12 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 62
+          },
+          {
+            "time": "1 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 56
+          },
+          {
+            "time": "2 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 50
+          },
+          {
+            "time": "3 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 42
+          },
+          {
+            "time": "4 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 39
+          },
+          {
+            "time": "5 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 36,
+            "current": true
+          },
+          {
+            "time": "6 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 41
+          },
+          {
+            "time": "7 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 42
+          },
+          {
+            "time": "8 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 44
+          },
+          {
+            "time": "9 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 41
+          },
+          {
+            "time": "10 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 36
+          },
+          {
+            "time": "11 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 27
+          }
+        ]
+      }
+    },
+    "web_results_link": "https://www.google.com/search?q=local+guide+program&ibp=gwp;0,26,Oh4KHCIYTWFzb24gSGFsbCBBbm4gQXJib3IsIE1JKAI&pcl=lp",
+    "serpapi_web_results_link": "https://serpapi.com/search.json?device=desktop&engine=google&google_domain=google.com&ibp=gwp%3B0%2C26%2COh4KHCIYTWFzb24gSGFsbCBBbm4gQXJib3IsIE1JKAI&q=local+guide+program"
+  }
+}

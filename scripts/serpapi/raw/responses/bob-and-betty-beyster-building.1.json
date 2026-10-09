@@ -1,0 +1,145 @@
+{
+  "search_metadata": {
+    "id": "6ac956673d40b6783609e9e1",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/KZ9T6HBj_dMhzUd8fO3lqYNdHdeJUQH2ou2Cu_0uCWk/6ac956673d40b6783609e9e1.json",
+    "markdown_endpoint": "https://serpapi.com/searches/KZ9T6HBj_dMhzUd8fO3lqYNdHdeJUQH2ou2Cu_0uCWk/6ac956673d40b6783609e9e1.md",
+    "created_at": "2026-10-09 21:02:31 UTC",
+    "processed_at": "2026-10-09 21:02:31 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/Bob+and+Betty+Beyster+Building%2C+2260+Hayward+St%2C+Ann+Arbor%2C+MI/@42.29297,-83.71611,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/KZ9T6HBj_dMhzUd8fO3lqYNdHdeJUQH2ou2Cu_0uCWk/6ac956673d40b6783609e9e1.html",
+    "prettify_html_file": "https://serpapi.com/searches/KZ9T6HBj_dMhzUd8fO3lqYNdHdeJUQH2ou2Cu_0uCWk/6ac956673d40b6783609e9e1.prettify",
+    "total_time_taken": 0.85
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "Bob and Betty Beyster Building, 2260 Hayward St, Ann Arbor, MI",
+    "ll": "@42.29297,-83.71611,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Results for exact spelling",
+    "query_displayed": "Bob and Betty Beyster Building, 2260 Hayward St, Ann Arbor, MI"
+  },
+  "local_results": [
+    {
+      "position": 1,
+      "title": "BBB Building",
+      "place_id": "ChIJD4gbWYauPIgRQo3U-cGm4XI",
+      "data_id": "0x883cae86591b880f:0x72e1a6c1f9d48d42",
+      "data_cid": "8278080942134037826",
+      "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae86591b880f%3A0x72e1a6c1f9d48d42&engine=google_maps_reviews&hl=en",
+      "photos_link": "https://serpapi.com/search.json?data_id=0x883cae86591b880f%3A0x72e1a6c1f9d48d42&engine=google_maps_photos&hl=en",
+      "gps_coordinates": {
+        "latitude": 42.2930138,
+        "longitude": -83.71637199999999
+      },
+      "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJD4gbWYauPIgRQo3U-cGm4XI",
+      "provider_id": "/g/11cm0f1d79",
+      "rating": 4.3,
+      "reviews": 16,
+      "unclaimed_listing": true,
+      "type": "Academic department",
+      "types": [
+        "Academic department"
+      ],
+      "address": "2260 Hayward St, Ann Arbor, MI 48109",
+      "country": "United States",
+      "open_state": "Closed · Opens 8 AM Mon",
+      "hours": "Closed · Opens 8 AM Mon",
+      "operating_hours": {
+        "friday": "8 AM–5 PM",
+        "saturday": "Closed",
+        "sunday": "Closed",
+        "monday": "8 AM–5 PM",
+        "tuesday": "8 AM–5 PM",
+        "wednesday": "8 AM–5 PM",
+        "thursday": "8 AM–5 PM"
+      },
+      "phone": "(734) 764-1688",
+      "website": "https://maps.studentlife.umich.edu/building/bob-and-betty-beyster-building",
+      "extensions": [
+        {
+          "accessibility": [
+            "Wheelchair accessible entrance",
+            "Wheelchair accessible parking lot"
+          ]
+        }
+      ],
+      "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLc_PqvKu6eC7lRCkqxoYBbtDvenp6usOJg19QH-fqN62v_HY9VAwSSRFJAu6L85Hbn3XUYdpV_MXeZtcUs3u6wi704ODT6Gi77DxzHFxaMM3y6hW5o299gn1CXYWb6xSlKuZuIKjw=w1000-h1000-c-n",
+      "serpapi_thumbnail": "https://serpapi.com/images/url/aGa7ZnicHcRdEkJAAADgEwmplWZ6EFMK_RDRi8m2rYpd2l3UDTtCt2mm7-H7fgrOazaV5bLQBphSXCLB0BNSwhHhA0grGT_PjEmQyaY5f1QezHZN6wqALL0MrEfT03Sec7tFpAaCbddYNfaOdG02YNhmTmrEZheGwWJtCuBNxk5OtCRKL3Wc-Qk6cRgxTYDupiujrX0Ay5uu2_3bWfRn39deoDiO6dAwMFGtJD3moA9LV5zEyr13s05VFEUq_kOJ_AARiUUg"
+    },
+    {
+      "position": 2,
+      "title": "Computer Science and Engineering",
+      "place_id": "ChIJL6vg9duvPIgRGc36d26mBqg",
+      "data_id": "0x883cafdbf5e0ab2f:0xa806a66e77facd19",
+      "data_cid": "12107547641621695769",
+      "reviews_link": "https://serpapi.com/search.json?data_id=0x883cafdbf5e0ab2f%3A0xa806a66e77facd19&engine=google_maps_reviews&hl=en",
+      "photos_link": "https://serpapi.com/search.json?data_id=0x883cafdbf5e0ab2f%3A0xa806a66e77facd19&engine=google_maps_photos&hl=en",
+      "gps_coordinates": {
+        "latitude": 42.2929549,
+        "longitude": -83.7163436
+      },
+      "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJL6vg9duvPIgRGc36d26mBqg",
+      "provider_id": "/g/11rsfck_95",
+      "rating": 5,
+      "reviews": 2,
+      "type": "Academic department",
+      "types": [
+        "Academic department"
+      ],
+      "address": "Bob and Betty Beyster Building, 2260 Hayward St, Ann Arbor, MI 48109",
+      "country": "United States",
+      "open_state": "Closed · Opens 8 AM Mon",
+      "hours": "Closed · Opens 8 AM Mon",
+      "operating_hours": {
+        "friday": "8 AM–5 PM",
+        "saturday": "Closed",
+        "sunday": "Closed",
+        "monday": "8 AM–5 PM",
+        "tuesday": "8 AM–5 PM",
+        "wednesday": "8 AM–5 PM",
+        "thursday": "8 AM–5 PM"
+      },
+      "phone": "(734) 764-8504",
+      "website": "https://cse.engin.umich.edu/",
+      "extensions": [
+        {
+          "accessibility": [
+            "Wheelchair accessible entrance",
+            "Wheelchair accessible parking lot"
+          ]
+        }
+      ],
+      "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLcD3NOQRsPs5Dn4TKad91Y_Skjr5-BQFkRXauJ3MDjwblyQMCLs5dThlIf1RSFxeJyeZXAZZ9Om-JNzNOeaBBdSf0t9FkGOwde6g8bmjRJSUbzFMnKFWRxpn4wqflG6UuDKJMxcIXXwmxti=w1000-h1000-c-n",
+      "serpapi_thumbnail": "https://serpapi.com/images/url/S1VPFXicHcTBboIwAADQL6pAEDKW7ACSGovAKJohlwVKgUFblJYU_UnP_s0S3-G9nr1SV_lpGKy3N900dYwuks5kEooKtSETN7q5khIQafh-MPIjCe0kzbD8lk4otqeoajzr8puPw-yAIIMjLqoF2XE46Jrds3h3lE5z6tmhtXAOV4rutCz8svRSDlDySFJaBUGTt6by4LhPdUPd7qPmA0b5uX7AWETwB69XsdW3lu3d8xJGKF7JoSg0X9Xfl7ZM0wT9ewLEP6qZSC4"
+    },
+    {
+      "position": 3,
+      "title": "Bob and Betty Beyster Building",
+      "place_id": "ChIJ0c8pX4auPIgR8_vZwVtntFY",
+      "data_id": "0x883cae865f29cfd1:0x56b4675bc1d9fbf3",
+      "data_cid": "6247732226861693939",
+      "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae865f29cfd1%3A0x56b4675bc1d9fbf3&engine=google_maps_reviews&hl=en",
+      "photos_link": "https://serpapi.com/search.json?data_id=0x883cae865f29cfd1%3A0x56b4675bc1d9fbf3&engine=google_maps_photos&hl=en",
+      "gps_coordinates": {
+        "latitude": 42.2929549,
+        "longitude": -83.7163436
+      },
+      "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJ0c8pX4auPIgR8_vZwVtntFY",
+      "provider_id": "/g/12hl8nt2c",
+      "type": "Building",
+      "types": [
+        "Building"
+      ],
+      "address": "Ann Arbor, MI 48109",
+      "country": "United States",
+      "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLdvjp7FQjvxSSp_8vXIzqt2ae7lOWoBIbQ56WPDhDXqPsCK0bgN3VASU9jDoTNPv-iWKRMt8-CaEzEow9Ej6BFhoTqwn5CWeXDdA6U3Wu2nPn7yWQpxTPspyEvC39Ml2CbRzkQ=w1000-h1000-c-n",
+      "serpapi_thumbnail": "https://serpapi.com/images/url/HBn8FHicHcRdDoIgAADgE5GmS7OtB0XbWlmYFr41f5hkChiE5QG7Q7dp63v4vh-qlJArw-ioPWs4bzrylORRcaYIU7OK90bzKKQElTR8P7j3-1q3wt0krX6lqbgudb6dBmUVxO2OmAfbMlk4GIU0zAck4c4sm4N98dOz14Y8OyANbnh3itUSwCKaIj56UesEG8qzYWQLiEke1r5ztvHTYoi5b5yIV4akeEca2l7cWbA8TfdkPc5N0wT0fwXYD11WRKU"
+    }
+  ]
+}

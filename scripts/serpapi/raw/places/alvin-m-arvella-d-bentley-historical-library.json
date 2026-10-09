@@ -1,0 +1,267 @@
+{
+  "slug": "alvin-m-arvella-d-bentley-historical-library",
+  "query": "Bentley Historical Library, 1150 Beal Ave, Ann Arbor, MI",
+  "fetched_at": "2026-10-09T21:02:08.380Z",
+  "search_ids": [
+    "6ac9564cafaa6758b2a1d87d"
+  ],
+  "resolved_by": "search opened the place",
+  "distance_from_ours_m": 18,
+  "place": {
+    "title": "Bentley Historical Library",
+    "place_id": "ChIJN7ti5o6uPIgRfJLzadHsLS8",
+    "data_id": "0x883cae8ee662bb37:0x2f2decd169f3927c",
+    "data_cid": "3399633677904482940",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae8ee662bb37%3A0x2f2decd169f3927c&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae8ee662bb37%3A0x2f2decd169f3927c&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2895957,
+      "longitude": -83.7122096
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJN7ti5o6uPIgRfJLzadHsLS8",
+    "provider_id": "/m/02pqv1_",
+    "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9Twb6nmkvZLJYuKdXEXW0ooSjPXvpVE-KppLk1zoaBL6PRpsL1TDdG5hxr9QRKaVkwornq8CSEHhQO7WKBJUO00uCb7wKtlPHIJQWYriWHLu3IL2WOAw3aY1aTLLg8JqUZA5UX8NQ=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/G6Op8XicHcThEoEwAADgJ5qWDnHnR-ik7VSUVf8qXaNs05bhDT2Ct3Hn-_F9P1QpIReG0VFr1HDedPUg677iTNVMjSp-MxohQSWBNJw9ubzmsS6n7NY-cuxnAzqnbkog58drmD7EyQVICNyab16s8DQ8CInNeHPeTuizn0cHVJxazXt2t9dH16NRMCNo5ScBhMO6nGmkutDb-RHJ-gvx8GDt8JgEjraKzCxijBvbvye5M0lSex8ttQkhBPR_BdgPLOhE2w",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 0
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 0
+      },
+      {
+        "stars": 4,
+        "amount": 0
+      },
+      {
+        "stars": 5,
+        "amount": 15
+      }
+    ],
+    "rating": 5,
+    "reviews": 15,
+    "type": [
+      "Library",
+      "Archive"
+    ],
+    "type_ids": [
+      "library",
+      "archive"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      }
+    ],
+    "address": "1150 Beal Ave, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "The University of Michigan - North Campus",
+    "website": "http://bentley.umich.edu/",
+    "phone": "(734) 764-3482",
+    "open_state": "Closed · Opens 9:30 AM Sat",
+    "plus_code": "77QQ+R4 Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "9:30 AM–4:30 PM"
+      },
+      {
+        "saturday": "9:30 AM–1:30 PM"
+      },
+      {
+        "sunday": "Closed"
+      },
+      {
+        "monday": "Closed"
+      },
+      {
+        "tuesday": "9:30 AM–4:30 PM"
+      },
+      {
+        "wednesday": "9:30 AM–7 PM"
+      },
+      {
+        "thursday": "9:30 AM–4:30 PM"
+      }
+    ],
+    "images": [
+      {
+        "title": "All",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9Twb6nmkvZLJYuKdXEXW0ooSjPXvpVE-KppLk1zoaBL6PRpsL1TDdG5hxr9QRKaVkwornq8CSEHhQO7WKBJUO00uCb7wKtlPHIJQWYriWHLu3IL2WOAw3aY1aTLLg8JqUZA5UX8NQ=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/G6Op8XicHcThEoEwAADgJ5qWDnHnR-ik7VSUVf8qXaNs05bhDT2Ct3Hn-_F9P1QpIReG0VFr1HDedPUg677iTNVMjSp-MxohQSWBNJw9ubzmsS6n7NY-cuxnAzqnbkog58drmD7EyQVICNyab16s8DQ8CInNeHPeTuizn0cHVJxazXt2t9dH16NRMCNo5ScBhMO6nGmkutDb-RHJ-gvx8GDt8JgEjraKzCxijBvbvye5M0lSex8ttQkhBPR_BdgPLOhE2w"
+      },
+      {
+        "title": "By owner",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RT-__kjekPHv5V76XKAtfQ3ARaww1esrwZ-40xuOhepZzTcavCpit-fLiHaOu_vYkLM3L5iJIXWLCxg2NtB9PJzggEyOKhf96-Cbh1vG7AVMEE3swPzckYJPM21dKMHD-NgZBt=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/EydSn3icHcRLDoIwFADAEz0B6yeYuEAkIn-NEWVDsJYWQSC0UOWCnsHbmDiL-X6YEC1fKUrF0IQ2Da1Iz0mHm1qQWkxw81RoywFz4IoRxMVbP54gTcsHKSN7mJ-Xi4triPyAjGMmpUZ4JxOYqa8-ZKRNxhPOBrMtBOReYWdhnw7X0vORNy-c_SX2zBedBmKjR85IqfUOXZbrCzBvTBt2S-PsWxbiMhpxeXUif6rdXd_eQkCTjVhLTVVVYP8x1D-P1URo"
+      },
+      {
+        "title": "Videos",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9R2vHdVQUdsItgu_0XSjfbxJyGDr3wWI4nBzUJgbFANnbLyvzhjKFyORlG_7HmteZYKmw0qKVmNcIOHB5XhsFtZshnYwtq5xzswBh5tZT0ueeGCnYFwjcS-ElgBwiqL7zN8gb-xbJ_g0KHd=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/rfzUK3icHcTLjoIwFADQL6p0dIgzJi5klKfB-EJhQ9LSaSVQxHuxwE_Oev7GxLM4_38K8Q4Ly6rUbCKbRlaiA_HgjUahccKb2pJ3IBwIWKv4chu-D9OnXyT7cwEByi6n12P5y_pw8NaPmbkEn9oZz6Fk7irWbDs8R1VG7rA7VF4-92sUWRrVhrZRUsc82PmOfVXgYgZKpwZbux_BOMrG7EQ7Ibwfnbqm5EeyqaRjbu12PsZfkpGehbmkkV8szQellKj3nOgXn-FJ8g"
+      },
+      {
+        "title": "Street View & 360°",
+        "thumbnail": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=1nX0LRKdJ_JD33KNYRz9Yw&cb_client=maps_sv.tactile.gps&w=224&h=298&yaw=93.83602&pitch=0&thumbfov=100",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/nxrOFnicHc0xDsIgFADQ27AJtBjTmhAXp9Y4dLJTQxELCYUf-YJ6G4_lbUx8F3jfj0WEtGcs4d0YzM4UcE_j0wYUXWJcvFHgEtVxZbliaB_rHJTzB1AhuquswoWfhv7aTd1RiP48Du92LETPk_bOBJSrgjSlTFFpdN7QBRIpsq63xMq6bchLFdkK2ogdrwk41FZy8m9uMcuK8x-AGzlO"
+      }
+    ],
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"I was awed by the service and all-around atmosphere of the Library.\""
+        },
+        {
+          "snippet": "\"The Staff is Exceptional and Knowledgeable.\""
+        },
+        {
+          "snippet": "\"Your support means more to my family and me than words can express.\""
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "This place is so cool, if I hadn't taken my history course I would have never known about it. They keep all sorts of records tangentially related to the university's history. I was unable to go with my class for the initial meeting where they explained the rules, but the staff helped me out without complaint. The staff have always been helpful, and even interested in what kind of work I was embarking on. In my quest to learn about how WWII veterans changed the university, I was able to come across other information thanks to the archivist about the Army's Japanese Intensive Language course that ultimately led to the formation of the Center for Japanese Studies. There's a crazy history of spying, moving folks from the internment camps on the west coast, and professors pulling military strings to get the cultural studies of Japan ramped up through the university. I've come across language books, letters, and amazing photos through all this. So far, this has been the highlight of my first semester at the university.\n\nThe only challenge is parking. They have a really small parking lot, and you have to get a hang tag from inside. The university's bus stop isn't terribly far, and I've used that as well when I wasn't sure on parking. In the worst case scenario, parking at the VA hospital across the street would be viable.",
+          "date": "7 years ago",
+          "date_iso8601": "2018-11-05T18:03:49+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "As a researcher from Ohio State, it pains me to say this, but the Bentley Historical Library at the University of Michigan is an absolute treasure. Having made two research trips, I can say that the staff is always friendly and their systems are easy to use. Of all the libraries/archives I have visited between the United States, Taiwan, and the PRC the Bentley Historical Library was the most visitor friendly.",
+          "date": "6 years ago",
+          "date_iso8601": "2020-03-23T16:35:45+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "I was awed by the service and all-around atmosphere of the Library.  The staff is friendly and helpful.  They answer all questions and provide requested materials in a fast and friendly manner.  I am partially disabled, and they helped accommodate my needs.  Thank you Library Staff.",
+          "date": "7 years ago",
+          "date_iso8601": "2019-07-10T21:20:47+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Very cool to research here!",
+          "date": "7 years ago",
+          "date_iso8601": "2018-12-28T19:21:45+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "The library hosts archives for the University of Michigan and the Ann Arbor, and helps researchers find historical records for individuals or addresses associated with them.\n\nThere's a tour hosted at 5:30pm on the Wednesday that falls in the middle of each month, showing visitors the various storage facilities, restoration labs, large print document storage and other specialized labs for separation or binding of documents. You can request help finding material, as well as digitization services and archive retrieval for remote researchers that can't visit. Very insightful.",
+          "date": "a month ago",
+          "date_iso8601": "2026-08-13T17:10:44+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "My beloved grandfather graduated the University of Michigan in 1954 and I came here from Germany to see if I could find any information about him. The staff here was so friendly and helpful and helped me find more than I could possibly hope for! They provided me original documents and the year book as if they had been waiting for me all these years. I’m very impressed and so very thankful for your incredible support today! Thank you very much. Your support means more to my family and me than words can express. Thank you for maintaining this priceless treasure of archived documents! ✨🍀🎓❤️✨",
+          "date": "2 months ago",
+          "date_iso8601": "2026-07-10T21:04:23+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Bently is the Best. The Staff is Exceptional and Knowledgeable.",
+          "date": "3 months ago",
+          "date_iso8601": "2026-07-04T17:27:57+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "ミシガン大学のアーカイヴズであるベントレーは、実に使いやすい、アーカイヴズで、特にスタッフのきさくな配慮、と閲覧席のデスクが可変で設定できる機能は、イェールにも、LCにも、NYPLにもない実に利用者本位の配慮に満ちた設備である。\n\nミシガン大学図書館で20世紀初頭に、ミシガンの名前を不動にしたWW Bishopのアーカイヴズを調査したのだが、大学図書館の底力は百年の計が必要だと語っている、そうした資料を保存している図書館でもある。\n\n中庭に向かって作業でき、時々ヌートリアが現れて、利用者を慰めるのもこの図書館ならではのサービスであろう。",
+          "date": "4 years ago",
+          "date_iso8601": "2021-10-12T12:20:49+00:00"
+        }
+      ]
+    },
+    "people_also_search_for": [
+      {
+        "search_term": "People also search for",
+        "local_results": [
+          {
+            "position": 1,
+            "title": "Museums Library",
+            "data_id": "0x0:0x28493ec96e933b92",
+            "data_cid": "2902920469681486738",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x28493ec96e933b92&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x28493ec96e933b92&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2362252,
+              "longitude": -83.7275608
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x28493ec96e933b92%218m2%213d42.2362252%214d-83.7275608&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 1,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9SPTDyziFDmoOP4PN23uxrB15Em69DPJWCnGCpU7vy2g-q2cH0KgFS7GGnh0Z6CHj8n_38r1yAr98A--EwpR_y8HuO3Vf0vlcgfT2Jc4g0r7IR7_MTGnC4WXlweptNYtHhPns2P=w156-h156-n-k-no",
+            "type": [
+              "Library"
+            ]
+          },
+          {
+            "position": 2,
+            "title": "William L. Clements Library",
+            "data_id": "0x0:0xa52cd12a0d3e591c",
+            "data_cid": "11902117893774399772",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xa52cd12a0d3e591c&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xa52cd12a0d3e591c&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2754991,
+              "longitude": -83.7379282
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xa52cd12a0d3e591c%218m2%213d42.2754991%214d-83.7379282&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 11,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QqijmwJke7M35euB7tAeS7EQmYfNXVNgPOUo1UhyAlTsQ60u_k55A9TSm1ng6qnBmyRoQh8w0aKxFI95lJ_-9pY5DZs-xV_p2_ue9MP6DAgEV2lA_sgo6Xx2LR7lscThFj-eIy=w156-h156-n-k-no",
+            "type": [
+              "University library"
+            ]
+          },
+          {
+            "position": 3,
+            "title": "Richard W. Bailey Library",
+            "data_id": "0x0:0x8de24297a4f0908c",
+            "data_cid": "10223807323159171212",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x8de24297a4f0908c&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x8de24297a4f0908c&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2634818,
+              "longitude": -83.66752009999999
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x8de24297a4f0908c%218m2%213d42.2634818%214d-83.66752009999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.6,
+            "reviews": 28,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RqO5Ksc69HMBSypjaJB2Cg0iAuYkf5bdQSL3JPLtAfzYq-_3WvKohC-8DQfMzzZb8s8eZCf24NKRsBo4s9e9EZz0qQlUz852S2jyYkbOaYx5J-5IVPtGFeeAactm9CwC9nVWHDYg=w156-h156-n-k-no",
+            "type": [
+              "University library"
+            ]
+          },
+          {
+            "position": 4,
+            "title": "University of Michigan Law Library",
+            "data_id": "0x0:0x6ad9c6953b30408e",
+            "data_cid": "7699403382212018318",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x6ad9c6953b30408e&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x6ad9c6953b30408e&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.273756,
+              "longitude": -83.739072
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x6ad9c6953b30408e%218m2%213d42.273756%214d-83.739072&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.6,
+            "reviews": 54,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QgpcGL-SFfylPIbUl_711BZDd6GCqyBpi76Xjh_18tQBnm4UX6VzhxEM4mbOy8u8llUdc8ciSy94alR_X9PF3xETb-eYg3w314bhGIhiSkKLx1t_sJbYiVy_bLwZY6QJsuCwn7kgHukY-O=w156-h156-n-k-no",
+            "type": [
+              "Law library",
+              "Law school"
+            ]
+          }
+        ]
+      }
+    ],
+    "web_results_link": "https://www.google.com/search?q=local+guide+program&ibp=gwp;0,26,Oi4KLCIoQmVudGxleSBIaXN0b3JpY2FsIExpYnJhcnkgQW5uIEFyYm9yLCBNSSgC&pcl=lp",
+    "serpapi_web_results_link": "https://serpapi.com/search.json?device=desktop&engine=google&google_domain=google.com&ibp=gwp%3B0%2C26%2COi4KLCIoQmVudGxleSBIaXN0b3JpY2FsIExpYnJhcnkgQW5uIEFyYm9yLCBNSSgC&q=local+guide+program"
+  }
+}

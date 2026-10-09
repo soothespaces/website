@@ -1,0 +1,107 @@
+{
+  "slug": "bob-and-betty-beyster-building",
+  "query": "Bob and Betty Beyster Building, 2260 Hayward St, Ann Arbor, MI",
+  "fetched_at": "2026-10-09T21:02:36.190Z",
+  "search_ids": [
+    "6ac956673d40b6783609e9e1",
+    "6ac95669b7942f24a281108e"
+  ],
+  "resolved_by": "nearest candidate (19 m): Computer Science and Engineering",
+  "distance_from_ours_m": 19,
+  "place": {
+    "title": "Computer Science and Engineering",
+    "place_id": "ChIJL6vg9duvPIgRGc36d26mBqg",
+    "data_id": "0x883cafdbf5e0ab2f:0xa806a66e77facd19",
+    "data_cid": "12107547641621695769",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cafdbf5e0ab2f%3A0xa806a66e77facd19&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cafdbf5e0ab2f%3A0xa806a66e77facd19&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2929549,
+      "longitude": -83.7163436
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJL6vg9duvPIgRGc36d26mBqg",
+    "provider_id": "/g/11rsfck_95",
+    "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLcD3NOQRsPs5Dn4TKad91Y_Skjr5-BQFkRXauJ3MDjwblyQMCLs5dThlIf1RSFxeJyeZXAZZ9Om-JNzNOeaBBdSf0t9FkGOwde6g8bmjRJSUbzFMnKFWRxpn4wqflG6UuDKJMxcIXXwmxti=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/S1VPFXicHcTBboIwAADQL6pAEDKW7ACSGovAKJohlwVKgUFblJYU_UnP_s0S3-G9nr1SV_lpGKy3N900dYwuks5kEooKtSETN7q5khIQafh-MPIjCe0kzbD8lk4otqeoajzr8puPw-yAIIMjLqoF2XE46Jrds3h3lE5z6tmhtXAOV4rutCz8svRSDlDySFJaBUGTt6by4LhPdUPd7qPmA0b5uX7AWETwB69XsdW3lu3d8xJGKF7JoSg0X9Xfl7ZM0wT9ewLEP6qZSC4",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 0
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 0
+      },
+      {
+        "stars": 4,
+        "amount": 0
+      },
+      {
+        "stars": 5,
+        "amount": 2
+      }
+    ],
+    "rating": 5,
+    "reviews": 2,
+    "type": [
+      "Academic department"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      }
+    ],
+    "address": "Bob and Betty Beyster Building, 2260 Hayward St, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "BBB Building",
+    "website": "https://cse.engin.umich.edu/",
+    "phone": "(734) 764-8504",
+    "open_state": "Closed · Opens 8 AM Mon",
+    "plus_code": "77VM+5F Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "8 AM–5 PM"
+      },
+      {
+        "saturday": "Closed"
+      },
+      {
+        "sunday": "Closed"
+      },
+      {
+        "monday": "8 AM–5 PM"
+      },
+      {
+        "tuesday": "8 AM–5 PM"
+      },
+      {
+        "wednesday": "8 AM–5 PM"
+      },
+      {
+        "thursday": "8 AM–5 PM"
+      }
+    ],
+    "user_reviews": {
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "Heard Larry Page has had some success after graduating!",
+          "date": "2 months ago",
+          "date_iso8601": "2026-08-05T16:56:22+00:00"
+        },
+        {
+          "rating": 5,
+          "date": "3 years ago",
+          "date_iso8601": "2023-05-24T21:42:06+00:00"
+        }
+      ]
+    }
+  }
+}
