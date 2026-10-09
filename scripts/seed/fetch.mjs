@@ -10,6 +10,24 @@ import { fileURLToPath } from "node:url";
 const RAW = join(dirname(fileURLToPath(import.meta.url)), "raw");
 const UA = "soothespaces-seed/1.0 (+https://github.com/soothespaces/website)";
 
+// fetch with a few retries: the U-M sites occasionally reset a connection
+// partway through a long crawl.
+async function get(url, init) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const res = await fetch(url, init);
+      // Buffer the body inside the retry, since resets also happen mid-body.
+      const body = await res.arrayBuffer();
+      if (res.status < 500 || attempt === 3) {
+        return new Response(body, { status: res.status, headers: res.headers });
+      }
+    } catch (error) {
+      if (attempt === 3) throw error;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
+  }
+}
+
 const SOURCES = [
   {
     file: "mguide-study-spots.json",
@@ -65,7 +83,7 @@ const fetchedAt = new Date().toISOString();
 const rows = [];
 
 for (const source of SOURCES) {
-  const res = await fetch(source.url, { headers: { "user-agent": UA } });
+  const res = await get(source.url, { headers: { "user-agent": UA } });
   if (!res.ok) throw new Error(`${source.url}: HTTP ${res.status}`);
   const body = await res.text();
   const data = source.extract ? source.extract(body) : JSON.parse(body);
@@ -81,7 +99,7 @@ for (const [instance, lids] of Object.entries(LIBCAL)) {
   for (const lid of lids) {
     for (const kind of ["spaces", "seats"]) {
       const url = `https://${instance}/${kind}?lid=${lid}&gid=0&c=-1`;
-      const res = await fetch(url, { headers: { "user-agent": UA } });
+      const res = await get(url, { headers: { "user-agent": UA } });
       if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
       const html = await res.text();
       const location = clean(html.match(/<title>([\s\S]*?)<\/title>/)?.[1]);
@@ -116,7 +134,7 @@ async function cmsAll(path) {
   const included = [];
   let url = `${CMS}/${path}${path.includes("?") ? "&" : "?"}page[limit]=50`;
   while (url) {
-    const res = await fetch(url, { headers: { "user-agent": UA, accept: "application/vnd.api+json" } });
+    const res = await get(url, { headers: { "user-agent": UA, accept: "application/vnd.api+json" } });
     if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
     const body = await res.json();
     data.push(...body.data);
@@ -186,7 +204,7 @@ const fass = JSON.parse(await readFile(join(RAW, "umich-library-fass.json"), "ut
 const spacePages = [];
 for (const space of fass.spaces) {
   const url = `${libraryOrigin}${space.slug.replace(/\/?$/, "/")}`;
-  const res = await fetch(url, { headers: { "user-agent": UA } });
+  const res = await get(url, { headers: { "user-agent": UA } });
   if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
   const html = await res.text();
   const main = html.match(/<main[\s\S]*?<\/main>/)?.[0] ?? null;
