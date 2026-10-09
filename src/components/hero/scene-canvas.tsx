@@ -5,17 +5,22 @@ import type { StudyScene } from "./scenes";
 import {
   COMPOSITE_FRAGMENT,
   INK_FRAGMENT,
+  FIELD_FRAGMENT,
   VERTEX,
-  VISIBILITY_FRAGMENT,
+  WAVE_SPEED,
+  WAVELENGTH,
   withDefines,
 } from "./shaders";
 
-// Starting late means every ring that would have been emitted already is on
-// screen in the first frame. It's also the frame shown with reduced motion.
+// The frame shown with reduced motion.
 const START_TIME = 40;
 const MAX_DPR = 2;
-const VISIBILITY_TEXELS_PER_METER = 8;
+// The baked amplitudes rotate once per wavelength, so they need enough
+// texels per wavelength to interpolate without dimming between texels.
+const FIELD_TEXELS_PER_METER = 10;
+// Two sources per baked texture.
 const SOURCE_SLOTS = 4;
+const ANGULAR_SPEED = (Math.PI * 2 * WAVE_SPEED) / WAVELENGTH;
 
 type Rgb = [number, number, number];
 
@@ -33,22 +38,41 @@ function prefersMoreContrast() {
   return matchMedia("(prefers-contrast: more)").matches;
 }
 
+// How far, in radians, each source lags the one before it. In phase, the
+// line halfway between two tables is where they reinforce each other.
+const PHASE_STEP = 0;
+
+function spin(i: number, t: number): [number, number] {
+  const angle = -i * PHASE_STEP - ANGULAR_SPEED * t;
+  return [Math.cos(angle), Math.sin(angle)];
+}
+
 function packScene(scene: StudyScene) {
   const walls = scene.strokes.filter((s) => s.kind === "wall");
-  const strokes = [...walls, ...scene.strokes.filter((s) => s.kind !== "wall")];
+  const furniture = scene.strokes.filter((s) => s.kind === "furniture");
+  const fadedFurniture = scene.strokes.filter((s) => s.kind === "furniture-fade");
+  const highlightedFurniture = scene.strokes.filter((s) => s.kind === "furniture-highlight");
+  const strokes = [...walls, ...furniture, ...fadedFurniture, ...highlightedFurniture];
   const sources = scene.sound.slice(0, SOURCE_SLOTS);
-  const padded = [...sources.map((s) => [s.at[0], s.at[1], s.period, s.seed])];
-  while (padded.length < SOURCE_SLOTS) padded.push([0, 0, 1, 0]);
+  const boxes = sources.map((s) => [s.at[0], s.at[1], s.halfSize[0], s.halfSize[1]]);
+  const rounding = sources.map((s) => s.rounding);
+  while (boxes.length < SOURCE_SLOTS) {
+    boxes.push([0, 0, 0, 0]);
+    rounding.push(0);
+  }
   return {
     defines: {
       SEG_COUNT: strokes.length,
       WALL_COUNT: walls.length,
+      FADE_FURNITURE_START: walls.length + furniture.length,
+      HIGHLIGHT_FURNITURE_START: walls.length + furniture.length + fadedFurniture.length,
       SOURCE_COUNT: sources.length,
       SOURCE_SLOTS,
     },
     segA: strokes.map((s) => [s.a[0], s.a[1], s.b[0], s.b[1]]),
     segB: strokes.map((s) => [s.radius, s.halfWidth]),
-    sources: padded,
+    sourceBox: boxes,
+    sourceRounding: rounding,
   };
 }
 
@@ -115,30 +139,46 @@ export function SceneCanvas({
         uPx: { value: 0.01 },
       };
       const geometry = new Triangle(gl);
-      const program = (fragment: string, uniforms: Record<string, { value: unknown }>) =>
+      const program = (
+        fragment: string,
+        uniforms: Record<string, { value: unknown }>,
+        defines: Record<string, number> = {},
+      ) =>
         new Program(gl, {
           vertex: VERTEX,
-          fragment: withDefines(fragment, packed.defines),
+          fragment: withDefines(fragment, { ...packed.defines, ...defines }),
           uniforms,
           depthTest: false,
           depthWrite: false,
         });
 
-      const visibilityTarget = new RenderTarget(gl, {
-        width: Math.min(1024, Math.ceil(worldSize[0] * VISIBILITY_TEXELS_PER_METER)),
-        height: Math.min(1024, Math.ceil(worldSize[1] * VISIBILITY_TEXELS_PER_METER)),
-        depth: false,
-      });
-      const visibilityMesh = new Mesh(gl, {
-        geometry,
-        program: program(VISIBILITY_FRAGMENT, {
-          ...segments,
-          uWorldMin: { value: worldMin },
-          uWorldSize: { value: worldSize },
-          uSources: { value: packed.sources },
-        }),
-      });
-      renderer.render({ scene: visibilityMesh, target: visibilityTarget });
+      const fieldUniforms = {
+        ...segments,
+        uSourceBox: { value: packed.sourceBox },
+        uSourceRounding: { value: packed.sourceRounding },
+        uWorldMin: { value: worldMin },
+        uWorldSize: { value: worldSize },
+      };
+      const bake = (pair: number) => {
+        const target = new RenderTarget(gl, {
+          width: Math.min(1024, Math.ceil(worldSize[0] * FIELD_TEXELS_PER_METER)),
+          height: Math.min(1024, Math.ceil(worldSize[1] * FIELD_TEXELS_PER_METER)),
+          depth: false,
+          type: WebGL2RenderingContext.HALF_FLOAT,
+          internalFormat: WebGL2RenderingContext.RGBA16F,
+          minFilter: gl.LINEAR,
+          magFilter: gl.LINEAR,
+        });
+        const mesh = new Mesh(gl, {
+          geometry,
+          program: program(FIELD_FRAGMENT, fieldUniforms, { PAIR: pair }),
+        });
+        renderer.render({ scene: mesh, target });
+        mesh.program.remove();
+        return target;
+      };
+      const waveTargets = [bake(0)];
+      if (packed.defines.SOURCE_COUNT > 2) waveTargets.push(bake(1));
 
       const inkTarget = new RenderTarget(gl, { width: 1, height: 1, depth: false });
       const inkMesh = new Mesh(gl, {
@@ -148,36 +188,40 @@ export function SceneCanvas({
 
       const colors = {
         uFg: { value: [0, 0, 0] as Rgb },
-        uAccent: { value: [0, 0, 0] as Rgb },
+        uSound: { value: [0, 0, 0] as Rgb },
         uAlpha: { value: [0.4, 0.2, 0.1, 0.75] },
       };
       const time = { value: START_TIME };
+      const spins = { value: Array.from({ length: SOURCE_SLOTS }, () => [0, 0]) };
       const compositeMesh = new Mesh(gl, {
         geometry,
         program: program(COMPOSITE_FRAGMENT, {
           ...view,
           ...colors,
           uInk: { value: inkTarget.texture },
-          uVisibility: { value: visibilityTarget.texture },
+          uWave0: { value: waveTargets[0].texture },
+          uWave1: { value: waveTargets.at(-1)!.texture },
+          uSpin: spins,
           uWorldMin: { value: worldMin },
           uWorldSize: { value: worldSize },
           uBounds: {
             value: [bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height],
           },
           uFade: { value: margin * 0.8 },
-          uTime: time,
-          uSources: { value: packed.sources },
         }),
       });
 
-      const draw = () => renderer.render({ scene: compositeMesh });
+      const draw = () => {
+        spins.value = spins.value.map((_, i) => spin(i, time.value));
+        renderer.render({ scene: compositeMesh });
+      };
 
       const readTheme = () => {
         colors.uFg.value = readColor(probe, "--foreground");
-        colors.uAccent.value = readColor(probe, "--primary");
+        colors.uSound.value = readColor(probe, "--sound");
         colors.uAlpha.value = prefersMoreContrast()
           ? [0.85, 0.5, 0.18, 0.95]
-          : [0.38, 0.2, 0.09, 0.62];
+          : [0.38, 0.2, 0.09, 0.85];
       };
 
       const layout = () => {
@@ -284,8 +328,8 @@ export function SceneCanvas({
         document.removeEventListener("visibilitychange", update);
         canvas.removeEventListener("webglcontextlost", onContextLost);
         canvas.removeEventListener("webglcontextrestored", onContextRestored);
-        for (const mesh of [visibilityMesh, inkMesh, compositeMesh]) mesh.program.remove();
-        for (const target of [visibilityTarget, inkTarget]) {
+        for (const mesh of [inkMesh, compositeMesh]) mesh.program.remove();
+        for (const target of [...waveTargets, inkTarget]) {
           gl.deleteFramebuffer(target.buffer);
           for (const texture of target.textures) gl.deleteTexture(texture.texture);
         }

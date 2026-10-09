@@ -14,6 +14,8 @@ Full rationale: [design-system doc](https://claude.ai/code/artifact/eea24662-bb9
   `primary` is our one accent color. `accent` is the subtle hover surface,
   not the brand color. That naming is not a dependency on the shadcn kit
   ([ADR 0010](../decisions/0010-buttons-and-icons.md)).
+- `sound` is a decorative color for the sound-wave visualization only. It is
+  never used for text or controls, so it has no contrast requirement.
 - `border-border` is for decorative dividers only. A border that identifies a
   control (inputs, outline buttons) uses `border-input`, which meets 3:1.
 - Never use color alone: destructive actions carry an icon or a verb ("Delete
@@ -39,8 +41,9 @@ help, legal pages, sign-in, and the style guide all put their content in
 
 `.page-width` sits outside Tailwind's layers, so a `max-w-*` or `px-*` utility
 on that element cannot change the column. ESLint rejects every other max width
-except `max-w-64`, which is the space chip, not a page. The map is full bleed,
-and so is the hero illustration. Their content still uses `PageWidth`.
+except the space chip: `max-w-64`, or `max-w-[min(16rem,100%)]` when the chip
+must also shrink to its parent. The map is full bleed, and so is the hero
+illustration. Their content still uses `PageWidth`.
 
 `html` sets `scrollbar-gutter: stable`, so a short page and a long page keep
 the same column. Without that, the centered column shifts by half a scrollbar

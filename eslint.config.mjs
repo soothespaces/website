@@ -4,15 +4,16 @@ import nextTs from "eslint-config-next/typescript";
 
 const pageWidth = [
   {
-    selector: "Literal[value=/max-w-(?!64\\b|full\\b|none\\b|min\\b|max\\b|fit\\b)/]",
+    selector:
+      "Literal[value=/max-w-(?!64\\b|full\\b|none\\b|min\\b|max\\b|fit\\b|\\[min\\(16rem,100%\\)\\])/]",
     message:
-      "Page width is PageWidth (--page-width). Do not set another max-width. max-w-64 is only for the space chip.",
+      "Page width is PageWidth (--page-width). Do not set another max-width. max-w-64 and max-w-[min(16rem,100%)] are only for the space chip.",
   },
   {
     selector:
-      "TemplateElement[value.raw=/max-w-(?!64\\b|full\\b|none\\b|min\\b|max\\b|fit\\b)/]",
+      "TemplateElement[value.raw=/max-w-(?!64\\b|full\\b|none\\b|min\\b|max\\b|fit\\b|\\[min\\(16rem,100%\\)\\])/]",
     message:
-      "Page width is PageWidth (--page-width). Do not set another max-width. max-w-64 is only for the space chip.",
+      "Page width is PageWidth (--page-width). Do not set another max-width. max-w-64 and max-w-[min(16rem,100%)] are only for the space chip.",
   },
 ];
 
