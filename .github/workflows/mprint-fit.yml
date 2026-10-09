@@ -1,0 +1,74 @@
+# Re-fits the MPrint sheets onto their building footprints and commits the
+# corner records in scripts/mprint/alignments/. Runs on a GitHub runner
+# because cloud dev sessions can't reach mprint.umich.edu. The overlay PNGs
+# are uploaded as a run artifact, not committed. Run it from the Actions tab,
+# or push a change to the fitter on a feature branch.
+name: MPrint fit
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - "scripts/mprint/fit_outline.py"
+      - "scripts/mprint/geom.py"
+      - "scripts/mprint/footprints/**"
+      - ".github/workflows/mprint-fit.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mprint-fit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fit:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: scripts/mprint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install numpy pillow scipy
+
+      - run: python3 test_vectorize.py
+
+      - name: Download sheets
+        run: |
+          for sheet in ulib/ulib_1 ulib/ulib_2 dc/dc_2; do
+            curl -fsSL -o "$(basename "$sheet").png" "https://mprint.umich.edu/assets/floorplans/$sheet.png"
+          done
+          sha256sum *.png
+
+      - name: Fit
+        run: |
+          python3 fit_outline.py ulib_1.png footprints/shapiro.json --out alignments/ulib_1.json --preview out/ulib_1_fit.png
+          python3 fit_outline.py ulib_2.png footprints/shapiro.json --out alignments/ulib_2.json --preview out/ulib_2_fit.png
+          python3 fit_outline.py dc_2.png footprints/duderstadt.json --out alignments/dc_2.json --preview out/dc_2_fit.png
+          git diff --stat -- alignments
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mprint-fit-previews
+          path: scripts/mprint/out/
+
+      - name: Commit refreshed alignments
+        run: |
+          git add alignments
+          if git diff --cached --quiet; then
+            echo "Alignments unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refit MPrint sheets onto their footprints"
+          git push
