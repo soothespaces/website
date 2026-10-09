@@ -24,5 +24,19 @@
     "status": "Success",
     "error": null,
     "file": "responses/harold-t-and-vivian-b-shapiro-library.2.json"
+  },
+  {
+    "at": "2026-10-09T19:44:37.510Z",
+    "slug": "michigan-union",
+    "params": {
+      "type": "search",
+      "q": "Michigan Union, 530 S State St, Ann Arbor, MI",
+      "ll": "@42.27523,-83.74155,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac94424f9bee9201ae8b47a",
+    "status": "Success",
+    "error": null,
+    "file": "responses/michigan-union.1.json"
   }
 ]
