@@ -1,0 +1,41 @@
+{
+  "_comment": "Hand mappings build.mjs applies on top of raw/. Edit this file, not raw/.",
+  "libraryBuildings": {
+    "Shapiro Library": "harold-t-and-vivian-b-shapiro-library",
+    "Hatcher Library North": "harlan-h-hatcher-graduate-library",
+    "Hatcher Library South": "harlan-h-hatcher-graduate-library",
+    "Art, Architecture, and Engineering Library": "james-and-anne-duderstadt-center",
+    "Fine Arts Library": "tappan-hall",
+    "Music Library": "earl-v-moore-building",
+    "Taubman Health Sciences Library": "alfred-a-taubman-health-sciences-library"
+  },
+  "_mguideNoise": "mguide's 3-level scale mapped onto the Library's. 'moderate' sits between quiet and conversational, which is the Library's low_noise.",
+  "mguideNoise": {
+    "quiet": "quiet",
+    "moderate": "low_noise",
+    "social": "conversational"
+  },
+  "_mguideAmenities": "wifi is on every record and isn't a space_feature, so it's dropped.",
+  "mguideAmenities": {
+    "outlets": "outlets",
+    "computers": "computers",
+    "printing": "printing",
+    "scanners": "scanners",
+    "whiteboards": "whiteboards",
+    "groupRooms": "group_rooms"
+  },
+  "_unlistedMguideSpaces": "mguide spaces in buildings the Library data already covers, per docs/technical/supabase-backend.md. Kept as rows so slugs stay stable.",
+  "unlistedMguideSpaces": [
+    "shapiro-library-1f",
+    "shapiro-library-2f",
+    "shapiro-library-basement",
+    "askwith-media-library",
+    "hatcher-library-north-reading",
+    "hatcher-library-south-reading",
+    "hatcher-library-reference",
+    "duderstadt-center-main",
+    "duderstadt-center-2f",
+    "duderstadt-center-3f",
+    "taubman-health-sciences-library"
+  ]
+}

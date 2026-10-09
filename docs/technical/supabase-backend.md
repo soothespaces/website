@@ -610,9 +610,11 @@ by accident.
 
 ## Seed data
 
-### Is the raw data in the repo? No
+### Is the raw data in the repo? Yes, since 2026-10-09
 
-Checked every branch and the full git history on 2026-10-08. The only data file
+Snapshots of the MVP sources are now committed under `scripts/seed/raw/` (see
+[scripts/seed/README.md](../../scripts/seed/README.md)). Before that, as checked on
+every branch and the full git history on 2026-10-08, the only data file
 anywhere is `scripts/mprint/labels/ulib_2.json` (Shapiro floor 2 room labels). Missing:
 
 | Source | Records | Status |

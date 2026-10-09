@@ -8,6 +8,7 @@ on:
   pull_request:
     paths:
       - "supabase/**"
+      - "scripts/seed/**"
       - ".github/workflows/supabase-migrations.yml"
   workflow_dispatch:
 
@@ -30,7 +31,12 @@ jobs:
       # Installs the Supabase CLI pinned in package.json.
       - run: npm ci
 
-      - name: Apply migrations to a local database
+      - name: Check supabase/seed.sql matches scripts/seed
+        run: |
+          node scripts/seed/build.mjs
+          git diff --exit-code supabase/seed.sql
+
+      - name: Apply migrations and seed to a local database
         run: npx supabase db start
 
       - name: Lint the resulting schema

@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "env:pull": "npx vercel env pull .env.local --environment=production",
-    "db:types": "supabase gen types typescript --project-id doinwugtdzxxrmvcmemm --schema public > src/types/supabase.ts"
+    "db:types": "supabase gen types typescript --project-id doinwugtdzxxrmvcmemm --schema public > src/types/supabase.ts",
+    "seed:fetch": "node scripts/seed/fetch.mjs",
+    "seed:build": "node scripts/seed/build.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
