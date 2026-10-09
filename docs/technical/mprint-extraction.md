@@ -239,6 +239,49 @@ A column in the 2000 hall stays a ring rather than a filled dot. Open-to-below
 stays a hole, because its label is null. The GeoJSON is about 480 KB and is
 generated, not committed.
 
+### Duderstadt floor 2 (`dc_2.png`, 4134×2370), 2026-10-09
+
+The outline step still works. The red trace on the sheet follows the outer
+wall, including the west wing out to the octagon and the round room on the
+southeast. The fit to FO's footprint does not. That polygon is a simplified
+shell, a large rectangle plus a west bar, not the wall line. Spans are almost
+the same (about 154 m by 89 m on the sheet at 5 cm/pixel, 155 m by 90 m on the
+footprint), but the shapes are not: median distance **12.6 m**, only **9%** of
+the edge within 1 m, overlap **0.49**. A wider rotation search (±30°) did not
+find a better pose. `alignments/dc_2.json` records that fit with `usable:
+false`. Those corners should not be used to drape the plan on the map.
+Shapiro worked because FO's line there is the arcade. Duderstadt needs the
+manual corner tool, or a footprint that actually follows the wall.
+
+Room segmentation is mixed, at dilation 12 and wall 200 (116 regions kept).
+Fully walled rooms come apart: the 2356A–E row and the 2335 lettered rooms are
+each their own region. The LibCal study rooms that open onto a wide corridor
+do not. 2360, 2364, 2368, 2372 and 2376 stay one region, and the 2378–2388
+stack falls out of the kept set because the doorway never closes. Raising
+dilation to 28 still leaves that stack inside one component, and it drops the
+region count from 116 to 35.
+
+**Names.** `room_names.py` encodes the scheme on this sheet and on Shapiro.
+A plain number (`2384`) is a room and can match LibCal. A trailing letter
+(`2335A`, `2356E`, `2321K`) is an extension of that room. A floor digit, a
+letter, and two digits is not a room: `2C` corridor, `2S` stair, `2E`
+elevator, `2V` vestibule, and the same shape for `2L` and `2F`. `ROOF`, `UP`,
+`DN`, and "first floor below" are open.
+
+Duderstadt's LibCal location (`umich-nc.libcal.com`, lid 11261, from the
+snapshot on pull request 14) has 12 study rooms. Eleven are printed on this
+floor: 2340, 2344, 2348, 2352, 2360, 2364, 2368, 2372, 2380, 2382, 2384.
+**2374 is not.** The run of rooms is 2360, 2364, 2368, 2372, **2376**. 2378,
+2386 and 2388 sit beside the LibCal ones and are not bookable there. The
+reading is in `readings/dc_2.json`.
+
+**OCR.** Tesseract at 4×, page segmentation mode 11, read the axis-aligned
+tags 2380, 2382 and 2384 at 96% confidence, missed 2378, and read `2C38` as
+`2038`. A rotation sweep of the 2340–2352 column, whose numbers are drawn at
+an angle, returned nothing. On this sheet the numbers still have to be read
+by eye. The classifier is what makes that reading useful: drop the letter
+classes and the extensions, then join the plain numbers to LibCal.
+
 ## What this does NOT do yet
 
 - **The vectors are not on the map, and the corners are not in `floor_plans`.**

@@ -10,6 +10,7 @@ import numpy as np
 from PIL import Image
 
 from fit_outline import drop_spurs, fit_plan, load_footprint, local_frame
+from room_names import classify, match_libcal
 from geom import (
     apply_homography,
     homography,
@@ -63,6 +64,32 @@ class ContourTests(unittest.TestCase):
         self.assertLess(len(simplified), len(ring))
         self.assertTrue(any(np.allclose(p, (0, 4)) for p in simplified[:-1]))
         self.assertTrue(any(np.allclose(p, (3, 3)) or np.allclose(p, (0, 0)) for p in simplified[:-1]))
+
+
+class RoomNameTests(unittest.TestCase):
+    def test_letter_class_and_extension_are_not_libcal_rooms(self):
+        self.assertEqual(classify("2S35")["kind"], "stair")
+        self.assertEqual(classify("2C32")["kind"], "corridor")
+        self.assertEqual(classify("2E36")["kind"], "elevator")
+        self.assertEqual(classify("2335A")["kind"], "extension")
+        self.assertEqual(classify("2335A")["parent"], "2335")
+        self.assertFalse(classify("2356E")["matchable"])
+        self.assertTrue(classify("2384")["matchable"])
+        self.assertEqual(classify("ROOF")["kind"], "open")
+
+    def test_libcal_join_keeps_plain_numbers_only(self):
+        libcal = ["2340", "2344", "2384", "2374"]
+        seen = ["2340", "2344", "2384", "2376", "2335A", "2S35", "2C32", "ROOF"]
+        report = match_libcal(seen, libcal)
+        self.assertEqual(report["found"], ["2340", "2344", "2384"])
+        self.assertEqual(report["missing"], ["2374"])
+        self.assertEqual(report["roomsNotInLibcal"], ["2376"])
+        self.assertEqual({item["kind"] for item in report["ignored"]}, {"extension", "stair", "corridor", "open"})
+
+    def test_duderstadt_footprint_uses_the_large_ring(self):
+        path = Path(__file__).parent / "footprints" / "duderstadt.json"
+        _, ring = load_footprint(str(path), None)
+        self.assertGreater(len(ring), 100)
 
 
 class ProjectionTests(unittest.TestCase):

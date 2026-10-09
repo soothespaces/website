@@ -70,9 +70,19 @@ def load_footprint(path: str, name: str | None) -> tuple[dict, np.ndarray]:
         names = [(f.get("properties") or {}).get("ObjectName") or (f.get("properties") or {}).get("name") for f in features[:12]]
         sys.exit(f"expected one footprint feature, found {len(features)} ({names}). Pass --name.")
     geom = features[0]["geometry"]
-    if geom["type"] != "Polygon":
-        sys.exit(f"footprint geometry is {geom['type']}; this fit expects one Polygon")
-    ring = np.asarray(geom["coordinates"][0], dtype=float)[:, :2]
+    if geom["type"] == "Polygon":
+        candidates = [geom["coordinates"][0]]
+    elif geom["type"] == "MultiPolygon":
+        candidates = [poly[0] for poly in geom["coordinates"]]
+    else:
+        sys.exit(f"footprint geometry is {geom['type']}; expected a Polygon or MultiPolygon")
+    # A building can be more than one ring (Duderstadt has a small second part).
+    # The sheet is one outline, so fit the largest ring.
+    def ring_area(coords) -> float:
+        pts = np.asarray(coords, dtype=float)[:, :2]
+        return abs(float(np.sum(pts[:, 0] * np.roll(pts[:, 1], -1) - np.roll(pts[:, 0], -1) * pts[:, 1])))
+
+    ring = np.asarray(max(candidates, key=ring_area), dtype=float)[:, :2]
     if len(ring) >= 2 and np.allclose(ring[0], ring[-1]):
         ring = ring[:-1]
     return features[0], ring
@@ -356,6 +366,9 @@ def fit_plan(image: str, footprint_path: str, name: str | None, wall: int, simpl
             "medianMetersEastHalf": side(east),
             "medianMetersWestHalf": side(west),
         },
+        # Shapiro's ground floor lands near 0.3 m and 0.97 overlap. A fit this
+        # loose means the footprint is not the wall line on the sheet.
+        "usable": bool(float(np.median(distance)) <= 1.0 and iou >= 0.9),
         "corners": [[round(float(lng), 7), round(float(lat), 7)] for lng, lat in corners_ll],
         "_preview": {"plan": placed, "footprint": footprint_xy, "dropped": dropped},
     }
@@ -388,7 +401,8 @@ def main() -> None:
     fit = result["fit"]
     print(
         f"{result['cmPerPixel']} cm/px, image up {result['imageUpDegreesFromNorth']}° from north, "
-        f"median {fit['medianMeters']} m, {fit['fractionWithin1m']:.0%} of the edge within 1 m, IoU {fit['iou']}",
+        f"median {fit['medianMeters']} m, {fit['fractionWithin1m']:.0%} of the edge within 1 m, IoU {fit['iou']}"
+        + ("" if result["usable"] else " — not tight enough to use as map corners"),
         file=sys.stderr,
     )
 

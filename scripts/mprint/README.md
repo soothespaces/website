@@ -33,9 +33,16 @@ python3 vectorize.py ulib_2.png labels/ulib_2.json \
 ```
 
 `alignments/` is the committed corner record (one file per sheet, with the
-image sha256). `footprints/shapiro.json` is FO's Shapiro polygon, including the
-bridge to Hatcher; the fit drops that spur because it is not drawn on the
-sheet. GeoJSON and preview PNGs are generated, same as the masks.
+image sha256). A fit with `usable: false` did not land on the footprint; don't
+drape that sheet from those corners. `footprints/shapiro.json` is FO's Shapiro
+polygon, including the bridge to Hatcher; the fit drops that spur because it
+is not drawn on the sheet. `footprints/duderstadt.json` is the same layer for
+the Duderstadt Center. GeoJSON and preview PNGs are generated, same as the masks.
+
+`room_names.py` classifies a printed number: plain room, lettered extension
+(`2335A`), or a letter class (`2S` stair, `2C` corridor, `2E` elevator, `2V`
+vestibule). Only plain rooms are matched to LibCal. `readings/dc_2.json` is
+the visual read of Duderstadt floor 2 against that list.
 
 ## OCR prototype
 

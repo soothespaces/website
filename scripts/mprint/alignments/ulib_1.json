@@ -21,6 +21,7 @@
   "medianMetersEastHalf": 0.305,
   "medianMetersWestHalf": 0.342
  },
+ "usable": true,
  "corners": [
   [
    -83.7375563,
