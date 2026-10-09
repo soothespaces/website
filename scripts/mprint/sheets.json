@@ -1,8 +1,8 @@
 [
- {"sheet": "ulib_1", "building": "harold-t-and-vivian-b-shapiro-library", "floor": 1, "footprint": "footprints/shapiro.json"},
- {"sheet": "ulib_2", "building": "harold-t-and-vivian-b-shapiro-library", "floor": 2, "footprint": "footprints/shapiro.json", "labels": "labels/ulib_2.json"},
- {"sheet": "ulib_3", "building": "harold-t-and-vivian-b-shapiro-library", "floor": 3, "footprint": "footprints/shapiro.json", "close": 6},
- {"sheet": "dc_1", "building": "james-and-anne-duderstadt-center", "floor": 1, "footprint": "footprints/duderstadt.json", "close": 50},
- {"sheet": "dc_2", "building": "james-and-anne-duderstadt-center", "floor": 2, "footprint": "footprints/duderstadt.json"},
+ {"sheet": "ulib_1", "building": "harold-t-and-vivian-b-shapiro-library", "floor": 1, "footprint": "footprints/shapiro.json", "libcal": "Shapiro Undergraduate Library", "cms": "Shapiro Library"},
+ {"sheet": "ulib_2", "building": "harold-t-and-vivian-b-shapiro-library", "floor": 2, "footprint": "footprints/shapiro.json", "labels": "labels/ulib_2.json", "libcal": "Shapiro Undergraduate Library", "cms": "Shapiro Library"},
+ {"sheet": "ulib_3", "building": "harold-t-and-vivian-b-shapiro-library", "floor": 3, "footprint": "footprints/shapiro.json", "close": 6, "readings": "readings/ulib_3.json", "libcal": "Shapiro Undergraduate Library", "cms": "Shapiro Library"},
+ {"sheet": "dc_1", "building": "james-and-anne-duderstadt-center", "floor": 1, "footprint": "footprints/duderstadt.json", "close": 50, "libcal": "Duderstadt"},
+ {"sheet": "dc_2", "building": "james-and-anne-duderstadt-center", "floor": 2, "footprint": "footprints/duderstadt.json", "libcal": "Duderstadt"},
  {"sheet": "eq_1", "building": "east-quadrangle", "floor": 1, "footprint": "footprints/east-quad.json", "up": 90}
 ]

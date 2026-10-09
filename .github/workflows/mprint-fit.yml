@@ -19,6 +19,11 @@ on:
       - "scripts/mprint/sheets.json"
       - "scripts/mprint/footprints/**"
       - "scripts/mprint/labels/**"
+      - "scripts/mprint/read_rooms.py"
+      - "scripts/mprint/label_rooms.py"
+      - "scripts/mprint/room_names.py"
+      - "scripts/mprint/readings/**"
+      - "scripts/mprint/rooms/**"
       - ".github/workflows/mprint-fit.yml"
 
 permissions:

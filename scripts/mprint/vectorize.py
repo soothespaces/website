@@ -188,7 +188,9 @@ def vectorize(image: str, labels_path: str | None, simplify: float, corners_path
         if spec["sha256"] != sha256(image):
             sys.exit(f"{image} differs from the image {labels_path} was labeled on. Re-run label_rooms.py sheet.")
         labels, keep = segment(gray, spec["dilation"], spec["wall"])
-        unknown = sorted(set(spec["labels"]) - {str(i) for i in keep}, key=int)
+        # A labels file from read_rooms.py may name regions under segment()'s
+        # size cutoff (a numbered closet); those only have to exist.
+        unknown = sorted({k for k in spec["labels"] if not 0 < int(k) <= int(labels.max())}, key=int)
         unlabeled = sorted({str(i) for i in keep} - set(spec["labels"]), key=int)
         if unknown or unlabeled:
             sys.exit(f"labels don't match the segmentation: unknown {unknown}, unlabeled {unlabeled}")

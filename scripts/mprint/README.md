@@ -61,6 +61,18 @@ polygon, including the bridge to Hatcher; the fit drops that spur because it
 is not drawn on the sheet. `footprints/duderstadt.json` and `footprints/east-quad.json`
 are the same layer for those buildings. GeoJSON and preview PNGs are generated, same as the masks.
 
+### Room numbers from printed labels
+
+`read_rooms.py` labels a floor from the numbers printed on it: an agent reads
+the labels from contact sheets into `readings/<sheet>.json`, and `grow` gives
+each number the region it sits in and merges unnumbered pieces (furniture
+splits) into the neighbor they share the most boundary with. When a
+`sheets.json` entry names `readings`, the pipeline runs `grow` on the sheet it
+just downloaded, so the labels always match the image. `rooms/known.json`
+holds hand-kept room facts (Clark Commons is 3045); their names go on the map
+as `roomName`. The step-by-step is the repo skill
+[`.claude/skills/label-floor`](../../.claude/skills/label-floor/SKILL.md).
+
 `room_names.py` classifies a printed number: plain room, lettered extension
 (`2335A`), or a letter class (`2S` stair, `2C` corridor, `2E` elevator, `2V`
 vestibule). Only plain rooms are matched to LibCal. `readings/dc_2.json` is

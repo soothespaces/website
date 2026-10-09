@@ -20,6 +20,7 @@ from geom import (
     signed_area,
     simplify_ring,
 )
+from read_rooms import grow
 from vectorize import vectorize
 
 
@@ -239,6 +240,32 @@ class FitTests(unittest.TestCase):
         self.assertEqual(collection["mprint"]["crs"], "pixel")
         self.assertGreater(int((room_ids > 0).sum()), 1000)
         self.assertEqual(len(records), 2)
+
+
+class GrowTests(unittest.TestCase):
+    def test_numbers_claim_rooms_and_furniture_pieces_rejoin_them(self):
+        # Two rooms split by a wall. A bench in the left room's corner cuts off
+        # a pocket with no number; it should rejoin the left room.
+        height, width = 200, 300
+        gray = np.full((height, width), 255, dtype=np.uint8)
+        gray[20:180, 20:280] = 0
+        gray[26:174, 26:274] = 255
+        gray[26:174, 147:153] = 0
+        gray[110:112, 26:80] = 0
+        gray[110:174, 78:80] = 0
+        readings = {"width": width, "height": height, "dilation": 3, "wall": 200, "readings": [
+            {"text": "3001", "x": 90, "y": 60},
+            {"text": "3002", "x": 210, "y": 100},
+        ]}
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "rooms.png"
+            Image.fromarray(gray).save(image)
+            spec = Path(tmp) / "readings.json"
+            spec.write_text(__import__("json").dumps(readings))
+            result, report = grow(str(image), str(spec))
+        self.assertEqual(sorted(n for n in result["labels"].values() if n), ["3001", "3001", "3002"])
+        self.assertEqual([m["into"] for m in report["merges"]], ["3001"])
+        self.assertEqual(report["unplaced"], [])
 
 
 if __name__ == "__main__":

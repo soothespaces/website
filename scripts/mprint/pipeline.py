@@ -25,6 +25,7 @@ import urllib.request
 from pathlib import Path
 
 from fit_outline import fit_plan, render_preview as render_fit
+from read_rooms import expected_rooms, grow, write_report
 from vectorize import render_preview, vectorize
 
 HERE = Path(__file__).resolve().parent
@@ -42,7 +43,17 @@ def fetch(sheet: str, directory: Path) -> Path:
     return path
 
 
-def map_features(collection: dict) -> list[dict]:
+def room_names(expected: dict) -> dict[str, str]:
+    """Room number -> display name: hand-kept facts first, then the Library CMS."""
+    names = {}
+    for number, sources in expected.items():
+        name = sources.get("known", sources.get("cms"))
+        if isinstance(name, str) and not name.startswith("capacity "):
+            names[number] = name.split(" (")[0]
+    return names
+
+
+def map_features(collection: dict, names: dict[str, str] | None = None) -> list[dict]:
     """Keep what the map draws; pixel bookkeeping stays in the full export."""
     out = []
     for feature in collection["features"]:
@@ -50,6 +61,8 @@ def map_features(collection: dict) -> list[dict]:
         keep = {"layer": props["layer"]}
         if props["layer"] == "room":
             keep["roomNumber"] = props["roomNumber"]
+            if names and props["roomNumber"] in names:
+                keep["roomName"] = names[props["roomNumber"]]
         out.append({"type": "Feature", "properties": keep, "geometry": feature["geometry"]})
     return out
 
@@ -74,17 +87,28 @@ def run(entry: dict, sheets: Path, previews: Path | None) -> dict:
         "corners": fit["corners"],
         "usable": fit["usable"],
         "fitMedianMeters": fit["fit"]["medianMeters"],
-        "labeled": "labels" in entry,
+        "labeled": "labels" in entry or "readings" in entry,
         "geojson": None,
     }
     if not fit["usable"]:
         return record
 
     labels = str(HERE / entry["labels"]) if "labels" in entry else None
+    names = None
+    if "readings" in entry:
+        # Labels come from the printed numbers each run, so they always match
+        # the sheet just downloaded (see read_rooms.py and the label-floor skill).
+        result, report = grow(str(image), str(HERE / entry["readings"]))
+        labels = str(sheets / f"{sheet}_labels.json")
+        Path(labels).write_text(json.dumps(result, indent=1) + "\n")
+        expected = expected_rooms(entry)
+        names = room_names(expected)
+        if previews:
+            write_report(report, expected, previews / f"{sheet}_report.md", sheet)
     collection, rgb, gray, room_ids, records, spec = vectorize(str(image), labels, 1.0, str(alignment))
     dest = PUBLIC / entry["building"] / f"{entry['floor']}.geojson"
     dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_text(json.dumps({"type": "FeatureCollection", "features": map_features(collection)}, separators=(",", ":")))
+    dest.write_text(json.dumps({"type": "FeatureCollection", "features": map_features(collection, names)}, separators=(",", ":")))
     record["geojson"] = "/" + dest.relative_to(PUBLIC.parent).as_posix()
     record["rooms"] = sum(1 for f in collection["features"] if f["properties"]["layer"] == "room")
     if previews:
