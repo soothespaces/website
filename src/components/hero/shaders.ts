@@ -98,9 +98,9 @@ const float MIN_HIT_DIST = 0.01;
 const float MAX_TRACE_DIST = 0.4;
 const float SHADOW_SOFTNESS = 0.3; // the lower, the sharper
 const float WAVENUMBER = ${(TAU / WAVELENGTH).toFixed(6)};
-// Share of the pressure a wall reflects. Painted partitions and glass absorb
-// roughly 30-50% of the intensity at speech frequencies.
-const float REFLECTION = 0.775;
+// Share of the pressure a wall reflects. Library partitions are usually
+// treated and absorb about 75% of the intensity at speech frequencies.
+const float REFLECTION = 0.5;
 // Meters around a wall's end over which its reflection fades in, standing in
 // for diffraction at the edge.
 const float EDGE = 0.6;
@@ -227,7 +227,8 @@ uniform vec4 uAlpha; // walls, furniture, floor grid, rings
 out vec4 fragColor;
 
 const float WAVENUMBER = ${(TAU / WAVELENGTH).toFixed(6)};
-const float RING_WIDTH = 0.03;
+// cos(phase) is raised to this power, so a crest is about 6 cm wide.
+const float CREST_SHARPNESS = 16.0;
 const float GAMMA = 2.2;
 
 vec2 cmul(vec2 a, vec2 b) {
@@ -268,21 +269,17 @@ void main() {
   z += cmul(wave.xy, uSpin[2]) + cmul(wave.zw, uSpin[3]);
 #endif
 
-  // The pressure is amplitude * cos(phase); crests sit at phase 0.
+  // The pressure here is Re(z) = |z| cos(phase), shaded like a ripple tank
+  // with the crests sharpened into bands. Unlike drawn lines, that stays
+  // continuous where waves cancel (the phase is undefined there), and
+  // standing waves pulse in place. Sharpness drops on coarse screens so a
+  // band never gets thinner than about a pixel.
   float amplitude = length(z);
-  float phase = amplitude > 1e-5 ? atan(z.y, z.x) : 3.14159;
-  // Where waves overlap the phase can turn much faster than one wavelength
-  // per wavelength, so measure its actual gradient: d(arg z) = Im(conj(z) dz) / |z|^2.
-  vec2 dz = dFdx(z);
-  vec2 dzy = dFdy(z);
-  vec2 turn = vec2(z.x * dz.y - z.y * dz.x, z.x * dzy.y - z.y * dzy.x)
-    / max(amplitude * amplitude, 1e-10);
-  float radiansPerMeter = max(length(turn) / uPx, WAVENUMBER * 0.25);
-  float fromCrest = abs(phase) / radiansPerMeter; // meters of floor
-  float halfWidth = max(RING_WIDTH, uPx * 0.6);
-  float line = 1.0 - smoothstep(halfWidth, halfWidth + uPx * 1.2, fromCrest);
+  float pixelPhase = WAVENUMBER * uPx;
+  float sharpness = min(CREST_SHARPNESS, 1.386 / (pixelPhase * pixelPhase));
+  float crest = pow(max(z.x / max(amplitude, 1e-6), 0.0), sharpness);
   float level = pow(min(amplitude * amplitude, 1.0), 1.0 / GAMMA);
-  float ringAlpha = line * level * uAlpha.w * mask * vignette;
+  float ringAlpha = crest * level * uAlpha.w * mask * vignette;
 
   // A faint one-meter dot grid on the floor of the room itself.
   vec2 cell = abs(fract(p) - 0.5);
