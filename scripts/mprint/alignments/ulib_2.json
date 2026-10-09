@@ -7,36 +7,36 @@
  "footprint": "footprints/shapiro.json",
  "spurDropped": true,
  "transform": "similarity",
- "metersPerPixel": 0.050465,
- "cmPerPixel": 5.046,
- "imageUpDegreesFromNorth": -1.29,
+ "metersPerPixel": 0.050502,
+ "cmPerPixel": 5.05,
+ "imageUpDegreesFromNorth": -1.261,
  "fit": {
-  "medianMeters": 0.347,
-  "p90Meters": 1.382,
-  "fractionWithin1m": 0.891,
-  "fractionWithin0_5m": 0.682,
-  "iou": 0.948,
+  "medianMeters": 0.343,
+  "p90Meters": 1.387,
+  "fractionWithin1m": 0.892,
+  "fractionWithin0_5m": 0.69,
+  "iou": 0.949,
   "planCoveredByFootprint": 0.981,
-  "footprintCoveredByPlan": 0.966,
-  "medianMetersEastHalf": 0.41,
-  "medianMetersWestHalf": 0.221
+  "footprintCoveredByPlan": 0.967,
+  "medianMetersEastHalf": 0.402,
+  "medianMetersWestHalf": 0.224
  },
  "usable": true,
  "corners": [
   [
-   -83.7375647,
-   42.2760321
+   -83.7375651,
+   42.2760327
   ],
   [
-   -83.7368388,
-   42.2760442
+   -83.7368387,
+   42.2760446
   ],
   [
-   -83.7368133,
-   42.2752039
+   -83.7368137,
+   42.2752037
   ],
   [
-   -83.7375391,
+   -83.7375401,
    42.2751918
   ]
  ]
