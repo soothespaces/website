@@ -37,6 +37,10 @@ on that element cannot change the column. ESLint rejects every other max width
 except `max-w-64`, which is the space chip, not a page. The map is full bleed,
 and so is the hero illustration. Their content still uses `PageWidth`.
 
+`html` sets `scrollbar-gutter: stable`, so a short page and a long page keep
+the same column. Without that, the centered column shifts by half a scrollbar
+when one page scrolls and another does not.
+
 ## Typography
 
 "Swiss, clarified", picked on 2026-10-08 from the
