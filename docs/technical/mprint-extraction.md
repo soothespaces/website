@@ -190,7 +190,7 @@ the border is outside; everything else is the building) and fits that edge to a
 footprint polygon. The only transform is scale, rotation, and shift. It writes
 `floor_plans.corners`: top-left, top-right, bottom-right, bottom-left. A spur
 that leaves the footprint and comes back within 8 m, while reaching 10 m or
-more, is dropped before the score. On Shapiro that spur is the bridge west to
+more, is dropped when the fit without it overlaps better. On Shapiro that spur is the bridge west to
 Hatcher, which is not drawn on the MPrint sheet. Column bays are only a few
 meters deep, so they stay.
 
@@ -250,8 +250,20 @@ footprint), but the shapes are not: median distance **12.6 m**, only **9%** of
 the edge within 1 m, overlap **0.49**. A wider rotation search (±30°) did not
 find a better pose. `alignments/dc_2.json` records that fit with `usable:
 false`. Those corners should not be used to drape the plan on the map.
-Shapiro worked because FO's line there is the arcade. Duderstadt needs the
-manual corner tool, or a footprint that actually follows the wall.
+
+**That miss was at least partly the fitter, not the footprint.** Drawing
+Duderstadt's own footprint as a sheet and fitting it back also failed (2.3 m
+median, 0.78 overlap). Two things caused it. The spur rule cut off the narrow
+west end of the footprint, which is on the sheet. And ICP started from the
+footprint's vertex mean instead of the pose the coarse search picked; once the
+west end was gone, that start sat about 16 m off. The fitter now starts ICP
+from the searched pose (area centroids, not vertex means) and fits with and
+without a spur, keeping the higher overlap. The same synthetic check now
+lands at 0.02 m, and a drawn Shapiro outline without the bridge comes back
+at 0.9° instead of 2.1°. `dc_2`, `ulib_1` and `ulib_2` need to be fitted
+again with the new code before these numbers or `dc_2`'s `usable: false` are
+trusted. If Duderstadt still misses after that, it needs the manual corner
+tool or a footprint that follows the wall.
 
 Room segmentation is mixed, at dilation 12 and wall 200 (116 regions kept).
 Fully walled rooms come apart: the 2356A–E row and the 2335 lettered rooms are

@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 
 from fit_outline import drop_spurs, fit_plan, load_footprint, local_frame
 from room_names import classify, match_libcal
@@ -176,6 +176,42 @@ class FitTests(unittest.TestCase):
         self.assertAlmostEqual(result["imageUpDegreesFromNorth"], -degrees, delta=0.05)
         self.assertGreater(result["fit"]["iou"], 0.98)
         self.assertLess(result["fit"]["medianMeters"], 0.02)
+
+    def _fit_drawn_footprint(self, name: str, ring_xy: np.ndarray, scale: float, degrees: float) -> dict:
+        """Draw a footprint ring as a sheet (outline only, north rotated by
+        `degrees`) and fit it back onto the footprint file it came from."""
+        px = (ring_xy @ _rotation(degrees)) / scale
+        px = np.c_[px[:, 0], -px[:, 1]]
+        px -= px.min(axis=0) - 60
+        width, height = (px.max(axis=0) + 60).astype(int)
+        img = Image.new("L", (int(width), int(height)), 255)
+        ImageDraw.Draw(img).polygon([tuple(p) for p in px], fill=255, outline=0, width=6)
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "sheet.png"
+            img.save(image)
+            path = Path(__file__).parent / "footprints" / name
+            return fit_plan(str(image), str(path), None, wall=200, simplify=1.0)
+
+    def test_duderstadt_outline_fits_its_own_footprint_and_keeps_the_west_end(self):
+        # The west end of Duderstadt's footprint looks like a spur but is on
+        # the sheet; the fit has to keep it, and start from the searched pose.
+        _, ring = load_footprint(str(Path(__file__).parent / "footprints" / "duderstadt.json"), None)
+        xy, *_ = local_frame(ring)
+        result = self._fit_drawn_footprint("duderstadt.json", xy, 0.05, 1.0)
+        self.assertFalse(result["spurDropped"])
+        self.assertAlmostEqual(result["metersPerPixel"], 0.05, delta=0.0005)
+        self.assertAlmostEqual(result["imageUpDegreesFromNorth"], -1.0, delta=0.1)
+        self.assertLess(result["fit"]["medianMeters"], 0.1)
+        self.assertTrue(result["usable"])
+
+    def test_shapiro_outline_without_the_bridge_drops_the_spur(self):
+        _, ring = load_footprint(str(Path(__file__).parent / "footprints" / "shapiro.json"), None)
+        xy, *_ = local_frame(ring)
+        kept, _ = drop_spurs(xy)
+        result = self._fit_drawn_footprint("shapiro.json", kept, 0.0504, 0.9)
+        self.assertTrue(result["spurDropped"])
+        self.assertAlmostEqual(result["imageUpDegreesFromNorth"], -0.9, delta=0.1)
+        self.assertLess(result["fit"]["medianMeters"], 0.1)
 
     def test_vectorize_splits_two_rooms_and_projects_inside_the_footprint(self):
         # Two rooms split by a vertical wall, inside an outer wall.

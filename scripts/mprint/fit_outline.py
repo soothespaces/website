@@ -10,7 +10,8 @@ lng/lat of the image's four corners in the order `floor_plans.corners` uses
 
 Parts of a footprint that are not on the sheet are left out of the score.
 Shapiro's footprint includes the bridge west to Hatcher; that spur sticks
-out and comes back, and it is dropped before the fit.
+out and comes back. The fit runs with and without the spur and keeps the one
+with more overlap, so a real wing that happens to look like a spur stays.
 
 Usage:
     python3 fit_outline.py ulib_1.png footprints/shapiro.json --out alignments/ulib_1.json
@@ -224,8 +225,21 @@ def _rotation(degrees: float) -> np.ndarray:
     return np.array([[c, -s], [s, c]])
 
 
+def area_centroid(poly: np.ndarray) -> np.ndarray:
+    """Centroid of the enclosed area. A vertex mean leans toward whichever
+    stretch of edge happens to have the most vertices, and FO's footprints
+    are drawn with very uneven vertex density."""
+    x, y = poly[:, 0], poly[:, 1]
+    xn, yn = np.roll(x, -1), np.roll(y, -1)
+    cross = x * yn - xn * y
+    area = float(cross.sum()) / 2
+    if abs(area) < 1e-12:
+        return poly.mean(axis=0)
+    return np.array([float(((x + xn) * cross).sum()), float(((y + yn) * cross).sum())]) / (6 * area)
+
+
 def fit_similarity(plan_xy: np.ndarray, footprint_xy: np.ndarray) -> tuple[float, np.ndarray, np.ndarray, np.ndarray]:
-    """ICP. `plan_xy` is in a y-up pixel frame (x right, y = -row), centered later.
+    """ICP. `plan_xy` is in a y-up pixel frame (x right, y = -row), centered on its vertex mean.
 
     Returns scale (meters per pixel), rotation, shift, and the fitted plan points.
     """
@@ -235,22 +249,22 @@ def fit_similarity(plan_xy: np.ndarray, footprint_xy: np.ndarray) -> tuple[float
     scale0 = float(np.mean(foot_span / np.maximum(plan_span, 1e-6)))
     step = max(1, len(centered) // 250)
     probe = centered[::step]
-    center = footprint_xy.mean(axis=0)
+    # The coarse search pins the plan's area centroid on the footprint's.
+    offset = area_centroid(centered)
+    center = area_centroid(footprint_xy)
 
     best = None
     for degrees in np.linspace(-6, 6, 25):
         rotation = _rotation(float(degrees))
         for scale in np.linspace(scale0 * 0.92, scale0 * 1.08, 9):
-            placed = (probe * scale) @ rotation.T
-            placed = placed - placed.mean(axis=0) + center
+            placed = ((probe - offset) * scale) @ rotation.T + center
             _, dist = closest_on_ring(placed, footprint_xy)
             median = float(np.median(dist))
             if best is None or median < best[0]:
                 best = (median, float(scale), float(degrees))
     scale, rotation = best[1], _rotation(best[2])
-    placed = (centered * scale) @ rotation.T
-    placed = placed - placed.mean(axis=0) + footprint_xy.mean(axis=0)
-    shift = footprint_xy.mean(axis=0) - placed.mean(axis=0)
+    # ICP starts from the pose the search picked: `offset` lands on `center`.
+    shift = center - scale * (rotation @ offset)
     # A few hundred vertices are enough to pin down four degrees of freedom,
     # and the real outlines have thousands.
     icp_step = max(1, len(centered) // 400)
@@ -322,12 +336,20 @@ def fit_plan(image: str, footprint_path: str, name: str | None, wall: int, simpl
     plan = np.c_[ring[:-1, 0], -ring[:-1, 1]]
     _, footprint_ll = load_footprint(footprint_path, name)
     footprint_xy, origin, m_lng, _ = local_frame(footprint_ll)
-    footprint_xy, dropped = drop_spurs(footprint_xy)
-    scale, rotation, shift, placed = fit_similarity(plan, footprint_xy)
+    # A spur is only left out when the fit agrees: Shapiro's bridge is not on
+    # the sheet, but the narrow west end of Duderstadt's footprint is.
+    kept_xy, spur = drop_spurs(footprint_xy)
+    candidates = [(footprint_xy, None)] + ([(kept_xy, spur)] if spur is not None else [])
+    best = None
+    for candidate_xy, candidate_spur in candidates:
+        scale, rotation, shift, placed = fit_similarity(plan, candidate_xy)
+        overlap = raster_iou(placed, candidate_xy)
+        if best is None or overlap[0] > best[0][0]:
+            best = (overlap, candidate_xy, candidate_spur, scale, rotation, shift, placed)
+    (iou, plan_in_foot, foot_in_plan), footprint_xy, dropped, scale, rotation, shift, placed = best
 
     samples = resample_closed(placed, 0.5)
     distance = segment_distance(samples, footprint_xy)
-    iou, plan_in_foot, foot_in_plan = raster_iou(placed, footprint_xy)
     up = rotation @ np.array([0.0, 1.0])
     degrees = math.degrees(math.atan2(float(up[0]), float(up[1])))
 
