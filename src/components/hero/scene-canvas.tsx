@@ -7,15 +7,20 @@ import {
   INK_FRAGMENT,
   FIELD_FRAGMENT,
   VERTEX,
+  WAVE_SPEED,
+  WAVELENGTH,
   withDefines,
 } from "./shaders";
 
-// Starting late means every ring that would have been emitted already is on
-// screen in the first frame. It's also the frame shown with reduced motion.
+// The frame shown with reduced motion.
 const START_TIME = 40;
 const MAX_DPR = 2;
-const FIELD_TEXELS_PER_METER = 10;
-const SOURCE_SLOTS = 3;
+// The baked amplitudes rotate once per wavelength, so they need enough
+// texels per wavelength to interpolate without dimming between texels.
+const FIELD_TEXELS_PER_METER = 16;
+// Two sources per baked texture.
+const SOURCE_SLOTS = 4;
+const ANGULAR_SPEED = (Math.PI * 2 * WAVE_SPEED) / WAVELENGTH;
 
 type Rgb = [number, number, number];
 
@@ -31,6 +36,17 @@ function prefersMoreContrast() {
   const setting = document.documentElement.dataset.contrast;
   if (setting) return setting === "more";
   return matchMedia("(prefers-contrast: more)").matches;
+}
+
+// Each source wanders in phase and loudness on its own, like an uncorrelated
+// voice, which slowly moves where its waves cancel out against the others'.
+function spin(i: number, t: number): [number, number] {
+  const seed = i * 2.39996;
+  const phase =
+    seed * 3 + 1.1 * Math.sin(0.21 * t + seed) + 0.7 * Math.sin(0.53 * t + 2.3 * seed);
+  const gain = 0.8 + 0.2 * Math.sin(0.41 * t + 1.7 * seed);
+  const angle = phase - ANGULAR_SPEED * t;
+  return [gain * Math.cos(angle), gain * Math.sin(angle)];
 }
 
 function packScene(scene: StudyScene) {
@@ -138,9 +154,6 @@ export function SceneCanvas({
           depthWrite: false,
         });
 
-      // Direct sound and its reflections off the walls are baked separately,
-      // since each has its own wavefronts. The packed distance can't be
-      // filtered; the composite pass interpolates it itself.
       const fieldUniforms = {
         ...segments,
         uSourceBox: { value: packed.sourceBox },
@@ -148,24 +161,26 @@ export function SceneCanvas({
         uWorldMin: { value: worldMin },
         uWorldSize: { value: worldSize },
       };
-      const bake = (reflected: boolean) => {
+      const bake = (pair: number) => {
         const target = new RenderTarget(gl, {
           width: Math.min(1024, Math.ceil(worldSize[0] * FIELD_TEXELS_PER_METER)),
           height: Math.min(1024, Math.ceil(worldSize[1] * FIELD_TEXELS_PER_METER)),
           depth: false,
-          minFilter: gl.NEAREST,
-          magFilter: gl.NEAREST,
+          type: WebGL2RenderingContext.HALF_FLOAT,
+          internalFormat: WebGL2RenderingContext.RGBA16F,
+          minFilter: gl.LINEAR,
+          magFilter: gl.LINEAR,
         });
         const mesh = new Mesh(gl, {
           geometry,
-          program: program(FIELD_FRAGMENT, fieldUniforms, { REFLECTED: reflected ? 1 : 0 }),
+          program: program(FIELD_FRAGMENT, fieldUniforms, { PAIR: pair }),
         });
         renderer.render({ scene: mesh, target });
         mesh.program.remove();
         return target;
       };
-      const fieldTarget = bake(false);
-      const echoTarget = bake(true);
+      const waveTargets = [bake(0)];
+      if (packed.defines.SOURCE_COUNT > 2) waveTargets.push(bake(1));
 
       const inkTarget = new RenderTarget(gl, { width: 1, height: 1, depth: false });
       const inkMesh = new Mesh(gl, {
@@ -179,26 +194,29 @@ export function SceneCanvas({
         uAlpha: { value: [0.4, 0.2, 0.1, 0.75] },
       };
       const time = { value: START_TIME };
+      const spins = { value: Array.from({ length: SOURCE_SLOTS }, () => [0, 0]) };
       const compositeMesh = new Mesh(gl, {
         geometry,
         program: program(COMPOSITE_FRAGMENT, {
           ...view,
           ...colors,
           uInk: { value: inkTarget.texture },
-          uField: { value: fieldTarget.texture },
-          uEcho: { value: echoTarget.texture },
-          uFieldSize: { value: [fieldTarget.width, fieldTarget.height] },
+          uWave0: { value: waveTargets[0].texture },
+          uWave1: { value: waveTargets.at(-1)!.texture },
+          uSpin: spins,
           uWorldMin: { value: worldMin },
           uWorldSize: { value: worldSize },
           uBounds: {
             value: [bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height],
           },
           uFade: { value: margin * 0.8 },
-          uTime: time,
         }),
       });
 
-      const draw = () => renderer.render({ scene: compositeMesh });
+      const draw = () => {
+        spins.value = spins.value.map((_, i) => spin(i, time.value));
+        renderer.render({ scene: compositeMesh });
+      };
 
       const readTheme = () => {
         colors.uFg.value = readColor(probe, "--foreground");
@@ -313,7 +331,7 @@ export function SceneCanvas({
         canvas.removeEventListener("webglcontextlost", onContextLost);
         canvas.removeEventListener("webglcontextrestored", onContextRestored);
         for (const mesh of [inkMesh, compositeMesh]) mesh.program.remove();
-        for (const target of [fieldTarget, echoTarget, inkTarget]) {
+        for (const target of [...waveTargets, inkTarget]) {
           gl.deleteFramebuffer(target.buffer);
           for (const texture of target.textures) gl.deleteTexture(texture.texture);
         }
