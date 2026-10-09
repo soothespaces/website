@@ -6,6 +6,7 @@ import { DropdownMenu } from "radix-ui";
 import { loginHref } from "@/lib/auth/paths";
 import { useSession } from "@/lib/auth/use-session";
 import { ROUTES } from "@/lib/site";
+import { Button } from "@/components/ui/button";
 
 // Header control: "Sign in" for guests, an account menu once signed in.
 export function UserMenu() {
@@ -20,12 +21,9 @@ export function UserMenu() {
     if (pathname === "/login") return null;
     const query = searchParams.toString();
     return (
-      <Link
-        href={loginHref(query ? `${pathname}?${query}` : pathname)}
-        className="rounded-md border border-input px-3 py-1.5 hover:bg-accent"
-      >
-        Sign in
-      </Link>
+      <Button asChild variant="outline" size="sm">
+        <Link href={loginHref(query ? `${pathname}?${query}` : pathname)}>Sign in</Link>
+      </Button>
     );
   }
 
@@ -64,12 +62,14 @@ export function UserMenu() {
           </DropdownMenu.Item>
           <form action="/auth/signout" method="post">
             <DropdownMenu.Item asChild>
-              <button
+              <Button
                 type="submit"
-                className="w-full rounded-sm px-3 py-2 text-left outline-none data-[highlighted]:bg-accent"
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start data-[highlighted]:bg-accent"
               >
                 Sign out
-              </button>
+              </Button>
             </DropdownMenu.Item>
           </form>
         </DropdownMenu.Content>
