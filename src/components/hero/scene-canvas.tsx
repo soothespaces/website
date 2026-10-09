@@ -163,7 +163,7 @@ export function SceneCanvas({
 
       const colors = {
         uFg: { value: [0, 0, 0] as Rgb },
-        uAccent: { value: [0, 0, 0] as Rgb },
+        uSound: { value: [0, 0, 0] as Rgb },
         uAlpha: { value: [0.4, 0.2, 0.1, 0.75] },
       };
       const time = { value: START_TIME };
@@ -189,7 +189,7 @@ export function SceneCanvas({
 
       const readTheme = () => {
         colors.uFg.value = readColor(probe, "--foreground");
-        colors.uAccent.value = readColor(probe, "--primary");
+        colors.uSound.value = readColor(probe, "--sound");
         colors.uAlpha.value = prefersMoreContrast()
           ? [0.85, 0.5, 0.18, 0.95]
           : [0.38, 0.2, 0.09, 0.85];
