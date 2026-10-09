@@ -12,5 +12,17 @@
     "status": "Success",
     "error": null,
     "file": "responses/harold-t-and-vivian-b-shapiro-library.1.json"
+  },
+  {
+    "at": "2026-10-09T19:43:48.280Z",
+    "slug": "harold-t-and-vivian-b-shapiro-library",
+    "params": {
+      "place_id": "ChIJzbU38USuPIgRA37lIk4WV4Q"
+    },
+    "http_status": 200,
+    "search_id": "6ac943f310ceeda51682e2a2",
+    "status": "Success",
+    "error": null,
+    "file": "responses/harold-t-and-vivian-b-shapiro-library.2.json"
   }
 ]

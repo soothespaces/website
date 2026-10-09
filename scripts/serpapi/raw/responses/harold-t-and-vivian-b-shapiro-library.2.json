@@ -1,14 +1,24 @@
 {
-  "slug": "harold-t-and-vivian-b-shapiro-library",
-  "query": "Shapiro Library, 919 S University Ave, Ann Arbor, MI",
-  "fetched_at": "2026-10-09T19:43:49.782Z",
-  "search_ids": [
-    "6ac9438c5fda0bd36ed591f6",
-    "6ac943f310ceeda51682e2a2"
-  ],
-  "resolved_by": "place_id lookup after: search opened the place",
-  "distance_from_ours_m": 10,
-  "place": {
+  "search_metadata": {
+    "id": "6ac943f310ceeda51682e2a2",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/wwhiXGSxofFTbuZ9rTFRmIIN4S8xtWWAcPoWtJo96lg/6ac943f310ceeda51682e2a2.json",
+    "markdown_endpoint": "https://serpapi.com/searches/wwhiXGSxofFTbuZ9rTFRmIIN4S8xtWWAcPoWtJo96lg/6ac943f310ceeda51682e2a2.md",
+    "created_at": "2026-10-09 19:43:47 UTC",
+    "processed_at": "2026-10-09 19:43:47 UTC",
+    "google_maps_url": "https://www.google.com/maps/place///data=!4m6!3m5!1s0x883cae44f137b5cd:0x8457164e22e57e03!8m2!3d0!4d0!16s?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/wwhiXGSxofFTbuZ9rTFRmIIN4S8xtWWAcPoWtJo96lg/6ac943f310ceeda51682e2a2.html",
+    "prettify_html_file": "https://serpapi.com/searches/wwhiXGSxofFTbuZ9rTFRmIIN4S8xtWWAcPoWtJo96lg/6ac943f310ceeda51682e2a2.prettify",
+    "total_time_taken": 0.61
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "place_id": "ChIJzbU38USuPIgRA37lIk4WV4Q",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "place_results": {
     "title": "Shapiro Library",
     "place_id": "ChIJzbU38USuPIgRA37lIk4WV4Q",
     "data_id": "0x883cae44f137b5cd:0x8457164e22e57e03",
