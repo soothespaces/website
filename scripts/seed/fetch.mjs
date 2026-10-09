@@ -178,29 +178,30 @@ rows.push(
   `| \`umich-library-cms.json\` | ${CMS}/node/{building,location,room}, /taxonomy_term/floor | U-M Library CMS (JSON:API): ${libraryCms.buildings.places.length} buildings and ${libraryCms.locations.places.length} locations with hours periods, ${libraryCms.rooms.length} rooms, floor names |`,
 );
 
-// Each Find a Study Space entry has its own page with a longer description.
-// Gatsby serves the page's data as JSON next to it; fall back to the HTML's
-// meta description if that isn't available.
+// Each Find a Study Space entry has its own page with a longer description
+// (where to find it, seating, what's nearby). Keep the page's <main> element,
+// minus scripts, styles and SVG icons; build.mjs pulls the text out.
 const libraryOrigin = "https://www.lib.umich.edu";
 const fass = JSON.parse(await readFile(join(RAW, "umich-library-fass.json"), "utf8"));
 const spacePages = [];
 for (const space of fass.spaces) {
-  const path = space.slug.replace(/\/$/, "");
-  const entry = { slug: space.slug };
-  const res = await fetch(`${libraryOrigin}/page-data${path}/page-data.json`, { headers: { "user-agent": UA } });
-  if (res.ok) {
-    entry.pageData = (await res.json()).result?.data ?? null;
-  } else {
-    const html = await (await fetch(`${libraryOrigin}${path}/`, { headers: { "user-agent": UA } })).text();
-    entry.description = html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? null;
-    entry.pageDataStatus = res.status;
-  }
-  spacePages.push(entry);
+  const url = `${libraryOrigin}${space.slug.replace(/\/?$/, "/")}`;
+  const res = await fetch(url, { headers: { "user-agent": UA } });
+  if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
+  const html = await res.text();
+  const main = html.match(/<main[\s\S]*?<\/main>/)?.[0] ?? null;
+  spacePages.push({
+    slug: space.slug,
+    url,
+    main: main
+      ?.replace(/<(script|style|svg|noscript)\b[\s\S]*?<\/\1>/g, "")
+      .replace(/\s+/g, " "),
+  });
   await new Promise((resolve) => setTimeout(resolve, 300));
 }
 await writeFile(join(RAW, "umich-library-space-pages.json"), JSON.stringify(spacePages, null, 2) + "\n");
 rows.push(
-  `| \`umich-library-space-pages.json\` | ${libraryOrigin}/page-data/visit-and-study/study-spaces/…/page-data.json | The ${spacePages.length} Library study-space pages' own data (full description, links) |`,
+  `| \`umich-library-space-pages.json\` | ${libraryOrigin}/visit-and-study/study-spaces/…/ | The <main> HTML of each of the ${spacePages.length} Library study-space pages (full description) |`,
 );
 
 await writeFile(
