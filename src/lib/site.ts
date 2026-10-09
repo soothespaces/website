@@ -6,7 +6,7 @@ export const ROUTES = {
   help: "/help",
   privacy: "/privacy",
   terms: "/terms",
-  signIn: "/sign-in",
+  signIn: "/login",
   accountPreferences: "/settings",
 } as const;
 
@@ -71,7 +71,7 @@ export const HELP_TOPICS: HelpTopic[] = [
       {
         question: "Where are my account preferences?",
         answer:
-          "Once you're signed in, select your profile in the top corner of any page.",
+          "Once you're signed in, select your profile in the top corner of any page, then Account preferences.",
       },
     ],
   },

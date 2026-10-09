@@ -58,8 +58,8 @@ function MenuIcon({ open }: { open: boolean }) {
   );
 }
 
-// The interactive part of the site header. `account` is rendered on the
-// server (it reads the session) and passed in, so it stays a Server Component.
+// The interactive part of the site header. `account` is passed in so the
+// header can wrap it in its own Suspense boundary.
 export function HeaderFrame({ account }: { account: ReactNode }) {
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement>(null);

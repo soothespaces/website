@@ -36,12 +36,15 @@ npm run env:pull       # = vercel env pull .env.local --environment=production
 This writes `.env.local` (git-ignored). The Supabase vars are only set for the
 Production environment in Vercel, which is why the script passes
 `--environment=production`. Vars marked Sensitive in Vercel (service role key,
-DB password) come down empty; the app doesn't need them. The two it reads are
+DB password) come down empty; the app doesn't need them. The ones it reads are
 listed in [`.env.example`](.env.example):
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (the newer name for the anon key; safe in
   the browser because Row Level Security decides what it can read and write)
+- `NEXT_PUBLIC_MAPTILER_KEY` (map tiles; restrict it to our domains in the MapTiler
+  dashboard). Optional: without it the map falls back to OpenFreeMap's keyless
+  OSM styles, which look different but work the same.
 
 ### 3. Run
 
@@ -74,6 +77,26 @@ Open [http://localhost:3000](http://localhost:3000).
 - **Local stack (optional):** `supabase/config.toml` is there so `npx supabase start`
   can run a local Postgres in Docker, but day-to-day development uses the
   production project.
+
+## Sign-in
+
+Google only, `@umich.edu` only ([ADR 0003](docs/decisions/0003-supabase-as-backend.md)).
+
+- **Flow:** `/login` posts to `/auth/login`, which sends the user to Google via
+  Supabase. Google returns to `/auth/callback` on the same origin (localhost, a
+  preview URL or production), which sets the session cookie and redirects to `next`.
+  Sign out by posting to `/auth/signout`.
+- **In components:** `useSession()` from `src/lib/auth/use-session.ts` gives
+  `{ user, loading }`. Show `<SignInPrompt reason="to check in" />` to guests in
+  place of a signed-in-only action; it brings them back to the same page. Anything
+  that must be trusted is checked on the server (`supabase.auth.getClaims()`) and by
+  RLS, never only by the hook.
+- **`@umich.edu`:** enforced by the `before_user_created` auth hook (must be enabled
+  in the dashboard under Authentication → Hooks) and again in `/auth/callback`.
+- **Redirect URLs:** a deployment can only sign in if its origin is listed in
+  Supabase → Authentication → URL Configuration → Redirect URLs
+  (`http://localhost:3000/**`, `https://*-tanner-s-projects.vercel.app/**`, and the
+  production URL as Site URL).
 
 ## Learn More
 
