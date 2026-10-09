@@ -22,6 +22,9 @@
 /* Light (default) */
 :root {
   color-scheme: light;
+  /* One page column. PageWidth is the only thing that reads these. */
+  --page-width: 64rem;
+  --page-gutter: 1rem;
   --background: #ffffff;
   --foreground: #171717;
   --card: #ffffff;
@@ -41,6 +44,7 @@
   --border: #e5e5e5; /* decorative dividers only */
   --input: #737373; /* borders that identify a control */
   --ring: #3d6b4f;
+  --sound: #4f7394;
   --logo-gap: transparent; /* outline around the logo bookmark */
 }
 
@@ -66,6 +70,7 @@
   --border: #262626;
   --input: #8a8a8a;
   --ring: #8cc7a1;
+  --sound: #8fb4d6;
   --logo-gap: var(--background);
 }
 
@@ -91,6 +96,7 @@
     --border: #262626;
     --input: #8a8a8a;
     --ring: #8cc7a1;
+    --sound: #8fb4d6;
   --logo-gap: var(--background);
   }
 }
@@ -116,6 +122,7 @@
   --border: #000000;
   --input: #000000;
   --ring: #000000;
+  --sound: #284f70;
 }
 
 @media (prefers-contrast: more) {
@@ -139,6 +146,7 @@
     --border: #000000;
     --input: #000000;
     --ring: #000000;
+    --sound: #284f70;
   }
 }
 
@@ -166,6 +174,7 @@
   --border: #ffffff;
   --input: #ffffff;
   --ring: #ffffff;
+  --sound: #b8d8f2;
   --logo-gap: var(--background);
 }
 
@@ -190,6 +199,7 @@
     --border: #ffffff;
     --input: #ffffff;
     --ring: #ffffff;
+    --sound: #b8d8f2;
   --logo-gap: var(--background);
   }
 }
@@ -215,6 +225,7 @@
     --border: #ffffff;
     --input: #ffffff;
     --ring: #ffffff;
+    --sound: #b8d8f2;
   --logo-gap: var(--background);
   }
 }
@@ -240,14 +251,16 @@
     --border: #ffffff;
     --input: #ffffff;
     --ring: #ffffff;
+    --sound: #b8d8f2;
   --logo-gap: var(--background);
   }
 }
 
 /*
- * Colorblind-safe palette (Okabe-Ito blue and vermillion). Only the accent
- * and destructive colors change. Values clear 7:1 so they also hold up in
- * high contrast. Declared last so it wins over the rules above.
+ * Colorblind-safe palette (Okabe-Ito blue and vermillion). Only the accent,
+ * destructive and sound colors change. Accent and destructive clear 7:1 so
+ * they also hold up in high contrast; sound moves to orange so it stays
+ * distinct from the blue accent. Declared last so it wins over the rules above.
  */
 :root[data-palette="cvd"] {
   --primary: #005a9c;
@@ -255,6 +268,7 @@
   --destructive: #9a3a00;
   --destructive-foreground: #ffffff;
   --ring: #005a9c;
+  --sound: #8a5a00;
 }
 
 :root[data-palette="cvd"][data-theme="dark"] {
@@ -263,6 +277,7 @@
   --destructive: #f5a06e;
   --destructive-foreground: #000000;
   --ring: #56b4e9;
+  --sound: #e6a23c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -272,6 +287,7 @@
     --destructive: #f5a06e;
     --destructive-foreground: #000000;
     --ring: #56b4e9;
+    --sound: #e6a23c;
   }
 }
 

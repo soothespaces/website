@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
+import { PageWidth } from "@/components/page-width";
 import { LOGIN_ERRORS, sanitizeNextPath, type LoginError } from "@/lib/auth/paths";
 
 export const metadata: Metadata = {
@@ -29,7 +30,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-6 px-4 py-16">
+    <PageWidth className="flex flex-1 flex-col justify-center gap-6 py-16">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-semibold tracking-tight">Sign in</h1>
         <p className="text-muted-foreground">
@@ -51,13 +52,13 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         <input type="hidden" name="next" value={next} />
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-3 rounded-md bg-primary px-4 py-3 font-medium text-primary-foreground"
+          className="inline-flex w-full items-center justify-center gap-3 rounded-md bg-primary px-4 py-3 font-medium text-primary-foreground sm:w-auto"
         >
           <GoogleIcon />
           Continue with Google
         </button>
       </form>
-    </div>
+    </PageWidth>
   );
 }
 

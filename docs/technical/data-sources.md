@@ -551,6 +551,67 @@ Budget check for the free tier: about 30 place-ID lookups once, about 30 popular
 snapshots a month, and about 60–90 review queries once for curation. That's under 250
 in the first month and about 30 a month after.
 
+### Update 2026-10-09: docs survey and schema
+
+A pass over SerpApi's Google Maps engine docs added: `unsupported_extensions` (attributes
+Google lists as absent), `popular_times.live_hash.time_spent` ("People typically spend
+45 min to 1.5 hr here"), `hours_last_updated`, `located_in`, `user_reviews.topics`, and
+that a `type=search` call returns `operating_hours` and ids for up to 20 places in one
+search (no popular times). Not in the docs: `at_this_place`, holiday or special hours,
+an "Open 24 hours" example. Place-results `hours` is an array of one-key objects per day
+with comma-separated intervals and inconsistent AM/PM, so the snapshot script must parse
+it defensively. One real Shapiro lookup should confirm the shape before the script is
+written. Tables: `public.google_places` and `public.building_popular_times`
+([Supabase Backend Plan](supabase-backend.md#opening-hours-and-google-places)).
+
+## 12. U-M Library CMS: hours, rooms and study-space pages (found 2026-10-09)
+
+lib.umich.edu is built from a Drupal CMS whose JSON:API is public at
+`https://cms.lib.umich.edu/jsonapi`. `node/building` (11) and `node/location` (52) carry
+hours as `field_hours_open` paragraphs: one per period (`fall_and_winter_semester_hours`,
+`fall_exam_hours`, `thanksgiving_break_hours`, `hours_exceptions`, …) with a
+`field_date_range` and per-weekday entries `{ day, all_day, starthours, endhours,
+comment }`. Times are HHMM integers (`800`–`200` runs past midnight); comments carry
+"24 hours", "Opens at 10am", "Closes at 6pm", "Closed". Old periods stay in the CMS, so
+filter by date. `node/room` (137) has `field_room_number`, `field_capacity` (129 rooms),
+`field_square_feet`, `field_bookable`, `field_booking_url` and sometimes
+`field_noise_level`. Each Find a Study Space entry's page has an "About the space"
+section with directions and seating details. `scripts/seed/fetch.mjs` snapshots all of
+this into `raw/umich-library-cms.json` and `raw/umich-library-space-pages.json`; the seed
+uses the hours and descriptions. Matching rooms to spaces (for capacity) is still open.
+
+## 13. U-M Facilities campus map (found 2026-10-09)
+
+https://map.fo.umich.edu/ (the Facilities & Parking Map, built by FO Information
+Services) is an ArcGIS Maps SDK app. The page itself sits behind a Cloudflare bot check,
+but all of its data comes from a public ArcGIS Server 11.5 with no authentication:
+`https://gisapi.fo.umich.edu/arcgis/rest/services/`. Any layer answers
+`query?where=1=1&outFields=…&outSR=4326&f=geojson`, 2,000 features per page.
+
+- **`CampusAccessibility/MapServer`:** exterior doors in three layers (3 automatic
+  accessible: 402, 4 manual accessible: 488, 5 non-accessible: 1,763) and curb ramps
+  (2: 940 lines, attributes empty). Door fields that carry data: `Accessible`
+  (`Automatic`, `Manual`, `AutoNonAcc`, `ManNonAcc`), `BldRecNbr`, `Floor`, `Keypad`,
+  `Comments` (survey notes) and `AltText` (where the door is, in words). The layers
+  publish no coded-value domains; `InExt`, `cCure`, `Type` and `Swing` are nearly
+  constant and aren't used. FO surveyed the doors against the 2010 ADA Standards and
+  ANSI A117.1 (2017) and labels them "for general information and planning purposes only".
+- **`BaseMap/cMapBase_TC_NoLabels_WM/MapServer`:** the campus basemap as 20 vector
+  layers (buildings by type, sidewalks by material, water, lawns, athletic fields and
+  markings, parking lots, walls, fences, 15,776 trees, and so on) with their colors in
+  each layer's `drawingInfo.renderer`. `BldRecNbr` on doors equals `loc_ObjectNum` here.
+- Not pulled yet: the label overlay and gray/high-contrast basemap variants,
+  `SearchBuildingsParking_BuildingswithAltText` (building descriptions and alt text),
+  `CommonLocations` (68 named outdoor spaces), parking permits, EV chargers, bike lanes
+  and parking, construction areas.
+
+`scripts/campus-map/fetch.mjs` snapshots the doors into
+`scripts/campus-map/raw/accessibility.json` (seeded as `public.building_entrances`)
+and the basemap and curb ramps into `public/campus-map/*.geojson`;
+`scripts/campus-map/style.mjs` turns the renderers into MapLibre layers in
+`public/campus-map/style.json`. The container can't reach `gisapi.fo.umich.edu`, so the
+**Campus map snapshot** workflow runs the fetch on a GitHub runner.
+
 ## Gaps relative to what the app needs
 
 1. **Study-space coverage is still the biggest gap, though much less blank than it
