@@ -213,6 +213,15 @@ class FitTests(unittest.TestCase):
         self.assertAlmostEqual(result["imageUpDegreesFromNorth"], -0.9, delta=0.1)
         self.assertLess(result["fit"]["medianMeters"], 0.1)
 
+    def test_close_seals_a_gap_in_the_outer_wall(self):
+        from fit_outline import silhouette
+        gray = np.full((60, 60), 255, dtype=np.uint8)
+        gray[10:50, 10:12] = gray[10:50, 48:50] = 0
+        gray[10:12, 10:50] = gray[48:50, 10:50] = 0
+        gray[48:50, 28:32] = 255  # a 4 px window gap in the south wall
+        self.assertLess(silhouette(gray, 200).sum(), 400)
+        self.assertGreater(silhouette(gray, 200, close=3).sum(), 1500)
+
     def test_vectorize_splits_two_rooms_and_projects_inside_the_footprint(self):
         # Two rooms split by a vertical wall, inside an outer wall.
         height, width = 80, 90

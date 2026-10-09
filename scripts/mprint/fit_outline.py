@@ -33,9 +33,17 @@ from label_rooms import load_plan, sha256
 M_PER_DEG_LAT = 111_320.0
 
 
-def silhouette(gray: np.ndarray, wall: int) -> np.ndarray:
-    """Filled building: everything that is not white space connected to the border."""
-    labels, _ = ndimage.label(gray >= wall)
+def silhouette(gray: np.ndarray, wall: int, close: int = 0) -> np.ndarray:
+    """Filled building: everything that is not white space connected to the border.
+
+    `close` seals gaps in the outer wall up to about twice that many pixels
+    (window bands drawn as thin parallel lines on Shapiro floor 3), so the
+    outside does not leak into the floor. A large value also bridges a ring
+    of free-standing columns, which is where FO draws Duderstadt's edge."""
+    ink = gray < wall
+    if close:
+        ink = ndimage.binary_closing(ink, structure=np.ones((3, 3), dtype=bool), iterations=close)
+    labels, _ = ndimage.label(~ink)
     border = np.unique(np.concatenate([labels[0], labels[-1], labels[:, 0], labels[:, -1]]))
     exterior_ids = [int(i) for i in border if i]
     exterior = np.isin(labels, exterior_ids) if exterior_ids else np.zeros(gray.shape, dtype=bool)
@@ -47,8 +55,8 @@ def silhouette(gray: np.ndarray, wall: int) -> np.ndarray:
     return parts == int(np.argmax(sizes)) + 1
 
 
-def outer_ring(gray: np.ndarray, wall: int, simplify: float) -> np.ndarray:
-    mask = silhouette(gray, wall)
+def outer_ring(gray: np.ndarray, wall: int, simplify: float, close: int = 0) -> np.ndarray:
+    mask = silhouette(gray, wall, close)
     rings = rings_from_mask(mask)
     ring = max(rings, key=lambda r: abs(signed_area(r)))
     simplified = simplify_ring(ring, simplify)
@@ -238,8 +246,11 @@ def area_centroid(poly: np.ndarray) -> np.ndarray:
     return np.array([float(((x + xn) * cross).sum()), float(((y + yn) * cross).sum())]) / (6 * area)
 
 
-def fit_similarity(plan_xy: np.ndarray, footprint_xy: np.ndarray) -> tuple[float, np.ndarray, np.ndarray, np.ndarray]:
+def fit_similarity(plan_xy: np.ndarray, footprint_xy: np.ndarray, up: float = 0.0) -> tuple[float, np.ndarray, np.ndarray, np.ndarray]:
     """ICP. `plan_xy` is in a y-up pixel frame (x right, y = -row), centered on its vertex mean.
+
+    `up` is a rough bearing for the top of the sheet, clockwise from north;
+    the search covers 6° either side of it.
 
     Returns scale (meters per pixel), rotation, shift, and the fitted plan points.
     """
@@ -254,7 +265,7 @@ def fit_similarity(plan_xy: np.ndarray, footprint_xy: np.ndarray) -> tuple[float
     center = area_centroid(footprint_xy)
 
     best = None
-    for degrees in np.linspace(-6, 6, 25):
+    for degrees in np.linspace(-up - 6, -up + 6, 25):
         rotation = _rotation(float(degrees))
         for scale in np.linspace(scale0 * 0.92, scale0 * 1.08, 9):
             placed = ((probe - offset) * scale) @ rotation.T + center
@@ -329,9 +340,9 @@ def render_preview(plan_xy: np.ndarray, footprint_xy: np.ndarray, dropped_xy: np
     img.save(out)
 
 
-def fit_plan(image: str, footprint_path: str, name: str | None, wall: int, simplify: float) -> dict:
+def fit_plan(image: str, footprint_path: str, name: str | None, wall: int, simplify: float, close: int = 0, up: float = 0.0) -> dict:
     _, gray = load_plan(image)
-    ring = outer_ring(gray, wall, simplify)
+    ring = outer_ring(gray, wall, simplify, close)
     # y-up so north stays north once the drawing is rotated onto the footprint.
     plan = np.c_[ring[:-1, 0], -ring[:-1, 1]]
     _, footprint_ll = load_footprint(footprint_path, name)
@@ -342,7 +353,7 @@ def fit_plan(image: str, footprint_path: str, name: str | None, wall: int, simpl
     candidates = [(footprint_xy, None)] + ([(kept_xy, spur)] if spur is not None else [])
     best = None
     for candidate_xy, candidate_spur in candidates:
-        scale, rotation, shift, placed = fit_similarity(plan, candidate_xy)
+        scale, rotation, shift, placed = fit_similarity(plan, candidate_xy, up)
         overlap = raster_iou(placed, candidate_xy)
         if best is None or overlap[0] > best[0][0]:
             best = (overlap, candidate_xy, candidate_spur, scale, rotation, shift, placed)
@@ -350,8 +361,8 @@ def fit_plan(image: str, footprint_path: str, name: str | None, wall: int, simpl
 
     samples = resample_closed(placed, 0.5)
     distance = segment_distance(samples, footprint_xy)
-    up = rotation @ np.array([0.0, 1.0])
-    degrees = math.degrees(math.atan2(float(up[0]), float(up[1])))
+    top = rotation @ np.array([0.0, 1.0])
+    degrees = math.degrees(math.atan2(float(top[0]), float(top[1])))
 
     height, width = gray.shape
     corners_px = pixel_corners(width, height)
@@ -371,6 +382,8 @@ def fit_plan(image: str, footprint_path: str, name: str | None, wall: int, simpl
         "width": int(width),
         "height": int(height),
         "wall": wall,
+        "close": close,
+        "upHint": up,
         "footprint": str(footprint_path),
         "spurDropped": dropped is not None,
         "transform": "similarity",
@@ -403,11 +416,13 @@ def main() -> None:
     parser.add_argument("--name", help="ObjectName to pick out of a FeatureCollection")
     parser.add_argument("--wall", type=int, default=200)
     parser.add_argument("--simplify", type=float, default=1.0, help="px tolerance on the outer edge before fitting")
+    parser.add_argument("--close", type=int, default=0, help="seal outer-wall gaps up to about 2x this many px")
+    parser.add_argument("--up", type=float, default=0.0, help="rough bearing of the sheet's top, degrees clockwise from north")
     parser.add_argument("--out", help="write the corners JSON here")
     parser.add_argument("--preview", help="write a red-footprint / blue-plan overlay PNG")
     args = parser.parse_args()
 
-    result = fit_plan(args.image, args.footprint, args.name, args.wall, args.simplify)
+    result = fit_plan(args.image, args.footprint, args.name, args.wall, args.simplify, args.close, args.up)
     preview = result.pop("_preview")
     if args.preview:
         render_preview(preview["plan"], preview["footprint"], preview["dropped"], Path(args.preview))

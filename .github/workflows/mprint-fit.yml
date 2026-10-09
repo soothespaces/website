@@ -44,7 +44,7 @@ jobs:
 
       - name: Download sheets
         run: |
-          for sheet in ulib/ulib_1 ulib/ulib_2 dc/dc_2; do
+          for sheet in ulib/ulib_1 ulib/ulib_2 ulib/ulib_3 dc/dc_1 dc/dc_2 eq/eq_1; do
             curl -fsSL -o "$(basename "$sheet").png" "https://mprint.umich.edu/assets/floorplans/$sheet.png"
           done
           sha256sum *.png
@@ -53,7 +53,13 @@ jobs:
         run: |
           python3 fit_outline.py ulib_1.png footprints/shapiro.json --out alignments/ulib_1.json --preview out/ulib_1_fit.png
           python3 fit_outline.py ulib_2.png footprints/shapiro.json --out alignments/ulib_2.json --preview out/ulib_2_fit.png
+          # Floor 3's window bands leave gaps in the outer wall.
+          python3 fit_outline.py ulib_3.png footprints/shapiro.json --close 6 --out alignments/ulib_3.json --preview out/ulib_3_fit.png
+          # FO draws Duderstadt at the ring of outer columns; a wide close bridges them.
+          python3 fit_outline.py dc_1.png footprints/duderstadt.json --close 50 --out alignments/dc_1.json --preview out/dc_1_fit.png
           python3 fit_outline.py dc_2.png footprints/duderstadt.json --out alignments/dc_2.json --preview out/dc_2_fit.png
+          # East Quad's sheet has east at the top.
+          python3 fit_outline.py eq_1.png footprints/east-quad.json --up 90 --out alignments/eq_1.json --preview out/eq_1_fit.png
           git diff --stat -- alignments
 
       - uses: actions/upload-artifact@v4
