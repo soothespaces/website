@@ -24,12 +24,11 @@ of georeferencing that are easy to conflate but very different in cost:
   displayed image and hit-testing a label mask works regardless of where that image
   sits in the real world. **The segmentation doesn't need to be pixel-perfect either**
   — it needs to divide the floor into zones that roughly match what a person looking
-  at the image would call "a room," not survive a CAD audit. And **no polygon-vector
-  step is needed** — the label mask this pipeline already produces (which pixel
-  belongs to which room) is directly usable as-is: ship it as a small raster (e.g. an
-  indexed PNG the same size as the floor plan) alongside the source image, and hit-test
-  by pixel lookup on click. No contour-tracing/simplification needed for a click
-  target.
+  at the image would call "a room," not survive a CAD audit. A click target does
+  not need a polygon: the label mask (which pixel belongs to which room) is
+  directly usable as a small raster, hit-tested by pixel lookup. Polygons are a
+  separate step, for drawing the plan on the map. See
+  [Vector plans, fitted to the footprint](#vector-plans-fitted-to-the-footprint).
 - **Whole-image anchoring: needed for the seamless part, and much cheaper than
   per-room georeferencing.** For the map→floor transition to feel continuous rather
   than a jarring cut to an unrelated modal, the floor-plan image as a *single unit*
@@ -179,19 +178,77 @@ room matters.
 their own region, and spot-check clicks on printed labels and near walls resolve to
 the right room. It took about 6 tile reads plus one verify pass.
 
+## Vector plans, fitted to the footprint
+
+Click targets can stay in the image. Drawing the floor inside the building on
+the map cannot: MapLibre needs polygons in longitude/latitude, and it needs the
+sheet's four corners. Two scripts sit on top of the flood fill
+(`scripts/mprint/fit_outline.py`, `scripts/mprint/vectorize.py`).
+
+`fit_outline.py` traces the outer edge of the sheet (white space connected to
+the border is outside; everything else is the building) and fits that edge to a
+footprint polygon. The only transform is scale, rotation, and shift. It writes
+`floor_plans.corners`: top-left, top-right, bottom-right, bottom-left. A spur
+that leaves the footprint and comes back within 8 m, while reaching 10 m or
+more, is dropped before the score. On Shapiro that spur is the bridge west to
+Hatcher, which is not drawn on the MPrint sheet. Column bays are only a few
+meters deep, so they stay.
+
+`vectorize.py` traces each flood-fill room, grown back to the ink but not out
+through the exterior wall, and traces the ink itself (walls, stairs, columns,
+the printed numbers). Douglas–Peucker at 1 px straightens the staircase a
+raster makes of a diagonal line; rings smaller than about 28 px stay at 0.6 px
+so a column ring does not collapse. With `--corners` the same four corners are
+a homography, which for this similarity is the mapping MapLibre's image source
+would use. Room numbers come from the labels file. Without one, each region is
+its own polygon and `roomNumber` is null.
+
+The footprint used below is FO's Shapiro building polygon
+(`scripts/mprint/footprints/shapiro.json`), from the campus-map snapshot.
+
+### Shapiro floor 1 (`ulib_1.png`, 1167×2001), 2026-10-09
+
+- **5.041 cm/pixel.** The top of the sheet points **0.89° west of north**.
+- The plan's edge sits on FO's line with median distance **0.32 m**, **98%**
+  of the edge within 1 m, area overlap (intersection over union) **0.97**.
+- Corners: `[[-83.7375563, 42.276071], [-83.7368422, 42.2760792],
+  [-83.7368231, 42.2751732], [-83.7375372, 42.275165]]`.
+- An earlier fit of a 1166×2000 render of this same sheet reported 5.06 cm per
+  pixel, 1.4° off north, a 0.22 m median, and 97% of the edge within 1 m, and
+  gave corners about half a meter from these. Half a meter is the size of the
+  residual, and the two images are not the same pixel grid. The script's
+  overlay (blue plan, red FO, gray bridge left out) shows the same agreement
+  that fit described: both north arches and the stepped south end line up, and
+  FO's column bays are a little shallower than the plan's, mostly on the west
+  side.
+
+### Shapiro floor 2 (`ulib_2.png`, 1185×1854, the labeled plan)
+
+Same footprint, same kind of fit: **5.046 cm/pixel**, **1.29° west of north**,
+intersection over union **0.948**. The edge match is looser: median **0.347 m**,
+only **89%** within 1 m, 90th percentile **1.38 m**. This sheet does not trace
+the ground-floor arcade, so the fit is enough to park the floor on the
+building and not enough to trust a doorway against FO's line. Putting every
+floor through the same footprint, instead of aligning the images by their
+top-left pixels, is what puts them on one lat/lng grid.
+
+`vectorize.py` on the labeled plan wrote **49** room polygons (2,491 vertices)
+and one ink MultiPolygon (about 15,000 vertices, 676 rings) in EPSG:4326.
+Study rooms along the west side keep the numbers from `labels/ulib_2.json`.
+A column in the 2000 hall stays a ring rather than a filled dot. Open-to-below
+stays a hole, because its label is null. The GeoJSON is about 480 KB and is
+generated, not committed.
+
 ## What this does NOT do yet
 
-- **No whole-image anchoring to the map yet.** Extracted regions exist only in the
-  image's own pixel coordinate space, which is all *they* need (see above) — but a
-  seamless map→floor transition needs the floor-plan image itself, as one unit,
-  placed at the building's real-world position (a handful of corner coordinates,
-  matched against the building's known footprint). That's a per-floor-image
-  calibration, not per-room, and it hasn't been attempted. Without it, the floor
-  plan can still be shown (e.g. in a panel/modal on building click), just not as a
-  geographically continuous zoom.
-- **No polygon/vector export.** `label_rooms.py export` writes the label mask, which
-  is all click-to-check-in needs. Traced outlines are only worth adding if we want
-  smooth room outlines for rendering.
+- **The vectors are not on the map, and the corners are not in `floor_plans`.**
+  The files are the prototype. A MapLibre fill for `layer == "room"` and a fill
+  for `layer == "structure"` consume the GeoJSON directly. The raster mask is
+  still what `label_rooms.py export` produces for a click test in image space.
+- **The fit needs an outline that is the footprint.** Shapiro's ground floor
+  has that. Floor 2 is close but softer. A sheet that doesn't show the outer
+  wall, or a footprint we can't match, still wants the manual corner tool in
+  [ADR 0005](../decisions/0005-manual-floor-plan-alignment-tool.md).
 - **No auto-calibrated dilation radius.** 6px worked for the East Quad test; whether
   that's right for every building depends on that drawing's line weight and door-gap
   size at whatever resolution it was rendered at. A real pipeline should measure
@@ -211,12 +268,12 @@ the right room. It took about 6 tile reads plus one verify pass.
 Worth pursuing as the real approach to interactive floor plans — the core mechanism
 (dilated flood fill, labeled by reading) is validated, not just theoretical, and correctly handles
 the specific hard case (dashed/non-physical boundaries) that seemed likely to break
-it going in. Because the actual use case (clickable zones on the displayed image,
-for crowdsourced sensory reviews) doesn't need georeferencing or clean vector
-polygons, the remaining work is smaller than it first looked: labeling the remaining floors
-(fewer than 30, with `label_rooms.py`), whole-image anchoring, and per-image dilation
-tuning. Treat
-its output as a first draft that needs the manual-override layer (for rooms
-`rooms.json` doesn't cover at all, like named lounges) and spot-checking, not as
-ground truth to ingest blindly. See [Data Sources § Next Steps](data-sources.md#next-steps)
-and [Roadmap](../product/roadmap.md) for where this fits in sequencing.
+it going in. Click targets on the image still don't need a vector. Drawing the plan
+inside the building does, and the Shapiro prototype above is that step: corners from
+the footprint fit, room and ink polygons in longitude/latitude. What's left is
+labeling the other floors, running the fit where the outline actually matches, and
+loading the GeoJSON as map layers. Treat the output as a first draft that needs
+the manual-override layer (for rooms `rooms.json` doesn't cover at all, like named
+lounges) and spot-checking, not as ground truth to ingest blindly. See
+[Data Sources § Next Steps](data-sources.md#next-steps) and
+[Roadmap](../product/roadmap.md) for where this fits in sequencing.

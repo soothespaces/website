@@ -17,6 +17,26 @@ python3 label_rooms.py export ulib_2.png labels/ulib_2.json --out out/  # mask +
 `labels/` holds the committed labels, one file per floor. The export outputs are
 generated, so don't commit them.
 
+## Vector plan on the footprint
+
+`fit_outline.py` places the sheet on a building footprint (scale, rotation, and
+shift) and writes the four image corners MapLibre needs. `vectorize.py` traces
+the flood-fill rooms and the drawing's ink into GeoJSON. With `--corners`, that
+GeoJSON is longitude/latitude in the same corner order as `floor_plans.corners`.
+
+```bash
+curl -o ulib_1.png https://mprint.umich.edu/assets/floorplans/ulib/ulib_1.png
+python3 fit_outline.py ulib_1.png footprints/shapiro.json \
+    --out alignments/ulib_1.json --preview out/ulib_1_fit.png
+python3 vectorize.py ulib_2.png labels/ulib_2.json \
+    --corners alignments/ulib_2.json --out out/ --preview out/ulib_2_vector.png
+```
+
+`alignments/` is the committed corner record (one file per sheet, with the
+image sha256). `footprints/shapiro.json` is FO's Shapiro polygon, including the
+bridge to Hatcher; the fit drops that spur because it is not drawn on the
+sheet. GeoJSON and preview PNGs are generated, same as the masks.
+
 ## OCR prototype
 
 See [`docs/technical/mprint-extraction.md`](../../docs/technical/mprint-extraction.md)
