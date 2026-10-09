@@ -3,7 +3,7 @@
 // never hand-edited; build.mjs turns them into supabase/seed.sql.
 //
 //   node scripts/seed/fetch.mjs
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -95,6 +95,112 @@ for (const [instance, lids] of Object.entries(LIBCAL)) {
 await writeFile(join(RAW, "libcal-items.json"), JSON.stringify(libcal, null, 2) + "\n");
 rows.push(
   `| \`libcal-items.json\` | https://{instance}/{spaces,seats}?lid={lid}&gid=0&c=-1 | LibCal bookable rooms and seats: the resources.push({...}) items on each location page, ${libcal.reduce((n, l) => n + l.items.length, 0)} items |`,
+);
+
+// The U-M Library's Drupal CMS behind lib.umich.edu exposes JSON:API. Buildings
+// and locations carry hours (semester, exam and break periods, each with
+// per-weekday open/close times); rooms carry capacity, size and booking links.
+// Only the fields the seed uses are kept.
+const CMS = "https://cms.lib.umich.edu/jsonapi";
+const HOURS_KEYS = ["field_date_range", "field_hours_open"];
+const pick = (object, keys) =>
+  Object.fromEntries(keys.filter((key) => object?.[key] !== undefined).map((key) => [key, object[key]]));
+const relId = (node, name) => {
+  const data = node.relationships?.[name]?.data;
+  if (Array.isArray(data)) return data.map((d) => d.id);
+  return data?.id ?? null;
+};
+
+async function cmsAll(path) {
+  const data = [];
+  const included = [];
+  let url = `${CMS}/${path}${path.includes("?") ? "&" : "?"}page[limit]=50`;
+  while (url) {
+    const res = await fetch(url, { headers: { "user-agent": UA, accept: "application/vnd.api+json" } });
+    if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
+    const body = await res.json();
+    data.push(...body.data);
+    included.push(...(body.included ?? []));
+    url = body.links?.next?.href ?? null;
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  }
+  return { data, included };
+}
+
+const hoursParagraphs = (included) =>
+  included
+    .filter((p) => p.type.startsWith("paragraph--"))
+    .map((p) => ({ id: p.id, type: p.type, ...pick(p.attributes, HOURS_KEYS) }));
+
+const cmsPlaces = async (type) => {
+  const { data, included } = await cmsAll(`node/${type}?include=field_hours_open`);
+  return {
+    places: data.map((n) => ({
+      id: n.id,
+      type: n.type,
+      title: n.attributes.title,
+      path: n.attributes.path?.alias ?? null,
+      ...pick(n.attributes, ["field_hours_different_from_build", "field_display_hours_"]),
+      parent_location: relId(n, "field_parent_location"),
+      hours: relId(n, "field_hours_open"),
+    })),
+    hours: hoursParagraphs(included),
+  };
+};
+
+const libraryCms = {
+  buildings: await cmsPlaces("building"),
+  locations: await cmsPlaces("location"),
+  rooms: (await cmsAll("node/room")).data.map((n) => ({
+    id: n.id,
+    title: n.attributes.title,
+    path: n.attributes.path?.alias ?? null,
+    ...pick(n.attributes, [
+      "field_room_number",
+      "field_room_name",
+      "field_capacity",
+      "field_square_feet",
+      "field_bookable",
+      "field_booking_url",
+      "field_noise_level",
+      "field_space_features",
+      "field_ada_accessible",
+      "field_accessibility_notes",
+      "field_um_location_id",
+    ]),
+    building: relId(n, "field_room_building"),
+    floor: relId(n, "field_floor"),
+  })),
+  floors: (await cmsAll("taxonomy_term/floor")).data.map((t) => ({ id: t.id, name: t.attributes.name })),
+};
+await writeFile(join(RAW, "umich-library-cms.json"), JSON.stringify(libraryCms, null, 2) + "\n");
+rows.push(
+  `| \`umich-library-cms.json\` | ${CMS}/node/{building,location,room}, /taxonomy_term/floor | U-M Library CMS (JSON:API): ${libraryCms.buildings.places.length} buildings and ${libraryCms.locations.places.length} locations with hours periods, ${libraryCms.rooms.length} rooms, floor names |`,
+);
+
+// Each Find a Study Space entry has its own page with a longer description.
+// Gatsby serves the page's data as JSON next to it; fall back to the HTML's
+// meta description if that isn't available.
+const libraryOrigin = "https://www.lib.umich.edu";
+const fass = JSON.parse(await readFile(join(RAW, "umich-library-fass.json"), "utf8"));
+const spacePages = [];
+for (const space of fass.spaces) {
+  const path = space.slug.replace(/\/$/, "");
+  const entry = { slug: space.slug };
+  const res = await fetch(`${libraryOrigin}/page-data${path}/page-data.json`, { headers: { "user-agent": UA } });
+  if (res.ok) {
+    entry.pageData = (await res.json()).result?.data ?? null;
+  } else {
+    const html = await (await fetch(`${libraryOrigin}${path}/`, { headers: { "user-agent": UA } })).text();
+    entry.description = html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? null;
+    entry.pageDataStatus = res.status;
+  }
+  spacePages.push(entry);
+  await new Promise((resolve) => setTimeout(resolve, 300));
+}
+await writeFile(join(RAW, "umich-library-space-pages.json"), JSON.stringify(spacePages, null, 2) + "\n");
+rows.push(
+  `| \`umich-library-space-pages.json\` | ${libraryOrigin}/page-data/visit-and-study/study-spaces/…/page-data.json | The ${spacePages.length} Library study-space pages' own data (full description, links) |`,
 );
 
 await writeFile(
