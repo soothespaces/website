@@ -23,6 +23,23 @@ Full rationale: [design-system doc](https://claude.ai/code/artifact/eea24662-bb9
   with `data-[state=...]` variants.
 - Don't remove the global focus ring. If a component needs a different one, it
   must still be 2px and at least 3:1 against its surroundings.
+- Page content goes in `PageWidth`. Do not set a page `max-w-*`.
+
+## Page width
+
+There is one column. `--page-width` is 64rem and `--page-gutter` is 1rem
+([`tokens.css`](../../src/app/tokens.css)). The header, footer, landing page,
+help, legal pages, sign-in, and the style guide all put their content in
+[`PageWidth`](../../src/components/page-width.tsx).
+
+`.page-width` sits outside Tailwind's layers, so a `max-w-*` or `px-*` utility
+on that element cannot change the column. ESLint rejects every other max width
+except `max-w-64`, which is the space chip, not a page. The map is full bleed,
+and so is the hero illustration. Their content still uses `PageWidth`.
+
+`html` sets `scrollbar-gutter: stable`, so a short page and a long page keep
+the same column. Without that, the centered column shifts by half a scrollbar
+when one page scrolls and another does not.
 
 ## Typography
 
