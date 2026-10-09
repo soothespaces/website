@@ -1,0 +1,16 @@
+[
+  {
+    "at": "2026-10-09T19:42:05.218Z",
+    "slug": "harold-t-and-vivian-b-shapiro-library",
+    "params": {
+      "type": "search",
+      "q": "Shapiro Library, 919 S University Ave, Ann Arbor, MI",
+      "ll": "@42.2757,-83.73721,17z"
+    },
+    "http_status": 200,
+    "search_id": "6ac9438c5fda0bd36ed591f6",
+    "status": "Success",
+    "error": null,
+    "file": "responses/harold-t-and-vivian-b-shapiro-library.1.json"
+  }
+]
