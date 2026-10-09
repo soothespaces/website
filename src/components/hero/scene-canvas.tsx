@@ -17,7 +17,7 @@ const START_TIME = 40;
 const MAX_DPR = 2;
 // The baked amplitudes rotate once per wavelength, so they need enough
 // texels per wavelength to interpolate without dimming between texels.
-const FIELD_TEXELS_PER_METER = 16;
+const FIELD_TEXELS_PER_METER = 10;
 // Two sources per baked texture.
 const SOURCE_SLOTS = 4;
 const ANGULAR_SPEED = (Math.PI * 2 * WAVE_SPEED) / WAVELENGTH;
@@ -38,13 +38,13 @@ function prefersMoreContrast() {
   return matchMedia("(prefers-contrast: more)").matches;
 }
 
-// Each source lags the one before it by half a wavelength, and wanders a
-// little in loudness on its own.
+// How far, in radians, each source lags the one before it. In phase, the
+// line halfway between two tables is where they reinforce each other.
+const PHASE_STEP = 0;
+
 function spin(i: number, t: number): [number, number] {
-  const seed = i * 2.39996;
-  const gain = 0.8 + 0.2 * Math.sin(0.41 * t + 1.7 * seed);
-  const angle = -i * Math.PI - ANGULAR_SPEED * t;
-  return [gain * Math.cos(angle), gain * Math.sin(angle)];
+  const angle = -i * PHASE_STEP - ANGULAR_SPEED * t;
+  return [Math.cos(angle), Math.sin(angle)];
 }
 
 function packScene(scene: StudyScene) {

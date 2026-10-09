@@ -3,9 +3,11 @@
 
 const TAU = Math.PI * 2;
 // Every source hums at this one wavelength, in meters, so the waves interfere.
-export const WAVELENGTH = 0.7;
+// About a quarter of the tables' spacing, so the pattern has a few broad
+// interference lines rather than dozens of fine ones.
+export const WAVELENGTH = 1.8;
 // Meters per second the crests travel outward.
-export const WAVE_SPEED = 0.55;
+export const WAVE_SPEED = 0.8;
 
 const SEGMENTS = /* glsl */ `
 uniform vec4 uSegA[SEG_COUNT]; // endpoints a.xy, b.xy
@@ -99,8 +101,8 @@ const float MAX_TRACE_DIST = 0.4;
 const float SHADOW_SOFTNESS = 0.3; // the lower, the sharper
 const float WAVENUMBER = ${(TAU / WAVELENGTH).toFixed(6)};
 // Share of the pressure a wall reflects. Library partitions are usually
-// treated and absorb about 75% of the intensity at speech frequencies.
-const float REFLECTION = 0.5;
+// treated with absorbing panels, which take about 90% of the intensity.
+const float REFLECTION = 0.3;
 // Meters around a wall's end over which its reflection fades in, standing in
 // for diffraction at the edge.
 const float EDGE = 0.6;
@@ -226,9 +228,6 @@ uniform vec3 uSound;
 uniform vec4 uAlpha; // walls, furniture, floor grid, rings
 out vec4 fragColor;
 
-const float WAVENUMBER = ${(TAU / WAVELENGTH).toFixed(6)};
-// cos(phase) is raised to this power, so a crest is about 6 cm wide.
-const float CREST_SHARPNESS = 16.0;
 const float GAMMA = 2.2;
 
 vec2 cmul(vec2 a, vec2 b) {
@@ -264,22 +263,20 @@ void main() {
   vec2 uv = (p - uWorldMin) / uWorldSize;
   vec4 wave = texture(uWave0, uv);
   vec2 z = cmul(wave.xy, uSpin[0]) + cmul(wave.zw, uSpin[1]);
+  float loudest = length(wave.xy) * length(uSpin[0]) + length(wave.zw) * length(uSpin[1]);
 #if SOURCE_COUNT > 2
   wave = texture(uWave1, uv);
   z += cmul(wave.xy, uSpin[2]) + cmul(wave.zw, uSpin[3]);
+  loudest += length(wave.xy) * length(uSpin[2]) + length(wave.zw) * length(uSpin[3]);
 #endif
 
-  // The pressure here is Re(z) = |z| cos(phase), shaded like a ripple tank
-  // with the crests sharpened into bands. Unlike drawn lines, that stays
-  // continuous where waves cancel (the phase is undefined there), and
-  // standing waves pulse in place. Sharpness drops on coarse screens so a
-  // band never gets thinner than about a pixel.
-  float amplitude = length(z);
-  float pixelPhase = WAVENUMBER * uPx;
-  float sharpness = min(CREST_SHARPNESS, 1.386 / (pixelPhase * pixelPhase));
-  float crest = pow(max(z.x / max(amplitude, 1e-6), 0.0), sharpness);
-  float level = pow(min(amplitude * amplitude, 1.0), 1.0 / GAMMA);
-  float ringAlpha = crest * level * uAlpha.w * mask * vignette;
+  // Shaded like a ripple tank: the pressure Re(z), relative to the most it
+  // could reach here if every wave lined up. Where waves cancel it rests at
+  // a neutral half tone; where they reinforce it swings between bright
+  // crests and dark troughs. Brightness overall follows the loudest it gets.
+  float pressure = z.x / max(loudest, 1e-6);
+  float level = pow(min(loudest * loudest, 1.0), 1.0 / GAMMA);
+  float ringAlpha = (0.5 + 0.5 * pressure) * level * uAlpha.w * mask * vignette;
 
   // A faint one-meter dot grid on the floor of the room itself.
   vec2 cell = abs(fract(p) - 0.5);
