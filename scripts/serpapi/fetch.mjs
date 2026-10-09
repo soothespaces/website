@@ -138,6 +138,38 @@ budget = Math.min(
 );
 console.log(`This run may spend up to ${budget} searches (plan.json max ${plan.max}).`);
 
+// plan.inspect: saved responses (e.g. "shapiro.2.json") whose raw Google HTML
+// should be checked for popular times SerpApi's parser may have missed.
+// SerpApi keeps that HTML for 31 days, and fetching it is free. The HTML
+// carries reviewer names, so only marker counts and the matched busyness
+// phrases are written, to raw/inspect/.
+const BUSY = /(Usually not (?:too )?busy|Not (?:too )?busy|Usually a little busy|A little busy|Usually as busy as it gets|As busy as it gets|Usually (?:not too |a little )?busy|Busier than usual|Less busy than usual|Now: [^"\\]{0,40})/g;
+for (const file of plan.inspect ?? []) {
+  const saved = JSON.parse(await readFile(join(RAW, "responses", file), "utf8"));
+  const url = saved.search_metadata?.raw_html_file;
+  if (!url) {
+    console.log(`${file}: no raw_html_file`);
+    continue;
+  }
+  const res = await fetch(`${url}?api_key=${encodeURIComponent(KEY)}`);
+  const html = await res.text();
+  const phrases = [...new Set(html.match(BUSY) ?? [])];
+  const report = {
+    file,
+    search_id: saved.search_metadata.id,
+    http_status: res.status,
+    bytes: html.length,
+    popular_times_heading: (html.match(/Popular times/g) ?? []).length,
+    live: (html.match(/\bLive\b|LIVE/g) ?? []).length,
+    percent_busy: (html.match(/\d{1,3}% busy/g) ?? []).length,
+    busyness_phrases: phrases.slice(0, 20),
+    checked_at: new Date().toISOString(),
+  };
+  await mkdir(join(RAW, "inspect"), { recursive: true });
+  await write(join(RAW, "inspect", file), report);
+  console.log(`${file}: ${JSON.stringify(report)}`);
+}
+
 // plan.place_id_lookup: buildings already saved from a search whose place
 // should be fetched again by place_id (Google's place view can carry more,
 // like popular times, than the place a search opens).

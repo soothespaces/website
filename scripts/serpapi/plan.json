@@ -1,5 +1,9 @@
 {
   "_comment": "What the next run of fetch.mjs may spend. Pushing a change to this file on a branch other than main runs it on GitHub (Actions: SerpApi snapshot). Free plan: 250 searches a month, 50 an hour.",
-  "max": 2,
-  "only": ["michigan-union"]
+  "max": 0,
+  "inspect": [
+    "harold-t-and-vivian-b-shapiro-library.1.json",
+    "harold-t-and-vivian-b-shapiro-library.2.json",
+    "michigan-union.1.json"
+  ]
 }
