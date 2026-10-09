@@ -1,0 +1,138 @@
+{
+  "slug": "trotter-multicultural-center-1",
+  "query": "Trotter Multicultural Center, 428 S State St, Ann Arbor, MI",
+  "fetched_at": "2026-10-09T21:02:51.746Z",
+  "search_ids": [
+    "6ac9567971a90d95788dcbc2"
+  ],
+  "resolved_by": "search opened the place",
+  "distance_from_ours_m": 2,
+  "place": {
+    "title": "Trotter Multicultural Center",
+    "place_id": "ChIJYXlrJluuPIgRB9zXSBQnskI",
+    "data_id": "0x883cae5b266b7961:0x42b2271448d7dc07",
+    "data_cid": "4805946720432675847",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae5b266b7961%3A0x42b2271448d7dc07&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae5b266b7961%3A0x42b2271448d7dc07&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2771045,
+      "longitude": -83.7410711
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJYXlrJluuPIgRB9zXSBQnskI",
+    "provider_id": "/g/1hm45_5t0",
+    "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9ST5wZs6x5E9P2ABZjWNP3V0v4P9rC3_CM-5rsUGypqk6C18yXjGk878AYtW4pE7CTZ8uVzvwBlr2Famqq3icBzOEvegnlvLUMQHDOvCi1VGmMGFvAXMUS-s9Im1SfUGmz5-8M=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/GWrOUHicHcRJDoIwAADAF1VAFouJB6hQTaxiEFAuxjQIKGVrLcID_YO_MXEO8_0UQrR8qShVoc_ypsmr7MWznja1yGoxow1T8pYDygFXnH1SjnZ4MoeUW2_Ts4O546aPZB_osSqNwO6RfkUEmD2P8Nh2TwtpcDw_8BMuoHMRidF6C3RK4Sue5OBW_dy_sa7TS-pOB09meV3JXUSOm_VBolKLMSPYl86ZRCHg9pZp4T3CbDIBJKtBU1UVFP8pqH-TX0Ln",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 1
+      },
+      {
+        "stars": 2,
+        "amount": 3
+      },
+      {
+        "stars": 3,
+        "amount": 1
+      },
+      {
+        "stars": 4,
+        "amount": 12
+      },
+      {
+        "stars": 5,
+        "amount": 88
+      }
+    ],
+    "rating": 4.7,
+    "reviews": 105,
+    "type": [
+      "Cultural center"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot",
+          "Wheelchair accessible restroom",
+          "Wheelchair accessible seating"
+        ]
+      }
+    ],
+    "address": "428 S State St, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "website": "http://trotter.umich.edu/",
+    "phone": "(734) 763-3670",
+    "open_state": "Open · Closes 12 AM",
+    "plus_code": "77G5+RH Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "8 AM–12 AM"
+      },
+      {
+        "saturday": "10 AM–12 AM"
+      },
+      {
+        "sunday": "10 AM–12 AM"
+      },
+      {
+        "monday": "8 AM–12 AM"
+      },
+      {
+        "tuesday": "8 AM–12 AM"
+      },
+      {
+        "wednesday": "8 AM–12 AM"
+      },
+      {
+        "thursday": "8 AM–12 AM"
+      }
+    ],
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"Brand new facility and friendly workers.\""
+        },
+        {
+          "snippet": "\"Loads of space and comfortable setup.\""
+        },
+        {
+          "snippet": "\"Great place to study and the staff are always so nice and friendly.\""
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "Wonderful atmosphere and great programming. The student greeters were knowledgeable and welcoming!",
+          "date": "8 months ago",
+          "date_iso8601": "2026-01-22T01:33:09+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Great place to study and the staff are always so nice and friendly. I love studying here because there is also free food sometimes if they have extra left over after events. It's usually quiet too since not many people come here to study. It's only loud when there are events going on.",
+          "date": "9 years ago",
+          "date_iso8601": "2017-01-28T21:26:55+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "The building is brand new and the inside is very nice and well-done. It is a good place to study and have events. Also the staff are nice and is a huge upgrade from the old Trotter Multicultural Center. It is a nice building in a good location on campus.",
+          "date": "6 years ago",
+          "date_iso8601": "2020-01-07T16:32:09+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "The space is beautiful and large enough for an elegant dinner or dance. The sound system in the bottom room was difficult to access. The staff provided a beats pill for audio. The the technolgy involved with the projection screen is very loud.",
+          "date": "7 years ago",
+          "date_iso8601": "2018-11-10T16:01:21+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "My son's commencement exercise from u/m was held here. It was nice, room was perfect for the size of graduating students, restrooms were clean and easily accessible.",
+          "date": "4 years ago",
+          "date_iso8601": "2022-05-05T00:06:38+00:00"
+        }
+      ]
+    }
+  }
+}

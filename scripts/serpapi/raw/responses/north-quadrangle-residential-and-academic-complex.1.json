@@ -1,0 +1,429 @@
+{
+  "search_metadata": {
+    "id": "6ac95644a9fcce68c5968004",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/NVY4b6u7BzGXxgVqlj1Sz5NZsEP4hYEUOHU_uUTb6f4/6ac95644a9fcce68c5968004.json",
+    "markdown_endpoint": "https://serpapi.com/searches/NVY4b6u7BzGXxgVqlj1Sz5NZsEP4hYEUOHU_uUTb6f4/6ac95644a9fcce68c5968004.md",
+    "created_at": "2026-10-09 21:01:56 UTC",
+    "processed_at": "2026-10-09 21:01:56 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/North+Quad%2C+105+S+State+St%2C+Ann+Arbor%2C+MI/@42.28055,-83.74019,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/NVY4b6u7BzGXxgVqlj1Sz5NZsEP4hYEUOHU_uUTb6f4/6ac95644a9fcce68c5968004.html",
+    "prettify_html_file": "https://serpapi.com/searches/NVY4b6u7BzGXxgVqlj1Sz5NZsEP4hYEUOHU_uUTb6f4/6ac95644a9fcce68c5968004.prettify",
+    "total_time_taken": 0.9
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "North Quad, 105 S State St, Ann Arbor, MI",
+    "ll": "@42.28055,-83.74019,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Showing results for type: \"place\" instead of type: \"search\"",
+    "query_displayed": "North Quad, 105 S State St, Ann Arbor, MI"
+  },
+  "place_results": {
+    "title": "North Quadrangle Residential and Academic Complex",
+    "place_id": "ChIJy_fxa0CuPIgRWmk6N0CQ0u8",
+    "data_id": "0x883cae406bf1f7cb:0xefd29040373a695a",
+    "data_cid": "17281033325652896090",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae406bf1f7cb%3A0xefd29040373a695a&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae406bf1f7cb%3A0xefd29040373a695a&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2804947,
+      "longitude": -83.7401702
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJy_fxa0CuPIgRWmk6N0CQ0u8",
+    "provider_id": "/g/1tgtg4xk",
+    "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RKj4prktI04nu_Av90yabI7AP--R_6l7p-0QlVlnH2HUMvSwZAyQyi7gQ02F6bhXSA0HG-woag--R5n6v_Zna8Bomq79Fs9a7SkSuMcvWeBGvdEeFWyshqTBjWL20gfvQZgx4FSg=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/g9LzT3icHcvBboIwGADgJ6r8Y4zKkh1KMsRsmmF1LFwIdF2r1hZtKfYR9wi-zcwu3-27_UrnBvscRUo-zoQxQvHR8gsz2nHtZsycIjFYxCyyEVnX-5Bt3g7JcDm6JSR6bInPIHT9EpMPhDZtqvCAoFKfSpdxuVt5OjUkVGGPRQVxkfbyixIoF2gynbiHJ536ttHdPDenM84Km3WYHum4Yr7m-cJ_v_KiDlaet_mhfo9B_PiqEdekoOJlegAAJP9lSP8BkadEqA",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 1
+      },
+      {
+        "stars": 2,
+        "amount": 2
+      },
+      {
+        "stars": 3,
+        "amount": 15
+      },
+      {
+        "stars": 4,
+        "amount": 47
+      },
+      {
+        "stars": 5,
+        "amount": 121
+      }
+    ],
+    "rating": 4.5,
+    "reviews": 186,
+    "unclaimed_listing": true,
+    "type": [
+      "Student dormitory"
+    ],
+    "type_ids": [
+      "student_dormitory"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      }
+    ],
+    "address": "105 S State St, Ann Arbor, MI 48109",
+    "country": "United States",
+    "website": "http://northquad.umich.edu/",
+    "phone": "(734) 764-0206",
+    "plus_code": "77J5+5W Ann Arbor, Michigan",
+    "images": [
+      {
+        "title": "All",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RKj4prktI04nu_Av90yabI7AP--R_6l7p-0QlVlnH2HUMvSwZAyQyi7gQ02F6bhXSA0HG-woag--R5n6v_Zna8Bomq79Fs9a7SkSuMcvWeBGvdEeFWyshqTBjWL20gfvQZgx4FSg=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/g9LzT3icHcvBboIwGADgJ6r8Y4zKkh1KMsRsmmF1LFwIdF2r1hZtKfYR9wi-zcwu3-27_UrnBvscRUo-zoQxQvHR8gsz2nHtZsycIjFYxCyyEVnX-5Bt3g7JcDm6JSR6bInPIHT9EpMPhDZtqvCAoFKfSpdxuVt5OjUkVGGPRQVxkfbyixIoF2gynbiHJ536ttHdPDenM84Km3WYHum4Yr7m-cJ_v_KiDlaet_mhfo9B_PiqEdekoOJlegAAJP9lSP8BkadEqA"
+      },
+      {
+        "title": "Exterior",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QNbxzva4bKs4qO65bHaBBQ9wJBs_ph59ydZ4PTN_sxDQhZJo6F4O3CfiMrtqhXAZaewvlgRNGqfMmZ0h7c6pGrKbpuJDvLH3TWaQxZp5-QFhEGLRc9FfG9MFn_ceGuFaQCrwAucFX-qVd3=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/xvIhfHicHcTbboIwAADQLypguCw18QFwLUFBa8w0fSGlFmqCtNBycT-55_3Nkp2H8_sjrdVm67qd9J1WqbYTkxEjV70VvXW4ermtNoAbYNy4vD3fkJT1-j2zoD6YYDhFYZ2xJCFwyRNTaRnC94MG52tZmXVPJM1VhIKTnzbPYrSDvMeUiWXu2kuJh6Z4UU9-8Ejj8VDrKd_Px8y_3hhZqQ4BQfITHy8cogbDAvUVF3hCjKTjEk8c3cHw9fB3y8bzPCD_56D_A-E3R7w"
+      },
+      {
+        "title": "Videos",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QO2bxbkdzIU4FC8K7dcCUH6cZ6aEcLmJtpB84XYMzOh4xI0QlqLw40oocgCvquGJLMQuTGlQgNS5JXglJJHIZcYtPRHzWVon3ecFeTpDeAgK3ZwihDz9GQ0kjLjNCyy9Ffoles=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/oCNVUXicHcRZEsEwGADgE1VDa6kZD5QuUSV2feMXCaIpSXW5oDO4jRnfw_f9cK0z1TdNwa0Gk5IJmiv6AplqmuoGyIfJMmWAMpQ5jHfXyiHz1qk83c91uLE9tzftnsHdBB1IOscJRA-ss1HP3h9m9ZzbZYiIeEaFjaQE5r6fuY-jGcnXviAsXrXxngmMgzCBg14sg3q3lalFwaPrbEyHbGolxZWPa8cn6H6LbrFbVY53kYKqQdFECBn8PxjpD1zrRSg"
+      },
+      {
+        "title": "Amenities",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RYajn16ciaEAIbjPkY85R63TAezKTdoY5rmewR7-GlVg246yxg002jM_9mY9hVsxqDgu6JEz0VPF9kSdl1YntgVqQIhACiBA2szPEMlf4wpfJFtPLd8Peny1xWfpu0Xqz1JtVL=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/ELhQpHicHcRdboIwAADgE1VaVCZL9lAnLqIuHTN1fTKulBYsLdgSfi64M3ibJX4P3-NPed-41yDQaj6T1kotOifu3BovjJ9xWweycYA74AL8eS7HOGPXyqCIl9cE734rcmOrZRbNT1hM-1Nu2fJeiz57AR-aynARjYOEMKyOl7hmsaJuaDeyi9JkgpRs49t3rhEzXtL2a6fwe7nGoZtIctTFom-KdOvJIV8RYUY0nIumgz_thFJPD289ghAC9ZwD8w9OFETi"
+      },
+      {
+        "title": "Food & drink",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9S8KIw-j14EnLYc-vCYdP41m2W9iBOXrz-mRHCXspRTW1moJEDBbMRZ2gHDKQQDNLtyF05m-z-eeynSOtA-l622TeoGUrkvC7CdzdSLcfkJkk_6AKKpPxxQ5FLm6a-sVcB-sFIYKw=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/xKXOCXicHcRJDoIwFADQE30ZVBwSFwziUBwAFXFjtFRQaEtoFeGGHsHbmPgW7_vJpCzFWFGKrNtJOU8L8hSkwpxJwmQHc6qkpQAsQCjmOro3o3CIFjU8tN6UeTGGlx0n255G9Wh0tzbHqgUazO2jKINdpFG-nDrWdRWc9HTuIN931p5sXLVPoQVCGhZupAmFoes7wmf7Kn_ZAztpk9DDt3yZ52fDRKjcvt9-3_WocQFxwBYIdxGjelJrqqpC9h8D-wFVVkPx"
+      },
+      {
+        "title": "From visitors",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QgFTTb5CAVHT9xDiRAFVYZ8AkFmQ4YwIUTYm1dOoOroZaXu97H5pigRO973NSlwdSE2Cgs1OQBesQPTo48Y1coHMJ3KzWGIADc0krF284bLtnE82hA3hxqg6C1GBoSaFXEQxU=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/H7SxZnicHcRLDoIwFADAEyEUUMHERUUqfrFSP7jTSloi8JDWgB7QO3gbE2cx34_UulYj0yyk0xMAosieKms4VDqrdI9DaYpaGVwZysSbY_7yqSCMXfsBPkTM76b5DpNDevbwnZTUTdv5nqUlusUQN3C-nJ7-MOrXudjF_tDZJEV7S0I7EArFdJIpumXgeiniEK0XzvJ9nM3xlFv3htiee13pKvRsiR3ZPcQgQLMJJBdyCmm3H7fIsixD_udG9QOFS0JA"
+      },
+      {
+        "title": "Street View & 360°",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QWxFVICitncyOGUbZxAbX-bwFMcVWrPo6vCgvoWEd9TY58sj2H6Gxk09ItGRn4MYKB59SxDJshERwhUyOeIAdAMkOs3sbP8axMHEx6k2vIIYCnqpqQUQrnIXCqm_BEmm3rvcQd=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/oMzJEHicHcRREoFAGADgE61SNDLjIUmWSYUkL0Zb05J2q3_VdkJncBszvofv-6FC1DBXlBfVRwXnxSt_Q94SzkTOxIjwSilqQAQQKNY-fgxmGMv1GdsPwcjgu1F6lVZ6QWm_9sg5bgNudHbR8djJzFMyncFT2xiuLFUTC_fAJl6yW07No1xtgTqHnkaDn2Mrs7zSBx3SYHaX3saRRql1GCc2a-omjMKW4YvdVLelU1V625EwW_RjVVUR_U8Q-wGigEWE"
+      }
+    ],
+    "at_this_place": {
+      "type": [
+        {
+          "title": "Food & Drink",
+          "places": 1
+        },
+        {
+          "title": "Other",
+          "places": 3
+        }
+      ],
+      "places": [
+        {
+          "position": 1,
+          "title": "North Quad Dining Hall",
+          "data_id": "0x883caf9dfd0d37b1:0xa17c08a39d015dca",
+          "data_cid": "11636185036025322954",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf9dfd0d37b1%3A0xa17c08a39d015dca&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf9dfd0d37b1%3A0xa17c08a39d015dca&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2805179,
+            "longitude": -83.7401692
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf9dfd0d37b1%3A0xa17c08a39d015dca%218m2%213d42.2805179%214d-83.7401692&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 4.4,
+          "reviews": 25,
+          "type": "Restaurant",
+          "type_id": "restaurant",
+          "address": "105 S State St, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLfhHF6mT6UzEgW_hdN6n41jp11q0pAjSlJMeasIn9lthxmaiNyNBB0_7Q6rqpxRtHIiiYiSUpuWn1ljupwBXVZX4DREEScjT7oRptPIf2DLGNdZ2bPq8ePSWcGo9s59MQORAdlaKZmKhxWq=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLfhHF6mT6UzEgW_hdN6n41jp11q0pAjSlJMeasIn9lthxmaiNyNBB0_7Q6rqpxRtHIiiYiSUpuWn1ljupwBXVZX4DREEScjT7oRptPIf2DLGNdZ2bPq8ePSWcGo9s59MQORAdlaKZmKhxWq=w86-h86-n-k-no"
+        },
+        {
+          "position": 2,
+          "title": "University of Michigan Sweetland Center for Writing",
+          "data_id": "0x883cae403f7e5d7b:0xc44a4a574475ad2c",
+          "data_cid": "14144199318381636908",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae403f7e5d7b%3A0xc44a4a574475ad2c&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae403f7e5d7b%3A0xc44a4a574475ad2c&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.280518,
+            "longitude": -83.7401692
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae403f7e5d7b%3A0xc44a4a574475ad2c%218m2%213d42.280518%214d-83.7401692&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 3,
+          "reviews": 2,
+          "type": "Academic department",
+          "type_id": "university_department",
+          "address": "105 S State St, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Closed · Opens 8 AM Mon",
+          "hours": [
+            {
+              "friday": "8 AM–4 PM"
+            },
+            {
+              "saturday": "Closed"
+            },
+            {
+              "sunday": "Closed"
+            },
+            {
+              "monday": "8 AM–4 PM"
+            },
+            {
+              "tuesday": "8 AM–4 PM"
+            },
+            {
+              "wednesday": "8 AM–4 PM"
+            },
+            {
+              "thursday": "8 AM–4 PM"
+            }
+          ]
+        },
+        {
+          "position": 3,
+          "title": "Donald Hall Collection",
+          "data_id": "0x883cae406bc94cdb:0x9ebb6e26a763755c",
+          "data_cid": "11437856790933632348",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae406bc94cdb%3A0x9ebb6e26a763755c&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae406bc94cdb%3A0x9ebb6e26a763755c&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2806772,
+            "longitude": -83.73998580000001
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae406bc94cdb%3A0x9ebb6e26a763755c%218m2%213d42.2806772%214d-83.73998580000001&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Academic department",
+          "type_id": "university_department",
+          "address": "105 S State St, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Closed · Opens 10 AM Mon",
+          "hours": [
+            {
+              "friday": "12 AM–2 PM"
+            },
+            {
+              "saturday": "Closed"
+            },
+            {
+              "sunday": "Closed"
+            },
+            {
+              "monday": "10 AM–2 PM"
+            },
+            {
+              "tuesday": "10 AM–2 PM"
+            },
+            {
+              "wednesday": "10 AM–2 PM"
+            },
+            {
+              "thursday": "10 AM–2 PM"
+            }
+          ]
+        },
+        {
+          "position": 4,
+          "title": "Tawanna Dillahunt",
+          "data_id": "0x883cae406bf67f95:0x1a5afe5a8767904b",
+          "data_cid": "1899109857662308427",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae406bf67f95%3A0x1a5afe5a8767904b&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae406bf67f95%3A0x1a5afe5a8767904b&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2804947,
+            "longitude": -83.7401703
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae406bf67f95%3A0x1a5afe5a8767904b%218m2%213d42.2804947%214d-83.7401703&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Educational institution",
+          "type_id": "educational_institution",
+          "address": "105 S State St, Ann Arbor, MI 48109",
+          "location": "Floor 1"
+        }
+      ]
+    },
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"High quality dorm with amazing food\""
+        },
+        {
+          "snippet": "\"I have never seen such a place like that.\""
+        },
+        {
+          "snippet": "\"All things to all people is nothing to no one.\""
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "Used to eat at the dining hall all the time in undergrad. Pretty good food. They train their staff well and they do their best to create a diverse, yet inclusive menu- so those with allergies don't feel outcast by having to eat something different from everyone else. Their staff is also really nice about answering questions or doing custom stuff, if time is permitting. My ex worked there and she said they did an incredible job with being super green too.",
+          "date": "7 years ago",
+          "date_iso8601": "2018-12-04T01:43:38+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "I am planning on living here next year. There is a sense of belonging here that you will find nowhere else on campus. The dining hall is cute and cozy and always seems to have better food than the other dining halls. A nice place to study or just chill out.",
+          "date": "9 years ago",
+          "date_iso8601": "2017-01-08T16:32:15+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "home of the University of Michigan School of information and one of the newest buildings on campus. really excellent study rooms for The graduate students in the basement as well as a little lounge for socializing. nice courtyard outside for sitting on the few days it is nice in Michigan.",
+          "date": "7 years ago",
+          "date_iso8601": "2019-01-12T16:56:42+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "A self sustained ecosystem with a cafe, classrooms and dorm built inside. If you're visiting, don't forget to take a stroll in the Media Gateway to interact with the interior space. The best kept secret is Space 2435, a magical space where events and tranquility of student study gets mixed together.",
+          "date": "9 years ago",
+          "date_iso8601": "2016-11-22T12:01:55+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "The dorms here are pretty modern and high quality! The dining hall has a smaller selection than most but overall a very beautiful and decently maintained building.",
+          "date": "8 years ago",
+          "date_iso8601": "2018-09-16T02:36:44+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Overall an amazing place to live as an undergraduate at U of M. It is about 5-10 minutes away from the diag on foot and is very close to the stores and restaurants on State Street and East Liberty. The dorm has its own dinning hall and has very many places to study. Housing options range from single rooms with a bathroom that is shared with 2-3 other students, to 5 person suites with personal bathrooms. North Quad is home to the Max Kade House and the Global Scholars Program. Students that live here are mainly upperclassmen (sophomore and up)",
+          "date": "8 years ago",
+          "date_iso8601": "2017-11-27T05:24:41+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "From a former worker standpoint, this is an amazing place that is bigger than the University itself, I think. I have never seen such a place like that. I swear there is only one place that Ive seen and that is a place in Utah. The coming together of people to execute something is phenomenal-an energy I have never seen before. Their dedication, their drive, and enthusiasm is something to behold.\n\nI think it comes from the leadership of Ryan and Ronatta who are such very cool people who sets the tone for the overall place. I will never forget the kindness of so many  people in this place that I don't know even their names but I can only remember their faces. In addition, I will never forget the kindness of  Shrina and Sarah who always give me a plate of food. Thank you. I swear life has been unkind to me in so many instances. I surely remember this act of kindness.\n\nIts a joyous place too that vibrates everywhere! Peoples dedication, their smiling faces, its hard to see that there wouldn't be a day you don't find someone smiling at you, finding something to laugh about, joke around while passionately carried out what is expected on their behalf and amazingly, its still on time! lol. This is something truly beautiful! I think this what sets apart North Quad from an earlier experiences in South Quard, although they are both unique in their own ways and they can't be compared is that, North Quard is a little step down from the formality and rigidness of its bigger brother yet delivers a product in a fun way lol\n\nI will never forget the energy, dedication, passion and enthusiasm of the student population which is something to behold. Their ability to predict what is to come next after a job is something to behold! Its a puzzle that just fall right into their proper places. People such as Sophie, Garland, Amie, Date, Kervin, the smiling faces of Ketty and so many others that I could only remember them by their faces. I could not be more thankful for the help I have received from these people.\n\nIt feels like home too. I swear there have been many places I've been that I don't know whether I feel I am welcomed over there or not. Have I ever feel I was welcomed or North Quad is home for me? Yes, it certainly did. I will never forget a day, we were ask to collect the paper dishes because the machine was broken and there was this student who welcomed me and say ''we appreciated you here''. I feel welcomed. I swear there are many instances life throws at me that I don't feel welcome at all. I will surely remembers this.\n\nIf theres a place I will remember about Michigan, I will certainly remember North Quart-their dedication and an unsurpassable energy. Its bringing fun and joy and blend it with time management and hard working to deliver a product.",
+          "date": "8 years ago",
+          "date_iso8601": "2018-04-01T05:17:13+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "Very nice, new dorm complex.  Beautiful dining area.  Nice woodwork throughout the main floor",
+          "date": "2 years ago",
+          "date_iso8601": "2024-03-17T20:00:02+00:00"
+        }
+      ]
+    },
+    "people_also_search_for": [
+      {
+        "search_term": "People also search for",
+        "local_results": [
+          {
+            "position": 1,
+            "title": "The University of Michigan - North Campus",
+            "data_id": "0x0:0x7a08c0690cd6a036",
+            "data_cid": "8793489829860384822",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x7a08c0690cd6a036&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x7a08c0690cd6a036&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2959022,
+              "longitude": -83.71033249999999
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x7a08c0690cd6a036%218m2%213d42.2959022%214d-83.71033249999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.6,
+            "reviews": 215,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9R2cvatGnhdLqsvq8Jqri7rs5LlUYdoUdVWDdHvIEETVu1qKhAV8TeJiTMsB3ac5-nqOGypzpQPbmrC8Jq5VpzHqLPB37PeO7HUhM-B2SIbSt30nURpU8Gp-9c4-Tlygkxs5jYxskquaJTs=w156-h156-n-k-no",
+            "type": [
+              "University"
+            ]
+          },
+          {
+            "position": 2,
+            "title": "West Quadrangle",
+            "data_id": "0x0:0xba7373a88551e850",
+            "data_cid": "13435209281004759120",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xba7373a88551e850&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xba7373a88551e850&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2748013,
+              "longitude": -83.7428968
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xba7373a88551e850%218m2%213d42.2748013%214d-83.7428968&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.7,
+            "reviews": 47,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9T-zOUTAnwDqSOwLAxuV3kEXqZm_jvnL1wP7qbDEcIdT7PQwnY-XvsmmUZyTIJcqEfUToa3t_zmg_hEPEJDoqpdhTLcCiIMFmwNeaG14LyJdH1KzNcYeK0ggDAh9jADgEkLU5_d=w156-h156-n-k-no",
+            "type": [
+              "Student housing center"
+            ]
+          },
+          {
+            "position": 3,
+            "title": "East Quadrangle",
+            "data_id": "0x0:0x6945e140d12e1470",
+            "data_cid": "7585716815879083120",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x6945e140d12e1470&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x6945e140d12e1470&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2727345,
+              "longitude": -83.73549009999999
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x6945e140d12e1470%218m2%213d42.2727345%214d-83.73549009999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.6,
+            "reviews": 163,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TwUZyDJCovjoalBTwrt6d3KuZukMwybCvX9PWWDAru0omGI5VZd7YYQDqsKVDSc3A3NtjGwKSEhUeJkN57Ug2nkb-eGlH9wEtA_UaNaE_rkoKBMDRcXf9dymgh94HJGDGEW9E=w156-h156-n-k-no",
+            "type": [
+              "Student dormitory"
+            ]
+          },
+          {
+            "position": 4,
+            "title": "1100 North University Building",
+            "data_id": "0x0:0x788a3bab177eec3c",
+            "data_cid": "8685820437357063228",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x788a3bab177eec3c&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x788a3bab177eec3c&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2776451,
+              "longitude": -83.73540589999999
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x788a3bab177eec3c%218m2%213d42.2776451%214d-83.73540589999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 2,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9S7AuL5ZSu0BDLsSBbbhYv6DzHjh7UAlcF0mUx4cvkFQwr5qbbyGPGVU7hzM4u0Fh_vjqenGlCyl4yvGgfi_tyn6TLkXQuEJ49VYx3-dORdgb7n6qRD8ltGujFK9HOLd1B4Ddw-=w156-h156-n-k-no-pi-20-ya0-ro-0-fo100",
+            "type": [
+              "Academic department"
+            ]
+          },
+          {
+            "position": 5,
+            "title": "Northwood I Ann Arbor, MI",
+            "data_id": "0x0:0xaf8c115435a3244",
+            "data_cid": "790594031671980612",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xaf8c115435a3244&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xaf8c115435a3244&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.296331099999996,
+              "longitude": -83.71393669999999
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xaf8c115435a3244%218m2%213d42.296331099999996%214d-83.71393669999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 2.6,
+            "reviews": 5,
+            "thumbnail": "https://www.google.com/maps/vt/data=6CUj7sOZfn08px4m3dz5wTY4gQjD1sw0wtgsj6p602Pr1oFexfc9TMCYRJus8LJ_17P2_XayWO4VN4-ciqVMOTvBZZH_zWlx7Uv5mi3UZ1WY62CWq9WTiLiq77J6f-MltMAuFZ04uh6lxSmpAOeHEHDTLtY5oCTK",
+            "type": [
+              "Student housing center",
+              "Housing complex",
+              "Townhouse complex"
+            ]
+          }
+        ]
+      }
+    ],
+    "web_results_link": "https://www.google.com/search?q=local+guide+program&ibp=gwp;0,26,OkUKQyI_Tm9ydGggUXVhZHJhbmdsZSBSZXNpZGVudGlhbCBhbmQgQWNhZGVtaWMgQ29tcGxleCBBbm4gQXJib3IsIE1JKAI&pcl=lp",
+    "serpapi_web_results_link": "https://serpapi.com/search.json?device=desktop&engine=google&google_domain=google.com&ibp=gwp%3B0%2C26%2COkUKQyI_Tm9ydGggUXVhZHJhbmdsZSBSZXNpZGVudGlhbCBhbmQgQWNhZGVtaWMgQ29tcGxleCBBbm4gQXJib3IsIE1JKAI&q=local+guide+program"
+  }
+}

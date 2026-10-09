@@ -61,3 +61,41 @@
 [data-map-theme="dark"] .maplibregl-ctrl-attrib-button {
   filter: invert(1);
 }
+
+/* Popups: a card in the page's colors, with the tip to match. */
+.map-popup .maplibregl-popup-content {
+  background: var(--card);
+  color: var(--card-foreground);
+  border-radius: 0.75rem;
+  box-shadow: 0 0 0 1px var(--input), 0 4px 12px rgb(0 0 0 / 0.12);
+  padding: 0.75rem 2.25rem 0.75rem 0.875rem;
+  font: inherit;
+}
+
+.map-popup.maplibregl-popup-anchor-top .maplibregl-popup-tip,
+.map-popup.maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
+.map-popup.maplibregl-popup-anchor-top-right .maplibregl-popup-tip {
+  border-bottom-color: var(--card);
+}
+
+.map-popup.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.map-popup.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+.map-popup.maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip {
+  border-top-color: var(--card);
+}
+
+.map-popup.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: var(--card);
+}
+
+.map-popup.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: var(--card);
+}
+
+.map-popup .maplibregl-popup-close-button {
+  width: 2.75rem;
+  height: 2.75rem;
+  font-size: 1.25rem;
+  color: var(--muted-foreground);
+  border-radius: 0.75rem;
+}

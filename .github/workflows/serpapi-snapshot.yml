@@ -1,0 +1,62 @@
+# Runs scripts/serpapi/fetch.mjs on a GitHub runner (cloud dev sessions can't
+# reach serpapi.com) and commits what it saved back to the branch. Every run
+# spends real searches from a 250-a-month plan, so it only runs when
+# scripts/serpapi/plan.json changes on a feature branch, or by hand, and
+# plan.json caps the spend. Needs the repository secret SERPAPI_API_KEY.
+name: SerpApi snapshot
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - "scripts/serpapi/plan.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: serpapi-snapshot
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Fetch
+        env:
+          SERPAPI_API_KEY: ${{ secrets.SERPAPI_API_KEY }}
+        run: |
+          if [ -z "$SERPAPI_API_KEY" ]; then
+            echo "::warning::The SERPAPI_API_KEY repository secret isn't set, so nothing was fetched."
+            exit 0
+          fi
+          node scripts/serpapi/fetch.mjs
+
+      # Save whatever was fetched, even if the run stopped partway.
+      - name: Commit saved responses
+        if: always()
+        run: |
+          if [ ! -d scripts/serpapi/raw ]; then
+            echo "Nothing saved yet."
+            exit 0
+          fi
+          git add scripts/serpapi/raw
+          if git diff --cached --quiet; then
+            echo "Nothing new saved."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Save SerpApi responses"
+          git pull --rebase
+          git push

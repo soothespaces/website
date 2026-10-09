@@ -1,0 +1,472 @@
+{
+  "slug": "michigan-union",
+  "query": "Michigan Union, 530 S State St, Ann Arbor, MI",
+  "fetched_at": "2026-10-09T19:44:39.012Z",
+  "search_ids": [
+    "6ac94424f9bee9201ae8b47a"
+  ],
+  "resolved_by": "search opened the place",
+  "distance_from_ours_m": 22,
+  "place": {
+    "title": "Michigan Union",
+    "place_id": "ChIJm6MvgkeuPIgRijKnzq9YR_w",
+    "data_id": "0x883cae47822fa39b:0xfc4758afcea7328a",
+    "data_cid": "18178595933013881482",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae47822fa39b%3A0xfc4758afcea7328a&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae47822fa39b%3A0xfc4758afcea7328a&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2750492,
+      "longitude": -83.74166489999999
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJm6MvgkeuPIgRijKnzq9YR_w",
+    "provider_id": "/m/052rj7",
+    "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLfkLjww4tZDDPQ5fdEaI26T680--QgzAUknjMLfwCUuUGhU12aNcXGvrNvWvxLFSo3ZkBH3GrQC1EKOMXNYnBdiUAB5dnbKLNot3ClwU3fG-k1q9sTezMwZwFaQ_ZPUkM6bzFbGMeGe8dWq=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/Eiq-SnicHcTNboIwAADgJyo_dhBn4gFQusUWJdrouCxQCsxiq7RSw0vu7NuY-B2-539nzFUvXLfvoNMq1fb8rvnAlDRcGoepi9sOpdaAaTeKYnHBjcBnaz9MsVrt8qCp1-X3LDyEcw-AvJ0iKuSZ4MYm9E5RR_1ZmbETGodsPI4PnO4VLET8BdGQJ_56syWn7EfG9R-N4qCW1QZnysCktxQ2CAj_9qkPfCK2sGmZ_xY7KkhYTWmFCEd8Xh9vS-t7nge69wzIF4GxRx8",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 4
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 12
+      },
+      {
+        "stars": 4,
+        "amount": 36
+      },
+      {
+        "stars": 5,
+        "amount": 184
+      }
+    ],
+    "rating": 4.7,
+    "reviews": 236,
+    "type": [
+      "Student union",
+      "Community center",
+      "Academic department"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      }
+    ],
+    "address": "530 S State St, Ann Arbor, MI 48109",
+    "country": "United States",
+    "website": "https://uunions.umich.edu/union/",
+    "phone": "(734) 764-4636",
+    "open_state": "Open · Closes 2 AM",
+    "plus_code": "77G5+28 Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "7 AM–2 AM"
+      },
+      {
+        "saturday": "7 AM–2 AM"
+      },
+      {
+        "sunday": "9 AM–2 AM"
+      },
+      {
+        "monday": "7 AM–2 AM"
+      },
+      {
+        "tuesday": "7 AM–2 AM"
+      },
+      {
+        "wednesday": "7 AM–2 AM"
+      },
+      {
+        "thursday": "7 AM–2 AM"
+      }
+    ],
+    "at_this_place": {
+      "type": [
+        {
+          "title": "Food & Drink",
+          "places": 3
+        },
+        {
+          "title": "Shopping",
+          "places": 2
+        },
+        {
+          "title": "Services",
+          "places": 1
+        },
+        {
+          "title": "Other",
+          "places": 4
+        }
+      ],
+      "places": [
+        {
+          "position": 1,
+          "title": "QDOBA Mexican Eats",
+          "data_id": "0x883cafedb6197b13:0xa6fae9a7c0a8d2b2",
+          "data_cid": "12032186261174801074",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cafedb6197b13%3A0xa6fae9a7c0a8d2b2&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cafedb6197b13%3A0xa6fae9a7c0a8d2b2&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2751271,
+            "longitude": -83.74154700000001
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cafedb6197b13%3A0xa6fae9a7c0a8d2b2%218m2%213d42.2751271%214d-83.74154700000001&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 4.5,
+          "reviews": 152,
+          "type": "Mexican restaurant",
+          "type_id": "mexican_restaurant",
+          "address": "530 S State St Student Union, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Open · Closes 10 PM",
+          "hours": [
+            {
+              "friday": "11 AM–10 PM"
+            },
+            {
+              "saturday": "11 AM–10 PM"
+            },
+            {
+              "sunday": "11 AM–10 PM"
+            },
+            {
+              "monday": "11 AM–10 PM"
+            },
+            {
+              "tuesday": "11 AM–10 PM"
+            },
+            {
+              "wednesday": "11 AM–10 PM"
+            },
+            {
+              "thursday": "11 AM–10 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLd5iovZJCQE4kKFHIEP65SlBzLaPNvpzCDUHJbuK1vSKBTmEYGMylMT8hcavMs9o2RsinqKZF73btCqdssYiEpUtQG7DpDRLYl-bOyYSeBlMPTZQp8wshbsPX-nhGyCoVhFJSqvnO9iDHhG=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLd5iovZJCQE4kKFHIEP65SlBzLaPNvpzCDUHJbuK1vSKBTmEYGMylMT8hcavMs9o2RsinqKZF73btCqdssYiEpUtQG7DpDRLYl-bOyYSeBlMPTZQp8wshbsPX-nhGyCoVhFJSqvnO9iDHhG=w86-h86-n-k-no"
+        },
+        {
+          "position": 2,
+          "title": "Sweetwaters Coffee & Tea",
+          "data_id": "0x883cafa83a2cc52b:0xda5afa9f2318d557",
+          "data_cid": "15734163809567823191",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cafa83a2cc52b%3A0xda5afa9f2318d557&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cafa83a2cc52b%3A0xda5afa9f2318d557&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2751921,
+            "longitude": -83.7413279
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cafa83a2cc52b%3A0xda5afa9f2318d557%218m2%213d42.2751921%214d-83.7413279&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 4.6,
+          "reviews": 79,
+          "type": "Coffee shop",
+          "type_id": "coffee_shop",
+          "address": "530 S State St Rm 1300, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Open · Closes 12 AM",
+          "hours": [
+            {
+              "friday": "7:30 AM–12 AM"
+            },
+            {
+              "saturday": "7:30 AM–12 AM"
+            },
+            {
+              "sunday": "9:30 AM–12 AM"
+            },
+            {
+              "monday": "7:30 AM–12 AM"
+            },
+            {
+              "tuesday": "7:30 AM–12 AM"
+            },
+            {
+              "wednesday": "7:30 AM–12 AM"
+            },
+            {
+              "thursday": "7:30 AM–12 AM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLfCWW1BxAjvWLdEoY0zIqErhF8Bv4R6yGv9jgIxvZZHQ40wiPmHVZQRA9IkJzf7SZ4nfFYuEi12ZUcJw09uDmbKOMsHlNZrff_IY42kGPNEUxWwbJALtYygj4jSGYuxYOQUVORYmw=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLfCWW1BxAjvWLdEoY0zIqErhF8Bv4R6yGv9jgIxvZZHQ40wiPmHVZQRA9IkJzf7SZ4nfFYuEi12ZUcJw09uDmbKOMsHlNZrff_IY42kGPNEUxWwbJALtYygj4jSGYuxYOQUVORYmw=w86-h86-n-k-no"
+        },
+        {
+          "position": 3,
+          "title": "Tech Shop at the University of Michigan",
+          "data_id": "0x883cae47822fa599:0xe0f84713f517485",
+          "data_cid": "1013174063110124677",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae47822fa599%3A0xe0f84713f517485&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae47822fa599%3A0xe0f84713f517485&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.275183299999995,
+            "longitude": -83.74135679999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae47822fa599%3A0xe0f84713f517485%218m2%213d42.275183299999995%214d-83.74135679999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 3.8,
+          "reviews": 74,
+          "type": "Computer store",
+          "type_id": "computer_store",
+          "address": "Michigan Union, 530 S State St G310, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Open · Closes 7 PM",
+          "hours": [
+            {
+              "friday": "8 AM–7 PM"
+            },
+            {
+              "saturday": "11 AM–5 PM"
+            },
+            {
+              "sunday": "Closed"
+            },
+            {
+              "monday": "8 AM–7 PM"
+            },
+            {
+              "tuesday": "8 AM–7 PM"
+            },
+            {
+              "wednesday": "8 AM–7 PM"
+            },
+            {
+              "thursday": "8 AM–7 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLf38gnC6cH5Yl-EC2kTeMybWmXAuo9tnem0rUGaWlNdLSYc7nhkwSiZvcDJybXLouoaXVZ-3DDk-yZVaP5Mkffbd5PT3ENvjsym7MPhHPi6ESYR23Yht3Bp_C0yxdpF-KiNu9Ac7Q=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLf38gnC6cH5Yl-EC2kTeMybWmXAuo9tnem0rUGaWlNdLSYc7nhkwSiZvcDJybXLouoaXVZ-3DDk-yZVaP5Mkffbd5PT3ENvjsym7MPhHPi6ESYR23Yht3Bp_C0yxdpF-KiNu9Ac7Q=w86-h86-n-k-no"
+        },
+        {
+          "position": 4,
+          "title": "Panera Bread",
+          "data_id": "0x883caf7944f68d21:0x294a78bf32928c77",
+          "data_cid": "2975323266414185591",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf7944f68d21%3A0x294a78bf32928c77&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf7944f68d21%3A0x294a78bf32928c77&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.275183299999995,
+            "longitude": -83.74135679999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf7944f68d21%3A0x294a78bf32928c77%218m2%213d42.275183299999995%214d-83.74135679999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 3.3,
+          "reviews": 44,
+          "type": "Cafe",
+          "type_id": "cafe",
+          "address": "530 S State St, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Open · Closes 8 PM",
+          "hours": [
+            {
+              "friday": "9 AM–8 PM"
+            },
+            {
+              "saturday": "9 AM–8 PM"
+            },
+            {
+              "sunday": "9 AM–8 PM"
+            },
+            {
+              "monday": "9 AM–8 PM"
+            },
+            {
+              "tuesday": "9 AM–8 PM"
+            },
+            {
+              "wednesday": "9 AM–8 PM"
+            },
+            {
+              "thursday": "9 AM–8 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLf-SDPeUEUShD3vJf_MEioZiHYyFqf84H8lfZaKi6yjqv9atNhU8oJoQyQMYnuPjXJRrKfD0z10_fd74qrf6VUjVFkAmURvZKyAS2EAwAWAf7oRBsC5iIz9F2UEwfgPX_m-EY0=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLf-SDPeUEUShD3vJf_MEioZiHYyFqf84H8lfZaKi6yjqv9atNhU8oJoQyQMYnuPjXJRrKfD0z10_fd74qrf6VUjVFkAmURvZKyAS2EAwAWAf7oRBsC5iIz9F2UEwfgPX_m-EY0=w86-h86-n-k-no"
+        },
+        {
+          "position": 5,
+          "title": "The University of Michigan Ballroom",
+          "data_id": "0x883cae47822fa599:0xc38ae68129bcba5d",
+          "data_cid": "14090327826607422045",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae47822fa599%3A0xc38ae68129bcba5d&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae47822fa599%3A0xc38ae68129bcba5d&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2752282,
+            "longitude": -83.74151479999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae47822fa599%3A0xc38ae68129bcba5d%218m2%213d42.2752282%214d-83.74151479999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 4.5,
+          "reviews": 33,
+          "type": "Ballroom",
+          "type_id": "ballroom",
+          "address": "530 S State St, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLdAEnseObWKQ8RFQ8X6xzcCkaO5z0hMgVOhYYEATsK-qxdcQxfEI6j_49yENTcXUrOqUQAYIOR9SNMuiy1QYWpSELaK65LmB48hIuEAmwUV6G7Y1kynQL8jkUXNeHbhP5dxgi9jZA=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLdAEnseObWKQ8RFQ8X6xzcCkaO5z0hMgVOhYYEATsK-qxdcQxfEI6j_49yENTcXUrOqUQAYIOR9SNMuiy1QYWpSELaK65LmB48hIuEAmwUV6G7Y1kynQL8jkUXNeHbhP5dxgi9jZA=w86-h86-n-k-no"
+        },
+        {
+          "position": 6,
+          "title": "Manhattan Prep",
+          "data_id": "0x883cae3886aa1f7b:0x418d46c74ff4eb3a",
+          "data_cid": "4723509406035405626",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae3886aa1f7b%3A0x418d46c74ff4eb3a&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae3886aa1f7b%3A0x418d46c74ff4eb3a&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.275183299999995,
+            "longitude": -83.74135679999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae3886aa1f7b%3A0x418d46c74ff4eb3a%218m2%213d42.275183299999995%214d-83.74135679999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Tutoring service",
+          "type_id": "tutoring_service"
+        },
+        {
+          "position": 7,
+          "title": "Amazin' Blue",
+          "data_id": "0x883cae3886aa1f15:0x1efcb7f7b572c54b",
+          "data_cid": "2232861789797926219",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae3886aa1f15%3A0x1efcb7f7b572c54b&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae3886aa1f15%3A0x1efcb7f7b572c54b&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2752282,
+            "longitude": -83.74151479999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae3886aa1f15%3A0x1efcb7f7b572c54b%218m2%213d42.2752282%214d-83.74151479999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Performing arts group",
+          "type_id": "performing_arts_group"
+        },
+        {
+          "position": 8,
+          "title": "U-M Peace Corps Office",
+          "data_id": "0x883cae3864fd2699:0x20627c69fae45dfc",
+          "data_cid": "2333564351554018812",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae3864fd2699%3A0x20627c69fae45dfc&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae3864fd2699%3A0x20627c69fae45dfc&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.276729499999995,
+            "longitude": -83.7425712
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae3864fd2699%3A0x20627c69fae45dfc%218m2%213d42.276729499999995%214d-83.7425712&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Non-profit organization",
+          "type_id": "non_profit_organization"
+        },
+        {
+          "position": 9,
+          "title": "Michigan Student Assembly",
+          "data_id": "0x883cae3886aa1f3f:0xd0041bb10e96d4fc",
+          "data_cid": "14989135907063780604",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae3886aa1f3f%3A0xd0041bb10e96d4fc&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae3886aa1f3f%3A0xd0041bb10e96d4fc&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2752282,
+            "longitude": -83.74151479999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae3886aa1f3f%3A0xd0041bb10e96d4fc%218m2%213d42.2752282%214d-83.74151479999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Non-profit organization",
+          "type_id": "non_profit_organization"
+        }
+      ]
+    },
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"The food court in the basement has a nice selection of chain restaurants.\""
+        },
+        {
+          "snippet": "\"A great place for charging if you run out of battery.\""
+        },
+        {
+          "snippet": "\"Food in the basement level has a few chain fast food joints if you're in a rush.\""
+        }
+      ],
+      "topics": [
+        {
+          "keyword": "beautiful room",
+          "mentions": 5,
+          "id": "KnsurPNu5kw"
+        },
+        {
+          "keyword": "wedding venue",
+          "mentions": 2,
+          "id": "L0jnlqOm-rY"
+        },
+        {
+          "keyword": "conference rooms",
+          "mentions": 2,
+          "id": "DFNntbKkuLY"
+        },
+        {
+          "keyword": "renovation",
+          "mentions": 6,
+          "id": "ICLpBCm_A28"
+        },
+        {
+          "keyword": "old building",
+          "mentions": 3,
+          "id": "ihTFVUM7kmM"
+        },
+        {
+          "keyword": "many seats",
+          "mentions": 2,
+          "id": "BFveJ6PZ4gg"
+        },
+        {
+          "keyword": "cleanliness",
+          "mentions": 2,
+          "id": "WtXhzhVYpO4"
+        },
+        {
+          "keyword": "cozy room",
+          "mentions": 2,
+          "id": "DONDL4NG98Y"
+        },
+        {
+          "keyword": "wifi",
+          "mentions": 2,
+          "id": "D49qk7vnY0I"
+        },
+        {
+          "keyword": "quiet study",
+          "mentions": 2,
+          "id": "KHFtDJxY36I"
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "Great place to host events and workshops! The team works closely with you to ensure it is absolutely spectacular. We ran our  Industry-Academia Collaboration Workshop in the Michigan Union Pendleton Room and it was perfect for our guests (totaled 50-60 at any given point in time) and esteemed panelists and speakers!",
+          "date": "2 months ago",
+          "date_iso8601": "2026-08-07T14:23:36+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Great place. Great University. Have your student take the tour along with you to get a good feel of campus life.",
+          "date": "5 months ago",
+          "date_iso8601": "2026-04-27T22:00:56+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Beautiful, historic building that just happens to belong to the University of Michigan, my alma mater and now my employer for the past 31 years. So… no bias.  Right? Right!\n\nIt's a wonderful environment for meetings. The hard-wood paneling and artistic friezes are inspiring. So many things about this building are inspiring. The flooring, the paintings, the stained glass windows. It must be experienced.\n\nOn a practical note, a Sweetwaters Café is available on the first floor, adjoining the courtyard roofed-in with glass. Also on that floor is a Panera Bread, but it is closed during the spring and summer months. In the basement is a small food court with a few appetizing restaurant choices. (It smelled and looked great, but I wasn't there to eat and I didn't take note of those shops.)\n\nThere are many comfortable places to sit and relax or collaborate with others. Some are formal conference rooms which need to be reserved with building management, while others are various arrangements of desks and seating for informal use.",
+          "date": "4 months ago",
+          "date_iso8601": "2026-05-21T20:08:07+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "We visited our friend at UMich before The Game. It was freezing outside. There were a few students studying inside. The room was cozy and warm with many seats, coffee shops, and a furnace. WiFi was fast. Some rooms were beautiful where I would like to be for study. Hopefully, the weather would not get worse this Saturday. The game must be crazy this year.",
+          "date": "10 months ago",
+          "date_iso8601": "2025-11-28T01:35:16+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Was here for a conference; the event staff were absolutely delightful and the south dining hall (nearby) had delicious meals.  Very nice lounges to relax, and reliable wifi.",
+          "date": "4 months ago",
+          "date_iso8601": "2026-06-05T20:54:56+00:00"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,228 @@
+{
+  "slug": "samuel-trask-dana-building",
+  "query": "Dana Building, 440 Church St, Ann Arbor, MI",
+  "fetched_at": "2026-10-09T21:02:10.455Z",
+  "search_ids": [
+    "6ac956503d0e4e5e57c650fd"
+  ],
+  "resolved_by": "search opened the place",
+  "distance_from_ours_m": 14,
+  "place": {
+    "title": "Samuel T. Dana Building",
+    "place_id": "ChIJ5ZGWTUGuPIgRtdbU6UDMt-k",
+    "data_id": "0x883cae414d9691e5:0xe9b7cc40e9d4d6b5",
+    "data_cid": "16841153910748272309",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae414d9691e5%3A0xe9b7cc40e9d4d6b5&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae414d9691e5%3A0xe9b7cc40e9d4d6b5&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2772739,
+      "longitude": -83.736462
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJ5ZGWTUGuPIgRtdbU6UDMt-k",
+    "provider_id": "/g/11f3m7nldv",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 0
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 0
+      },
+      {
+        "stars": 4,
+        "amount": 0
+      },
+      {
+        "stars": 5,
+        "amount": 4
+      }
+    ],
+    "rating": 5,
+    "reviews": 4,
+    "unclaimed_listing": true,
+    "type": [
+      "Academic department"
+    ],
+    "type_ids": [
+      "university_department"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      }
+    ],
+    "address": "440 Church St, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "plus_code": "77G7+WC Ann Arbor, Michigan",
+    "at_this_place": {
+      "type": [
+        {
+          "title": "Other",
+          "places": 1
+        }
+      ],
+      "places": [
+        {
+          "position": 1,
+          "title": "Cooperative Institute for Great Lakes Research (CIGLR)",
+          "data_id": "0x883caf5bd30b01df:0xcb3e50d6cdffb7c8",
+          "data_cid": "14645231921764743112",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf5bd30b01df%3A0xcb3e50d6cdffb7c8&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf5bd30b01df%3A0xcb3e50d6cdffb7c8&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.277318799999996,
+            "longitude": -83.7365894
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf5bd30b01df%3A0xcb3e50d6cdffb7c8%218m2%213d42.277318799999996%214d-83.7365894&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Research institute",
+          "type_id": "research_institute",
+          "address": "DANA, 440 Church St, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Closed · Opens 8 AM Mon",
+          "hours": [
+            {
+              "friday": "8 AM–5 PM"
+            },
+            {
+              "saturday": "Closed"
+            },
+            {
+              "sunday": "Closed"
+            },
+            {
+              "monday": "8 AM–5 PM"
+            },
+            {
+              "tuesday": "8 AM–5 PM"
+            },
+            {
+              "wednesday": "8 AM–5 PM"
+            },
+            {
+              "thursday": "8 AM–5 PM"
+            }
+          ]
+        }
+      ]
+    },
+    "user_reviews": {
+      "most_relevant": [
+        {
+          "rating": 5,
+          "date": "a week ago",
+          "date_iso8601": "2026-09-26T00:32:03+00:00"
+        },
+        {
+          "rating": 5,
+          "date": "a month ago",
+          "date_iso8601": "2026-09-09T20:36:53+00:00"
+        },
+        {
+          "rating": 5,
+          "date": "10 months ago",
+          "date_iso8601": "2025-12-05T02:33:39+00:00"
+        },
+        {
+          "rating": 5,
+          "date": "2 years ago",
+          "date_iso8601": "2023-10-24T01:12:25+00:00"
+        }
+      ]
+    },
+    "people_also_search_for": [
+      {
+        "search_term": "People also search for",
+        "local_results": [
+          {
+            "position": 1,
+            "title": "Department of Sustainable Systems",
+            "data_id": "0x0:0x427ac7e30ab8cd36",
+            "data_cid": "4790360931613330742",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x427ac7e30ab8cd36&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x427ac7e30ab8cd36&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.277342399999995,
+              "longitude": -83.73659839999999
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x427ac7e30ab8cd36%218m2%213d42.277342399999995%214d-83.73659839999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 0,
+            "reviews": 0,
+            "thumbnail": "https://www.google.com/maps/vt/data=fSK93fS5SL0IOE15AKhZktYmmuvBgaHm7uCDN3IhrW3eCmc_nRMRe3garhlsGmrZTw7mrHOz-lZskzubDq1Qy8UMrGTnEF4gz-HF2FhWRdCdVS7p-R9EkaAoh4Krn5um0I4omuLsmLEql9BPwqPos_147Fkhxg7i",
+            "type": [
+              "University"
+            ]
+          },
+          {
+            "position": 2,
+            "title": "Haven Hall",
+            "data_id": "0x0:0x1fcdb2cb0540594c",
+            "data_cid": "2291684370437658956",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x1fcdb2cb0540594c&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x1fcdb2cb0540594c&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.276339,
+              "longitude": -83.739384
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x1fcdb2cb0540594c%218m2%213d42.276339%214d-83.739384&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 2.8,
+            "reviews": 6,
+            "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLe963zoAzsaJZk12nwL04_2ng7XrNcDaOihCVIkd_nKRldPFQlXmF8NjGWWSQJUMwG1qrQSm_0lcr2D6quMJUFjmxumeMgazMOVtXr3tEM9eBX89vO8mcJ4OLUj1kA3VBTQBuU=w156-h156-n-k-no",
+            "type": [
+              "Academic department",
+              "Public university"
+            ]
+          },
+          {
+            "position": 3,
+            "title": "Donald Hall Collection",
+            "data_id": "0x0:0x9ebb6e26a763755c",
+            "data_cid": "11437856790933632348",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x9ebb6e26a763755c&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x9ebb6e26a763755c&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2806772,
+              "longitude": -83.73998580000001
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x9ebb6e26a763755c%218m2%213d42.2806772%214d-83.73998580000001&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 0,
+            "reviews": 0,
+            "thumbnail": "https://www.google.com/maps/vt/data=svF_jEljCNuz_EB4vjnOvZwOQOcdkImXmH8HlV0OK1FYHMhCTJVE5J6EuyBrrYH-IQLDdWxiStLeHHMet-sv_ESE7nRPU3Qg9AJpGRZvNCyWcxorKW_4JH-wpce9j4ioHS6vf6759z29j2nH2HHYSoLYf5Tvccmw",
+            "type": [
+              "Academic department"
+            ]
+          },
+          {
+            "position": 4,
+            "title": "Damon B. Flowers Building (Facilities)",
+            "data_id": "0x0:0x6bbf1a956d0dd70d",
+            "data_cid": "7763953511692097293",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x6bbf1a956d0dd70d&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x6bbf1a956d0dd70d&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2647615,
+              "longitude": -83.6680346
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x6bbf1a956d0dd70d%218m2%213d42.2647615%214d-83.6680346&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 1,
+            "thumbnail": "https://www.google.com/maps/vt/data=TsjUXjnHiXAlkyDmZjBSW2d0BVS8H1kSVDjoAyKxR5tbB3smfQdVzNbndJLduwDb8w0q-d_5WN_D9KFf0mHLool2TZKxcTriuq855rtsT3U_p6Tn2tDFHINCYGURkM21YoTuflj6ncp5BXNfR74eQl4AT3R1E_U2",
+            "type": [
+              "College"
+            ]
+          }
+        ]
+      }
+    ],
+    "web_results_link": "https://www.google.com/search?q=local+guide+program&ibp=gwp;0,26,OisKKSIlU2FtdWVsIFQuIERhbmEgQnVpbGRpbmcgQW5uIEFyYm9yLCBNSSgC&pcl=lp",
+    "serpapi_web_results_link": "https://serpapi.com/search.json?device=desktop&engine=google&google_domain=google.com&ibp=gwp%3B0%2C26%2COisKKSIlU2FtdWVsIFQuIERhbmEgQnVpbGRpbmcgQW5uIEFyYm9yLCBNSSgC&q=local+guide+program"
+  }
+}

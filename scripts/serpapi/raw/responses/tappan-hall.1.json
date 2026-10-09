@@ -1,0 +1,60 @@
+{
+  "search_metadata": {
+    "id": "6ac956393a9206a87138e90c",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/HocagiJt1kLyrjdrvQdKKB9iUwiTevPAyeadYdRbVXM/6ac956393a9206a87138e90c.json",
+    "markdown_endpoint": "https://serpapi.com/searches/HocagiJt1kLyrjdrvQdKKB9iUwiTevPAyeadYdRbVXM/6ac956393a9206a87138e90c.md",
+    "created_at": "2026-10-09 21:01:45 UTC",
+    "processed_at": "2026-10-09 21:01:45 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/Tappan+Hall%2C+855+S+University+Ave%2C+Ann+Arbor%2C+MI/@42.27551,-83.73926,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/HocagiJt1kLyrjdrvQdKKB9iUwiTevPAyeadYdRbVXM/6ac956393a9206a87138e90c.html",
+    "prettify_html_file": "https://serpapi.com/searches/HocagiJt1kLyrjdrvQdKKB9iUwiTevPAyeadYdRbVXM/6ac956393a9206a87138e90c.prettify",
+    "total_time_taken": 0.48
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "Tappan Hall, 855 S University Ave, Ann Arbor, MI",
+    "ll": "@42.27551,-83.73926,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Showing results for type: \"place\" instead of type: \"search\"",
+    "query_displayed": "Tappan Hall, 855 S University Ave, Ann Arbor, MI"
+  },
+  "place_results": {
+    "title": "UMich Tappan Hall",
+    "place_id": "ChIJj9QSQyivPIgRcOzIcK6lWUQ",
+    "data_id": "0x883caf284312d48f:0x4459a5ae70c8ec70",
+    "data_cid": "4925149836141456496",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf284312d48f%3A0x4459a5ae70c8ec70&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883caf284312d48f%3A0x4459a5ae70c8ec70&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2752467,
+      "longitude": -83.7391373
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJj9QSQyivPIgRcOzIcK6lWUQ",
+    "provider_id": "/g/11l2lz4y3_",
+    "thumbnail": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=NtmKEex3ry4zOT_zEd_GaA&cb_client=search.gws-prod.gps&w=86&h=86&yaw=277.09262&pitch=0&thumbfov=100",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/4wjik3icHc29DsIgFEDht2ETaDWtmhDj0DiY6OLeIL0CCS0ErqXt0_havo0_yxm_834ZxJD2jCWMADhayMFO4NIqSKq91w5ksIkq37OxYGie_X2Q1h2CHLztxAX7cwPTOs6b5Xprl6ZrT_JI1L1VzsKAIoGMylCdv2L0HdUhkSy2FTG_zDKLsq4p35VVSYJFZQQn_8vDj6Lg_AOZtDnp",
+    "unclaimed_listing": true,
+    "type": [
+      "Education center"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      }
+    ],
+    "address": "855 S University Ave, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "website": "https://maps.studentlife.umich.edu/building/tappan-hall",
+    "plus_code": "77G6+38 Ann Arbor, Michigan"
+  }
+}

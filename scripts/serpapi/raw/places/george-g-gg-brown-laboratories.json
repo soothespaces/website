@@ -1,0 +1,326 @@
+{
+  "slug": "george-g-gg-brown-laboratories",
+  "query": "G.G. Brown Laboratory, 2350 Hayward St, Ann Arbor, MI",
+  "fetched_at": "2026-10-09T21:02:38.563Z",
+  "search_ids": [
+    "6ac9566cec900d74a2d9a42c"
+  ],
+  "resolved_by": "search opened the place",
+  "distance_from_ours_m": 20,
+  "place": {
+    "title": "GGBL Building",
+    "place_id": "ChIJ2U0UMoSuPIgR3SQGyfZMXVw",
+    "data_id": "0x883cae8432144dd9:0x5c5d4cf6c90624dd",
+    "data_cid": "6655560447141749981",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae8432144dd9%3A0x5c5d4cf6c90624dd&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae8432144dd9%3A0x5c5d4cf6c90624dd&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.293285,
+      "longitude": -83.7138353
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJ2U0UMoSuPIgR3SQGyfZMXVw",
+    "provider_id": "/g/11r8g_529",
+    "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn8hz7XEsfaRiXsjijh_pzUOlFOV8cXKBZhA0WGfuuYwmTqyi6jaxABWnpUPzE5JB-AO7YR_PogSCGA53pdei5SdQyl-N8r1JAEWCaWHEKXh0W5krBvEmWz7iQOFWSmEfYahyb0=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/U9T3-3icHcRdDoIgAADgE6G4Zrq2HrBRLbf8q9BempEKpkCilV6wM3Sbtr6H7_thfa_0wjQbNjMqKaumGHTRUSn6QvQGla1ZKQ2oBtpE2zg8EOGyyUmxLvOYp7rmNbuo6Rg06-Dk0tT3zgxBsimHIXu1h8fI53X-Rh4R6hhO2N55AAVOFl9CWSWrDbJn6lZwO7lFYwP2bmftECarnGyxnzJI7HvnPXFLJodHwZokLS6znI1XuHxZEELA_lMgfrpxRQM",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 0
+      },
+      {
+        "stars": 2,
+        "amount": 3
+      },
+      {
+        "stars": 3,
+        "amount": 4
+      },
+      {
+        "stars": 4,
+        "amount": 12
+      },
+      {
+        "stars": 5,
+        "amount": 71
+      }
+    ],
+    "rating": 4.7,
+    "reviews": 90,
+    "unclaimed_listing": true,
+    "type": [
+      "Laboratory",
+      "Academic department"
+    ],
+    "type_ids": [
+      "laboratory",
+      "university_department"
+    ],
+    "extensions": [
+      {
+        "service_options": [
+          "Onsite services"
+        ]
+      },
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      },
+      {
+        "parking": [
+          "Free parking lot"
+        ]
+      }
+    ],
+    "service_options": {
+      "onsite_services": true
+    },
+    "address": "G.G. Brown Building, 2350 Hayward St, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "Electrical Engineering & Computer Science (EECS)",
+    "website": "http://me.engin.umich.edu/",
+    "phone": "(734) 764-2694",
+    "plus_code": "77VP+8F Ann Arbor, Michigan",
+    "images": [
+      {
+        "title": "All",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn8hz7XEsfaRiXsjijh_pzUOlFOV8cXKBZhA0WGfuuYwmTqyi6jaxABWnpUPzE5JB-AO7YR_PogSCGA53pdei5SdQyl-N8r1JAEWCaWHEKXh0W5krBvEmWz7iQOFWSmEfYahyb0=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/U9T3-3icHcRdDoIgAADgE6G4Zrq2HrBRLbf8q9BempEKpkCilV6wM3Sbtr6H7_thfa_0wjQbNjMqKaumGHTRUSn6QvQGla1ZKQ2oBtpE2zg8EOGyyUmxLvOYp7rmNbuo6Rg06-Dk0tT3zgxBsimHIXu1h8fI53X-Rh4R6hhO2N55AAVOFl9CWSWrDbJn6lZwO7lFYwP2bmftECarnGyxnzJI7HvnPXFLJodHwZokLS6znI1XuHxZEELA_lMgfrpxRQM"
+      },
+      {
+        "title": "Inside",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlUjUWPh4vLgmwX1rkr4uvchKEcc-KZww6RM3REoYbXa-q7idsaUHiYGO9BFfSoT7NRfyHFLDXu3ZIe82SPdbAVCEV05oTnOJDRR8e8e2CW1q7bL4bARbWPazoS6XvsuO8pLAUW=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/RA-7MXicHcTbEoFAAADQL9ouimLGQxQharbLprd2rTbSpu0y_KBv8DdmnIfz_bCua8RCliumSQXnRUV7QVvC647WnUT4Qy4aAYgAQrZcGESoim8xCpg-eMVjTNX23ur9QNjBIQQcsnGcwaMGHX7GaQ6eRnkReeyW560_X22uIY-ME7y-3I1np72W7ag5CYMLtpK1kyhTHtX-3obQpCadrJH6NLCnYwtiFORvHs7SQfS-2XhWjJajqigKYP8JqH9aK0Ph"
+      },
+      {
+        "title": "Videos",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmGpbD03zOU--z6jOk1K9xivtkNLza_GEh_Io6tgasJzdVBp-8gjDFGXhuZuNaK1ecOxftd0AOADG8_FVAQZDbv3DxQ279Ggw5c0sW77pv04vpg_pn_DyRGnY7py5yTvF8zAM06sQ=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/a_cjknicHcTbbsIgAADQL8LSVdtq4gMLlk2dtY3z9kIqdjAvQIRiyx_6Cf6NiefhPB_CWm1GQXARUY8rxS91Y-obU9LW0vaYugZcG8AMMAH6KperzZXoA4aRz38B8PEpP4ezYfvv7Hkx9xUlE0G_VWx5Zab-uP7UIOUnnJGtaPbNopqFNcvbP3uEKEeYpDRbo2KPDy7CbfGRDAm_Dxg0myTRDvad5lRLiruSyF2iu0G3clnq0Q-MTTG-hxBCIN4zIF_oT0Uf"
+      },
+      {
+        "title": "Street View & 360°",
+        "thumbnail": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=2JVX7bzxOfNnTKE8JbAPow&cb_client=maps_sv.tactile.gps&w=224&h=298&yaw=181.62877&pitch=0&thumbfov=100",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/2JCfYXicHc1BCgIhFADQ27hLR4nGAokWbSaoFhHtBjVnFByV_OnUcbpVtwl6F3jfjwVIeUNIhocxUJypyc3G50WSeIxx9EYml7GOEymUgH1OKkjnt0mG6O6Cdddbq97zaTiGy2HPO7U7x4q06rV3JoCYZMp9LhikBucNHlNGVTC2RFawNUcvWQXlFK8Yb1uUHGgrGvR_hlgEbZof6Uc6FQ"
+      }
+    ],
+    "at_this_place": {
+      "type": [
+        {
+          "title": "Services",
+          "places": 1
+        }
+      ],
+      "places": [
+        {
+          "position": 1,
+          "title": "UPS Authorized Shipping Outlet",
+          "data_id": "0x883caf6a0e4265f1:0x9833f8d7934e1de8",
+          "data_cid": "10967383122350317032",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf6a0e4265f1%3A0x9833f8d7934e1de8&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf6a0e4265f1%3A0x9833f8d7934e1de8&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2931159,
+            "longitude": -83.7136987
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf6a0e4265f1%3A0x9833f8d7934e1de8%218m2%213d42.2931159%214d-83.7136987&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Shipping and mailing service",
+          "type_id": "shipping_and_mailing_service",
+          "address": "G.G. Brown Building, 2350 Hayward St, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Open · Closes 11:55 PM",
+          "hours": [
+            {
+              "friday": "12 AM–11:55 PM"
+            },
+            {
+              "saturday": "12 AM–11:55 PM"
+            },
+            {
+              "sunday": "12 AM–11:55 PM"
+            },
+            {
+              "monday": "12 AM–11:55 PM"
+            },
+            {
+              "tuesday": "12 AM–11:55 PM"
+            },
+            {
+              "wednesday": "12 AM–11:55 PM"
+            },
+            {
+              "thursday": "12 AM–11:55 PM"
+            }
+          ]
+        }
+      ]
+    },
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"A very well designed, open feeling class and work space.\""
+        },
+        {
+          "snippet": "\"One of the nicer buildings on north\""
+        },
+        {
+          "snippet": "\"Great place to study\""
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "The large Rubik's cube is an excellent and interesting attraction which immediately punctuated the main atrium. The classrooms are equipped with state of the art technology that makes learning a breeze. Truly an amazing building.",
+          "date": "Edited 3 years ago",
+          "date_iso8601": "2023-02-14T15:38:41+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "All device recovery system",
+          "date": "a month ago",
+          "date_iso8601": "2026-08-30T22:09:12+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "What a place. An impressive showpiece. The AC is crazy in the summer. 5 stars because the building looks nice and is in good condition.",
+          "date": "4 years ago",
+          "date_iso8601": "2021-11-29T02:43:37+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "A nice place to study! And there's a giant rubik's cube but I've never used it before",
+          "date": "Edited 7 years ago",
+          "date_iso8601": "2019-01-11T23:09:14+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "I took both of my Chem E labs there 1982.  They included me with first a bench scale then a unit ops lab in the basement bay.",
+          "date": "7 years ago",
+          "date_iso8601": "2019-03-11T17:59:57+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "Used to go through the building everyday. The floor windows have excellent views .",
+          "date": "9 years ago",
+          "date_iso8601": "2016-12-12T01:48:00+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Interesting building with a lot of great workspaces. One of the nicer buildings on north",
+          "date": "3 years ago",
+          "date_iso8601": "2023-02-18T15:02:19+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "The new wing is beautiful. The old part has lots of cave-like spaces.",
+          "date": "10 years ago",
+          "date_iso8601": "2016-07-10T21:46:31+00:00"
+        }
+      ]
+    },
+    "people_also_search_for": [
+      {
+        "search_term": "People also search for",
+        "local_results": [
+          {
+            "position": 1,
+            "title": "GG Brown Loading Dock",
+            "data_id": "0x0:0x48050eadb398ed0a",
+            "data_cid": "5189570284819639562",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x48050eadb398ed0a&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x48050eadb398ed0a&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2930874,
+              "longitude": -83.7129107
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x48050eadb398ed0a%218m2%213d42.2930874%214d-83.7129107&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 0,
+            "reviews": 0,
+            "thumbnail": "https://www.google.com/maps/vt/data=La3aur742T15VjFrOltwBEkpcntwBGfQQW-K9dawIcQ3UiXzcyAMAkguEDHTepXmIEVFxQYcI8p2Mi6NzT5C_yVlCWncw_dI8k1zlfvbMysZQEmXKOY_kM4jffPb3E92v26dl-r32T7j3bNiL6iXiQzu7Gh60QN6",
+            "type": [
+              "Educational institution"
+            ]
+          },
+          {
+            "position": 2,
+            "title": "University of Michigan Department of Biomedical Engineering",
+            "data_id": "0x0:0xd97a4f50d8cd62db",
+            "data_cid": "15670925062042378971",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xd97a4f50d8cd62db&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xd97a4f50d8cd62db&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2896337,
+              "longitude": -83.714517
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xd97a4f50d8cd62db%218m2%213d42.2896337%214d-83.714517&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 4,
+            "thumbnail": "https://www.google.com/maps/vt/data=UOBXj5yjdwoFRXy4cPruqMGlteuXyHYIVZge0p4TU-Sd7A_uTQUajjLwLf4uA3J0wf1acMtDxjM8FHYZOvwGSFrJhbZFxhopJdhzj9sZ4OXVTWbvnsdZSi7L5fhP6tWRtvwh0li-PtN4GEO_DGFKfjIhUC9sXrKh",
+            "type": [
+              "Academic department"
+            ]
+          },
+          {
+            "position": 3,
+            "title": "BBB Building",
+            "data_id": "0x0:0x72e1a6c1f9d48d42",
+            "data_cid": "8278080942134037826",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x72e1a6c1f9d48d42&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x72e1a6c1f9d48d42&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2930138,
+              "longitude": -83.71637199999999
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x72e1a6c1f9d48d42%218m2%213d42.2930138%214d-83.71637199999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.3,
+            "reviews": 16,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm0jOemSSWvOtxVtelCTW8pWpb_571QL8mkx48Cp_XN9kHFfsUzp41xnfP9rfQx1oEFi2PpjFgjIarxaEcSraC2S0ik-JHk-0Qjq2e2AMTXsBNO37rdX_KoXgjEbOUXN5bXwrRUrA=w156-h156-n-k-no",
+            "type": [
+              "Academic department"
+            ]
+          },
+          {
+            "position": 4,
+            "title": "Civil and Environmental Engineering Department",
+            "data_id": "0x0:0xaa2cf4c67db3bdcf",
+            "data_cid": "12262445018772651471",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xaa2cf4c67db3bdcf&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xaa2cf4c67db3bdcf&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2937136,
+              "longitude": -83.7131794
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xaa2cf4c67db3bdcf%218m2%213d42.2937136%214d-83.7131794&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.5,
+            "reviews": 2,
+            "thumbnail": "https://www.google.com/maps/vt/data=MBsstPwN6M7Gcb7XZo_5bHVYnpIpIp2eUg1yrNEdzUZe-F8nh4HBqDWp6iTJ5XXvskCYE5rM0EUkFFkeiVfgthyMwmbpJCPQtcqSg6p4U7CzZXiNmq3oMI6EIlRS3gXsSl6Bc7bP-z8p2zYtmLur2iDYhhRl4cp5",
+            "type": [
+              "Academic department"
+            ]
+          },
+          {
+            "position": 5,
+            "title": "Nuclear Engineering Laboratories",
+            "data_id": "0x0:0x371ea3fb5963d8e8",
+            "data_cid": "3971792221319190760",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x371ea3fb5963d8e8&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x371ea3fb5963d8e8&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2908359,
+              "longitude": -83.714745
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x371ea3fb5963d8e8%218m2%213d42.2908359%214d-83.714745&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 0,
+            "reviews": 0,
+            "thumbnail": "https://www.google.com/maps/vt/data=O61OgipfycDO94sUvCCTNUZLLQlkMamvDDTffN16QRyN9fIjg6lV2siR2v7nTyr8QeF3Z1QGgaZuKb0KpCwofLOnhWkUnZeTvBg8R6B9ONSJtmZeOSG6pTBrEiHnq7-DJ075-3dGmwSQvHB600bFsO3NFunruSW7",
+            "type": [
+              "Academic department"
+            ]
+          }
+        ]
+      }
+    ],
+    "web_results_link": "https://www.google.com/search?q=local+guide+program&ibp=gwp;0,26,OiEKHyIbR0dCTCBCdWlsZGluZyBBbm4gQXJib3IsIE1JKAI&pcl=lp",
+    "serpapi_web_results_link": "https://serpapi.com/search.json?device=desktop&engine=google&google_domain=google.com&ibp=gwp%3B0%2C26%2COiEKHyIbR0dCTCBCdWlsZGluZyBBbm4gQXJib3IsIE1JKAI&q=local+guide+program"
+  }
+}

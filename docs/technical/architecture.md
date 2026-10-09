@@ -26,6 +26,36 @@ makes decisions — record them here and as ADRs under [decisions/](../decisions
   standalone backend.
 - Hosting/deploy: Vercel.
 
+## Campus map
+
+`src/features/map/` holds the map. `<CampusMap>` is the MapLibre base map (OpenFreeMap or
+MapTiler, swapped whole when the theme changes); `<MapExplorer>`, its child on `/map`,
+adds what we draw on it:
+
+- **Campus detail:** U-M Facilities & Operations' basemap from `public/campus-map/`
+  (lawns, sidewalks, buildings, water, trees), in FO's colors, recolored for dark mode.
+  Each file is fetched only once the map zooms in far enough to show it (zoom 14 at the
+  earliest), so the first view loads none of the 29 MB.
+- **Accessible entrances** (zoom 16+, filled for automatic doors) from
+  `building_entrances`, and **curb ramps** (zoom 17+) from FO.
+- **Buildings:** clicking a footprint outlines it, zooms to it (at least zoom 17) and
+  shows its accessible-entrance count.
+- **Study spaces:** a pin per building with listed spaces (spaces have no coordinates of
+  their own yet), opening their `SpaceChip`s.
+- A **layers panel** to turn each of these off.
+
+Layers go into named bands so they stack the same way whatever mounts first
+(`slots.tsx`): campus detail, then floor plans, then the basemap's labels, then
+overlays (entrances, ramps, the selected outline). Pins are DOM markers above all of
+them. Add a layer with `beforeId={SLOTS.<band>}`, as a react-map-gl child, never with
+`map.addLayer`, which a theme change would wipe.
+
+**Floor plans plug in at `layers/floor-plans.tsx`.** `<FloorPlanLayers>` already
+receives the selected building and sits in the `floorPlans` band, under the labels.
+It draws nothing yet; once `floor_plans.corners` is filled, it renders each plan
+from the `floor-plans` bucket as an image source at those corners, from
+`FLOOR_PLAN_MIN_ZOOM` (17, where selecting a building lands) up.
+
 ## Open questions
 
 - ~~Map rendering library~~: decided, MapLibre GL + react-map-gl + OpenStreetMap

@@ -1,0 +1,442 @@
+{
+  "slug": "wilbur-k-pierpont-commons",
+  "query": "Pierpont Commons, 2101 Bonisteel Blvd, Ann Arbor, MI",
+  "fetched_at": "2026-10-09T21:01:54.306Z",
+  "search_ids": [
+    "6ac9563f8681808925a125ed"
+  ],
+  "resolved_by": "search opened the place",
+  "distance_from_ours_m": 9,
+  "place": {
+    "title": "Pierpont Commons",
+    "place_id": "ChIJ5_4h0oeuPIgRe3Yb4GdeWac",
+    "data_id": "0x883cae87d221fee7:0xa7595e67e01b767b",
+    "data_cid": "12058773277495752315",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae87d221fee7%3A0xa7595e67e01b767b&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae87d221fee7%3A0xa7595e67e01b767b&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.291125799999996,
+      "longitude": -83.7174637
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJ5_4h0oeuPIgRe3Yb4GdeWac",
+    "provider_id": "/g/1tctmgcn",
+    "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLfRH3hdhJwGFtaljXbMBeOWyJs89siQ89SXjVYZfcTxLtXy5ee_7XpHkgrDO_00jqpv_rGovDsyTasMsomNO_7M9bV9OOPuqtGMUNgOUKxGoE3i5cs_O_wlwfCxN26VIXD9zih6Qg=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/mgY9RXicHcRbcoIwFADQFSFRRjTO-KHS4gvik6b9yWAaEhAIcqOAO3QJ3U1nPB_n76WMqWBi27lyelJrmYs7iJrr0ojS9LgubFnHABYHezabX4ttclg66letG__TxHlGL8FckK9uDWMM6X6MjzSLvn8Sfmq3hnZDIdiIVsurrD3CEMpu1YPVvn540J1iCEAXIWGjAF8iTMjufjN-cA4lOW9aX3846ZADI6zJm2TRhgM3WlEPP1Pl7uW06SOELPWeW-U_v2JHVA",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 3
+      },
+      {
+        "stars": 2,
+        "amount": 7
+      },
+      {
+        "stars": 3,
+        "amount": 22
+      },
+      {
+        "stars": 4,
+        "amount": 46
+      },
+      {
+        "stars": 5,
+        "amount": 151
+      }
+    ],
+    "rating": 4.5,
+    "reviews": 229,
+    "type": [
+      "Student union"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot",
+          "Wheelchair accessible seating"
+        ]
+      }
+    ],
+    "address": "2101 Bonisteel Blvd, Ann Arbor, MI 48109",
+    "country": "United States",
+    "website": "https://uunions.umich.edu/pierpont",
+    "phone": "(734) 764-4636",
+    "open_state": "Open · Closes 10 PM",
+    "plus_code": "77RM+F2 Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "7 AM–10 PM"
+      },
+      {
+        "saturday": "12–10 PM"
+      },
+      {
+        "sunday": "12–10 PM"
+      },
+      {
+        "monday": "7 AM–10 PM"
+      },
+      {
+        "tuesday": "7 AM–10 PM"
+      },
+      {
+        "wednesday": "7 AM–10 PM"
+      },
+      {
+        "thursday": "7 AM–10 PM"
+      }
+    ],
+    "at_this_place": {
+      "type": [
+        {
+          "title": "Food & Drink",
+          "places": 4
+        },
+        {
+          "title": "Shopping",
+          "places": 3
+        },
+        {
+          "title": "Services",
+          "places": 1
+        },
+        {
+          "title": "Other",
+          "places": 1
+        }
+      ],
+      "places": [
+        {
+          "position": 1,
+          "title": "Panda Express",
+          "data_id": "0x883cae87d3b12e35:0xda2357c1d3c52e47",
+          "data_cid": "15718503614446382663",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae87d3b12e35%3A0xda2357c1d3c52e47&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae87d3b12e35%3A0xda2357c1d3c52e47&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2907302,
+            "longitude": -83.7177961
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae87d3b12e35%3A0xda2357c1d3c52e47%218m2%213d42.2907302%214d-83.7177961&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 3.8,
+          "reviews": 251,
+          "type": "Chinese restaurant",
+          "type_id": "chinese_restaurant",
+          "address": "2101 Bonisteel Blvd, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Open · Closes 8 PM",
+          "hours": [
+            {
+              "friday": "10 AM–8 PM"
+            },
+            {
+              "saturday": "12–5 PM"
+            },
+            {
+              "sunday": "12–5 PM"
+            },
+            {
+              "monday": "10 AM–8 PM"
+            },
+            {
+              "tuesday": "10 AM–8 PM"
+            },
+            {
+              "wednesday": "10 AM–8 PM"
+            },
+            {
+              "thursday": "10 AM–8 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/ACvplmOi2wW4INs6CIYF7FCxYfCw6eFfRt-BL7vkrSyCeKCPZC97YWlP3mthqkFvE6AxzZ_3zTCC_BmnTNReSLXUHOdOChOdMlGOX6iubGmPNsujlJ-6XdA_XLsOQIUHunvIC8H4ZljMxQ=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmOi2wW4INs6CIYF7FCxYfCw6eFfRt-BL7vkrSyCeKCPZC97YWlP3mthqkFvE6AxzZ_3zTCC_BmnTNReSLXUHOdOChOdMlGOX6iubGmPNsujlJ-6XdA_XLsOQIUHunvIC8H4ZljMxQ=w86-h86-n-k-no"
+        },
+        {
+          "position": 2,
+          "title": "The Great Greek Mediterranean Grill - U of M - Pierpont Commons",
+          "data_id": "0x883cafd38f21cbb3:0xf3025b4205ede38e",
+          "data_cid": "17510658640295355278",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cafd38f21cbb3%3A0xf3025b4205ede38e&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cafd38f21cbb3%3A0xf3025b4205ede38e&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.291125799999996,
+            "longitude": -83.7174637
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cafd38f21cbb3%3A0xf3025b4205ede38e%218m2%213d42.291125799999996%214d-83.7174637&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 4.7,
+          "reviews": 123,
+          "type": "Greek restaurant",
+          "type_id": "greek_restaurant",
+          "address": "2101 Bonisteel Blvd, Ann Arbor, MI 48109",
+          "open_state": "Open · Closes 7 PM",
+          "hours": [
+            {
+              "friday": "10 AM–7 PM"
+            },
+            {
+              "saturday": "12–6 PM"
+            },
+            {
+              "sunday": "12–6 PM"
+            },
+            {
+              "monday": "10 AM–7 PM"
+            },
+            {
+              "tuesday": "10 AM–7 PM"
+            },
+            {
+              "wednesday": "10 AM–7 PM"
+            },
+            {
+              "thursday": "10 AM–7 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/ACvplmOqB1qFRFBYSfxJZUnomQdL0T24WNOCeityWbXZhiXPLAu71zu0MZDgRcc_ZSgfPYCiMRGgux_DH8HGU9E-1WDS0k9HbF1zhwfnwXmIgSlaOLPI3GQ7vsBK_X8F_vYmITnfEM7Nig=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmOqB1qFRFBYSfxJZUnomQdL0T24WNOCeityWbXZhiXPLAu71zu0MZDgRcc_ZSgfPYCiMRGgux_DH8HGU9E-1WDS0k9HbF1zhwfnwXmIgSlaOLPI3GQ7vsBK_X8F_vYmITnfEM7Nig=w86-h86-n-k-no"
+        },
+        {
+          "position": 3,
+          "title": "Mujo Café",
+          "data_id": "0x883cae8619224d83:0xbb1af06ddbdcc7e4",
+          "data_cid": "13482352789117781988",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae8619224d83%3A0xbb1af06ddbdcc7e4&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae8619224d83%3A0xbb1af06ddbdcc7e4&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.291415699999995,
+            "longitude": -83.7157995
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae8619224d83%3A0xbb1af06ddbdcc7e4%218m2%213d42.291415699999995%214d-83.7157995&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 3.5,
+          "reviews": 57,
+          "type": "Cafe",
+          "type_id": "cafe",
+          "address": "2281 Bonisteel Blvd, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Closed · Opens 8 AM Mon",
+          "hours": [
+            {
+              "friday": "8 AM–4 PM"
+            },
+            {
+              "saturday": "Closed"
+            },
+            {
+              "sunday": "Closed"
+            },
+            {
+              "monday": "8 AM–4 PM"
+            },
+            {
+              "tuesday": "8 AM–4 PM"
+            },
+            {
+              "wednesday": "8 AM–4 PM"
+            },
+            {
+              "thursday": "8 AM–4 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/ACvplmPQ8kvfyJ1AegqKDE5LdRdb8U8D4CDsPNnX0VDj3lGJunDAJE_hZDz1aSWIZBphhDVuk62vmiofaVJv9byFpa5FDuLmTVYMsjpVt9eNAURKwKZxLVzk2pSANrfv2ZiMiLsSGKIj=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmPQ8kvfyJ1AegqKDE5LdRdb8U8D4CDsPNnX0VDj3lGJunDAJE_hZDz1aSWIZBphhDVuk62vmiofaVJv9byFpa5FDuLmTVYMsjpVt9eNAURKwKZxLVzk2pSANrfv2ZiMiLsSGKIj=w86-h86-n-k-no"
+        },
+        {
+          "position": 4,
+          "title": "Blue Market",
+          "data_id": "0x883cae87d2ac66d7:0x47a7ecaa960d3393",
+          "data_cid": "5163355715209606035",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae87d2ac66d7%3A0x47a7ecaa960d3393&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae87d2ac66d7%3A0x47a7ecaa960d3393&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.291413999999996,
+            "longitude": -83.7172257
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae87d2ac66d7%3A0x47a7ecaa960d3393%218m2%213d42.291413999999996%214d-83.7172257&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 3.5,
+          "reviews": 19,
+          "type": "Market",
+          "type_id": "market",
+          "address": "2101 Bonisteel Blvd #1204, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Closed · Opens 9 AM Mon",
+          "hours": [
+            {
+              "friday": "9 AM–3 PM"
+            },
+            {
+              "saturday": "Closed"
+            },
+            {
+              "sunday": "Closed"
+            },
+            {
+              "monday": "9 AM–3 PM"
+            },
+            {
+              "tuesday": "9 AM–3 PM"
+            },
+            {
+              "wednesday": "9 AM–3 PM"
+            },
+            {
+              "thursday": "9 AM–3 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/ACvplmOwFaHXryo8uOra7N2qh5jccEYCJzxr-nNku5XzkbGhYyYN2khSpxOfl5LXrYfOPhP7n8nLlBhNAtWo61r5uMT3dU6SBG7V-7Xd1hf9HTwd87y7TwIwzQLd45PRBqNhMCSVyE_lbA=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmOwFaHXryo8uOra7N2qh5jccEYCJzxr-nNku5XzkbGhYyYN2khSpxOfl5LXrYfOPhP7n8nLlBhNAtWo61r5uMT3dU6SBG7V-7Xd1hf9HTwd87y7TwIwzQLd45PRBqNhMCSVyE_lbA=w86-h86-n-k-no"
+        },
+        {
+          "position": 5,
+          "title": "University of Michigan Credit Union",
+          "data_id": "0x883cae87d221fee7:0x532ec8c45aa4e98",
+          "data_cid": "374621806233538200",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae87d221fee7%3A0x532ec8c45aa4e98&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae87d221fee7%3A0x532ec8c45aa4e98&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2911218,
+            "longitude": -83.7173743
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae87d221fee7%3A0x532ec8c45aa4e98%218m2%213d42.2911218%214d-83.7173743&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 4.7,
+          "reviews": 12,
+          "type": "Credit union",
+          "type_id": "credit_union",
+          "address": "2101 Bonisteel Blvd, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Closed · Opens 9 AM Mon",
+          "hours": [
+            {
+              "friday": "9 AM–2 PM"
+            },
+            {
+              "saturday": "Closed"
+            },
+            {
+              "sunday": "Closed"
+            },
+            {
+              "monday": "9 AM–2 PM"
+            },
+            {
+              "tuesday": "9 AM–2 PM"
+            },
+            {
+              "wednesday": "9 AM–2 PM"
+            },
+            {
+              "thursday": "9 AM–2 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/ACvplmNU_5ksApkggNRy9Z09v2UM8r7nE2bph0dUl70-h6kVZEYLRkr0rN3X1yTEeroh1ASoQCYZd6NZcRsYEvJf9_fAykFTZgv2pSszvYNj17yAJylbKWv60rNZUHfPG7BCCDiXg1Uo=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmNU_5ksApkggNRy9Z09v2UM8r7nE2bph0dUl70-h6kVZEYLRkr0rN3X1yTEeroh1ASoQCYZd6NZcRsYEvJf9_fAykFTZgv2pSszvYNj17yAJylbKWv60rNZUHfPG7BCCDiXg1Uo=w86-h86-n-k-no"
+        },
+        {
+          "position": 6,
+          "title": "Fireside Café",
+          "data_id": "0x883cae88788ffff9:0x7b127915a8a2281d",
+          "data_cid": "8868283750176401437",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae88788ffff9%3A0x7b127915a8a2281d&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae88788ffff9%3A0x7b127915a8a2281d&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2911534,
+            "longitude": -83.7174908
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae88788ffff9%3A0x7b127915a8a2281d%218m2%213d42.2911534%214d-83.7174908&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Restaurant",
+          "type_id": "restaurant"
+        },
+        {
+          "position": 7,
+          "title": "Tech Shop at the University of Michigan",
+          "data_id": "0x883cae87d263c1b3:0xdd8b97c1a378c72",
+          "data_cid": "997751260129496178",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae87d263c1b3%3A0xdd8b97c1a378c72&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae87d263c1b3%3A0xdd8b97c1a378c72&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.291210299999996,
+            "longitude": -83.717368
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae87d263c1b3%3A0xdd8b97c1a378c72%218m2%213d42.291210299999996%214d-83.717368&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Computer store",
+          "type_id": "computer_store"
+        },
+        {
+          "position": 8,
+          "title": "Barnes & Noble University of Michigan North Campus",
+          "data_id": "0x883cae87d24a62f9:0x390162a9a50e0466",
+          "data_cid": "4107672815896757350",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae87d24a62f9%3A0x390162a9a50e0466&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae87d24a62f9%3A0x390162a9a50e0466&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2911223,
+            "longitude": -83.717472
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae87d24a62f9%3A0x390162a9a50e0466%218m2%213d42.2911223%214d-83.717472&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Book store",
+          "type_id": "book_store"
+        },
+        {
+          "position": 9,
+          "title": "UMCU ATM",
+          "data_id": "0x883cae87d221fee7:0x9ab722739e3c9acc",
+          "data_cid": "11148417282550307532",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae87d221fee7%3A0x9ab722739e3c9acc&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae87d221fee7%3A0x9ab722739e3c9acc&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2911534,
+            "longitude": -83.7174908
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae87d221fee7%3A0x9ab722739e3c9acc%218m2%213d42.2911534%214d-83.7174908&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "ATM",
+          "type_id": "atm"
+        }
+      ]
+    },
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"Great place to grab some food an has a very wide selection\""
+        },
+        {
+          "snippet": "\"Cool place to meet up with people, eat, or grab some last minute supplies\""
+        },
+        {
+          "snippet": "\"Easy access to services by UMCU bank located in this building.\""
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "Love this building! It has great food options, a tech store and a barnes & Noble lite. It also has great meeting/studying spaces.",
+          "date": "3 years ago",
+          "date_iso8601": "2023-07-13T04:35:18+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "This place is very clean, closes at 5 pm, and quiet. If you have to go to the bathroom after 5 pm, stop at the Taco Bell up the street",
+          "date": "a year ago",
+          "date_iso8601": "2025-07-28T13:33:13+00:00"
+        },
+        {
+          "rating": 3,
+          "description": "It's fine as a commons area but I feel like it's a missed opportunity. The place is fairly outdated  with limited food options and is kinda disgusting on the first floor. It's basically the only place to get food on North campus (there's the area on Plymouth but that's a bit of a walk) so you would really expect a bit more. At least they have Ahmos.",
+          "date": "7 years ago",
+          "date_iso8601": "2019-02-01T05:16:26+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Somewhat outdated but pretty good location. Connected to the Duderstadt Center which is a huge plus. Plus they have gyros and Japanese food. Five stars, and definitely miles better than Palmer Commons.",
+          "date": "3 years ago",
+          "date_iso8601": "2023-02-06T03:26:54+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Suitable meeting place for UM students. Have a variety of eating areas. You can get Michigan merchandise here too.\n\nThey have multiple computers to use but most are not available during the pandemic.",
+          "date": "5 years ago",
+          "date_iso8601": "2021-03-22T12:16:36+00:00"
+        }
+      ]
+    }
+  }
+}

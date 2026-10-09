@@ -18,6 +18,10 @@ export const CampusMap = dynamic(() => import("./campus-map"), {
   ),
 });
 
+// What the map shows (campus detail, entrances, buildings, study spaces and
+// the layers panel). Render it as <CampusMap>'s child.
+export { MapExplorer } from "./map-explorer";
+
 // Wrap the map and anything that needs its instance (panels, overlays).
 export const CampusMapProvider = MapProvider;
 

@@ -1,0 +1,448 @@
+{
+  "slug": "art-and-architecture-building",
+  "query": "Art and Architecture Building, 2000 Bonisteel Blvd, Ann Arbor, MI",
+  "fetched_at": "2026-10-09T21:02:04.860Z",
+  "search_ids": [
+    "6ac9564aa89e020c4317f97c"
+  ],
+  "resolved_by": "search opened the place",
+  "distance_from_ours_m": 38,
+  "place": {
+    "title": "Art and Architecture Building",
+    "place_id": "ChIJY5jaX4iuPIgRQGRGSSLLJCM",
+    "data_id": "0x883cae885fda9863:0x2324cb2249466440",
+    "data_cid": "2532372238607737920",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae885fda9863%3A0x2324cb2249466440&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae885fda9863%3A0x2324cb2249466440&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2893439,
+      "longitude": -83.7171798
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJY5jaX4iuPIgRQGRGSSLLJCM",
+    "provider_id": "/g/1t_hznlz",
+    "thumbnail": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=HHF0ZTU3xmLOvTsy1OF5ag&cb_client=search.gws-prod.gps&w=86&h=86&yaw=4.6173306&pitch=0&thumbfov=100",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/7s8JzXicHc27DsIgFIDht2GTS6rVmBC3poNJl7q4mFNEIKGFlCO0b-Nr-TZeln_8_vfLIsZ0ZCzhrDVmp0t0i_ZpE4GaEIzXEF2iKowsC4b2OQ4TOH-KMAV3l23b8Gt_qZbx3OU-raJrdmCIGm7KOz2hTBpmZakpX3EOd2piIkUeamJ_WaHILa3Fvqp4TaJDZSUn_8sjZCk4_wBfCzlE",
+    "type": [
+      "Building"
+    ],
+    "type_ids": [
+      "compound_building"
+    ],
+    "address": "2000 Bonisteel Blvd, Ann Arbor, MI 48109",
+    "country": "United States",
+    "images": [
+      {
+        "title": "All",
+        "thumbnail": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=HHF0ZTU3xmLOvTsy1OF5ag&cb_client=maps_sv.tactile.gps&w=224&h=298&yaw=4.6173306&pitch=0&thumbfov=100",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/5lAOgnicHc1LDsIgFADA27AT6Mf6SYi7pguTburGTUMR4SVQiDxpex1v5W1MnAvM92MRYzozlvClNWbQS4RVu7SLkpoQjNMyQqIqeJYLhvbtp1mCu0Q5B3iIrmv5fbhVq7_2eUhb0bd7aYiaRuVAzyi8jGlMmaJUCE5TExNZRFnWxIrydCSbXERNm-JQVbwhEVBZwcn_eYYsCs5_10k52w"
+      },
+      {
+        "title": "Street View & 360°",
+        "thumbnail": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=HHF0ZTU3xmLOvTsy1OF5ag&cb_client=maps_sv.tactile.gps&w=224&h=298&yaw=4.6173306&pitch=0&thumbfov=100",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/5lAOgnicHc1LDsIgFADA27AT6Mf6SYi7pguTburGTUMR4SVQiDxpex1v5W1MnAvM92MRYzozlvClNWbQS4RVu7SLkpoQjNMyQqIqeJYLhvbtp1mCu0Q5B3iIrmv5fbhVq7_2eUhb0bd7aYiaRuVAzyi8jGlMmaJUCE5TExNZRFnWxIrydCSbXERNm-JQVbwhEVBZwcn_eYYsCs5_10k52w"
+      }
+    ],
+    "at_this_place": {
+      "type": [
+        {
+          "title": "Shopping",
+          "places": 1
+        },
+        {
+          "title": "Services",
+          "places": 2
+        },
+        {
+          "title": "Other",
+          "places": 8
+        }
+      ],
+      "places": [
+        {
+          "position": 1,
+          "title": "A. Alfred Taubman College of Architecture and Urban Planning",
+          "data_id": "0x883cae88f600ffd3:0x66530bd832ff504c",
+          "data_cid": "7373250038132068428",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae88f600ffd3%3A0x66530bd832ff504c&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae88f600ffd3%3A0x66530bd832ff504c&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2892778,
+            "longitude": -83.7173495
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae88f600ffd3%3A0x66530bd832ff504c%218m2%213d42.2892778%214d-83.7173495&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 4.4,
+          "reviews": 27,
+          "type": "University",
+          "type_id": "university",
+          "address": "2000 Bonisteel Blvd, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Closed · Opens 8 AM Mon",
+          "hours": [
+            {
+              "friday": "8 AM–5 PM"
+            },
+            {
+              "saturday": "Closed"
+            },
+            {
+              "sunday": "Closed"
+            },
+            {
+              "monday": "8 AM–5 PM"
+            },
+            {
+              "tuesday": "8 AM–5 PM"
+            },
+            {
+              "wednesday": "8 AM–5 PM"
+            },
+            {
+              "thursday": "8 AM–5 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLe499AT4vaHONPB8QJX8H5Ul82DO-899N8urKniFtNyLfSebQKufpqQPPFlCzyRYM8qWiHQcdL6RviJVnrIN2IIyZLd0ZKnMPIWdC_PpfmtVJlUp4cll7ecMnTAeEjFwTczLbDrxB-G4FYn=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLe499AT4vaHONPB8QJX8H5Ul82DO-899N8urKniFtNyLfSebQKufpqQPPFlCzyRYM8qWiHQcdL6RviJVnrIN2IIyZLd0ZKnMPIWdC_PpfmtVJlUp4cll7ecMnTAeEjFwTczLbDrxB-G4FYn=w86-h86-n-k-no"
+        },
+        {
+          "position": 2,
+          "title": "Penny W. Stamps School of Art & Design",
+          "data_id": "0x883cae885fc53fdb:0x18c4143b993ee1a1",
+          "data_cid": "1784573598552220065",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae885fc53fdb%3A0x18c4143b993ee1a1&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae885fc53fdb%3A0x18c4143b993ee1a1&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.289973599999996,
+            "longitude": -83.71728759999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae885fc53fdb%3A0x18c4143b993ee1a1%218m2%213d42.289973599999996%214d-83.71728759999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 4.8,
+          "reviews": 9,
+          "type": "Academic department",
+          "type_id": "university_department",
+          "address": "2000 Bonisteel Blvd, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Open · Closes 10 PM",
+          "hours": [
+            {
+              "friday": "7 AM–10 PM"
+            },
+            {
+              "saturday": "Closed"
+            },
+            {
+              "sunday": "Closed"
+            },
+            {
+              "monday": "7 AM–10 PM"
+            },
+            {
+              "tuesday": "7 AM–10 PM"
+            },
+            {
+              "wednesday": "7 AM–10 PM"
+            },
+            {
+              "thursday": "7 AM–10 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLcaX0cQGLy6fmjx5hobTgPEhSumbtvRrcaj3JApUGBr7aDn2VB_Lk5l0R0BHmsC0moB-djJCZhh6UdaLcQXfK7noBDL1ztCDHET9xElK4iWbqD54o8knZQZY8dxjpcw_ovz4DlHHQ=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLcaX0cQGLy6fmjx5hobTgPEhSumbtvRrcaj3JApUGBr7aDn2VB_Lk5l0R0BHmsC0moB-djJCZhh6UdaLcQXfK7noBDL1ztCDHET9xElK4iWbqD54o8knZQZY8dxjpcw_ovz4DlHHQ=w86-h86-n-k-no"
+        },
+        {
+          "position": 3,
+          "title": "Taubman Printing Lab",
+          "data_id": "0x883cae885e889fbd:0x50e70d43c648f0ca",
+          "data_cid": "5829642827395035338",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae885e889fbd%3A0x50e70d43c648f0ca&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae885e889fbd%3A0x50e70d43c648f0ca&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2899576,
+            "longitude": -83.7175725
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae885e889fbd%3A0x50e70d43c648f0ca%218m2%213d42.2899576%214d-83.7175725&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 4,
+          "reviews": 3,
+          "type": "Print shop",
+          "type_id": "print_shop",
+          "address": "2000 Bonisteel Blvd Rm 2107A, Ann Arbor, MI 48105",
+          "location": "Floor 1",
+          "open_state": "Closed · Opens 8 AM Mon",
+          "hours": [
+            {
+              "friday": "8 AM–5 PM"
+            },
+            {
+              "saturday": "Closed"
+            },
+            {
+              "sunday": "Closed"
+            },
+            {
+              "monday": "8 AM–5 PM"
+            },
+            {
+              "tuesday": "8 AM–5 PM"
+            },
+            {
+              "wednesday": "8 AM–5 PM"
+            },
+            {
+              "thursday": "8 AM–5 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLcj6bYuL6n3EzTUxBB8wR4QG34xOCuo8tNwhA1IJMRcxPkV1gmZPfwewpqiQ3jyGeozHBWkqbNMAHLYA4MX-xDkdr50jPHcfgSrj4OlVrrFOkR0KkPIJaZAB2g9W4EvtK_Pyq3X=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLcj6bYuL6n3EzTUxBB8wR4QG34xOCuo8tNwhA1IJMRcxPkV1gmZPfwewpqiQ3jyGeozHBWkqbNMAHLYA4MX-xDkdr50jPHcfgSrj4OlVrrFOkR0KkPIJaZAB2g9W4EvtK_Pyq3X=w86-h86-n-k-no"
+        },
+        {
+          "position": 4,
+          "title": "Department of Urban and Regional Planning",
+          "data_id": "0x883cae885fbc8a0d:0x1fb8e28a0792a68d",
+          "data_cid": "2285825893350942349",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae885fbc8a0d%3A0x1fb8e28a0792a68d&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae885fbc8a0d%3A0x1fb8e28a0792a68d&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2894471,
+            "longitude": -83.71744509999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae885fbc8a0d%3A0x1fb8e28a0792a68d%218m2%213d42.2894471%214d-83.71744509999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 5,
+          "reviews": 1,
+          "type": "Academic department",
+          "type_id": "university_department",
+          "address": "Art and Architecture Building, 2000 Bonisteel Blvd, Ann Arbor, MI 48109",
+          "location": "Floor 1"
+        },
+        {
+          "position": 5,
+          "title": "Department of Architecture",
+          "data_id": "0x883cae885fc29909:0xac709afd983aa400",
+          "data_cid": "12425601785886581760",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae885fc29909%3A0xac709afd983aa400&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae885fc29909%3A0xac709afd983aa400&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2894479,
+            "longitude": -83.71741209999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae885fc29909%3A0xac709afd983aa400%218m2%213d42.2894479%214d-83.71741209999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "University",
+          "type_id": "university",
+          "address": "Art and Architecture Building, 2000 Bonisteel Blvd, Ann Arbor, MI 48109",
+          "location": "Floor 1"
+        },
+        {
+          "position": 6,
+          "title": "TCAUP",
+          "data_id": "0x883cae886570d975:0x7d11a10528b99190",
+          "data_cid": "9012161372875231632",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae886570d975%3A0x7d11a10528b99190&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae886570d975%3A0x7d11a10528b99190&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.289973599999996,
+            "longitude": -83.71728759999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae886570d975%3A0x7d11a10528b99190%218m2%213d42.289973599999996%214d-83.71728759999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Architect",
+          "type_id": "architect"
+        },
+        {
+          "position": 7,
+          "title": "Joseph E. Trumpey",
+          "data_id": "0x883cae8862708a23:0xb04967fd8d46dfc9",
+          "data_cid": "12702798562669813705",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae8862708a23%3A0xb04967fd8d46dfc9&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae8862708a23%3A0xb04967fd8d46dfc9&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.289973599999996,
+            "longitude": -83.71728759999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae8862708a23%3A0xb04967fd8d46dfc9%218m2%213d42.289973599999996%214d-83.71728759999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Association / Organization",
+          "type_id": "association_or_organization"
+        },
+        {
+          "position": 8,
+          "title": "Arts and Architecture Bldg.",
+          "data_id": "0x883caf67a9a6a83d:0x981d28202ae394fe",
+          "data_cid": "10960961186713277694",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf67a9a6a83d%3A0x981d28202ae394fe&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf67a9a6a83d%3A0x981d28202ae394fe&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2900278,
+            "longitude": -83.7171812
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf67a9a6a83d%3A0x981d28202ae394fe%218m2%213d42.2900278%214d-83.7171812&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Educational institution",
+          "type_id": "educational_institution"
+        },
+        {
+          "position": 9,
+          "title": "Roman J. Witt Residency Program",
+          "data_id": "0x883cae8859d2ef7f:0xe555348ec53d9a47",
+          "data_cid": "16525172195505052231",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae8859d2ef7f%3A0xe555348ec53d9a47&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae8859d2ef7f%3A0xe555348ec53d9a47&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.289973599999996,
+            "longitude": -83.71728759999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae8859d2ef7f%3A0xe555348ec53d9a47%218m2%213d42.289973599999996%214d-83.71728759999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Academic department",
+          "type_id": "university_department"
+        },
+        {
+          "position": 10,
+          "title": "Digital Architecture Research & Technologies (DART ) Laboratory",
+          "data_id": "0x883caf8dfca51967:0xbfded3f36bfc8211",
+          "data_cid": "13825720948516225553",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf8dfca51967%3A0xbfded3f36bfc8211&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf8dfca51967%3A0xbfded3f36bfc8211&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.289957400000006,
+            "longitude": -83.7175662
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf8dfca51967%3A0xbfded3f36bfc8211%218m2%213d42.289957400000006%214d-83.7175662&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "University",
+          "type_id": "university"
+        }
+      ]
+    },
+    "at_this_location": [
+      {
+        "position": 1,
+        "title": "A. Alfred Taubman College of Architecture and Urban Planning",
+        "data_id": "0x883cae88f600ffd3:0x66530bd832ff504c",
+        "data_cid": "7373250038132068428",
+        "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae88f600ffd3%3A0x66530bd832ff504c&engine=google_maps_reviews&hl=en",
+        "photos_link": "https://serpapi.com/search.json?data_id=0x883cae88f600ffd3%3A0x66530bd832ff504c&engine=google_maps_photos&hl=en",
+        "gps_coordinates": {
+          "latitude": 42.2892778,
+          "longitude": -83.7173495
+        },
+        "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae88f600ffd3%3A0x66530bd832ff504c%218m2%213d42.2892778%214d-83.7173495&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+        "rating": 4.4
+      },
+      {
+        "position": 2,
+        "title": "Penny W. Stamps School of Art & Design",
+        "data_id": "0x883cae885fc53fdb:0x18c4143b993ee1a1",
+        "data_cid": "1784573598552220065",
+        "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae885fc53fdb%3A0x18c4143b993ee1a1&engine=google_maps_reviews&hl=en",
+        "photos_link": "https://serpapi.com/search.json?data_id=0x883cae885fc53fdb%3A0x18c4143b993ee1a1&engine=google_maps_photos&hl=en",
+        "gps_coordinates": {
+          "latitude": 42.2899736,
+          "longitude": -83.7172876
+        },
+        "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae885fc53fdb%3A0x18c4143b993ee1a1%218m2%213d42.2899736%214d-83.7172876&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+        "rating": 4.8
+      },
+      {
+        "position": 3,
+        "title": "Taubman Printing Lab",
+        "data_id": "0x883cae885e889fbd:0x50e70d43c648f0ca",
+        "data_cid": "5829642827395035338",
+        "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae885e889fbd%3A0x50e70d43c648f0ca&engine=google_maps_reviews&hl=en",
+        "photos_link": "https://serpapi.com/search.json?data_id=0x883cae885e889fbd%3A0x50e70d43c648f0ca&engine=google_maps_photos&hl=en",
+        "gps_coordinates": {
+          "latitude": 42.2899576,
+          "longitude": -83.7175725
+        },
+        "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae885e889fbd%3A0x50e70d43c648f0ca%218m2%213d42.2899576%214d-83.7175725&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+        "rating": 4
+      },
+      {
+        "position": 4,
+        "title": "Department of Urban and Regional Planning",
+        "data_id": "0x883cae885fbc8a0d:0x1fb8e28a0792a68d",
+        "data_cid": "2285825893350942349",
+        "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae885fbc8a0d%3A0x1fb8e28a0792a68d&engine=google_maps_reviews&hl=en",
+        "photos_link": "https://serpapi.com/search.json?data_id=0x883cae885fbc8a0d%3A0x1fb8e28a0792a68d&engine=google_maps_photos&hl=en",
+        "gps_coordinates": {
+          "latitude": 42.2894471,
+          "longitude": -83.7174451
+        },
+        "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae885fbc8a0d%3A0x1fb8e28a0792a68d%218m2%213d42.2894471%214d-83.7174451&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+        "rating": 5
+      },
+      {
+        "position": 5,
+        "title": "Department of Architecture",
+        "data_id": "0x883cae885fc29909:0xac709afd983aa400",
+        "data_cid": "12425601785886581760",
+        "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae885fc29909%3A0xac709afd983aa400&engine=google_maps_reviews&hl=en",
+        "photos_link": "https://serpapi.com/search.json?data_id=0x883cae885fc29909%3A0xac709afd983aa400&engine=google_maps_photos&hl=en",
+        "gps_coordinates": {
+          "latitude": 42.2894479,
+          "longitude": -83.7174121
+        },
+        "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae885fc29909%3A0xac709afd983aa400%218m2%213d42.2894479%214d-83.7174121&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place"
+      },
+      {
+        "position": 6,
+        "title": "TCAUP",
+        "data_id": "0x883cae886570d975:0x7d11a10528b99190",
+        "data_cid": "9012161372875231632",
+        "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae886570d975%3A0x7d11a10528b99190&engine=google_maps_reviews&hl=en",
+        "photos_link": "https://serpapi.com/search.json?data_id=0x883cae886570d975%3A0x7d11a10528b99190&engine=google_maps_photos&hl=en",
+        "gps_coordinates": {
+          "latitude": 42.2899736,
+          "longitude": -83.7172876
+        },
+        "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae886570d975%3A0x7d11a10528b99190%218m2%213d42.2899736%214d-83.7172876&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place"
+      },
+      {
+        "position": 7,
+        "title": "Joseph E. Trumpey",
+        "data_id": "0x883cae8862708a23:0xb04967fd8d46dfc9",
+        "data_cid": "12702798562669813705",
+        "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae8862708a23%3A0xb04967fd8d46dfc9&engine=google_maps_reviews&hl=en",
+        "photos_link": "https://serpapi.com/search.json?data_id=0x883cae8862708a23%3A0xb04967fd8d46dfc9&engine=google_maps_photos&hl=en",
+        "gps_coordinates": {
+          "latitude": 42.2899736,
+          "longitude": -83.7172876
+        },
+        "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae8862708a23%3A0xb04967fd8d46dfc9%218m2%213d42.2899736%214d-83.7172876&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place"
+      },
+      {
+        "position": 8,
+        "title": "Arts and Architecture Bldg.",
+        "data_id": "0x883caf67a9a6a83d:0x981d28202ae394fe",
+        "data_cid": "10960961186713277694",
+        "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf67a9a6a83d%3A0x981d28202ae394fe&engine=google_maps_reviews&hl=en",
+        "photos_link": "https://serpapi.com/search.json?data_id=0x883caf67a9a6a83d%3A0x981d28202ae394fe&engine=google_maps_photos&hl=en",
+        "gps_coordinates": {
+          "latitude": 42.2900278,
+          "longitude": -83.7171812
+        },
+        "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf67a9a6a83d%3A0x981d28202ae394fe%218m2%213d42.2900278%214d-83.7171812&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place"
+      },
+      {
+        "position": 9,
+        "title": "Roman J. Witt Residency Program",
+        "data_id": "0x883cae8859d2ef7f:0xe555348ec53d9a47",
+        "data_cid": "16525172195505052231",
+        "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae8859d2ef7f%3A0xe555348ec53d9a47&engine=google_maps_reviews&hl=en",
+        "photos_link": "https://serpapi.com/search.json?data_id=0x883cae8859d2ef7f%3A0xe555348ec53d9a47&engine=google_maps_photos&hl=en",
+        "gps_coordinates": {
+          "latitude": 42.2899736,
+          "longitude": -83.7172876
+        },
+        "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae8859d2ef7f%3A0xe555348ec53d9a47%218m2%213d42.2899736%214d-83.7172876&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place"
+      },
+      {
+        "position": 10,
+        "title": "Digital Architecture Research & Technologies (DART ) Laboratory",
+        "data_id": "0x883caf8dfca51967:0xbfded3f36bfc8211",
+        "data_cid": "13825720948516225553",
+        "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf8dfca51967%3A0xbfded3f36bfc8211&engine=google_maps_reviews&hl=en",
+        "photos_link": "https://serpapi.com/search.json?data_id=0x883caf8dfca51967%3A0xbfded3f36bfc8211&engine=google_maps_photos&hl=en",
+        "gps_coordinates": {
+          "latitude": 42.2899574,
+          "longitude": -83.7175662
+        },
+        "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf8dfca51967%3A0xbfded3f36bfc8211%218m2%213d42.2899574%214d-83.7175662&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place"
+      }
+    ],
+    "web_results_link": "https://www.google.com/search?q=local+guide+program&ibp=gwp;0,26,OjEKLyIrQXJ0IGFuZCBBcmNoaXRlY3R1cmUgQnVpbGRpbmcgQW5uIEFyYm9yLCBNSSgC&pcl=lp",
+    "serpapi_web_results_link": "https://serpapi.com/search.json?device=desktop&engine=google&google_domain=google.com&ibp=gwp%3B0%2C26%2COjEKLyIrQXJ0IGFuZCBBcmNoaXRlY3R1cmUgQnVpbGRpbmcgQW5uIEFyYm9yLCBNSSgC&q=local+guide+program"
+  }
+}

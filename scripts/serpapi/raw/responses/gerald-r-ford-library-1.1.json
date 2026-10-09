@@ -1,0 +1,247 @@
+{
+  "search_metadata": {
+    "id": "6ac9563d03610a977c9e225a",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/oYZ4SZKlGa3ZhCr7csmnk2HaXDiILV-pfgORC0-XMII/6ac9563d03610a977c9e225a.json",
+    "markdown_endpoint": "https://serpapi.com/searches/oYZ4SZKlGa3ZhCr7csmnk2HaXDiILV-pfgORC0-XMII/6ac9563d03610a977c9e225a.md",
+    "created_at": "2026-10-09 21:01:49 UTC",
+    "processed_at": "2026-10-09 21:01:49 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/Gerald+R.+Ford+Presidential+Library%2C+1000+Beal+Ave%2C+Ann+Arbor%2C+MI/@42.28852,-83.71227,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/oYZ4SZKlGa3ZhCr7csmnk2HaXDiILV-pfgORC0-XMII/6ac9563d03610a977c9e225a.html",
+    "prettify_html_file": "https://serpapi.com/searches/oYZ4SZKlGa3ZhCr7csmnk2HaXDiILV-pfgORC0-XMII/6ac9563d03610a977c9e225a.prettify",
+    "total_time_taken": 1.04
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "Gerald R. Ford Presidential Library, 1000 Beal Ave, Ann Arbor, MI",
+    "ll": "@42.28852,-83.71227,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Showing results for type: \"place\" instead of type: \"search\"",
+    "query_displayed": "Gerald R. Ford Presidential Library, 1000 Beal Ave, Ann Arbor, MI"
+  },
+  "place_results": {
+    "title": "Gerald R. Ford Presidential Library",
+    "place_id": "ChIJz5AUBI-uPIgRTAmklqddwDM",
+    "data_id": "0x883cae8f041490cf:0x33c05da796a4094c",
+    "data_cid": "3729083465831024972",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae8f041490cf%3A0x33c05da796a4094c&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae8f041490cf%3A0x33c05da796a4094c&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.288554399999995,
+      "longitude": -83.7123168
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJz5AUBI-uPIgRTAmklqddwDM",
+    "provider_id": "/m/09yzfm",
+    "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmORaGiu-HzT2fNUP7AHoszmzcG_xSzO1vLH5lvtd6NRK_2JJrZxNEicL3C_LbxgxHaLHlHTUYvbo4Z9EE_ac9QTzRD_417QJek9KFDFtzRPXmiMCz5Rkvn2zmgHVYee-vJpSJXyBxPZTvj3=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/Qmg34XicHcTNbsIgAADgJ8L-6UyX7OBqlWBXK9ZFeyGVMdoJpSnIGC_peW-zZN_h-310xoz6OQhEl8y4Ulywu2YTVYNhg5lRJQM-tVoDqoNVZkch97jd9ncAfR1_lqdquYJKe-nplrij30e2gAthzcdTiXckRmhqXJn3tEgyUlwdd7AtoID16WKvat6keU5amh5qj9dkHi0PiN3S3Wa9MR5XZ9m_ZX6Bb3aIveTw_cIYsGg8ovPPq6ua2n4lL99RGIag-5-C4Q817Eig",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 3
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 10
+      },
+      {
+        "stars": 4,
+        "amount": 23
+      },
+      {
+        "stars": 5,
+        "amount": 62
+      }
+    ],
+    "rating": 4.4,
+    "reviews": 98,
+    "type": [
+      "Event venue",
+      "History museum",
+      "Meeting planning service"
+    ],
+    "description": "Library telling the story of President Gerald Ford through seldom-seen documents & photographs.",
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot",
+          "Wheelchair accessible restroom",
+          "Wheelchair accessible seating"
+        ]
+      }
+    ],
+    "address": "1000 Beal Ave, Ann Arbor, MI 48109",
+    "country": "United States",
+    "website": "http://www.fordlibrarymuseum.gov/",
+    "phone": "(734) 205-0555",
+    "open_state": "Closed · Opens 8:45 AM Mon",
+    "plus_code": "77QQ+C3 Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "8:45 AM–4:45 PM"
+      },
+      {
+        "saturday": "Closed"
+      },
+      {
+        "sunday": "Closed"
+      },
+      {
+        "monday": "8:45 AM–4:45 PM"
+      },
+      {
+        "tuesday": "8:45 AM–4:45 PM"
+      },
+      {
+        "wednesday": "8:45 AM–4:45 PM"
+      },
+      {
+        "thursday": "8:45 AM–4:45 PM"
+      }
+    ],
+    "serpapi_posts_link": "https://serpapi.com/search.json?data_id=0x883cae8f041490cf%3A0x33c05da796a4094c&engine=google_maps_posts",
+    "posts": [
+      {
+        "media": "https://lh3.googleusercontent.com/geougc/AF1QipOUOU7HmRQTiB94BbKfTpLPEBYnvE4Blui_oWCX=h400-no",
+        "cta": "Learn more",
+        "link": "https://www.fordlibrarymuseum.gov/visit/library/planning-your-event-library",
+        "post_link": "https://search.google.com/local/posts?q=Gerald+R.+Ford+Presidential+Library&ludocid=3729083465831024972&lpsid=CIHM0ogKEMDN8v75w6mjTA&source=sh/x/loc/post&lsig=AB86z5UZnwwXhtqseeRxc9vcD4UW",
+        "description": "Check out our new patio furniture!  Our beautiful patio is included (along with the furniture) when you rent the Ford Presidential Library for your business meeting or special event.  Go to our website to learn more.",
+        "date": "Aug 18, 2026"
+      }
+    ],
+    "at_this_place": {
+      "type": [
+        {
+          "title": "Other",
+          "places": 1
+        }
+      ],
+      "places": [
+        {
+          "position": 1,
+          "title": "Two Open Triangles Up (Gyratory II)",
+          "data_id": "0x883caf00214f2be3:0x59cb676966dd41ea",
+          "data_cid": "6470378992042852842",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf00214f2be3%3A0x59cb676966dd41ea&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf00214f2be3%3A0x59cb676966dd41ea&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2885973,
+            "longitude": -83.7122827
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf00214f2be3%3A0x59cb676966dd41ea%218m2%213d42.2885973%214d-83.7122827&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Historical landmark",
+          "type_id": "historical_landmark",
+          "address": "1000 Beal Ave, Ann Arbor, MI 48109",
+          "location": "Floor 1"
+        }
+      ]
+    },
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"Nice people wonderful service\""
+        },
+        {
+          "snippet": "\"As a place to hold a meeting or event, I highly recommend it.\""
+        },
+        {
+          "snippet": "\"Easy parking and courteous employees.\""
+        }
+      ],
+      "topics": [
+        {
+          "keyword": "presidential library",
+          "mentions": 4,
+          "id": "OQNqNbWuo_M"
+        },
+        {
+          "keyword": "exhibits",
+          "mentions": 6,
+          "id": "rFOtpzW8UHc"
+        },
+        {
+          "keyword": "presidential history",
+          "mentions": 3,
+          "id": "qgJIMAe8Guc"
+        },
+        {
+          "keyword": "free admission",
+          "mentions": 3,
+          "id": "e0E73LJm0Jc"
+        },
+        {
+          "keyword": "leadership style",
+          "mentions": 2,
+          "id": "hEToPDzsyJA"
+        },
+        {
+          "keyword": "artifacts",
+          "mentions": 2,
+          "id": "oViR5ERuXmE"
+        },
+        {
+          "keyword": "helpful staff",
+          "mentions": 2,
+          "id": "E-kFNTfsgKA"
+        },
+        {
+          "keyword": "museum",
+          "mentions": 5,
+          "id": "rFADrfdW8Nc"
+        },
+        {
+          "keyword": "campus",
+          "mentions": 2,
+          "id": "SlFoPNJduaY"
+        },
+        {
+          "keyword": "size",
+          "mentions": 2,
+          "id": "AGvEJzVfRWY"
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 4,
+          "description": "I've been touring Presidential Libraries across the United States for some time.  This one definitely qualifies as the smallest Presidential Library I've visited to date!  Being raised to acknowledge that good things come in small packages, the Gerald R. Ford Presidential Library deserves this designation.  Although this library is small, if you're in Ann Arbor, take some time out of your day to enjoy this delightful little treat!  The experience lasts between 30 minutes to an hour and offers valuable knowledge.  You can explore an exhibit of presidential cartoons, watch a documentary, and see a replica of the Ford's office.  Even though this library is small, if you're in Ann Arbor, take some time out of your day to enjoy this delightful tiny treat!",
+          "date": "Edited a year ago",
+          "date_iso8601": "2025-03-28T01:42:11+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "A hidden gem on University of Michigan’s North Campus.\n\nDiscovered the library while looking for a sales meeting event venue in Ann Arbor. Rented “The Classroom” for two days and cannot say enough good things about the room and the facilities.\n\nRates are super reasonable and include A/V equipment. Terra, the Special Events Coordinator, is helpful, knowledgeable, and an incredibly gracious host.\n\nAs a place to hold a meeting or event, I highly recommend it.",
+          "date": "3 months ago",
+          "date_iso8601": "2026-06-10T19:58:24+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Nice library and tells the story of his presidency m Go Blue!",
+          "date": "5 months ago",
+          "date_iso8601": "2026-05-01T16:07:43+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Fantastic museum highlighting the life and career of President Gerald R. Ford.",
+          "date": "4 months ago",
+          "date_iso8601": "2026-06-09T12:27:52+00:00"
+        },
+        {
+          "rating": 3,
+          "description": "Not too much to see. But it is worth a stop for a bit of American history from the mid seventies.\n\nI was interested because I was born just as Nixon was getting into trouble with Watergate, Ford was an Eagle Scout, and the only accidental president.\n\nNothing is shown about Ford’s connection to the Boy Scouts, it’s mostly comics and a few items and letters from his time as president.\n\nI was immediately reminded of the fact that presidents are always repeating themselves no matter who is in the office. Same mistakes, different parties, different people.",
+          "date": "a year ago",
+          "date_iso8601": "2025-02-11T03:36:12+00:00"
+        }
+      ]
+    }
+  }
+}

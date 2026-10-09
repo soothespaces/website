@@ -1,0 +1,229 @@
+{
+  "search_metadata": {
+    "id": "6ac94770fbbebb35a92b3fb0",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/5iFA0mpLMlSFRYRwPilMgxVMSWYYQQIqajahl5xeM7o/6ac94770fbbebb35a92b3fb0.json",
+    "markdown_endpoint": "https://serpapi.com/searches/5iFA0mpLMlSFRYRwPilMgxVMSWYYQQIqajahl5xeM7o/6ac94770fbbebb35a92b3fb0.md",
+    "created_at": "2026-10-09 19:58:40 UTC",
+    "processed_at": "2026-10-09 19:58:40 UTC",
+    "google_maps_url": "https://www.google.com/maps/place///data=!4m6!3m5!1s0x883cae44f137b5cd:0x8457164e22e57e03!8m2!3d0!4d0!16s?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/5iFA0mpLMlSFRYRwPilMgxVMSWYYQQIqajahl5xeM7o/6ac94770fbbebb35a92b3fb0.html",
+    "prettify_html_file": "https://serpapi.com/searches/5iFA0mpLMlSFRYRwPilMgxVMSWYYQQIqajahl5xeM7o/6ac94770fbbebb35a92b3fb0.prettify",
+    "total_time_taken": 0.45
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "place",
+    "data": "!4m5!3m4!1s0x883cae44f137b5cd:0x8457164e22e57e03!8m2!3d42.275614999999995!4d-83.7371826",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "place_results": {
+    "title": "Shapiro Library",
+    "place_id": "ChIJzbU38USuPIgRA37lIk4WV4Q",
+    "data_id": "0x883cae44f137b5cd:0x8457164e22e57e03",
+    "data_cid": "9536115260829040131",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae44f137b5cd%3A0x8457164e22e57e03&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae44f137b5cd%3A0x8457164e22e57e03&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.275614999999995,
+      "longitude": -83.7371826
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJzbU38USuPIgRA37lIk4WV4Q",
+    "provider_id": "/g/1v_0kdxq",
+    "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLdre7C1wN7l6LG0iN7vzJQyDEkMAF_v5d--zL4X1xjUx3pOvnQCSIQ_m3mWZu7NUYegyvaUqyTVGk0zMLD6XY1hayiMYIODpWikyX1XjIwLMNkER3DqpRIjbW9f-Sh0O0e54pdZ9B4K8mw=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/BZ-vf3icHcTBboIwAADQL6q0AWUu2QFBDVuBoCLgxSB0FEqhUgTLR3rf3yzxHd7fiw6DkJ-a1lB9UXZd2ZCHJH3etQNph0Xeca3sMylBLjXL2jCOi56YNpp8s1nhPax8c5y_Q-VsmWftruOyAGDGRoKedfTURTC2oX10wyvXeXx5mH6UklKNWXRXp_OewdnDzipJEc1U5aVu4Ii4YipBSe1O2PPZ9qA7d3Fw61u8_gVHCgNIloYoLuuN8fPBp68JQQgBfZ-D9h9cikar",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 4
+      },
+      {
+        "stars": 2,
+        "amount": 2
+      },
+      {
+        "stars": 3,
+        "amount": 8
+      },
+      {
+        "stars": 4,
+        "amount": 18
+      },
+      {
+        "stars": 5,
+        "amount": 57
+      }
+    ],
+    "rating": 4.4,
+    "reviews": 89,
+    "type": [
+      "University library"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      }
+    ],
+    "address": "919 S University Ave, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "website": "https://lib.umich.edu/locations-and-hours/shapiro-library",
+    "phone": "(734) 764-7058",
+    "open_state": "Open · Closes 6 PM",
+    "plus_code": "77G7+64 Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "12 AM–6 PM"
+      },
+      {
+        "saturday": "10 AM–6 PM"
+      },
+      {
+        "sunday": "10 AM–12 AM"
+      },
+      {
+        "monday": "Open 24 hours"
+      },
+      {
+        "tuesday": "Open 24 hours"
+      },
+      {
+        "wednesday": "Open 24 hours"
+      },
+      {
+        "thursday": "Open 24 hours"
+      }
+    ],
+    "serpapi_posts_link": "https://serpapi.com/search.json?data_id=0x883cae44f137b5cd%3A0x8457164e22e57e03&engine=google_maps_posts",
+    "at_this_place": {
+      "type": [
+        {
+          "title": "Food & Drink",
+          "places": 1
+        },
+        {
+          "title": "Other",
+          "places": 1
+        }
+      ],
+      "places": [
+        {
+          "position": 1,
+          "title": "Bert's Café",
+          "data_id": "0x883cae46bfdff109:0x2a43458c643758be",
+          "data_cid": "3045354242311674046",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae46bfdff109%3A0x2a43458c643758be&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae46bfdff109%3A0x2a43458c643758be&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2756189,
+            "longitude": -83.7371766
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae46bfdff109%3A0x2a43458c643758be%218m2%213d42.2756189%214d-83.7371766&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 3.7,
+          "reviews": 49,
+          "type": "Cafe",
+          "type_id": "cafe",
+          "address": "919 S University Ave, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLfB9Yhzhq7pSK6ccmzBgZ8-pedmAqCAYUUrMGbBRf0mkt3yEXXMlStSVL_bS4bhx6f7G_nEsGNBJYF3pd2M6w4ySrOnYXHte10Ki22QRfDg08aIXjtk-sCY_MzyXjnBlje0m0Sq=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLfB9Yhzhq7pSK6ccmzBgZ8-pedmAqCAYUUrMGbBRf0mkt3yEXXMlStSVL_bS4bhx6f7G_nEsGNBJYF3pd2M6w4ySrOnYXHte10Ki22QRfDg08aIXjtk-sCY_MzyXjnBlje0m0Sq=w86-h86-n-k-no"
+        },
+        {
+          "position": 2,
+          "title": "Shapiro Design Lab",
+          "data_id": "0x883caf7ece89ef6b:0x86c16a71227c1a5a",
+          "data_cid": "9710159305729907290",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf7ece89ef6b%3A0x86c16a71227c1a5a&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf7ece89ef6b%3A0x86c16a71227c1a5a&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2756112,
+            "longitude": -83.7371821
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf7ece89ef6b%3A0x86c16a71227c1a5a%218m2%213d42.2756112%214d-83.7371821&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 5,
+          "reviews": 1,
+          "type": "Educational institution",
+          "type_id": "educational_institution",
+          "address": "919 S University Ave, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Closed · Opens 1 PM Sun",
+          "hours": [
+            {
+              "friday": "Closed"
+            },
+            {
+              "saturday": "Closed"
+            },
+            {
+              "sunday": "1–6 PM"
+            },
+            {
+              "monday": "1–6 PM"
+            },
+            {
+              "tuesday": "1–6 PM"
+            },
+            {
+              "wednesday": "1–6 PM"
+            },
+            {
+              "thursday": "1–6 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLcS5H7D6S6Jra4csHo_fYMh92AWehWFiskxY6Gd3asfXUV3Elv8jwtAJjHEFgo7PCtfIaeFFiRblJg9U46gW4XRrHh94HwO-IxIYDLqhRxlOojg08BVaV2YnnqUIDmy_9I-8UfAibriJ7uf=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLcS5H7D6S6Jra4csHo_fYMh92AWehWFiskxY6Gd3asfXUV3Elv8jwtAJjHEFgo7PCtfIaeFFiRblJg9U46gW4XRrHh94HwO-IxIYDLqhRxlOojg08BVaV2YnnqUIDmy_9I-8UfAibriJ7uf=w86-h86-n-k-no"
+        }
+      ]
+    },
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"Great place to study, and a great location too.\""
+        },
+        {
+          "snippet": "\"Great children's section in the basement.\""
+        },
+        {
+          "snippet": "\"However during the school year it is a bit of challenge to get a study spot.\""
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "Our friend showed us their beautiful library. I could image that I would like to be here for study in quiet study rooms or computer labs if I were a Michigan student. There were many beautiful wallpapers, pictures and windows. It was freezing outside, but there were a few students studying inside. Hopefully, the weather would not get worse this Saturday. The game must be crazy this year.",
+          "date": "10 months ago",
+          "date_iso8601": "2025-11-28T01:39:21+00:00"
+        },
+        {
+          "rating": 3,
+          "description": "The library is not a very good place to study. Although they have done some renovations recently, it is still a bit outdated and more work needs to be done. Also, there are no quiet places. I wish that the library could have areas where groups can study and chat and other areas for quiet studying.",
+          "date": "7 years ago",
+          "date_iso8601": "2019-03-09T01:08:00+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "The Bert’s Cafe has good latte!",
+          "date": "4 years ago",
+          "date_iso8601": "2022-02-15T13:24:46+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "I really like the Shapiro library because of all the resources that are there for students. There are obviously computers, lounges, and a cafe, but even for students who don't go to the university it can be a good study spot. However during the school year it is a bit of challenge to get a study spot.",
+          "date": "4 years ago",
+          "date_iso8601": "2022-07-12T13:19:29+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "Great place to study, and a great location too. Can get crowded sometimes, especially before a rly big exam.\nWould still definitely recommend if you're looking for a place to study, and are an undergraduate.",
+          "date": "7 years ago",
+          "date_iso8601": "2018-10-16T00:29:26+00:00"
+        }
+      ]
+    }
+  }
+}

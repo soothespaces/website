@@ -1,0 +1,157 @@
+{
+  "search_metadata": {
+    "id": "6ac9565d45a66ac226ebceb4",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/p5zmc69oWoETStYZAxRqv4pnee1EPlsUHu0UCkUah1E/6ac9565d45a66ac226ebceb4.json",
+    "markdown_endpoint": "https://serpapi.com/searches/p5zmc69oWoETStYZAxRqv4pnee1EPlsUHu0UCkUah1E/6ac9565d45a66ac226ebceb4.md",
+    "created_at": "2026-10-09 21:02:21 UTC",
+    "processed_at": "2026-10-09 21:02:21 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/Palmer+Commons%2C+100+Washtenaw+Ave%2C+Ann+Arbor%2C+MI/@42.28081,-83.73388,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/p5zmc69oWoETStYZAxRqv4pnee1EPlsUHu0UCkUah1E/6ac9565d45a66ac226ebceb4.html",
+    "prettify_html_file": "https://serpapi.com/searches/p5zmc69oWoETStYZAxRqv4pnee1EPlsUHu0UCkUah1E/6ac9565d45a66ac226ebceb4.prettify",
+    "total_time_taken": 1.31
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "Palmer Commons, 100 Washtenaw Ave, Ann Arbor, MI",
+    "ll": "@42.28081,-83.73388,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Showing results for type: \"place\" instead of type: \"search\"",
+    "query_displayed": "Palmer Commons, 100 Washtenaw Ave, Ann Arbor, MI"
+  },
+  "place_results": {
+    "title": "Palmer Commons",
+    "place_id": "ChIJ-Uj5XEKuPIgRt-3r7ouvpag",
+    "data_id": "0x883cae425cf948f9:0xa8a5af8beeebedb7",
+    "data_cid": "12152312185072905655",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae425cf948f9%3A0xa8a5af8beeebedb7&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae425cf948f9%3A0xa8a5af8beeebedb7&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2807724,
+      "longitude": -83.73385689999999
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJ-Uj5XEKuPIgRt-3r7ouvpag",
+    "provider_id": "/g/1hhpb13wp",
+    "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RwLDU4DkOpKZ-l1tLm4nJysbczdipQtHOUYndKlvsBu7UY5S6oCz-Hi4jxo3FtbzPoqJye3eHJeK9yjwLOFMHAgbSLR-u9nfHclcWrgrSP3SR9P-uLgzlb3OIRMQooTfwbZvx3LA=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/BuoRwXicHcRRDoIgGADgE5E2rGZbD1ZrpJSmOVePEKFF_CaY6Q07Qrdp63v4vp_S2trMHUeVeCQBpBKtEQ0HbYW2Iw4PR9YGcYOME-yLqvfTjq5zb32P6-iM1NjSh6fD3jA-XKr6YEmcn_QlUi-zbGf5aZJNYTUgUnm3N-CNZUMCz7AXWJBQRH5_62i82ZFAsoymqPX1lXDFi0Y2WYKz1E9QS-WgGI636e4AcLx27Px6YxosurHruqj8z5H-AXwtRs0",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 1
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 2
+      },
+      {
+        "stars": 4,
+        "amount": 4
+      },
+      {
+        "stars": 5,
+        "amount": 8
+      }
+    ],
+    "rating": 4.2,
+    "reviews": 15,
+    "type": [
+      "Conference center",
+      "Academic department"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot",
+          "Wheelchair accessible restroom"
+        ]
+      }
+    ],
+    "address": "100 Washtenaw Ave, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "website": "http://palmercommons.umich.edu/",
+    "phone": "(734) 615-4444",
+    "open_state": "Open · Closes 10 PM",
+    "plus_code": "77J8+8F Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "7 AM–10 PM"
+      },
+      {
+        "saturday": "11 AM–7 PM"
+      },
+      {
+        "sunday": "11 AM–7 PM"
+      },
+      {
+        "monday": "7 AM–10 PM"
+      },
+      {
+        "tuesday": "7 AM–10 PM"
+      },
+      {
+        "wednesday": "7 AM–10 PM"
+      },
+      {
+        "thursday": "7 AM–10 PM"
+      }
+    ],
+    "hours_last_updated": "Updated by phone call 1 week ago",
+    "serpapi_posts_link": "https://serpapi.com/search.json?data_id=0x883cae425cf948f9%3A0xa8a5af8beeebedb7&engine=google_maps_posts",
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"The service was amazing for the ceremony.\""
+        },
+        {
+          "snippet": "\"Nice place for studying and meetings.\""
+        },
+        {
+          "snippet": "\"Absolutely love parking here while visiting University of Michigan Ann Arbor\""
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 3,
+          "description": "Billing itself was gorgeous. The service was amazing for the ceremony.\nHard to navigate. It's not signed very well at all.\nThere are few maps and directions in the parking garage. It took ten minutes to figure out where the building even was, and then another five minutes figure out where the door was to get in.\nNo we are not stupid.",
+          "date": "5 months ago",
+          "date_iso8601": "2026-05-01T15:29:34+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Excellent space for the vendor fairs I attend.   There are several large rooms which can be connected or separate and make for a great  exhibit space.   I regularly attend life science vendor fairs for the university there.",
+          "date": "Edited a year ago",
+          "date_iso8601": "2025-04-24T16:56:09+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "The coffee shop seems always closed nowadays. The food for the catered events is good and it works well for seminars and such. But I do miss being able to stop in for a cup on my way to my car. Parking is convenient and always available, but pricey.",
+          "date": "3 years ago",
+          "date_iso8601": "2023-09-28T15:27:44+00:00"
+        },
+        {
+          "rating": 3,
+          "description": "I mean I guess it's clean and not that noisy but my god it has to be the worst location possible. Not very ideal for a place called Palmer \"Commons\". Very poor food options.",
+          "date": "3 years ago",
+          "date_iso8601": "2023-02-06T03:25:22+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Nice place for studying and meetings. Cafe has short summer hours.",
+          "date": "10 years ago",
+          "date_iso8601": "2016-07-10T21:37:27+00:00"
+        }
+      ]
+    }
+  }
+}
