@@ -23,6 +23,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: { default: "Soothe Spaces", template: "%s · Soothe Spaces" },
   description: "Find quiet, accessible study spaces on campus.",
+  // Proves site ownership to Google Search Console, which Google requires
+  // before it shows "Soothe Spaces" on the sign-in consent screen.
+  verification: {
+    google: "IEv4Pp3p81YD0Q3URrLYhkrvKUzuTdw5Vh5INrkD530",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
