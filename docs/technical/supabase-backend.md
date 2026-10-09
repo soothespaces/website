@@ -254,7 +254,7 @@ the guest's localStorage value:
 ```jsonc
 {
   "theme": "system" | "light" | "dark",
-  "contrast": "system" | "more",
+  "contrast": "system" | "normal" | "more",
   "palette": "default" | "cvd",
   "text": 100 | 112.5 | 125 | 150,
   "motion": "system" | "reduce",

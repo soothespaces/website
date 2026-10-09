@@ -67,6 +67,7 @@ system setting". Tokens live in [`src/app/tokens.css`](../../src/app/tokens.css)
 | `data-contrast` | `normal`, `more` | `prefers-contrast` |
 | `data-palette` | `cvd` | default palette |
 | `data-text` | `112`, `125`, `150` | 100% (browser zoom still applies) |
+| `data-motion` | `reduce` | `prefers-reduced-motion` |
 
 Modes combine freely (dark + high contrast + colorblind-safe + 150% text).
 Writing these attributes before first paint and persisting them is
