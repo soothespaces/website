@@ -260,10 +260,48 @@ west end was gone, that start sat about 16 m off. The fitter now starts ICP
 from the searched pose (area centroids, not vertex means) and fits with and
 without a spur, keeping the higher overlap. The same synthetic check now
 lands at 0.02 m, and a drawn Shapiro outline without the bridge comes back
-at 0.9° instead of 2.1°. `dc_2`, `ulib_1` and `ulib_2` need to be fitted
-again with the new code before these numbers or `dc_2`'s `usable: false` are
-trusted. If Duderstadt still misses after that, it needs the manual corner
-tool or a footprint that follows the wall.
+at 0.9° instead of 2.1°. The re-run is below.
+
+### Re-fit of six sheets, 2026-10-09
+
+The `MPrint fit` workflow fits every sheet from MPrint's own PNGs and commits
+`alignments/`. "Edge" is the median distance from the plan's outer edge to
+FO's line; "overlap" is intersection over union.
+
+| Sheet | Flags | cm/px | Top of sheet | Edge | Within 1 m | Overlap | Usable |
+| :-- | :-- | --: | --: | --: | --: | --: | :-- |
+| Shapiro 1 (`ulib_1`) | | 5.041 | 0.86° W of N | 0.32 m | 98% | 0.97 | yes |
+| Shapiro 2 (`ulib_2`) | | 5.050 | 1.26° W of N | 0.34 m | 89% | 0.95 | yes |
+| Shapiro 3 (`ulib_3`) | `--close 6` | 3.797 | 1.31° W of N | 0.33 m | 92% | 0.96 | yes |
+| Duderstadt 1 (`dc_1`) | `--close 50` | 5.233 | 0.56° E of N | 1.86 m | 35% | 0.79 | no |
+| Duderstadt 2 (`dc_2`) | | 5.479 | 0.61° E of N | 1.99 m | 32% | 0.86 | no |
+| East Quad 1 (`eq_1`) | `--up 90` | 4.872 | 92.9° E of N | 3.37 m | 14% | 0.62 | no |
+
+**Shapiro** is unchanged on floors 1 and 2, within a few centimeters, so the
+fitter fix didn't move the fits that already worked. Floor 3 draws its window
+bands as thin parallel lines with gaps, so the outside leaked into the floor
+and the first fit was 0.25 overlap. `--close 6` seals those gaps before the
+flood fill. Floor 3 also draws the bridge to Hatcher, and the fit keeps
+FO's spur for it. All three floors now agree on the bearing to within half a
+degree. Floor 3 is a larger render (3.8 cm per pixel, not 5.0), which is fine:
+each sheet gets its own corners.
+
+**Duderstadt** went from a 12.6 m miss to about 2 m, and the overlay shows
+why it stops there. FO's footprint is the roof line, a chamfered rectangle
+through the ring of diamond columns outside the building. The walls inside it
+are an octagon. On floor 1 the west wing lands on FO's line, and the columns
+sit on FO's north, east and south edges, so the pose looks right by eye. The
+edge statistics still can't pass, because most of the wall is meters inside
+the roof line by design. `--close 50` bridges the columns on floor 1; it also
+pulls in the cooling-tower enclosure south of the west wing, which costs some
+overlap. These corners are `usable: false` until someone checks them against
+a second reference (the manual tool, or satellite imagery).
+
+**East Quad** doesn't fit. The sheet has east at the top, and FO's polygon is
+a quad to the north and an H to the south, while the sheet's wings don't line
+up with either at any scale the search tries. It may be that FO splits East
+Quad differently from the floor plan, or that floor 1 doesn't cover all of
+FO's outline. It needs the manual corner tool.
 
 Room segmentation is mixed, at dilation 12 and wall 200 (116 regions kept).
 Fully walled rooms come apart: the 2356A–E row and the 2335 lettered rooms are

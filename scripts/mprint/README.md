@@ -32,12 +32,22 @@ python3 vectorize.py ulib_2.png labels/ulib_2.json \
     --corners alignments/ulib_2.json --out out/ --preview out/ulib_2_vector.png
 ```
 
+Two flags cover sheets that don't trace cleanly. `--close N` seals gaps in
+the outer wall before the outside is flood-filled (Shapiro floor 3 needs 6;
+at 50 it also bridges Duderstadt's ring of outer columns). `--up DEG` is a
+rough bearing for the sheet's top when it isn't north (East Quad: 90).
+
+The `MPrint fit` workflow (`.github/workflows/mprint-fit.yml`) downloads every
+sheet listed there, fits it, and commits `alignments/`; the overlays are a run
+artifact. It runs on a GitHub runner because cloud dev sessions can't reach
+mprint.umich.edu. Add a sheet there rather than committing a local fit.
+
 `alignments/` is the committed corner record (one file per sheet, with the
 image sha256). A fit with `usable: false` did not land on the footprint; don't
 drape that sheet from those corners. `footprints/shapiro.json` is FO's Shapiro
 polygon, including the bridge to Hatcher; the fit drops that spur because it
-is not drawn on the sheet. `footprints/duderstadt.json` is the same layer for
-the Duderstadt Center. GeoJSON and preview PNGs are generated, same as the masks.
+is not drawn on the sheet. `footprints/duderstadt.json` and `footprints/east-quad.json`
+are the same layer for those buildings. GeoJSON and preview PNGs are generated, same as the masks.
 
 `room_names.py` classifies a printed number: plain room, lettered extension
 (`2335A`), or a letter class (`2S` stair, `2C` corridor, `2E` elevator, `2V`
