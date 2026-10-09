@@ -113,7 +113,8 @@ export const COMMONS: StudyScene = {
     // stronger ink layer; the peripheral one fades with the vignette.
     ...faded(...rect(1.2, 3.7, 2.4, 1.6), ...benchSeating(1.2, 3.7, 2.4, 1.6, 2)),
     ...highlighted(...rect(8.4, 3.7, 2.4, 1.6), ...benchSeating(8.4, 3.7, 2.4, 1.6, 2)),
-    // Three evenly spaced circular tables, all emitting sound.
+    // Three evenly spaced circular tables. The two inner ones emit sound;
+    // the faded one on the right is quiet.
     roundTable(7.6, 12.6, 1.15),
     ...ringSeating(7.6, 12.6, 1.75, 5, -Math.PI / 2),
     roundTable(15.4, 12.6, 1.15),
@@ -123,7 +124,6 @@ export const COMMONS: StudyScene = {
   sound: [
     { at: [7.6, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
     { at: [15.4, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
-    { at: [23.2, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
   ],
   pin: [8.4, 3.7],
   chipSide: "right",
