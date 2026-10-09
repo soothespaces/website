@@ -12,6 +12,8 @@ Full rationale: [design-system doc](https://claude.ai/code/artifact/eea24662-bb9
   `ring-ring`. No raw palette classes (`bg-zinc-100`) and no `dark:` variants.
 - Names follow shadcn/ui. `primary` is our one accent color. `accent` is shadcn's
   subtle hover surface, not the brand color.
+- `sound` is a decorative color for the sound-wave visualization only. It is
+  never used for text or controls, so it has no contrast requirement.
 - `border-border` is for decorative dividers only. A border that identifies a
   control (inputs, outline buttons) uses `border-input`, which meets 3:1.
 - Never use color alone: destructive actions carry an icon or a verb ("Delete
