@@ -1,0 +1,175 @@
+{
+ "floors": [
+  {
+   "building": "east-quadrangle",
+   "floor": 1,
+   "sheet": "eq_1",
+   "sha256": "dc1f258535a9c337fe040a6755600ac4e03c2cc900b6cacc78f9d9d25f245faa",
+   "corners": [
+    [
+     -83.7343607,
+     42.2738448
+    ],
+    [
+     -83.7344824,
+     42.2720904
+    ],
+    [
+     -83.7356986,
+     42.2721366
+    ],
+    [
+     -83.7355769,
+     42.273891
+    ]
+   ],
+   "usable": false,
+   "fitMedianMeters": 3.371,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "harold-t-and-vivian-b-shapiro-library",
+   "floor": 1,
+   "sheet": "ulib_1",
+   "sha256": "c43ced9c309c4956b7ff5d9cb365f6b8d94cd3c91eb0dffbcbc79e20bf598ba7",
+   "corners": [
+    [
+     -83.737556,
+     42.2760711
+    ],
+    [
+     -83.736842,
+     42.276079
+    ],
+    [
+     -83.7368236,
+     42.2751731
+    ],
+    [
+     -83.7375377,
+     42.2751652
+    ]
+   ],
+   "usable": true,
+   "fitMedianMeters": 0.315,
+   "labeled": false,
+   "geojson": "/floor-plans/harold-t-and-vivian-b-shapiro-library/1.geojson",
+   "rooms": 43
+  },
+  {
+   "building": "harold-t-and-vivian-b-shapiro-library",
+   "floor": 2,
+   "sheet": "ulib_2",
+   "sha256": "8b8fd3e8737e4623f14f30797583a8f5ac54d9186e58a0c09a1c84ffb3693144",
+   "corners": [
+    [
+     -83.7375651,
+     42.2760327
+    ],
+    [
+     -83.7368387,
+     42.2760446
+    ],
+    [
+     -83.7368137,
+     42.2752037
+    ],
+    [
+     -83.7375401,
+     42.2751918
+    ]
+   ],
+   "usable": true,
+   "fitMedianMeters": 0.343,
+   "labeled": true,
+   "geojson": "/floor-plans/harold-t-and-vivian-b-shapiro-library/2.geojson",
+   "rooms": 49
+  },
+  {
+   "building": "harold-t-and-vivian-b-shapiro-library",
+   "floor": 3,
+   "sheet": "ulib_3",
+   "sha256": "b83904be07cb36e86788348aa9e9fd6603a23bbaa6ff60ce0b297169b70fe20e",
+   "corners": [
+    [
+     -83.7377339,
+     42.2761726
+    ],
+    [
+     -83.73672,
+     42.2761898
+    ],
+    [
+     -83.7366841,
+     42.2750303
+    ],
+    [
+     -83.737698,
+     42.2750132
+    ]
+   ],
+   "usable": true,
+   "fitMedianMeters": 0.328,
+   "labeled": false,
+   "geojson": "/floor-plans/harold-t-and-vivian-b-shapiro-library/3.geojson",
+   "rooms": 104
+  },
+  {
+   "building": "james-and-anne-duderstadt-center",
+   "floor": 1,
+   "sheet": "dc_1",
+   "sha256": "786123856a696e4e75e74026770b7b19623ca76b9bc119d433a19a4394cb8743",
+   "corners": [
+    [
+     -83.717323,
+     42.2918125
+    ],
+    [
+     -83.7144484,
+     42.2917917
+    ],
+    [
+     -83.7144662,
+     42.2904436
+    ],
+    [
+     -83.7173409,
+     42.2904644
+    ]
+   ],
+   "usable": false,
+   "fitMedianMeters": 1.864,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "james-and-anne-duderstadt-center",
+   "floor": 2,
+   "sheet": "dc_2",
+   "sha256": "78beac2b048872b92faa9a5ac60eb5b5addc078f3d6bec77676f933663ebe4ee",
+   "corners": [
+    [
+     -83.717291,
+     42.2917574
+    ],
+    [
+     -83.7145404,
+     42.2917356
+    ],
+    [
+     -83.7145573,
+     42.2905691
+    ],
+    [
+     -83.7173079,
+     42.2905909
+    ]
+   ],
+   "usable": false,
+   "fitMedianMeters": 1.985,
+   "labeled": false,
+   "geojson": null
+  }
+ ]
+}
