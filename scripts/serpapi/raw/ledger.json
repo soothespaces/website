@@ -38,5 +38,18 @@
     "status": "Success",
     "error": null,
     "file": "responses/michigan-union.1.json"
+  },
+  {
+    "at": "2026-10-09T19:58:40.641Z",
+    "slug": "harold-t-and-vivian-b-shapiro-library",
+    "params": {
+      "type": "place",
+      "data": "!4m5!3m4!1s0x883cae44f137b5cd:0x8457164e22e57e03!8m2!3d42.275614999999995!4d-83.7371826"
+    },
+    "http_status": 200,
+    "search_id": "6ac94770fbbebb35a92b3fb0",
+    "status": "Success",
+    "error": null,
+    "file": "responses/harold-t-and-vivian-b-shapiro-library.3.json"
   }
 ]
