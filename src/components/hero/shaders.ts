@@ -76,7 +76,7 @@ void main() {
 
 // Scene space, drawn once per scene. Everything here is static, so the whole
 // field is baked: the smooth-min distance to the sound sources (packed into RG)
-// and how much of their sound gets past the walls (B).
+// and the sound intensity that reaches each point (B, gamma encoded).
 export const FIELD_FRAGMENT = /* glsl */ `#version 300 es
 precision highp float;
 ${SEGMENTS}
@@ -95,6 +95,9 @@ const float SHADOW_SOFTNESS = 0.3; // the lower, the sharper
 // blocks either source the blend shrinks to nothing, so fields only merge
 // where both can be heard, never through a wall.
 const float BLEND = 1.6;
+// How much intensity still comes through a wall.
+const float LEAK = 0.06;
+const float GAMMA = 2.2;
 
 float sourceDist(vec2 p, int i) {
   float r = uSourceRounding[i];
@@ -140,6 +143,7 @@ void main() {
   vec2 p = uWorldMin + vUv * uWorldSize;
   float d = 1e4;
   float shadow = 1.0;
+  float intensity = 0.0;
   for (int i = 0; i < SOURCE_COUNT; i++) {
     float di = max(sourceDist(p, i), 0.0);
     float si = heard(p, i);
@@ -148,8 +152,18 @@ void main() {
     float h = clamp(0.5 + 0.5 * (d - di) / k, 0.0, 1.0);
     d = mix(d, di, h) - k * h * (1.0 - h);
     shadow = mix(shadow, si, h);
+
+    // Inverse square law, measured from the source's center and normalized
+    // to 1 at its edge. Uncorrelated sources add intensities.
+    float r0 = max(uSourceBox[i].z, uSourceBox[i].w);
+    float spread = r0 / (r0 + di);
+    intensity += spread * spread * mix(LEAK, 1.0, si);
   }
-  fragColor = vec4(encode(max(d, 0.0)), shadow, 1.0);
+  fragColor = vec4(
+    encode(max(d, 0.0)),
+    pow(clamp(intensity, 0.0, 1.0), 1.0 / GAMMA),
+    1.0
+  );
 }
 `;
 
@@ -175,10 +189,6 @@ out vec4 fragColor;
 const float SPACING = 0.7; // meters between rings
 const float SPEED = 0.55; // meters per second
 const float RING_WIDTH = 0.03;
-// Falls off like a light: 1 / (constant + linear * d + quadratic * d^2).
-const vec3 ATTENUATION = vec3(1.0, 0.18, 0.02);
-// How much still comes through a wall.
-const float LEAK = 0.06;
 
 float hash(float n) {
   return fract(sin(n * 91.3458) * 47453.5453);
@@ -224,7 +234,8 @@ void main() {
 
   vec2 sample_ = field(p);
   float d = sample_.x;
-  float shadow = sample_.y;
+  // Already gamma encoded, so linear intensity reads as perceived brightness.
+  float level = sample_.y;
   vec2 fromMin = p - uBounds.xy;
   vec2 fromMax = uBounds.zw - p;
   float vignette = min(
@@ -239,9 +250,7 @@ void main() {
   float line = 1.0 - smoothstep(halfWidth, halfWidth + aa * 1.2, abs(x - ring) * SPACING);
 
   float strength = mix(0.6, 1.0, hash(ring + 17.0));
-  float falloff = smoothstep(0.0, 0.4, d)
-    / (ATTENUATION.x + ATTENUATION.y * d + ATTENUATION.z * d * d);
-  float ringAlpha = line * strength * falloff * mix(LEAK, 1.0, shadow)
+  float ringAlpha = line * strength * smoothstep(0.0, 0.4, d) * level
     * uAlpha.w * mask * vignette;
 
   // A faint one-meter dot grid on the floor of the room itself.
