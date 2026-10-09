@@ -25,7 +25,7 @@ const TYPE_SCALE = [
 
 export default function StyleGuidePage() {
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-10 px-4 py-10">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-10 px-4 py-10">
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-semibold">Style guide</h1>
         <p className="text-muted-foreground">
@@ -71,7 +71,7 @@ export default function StyleGuidePage() {
           <LogoMark className="h-16 w-auto" />
           <div className="flex items-center gap-3">
             <LogoMark className="h-9 w-auto" />
-            <Wordmark className="h-6 w-auto" />
+            <Wordmark className="h-7.5 w-auto" />
           </div>
         </div>
       </section>
@@ -125,6 +125,6 @@ export default function StyleGuidePage() {
           />
         </label>
       </section>
-    </main>
+    </div>
   );
 }

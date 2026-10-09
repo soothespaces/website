@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { DropdownMenu } from "radix-ui";
 import { loginHref } from "@/lib/auth/paths";
 import { useSession } from "@/lib/auth/use-session";
+import { ROUTES } from "@/lib/site";
 
 // Header control: "Sign in" for guests, an account menu once signed in.
 export function UserMenu() {
@@ -53,6 +54,14 @@ export function UserMenu() {
             )}
           </div>
           <DropdownMenu.Separator className="my-1 h-px bg-border" />
+          <DropdownMenu.Item asChild>
+            <Link
+              href={ROUTES.accountPreferences}
+              className="block rounded-sm px-3 py-2 outline-none data-[highlighted]:bg-accent"
+            >
+              Account preferences
+            </Link>
+          </DropdownMenu.Item>
           <form action="/auth/signout" method="post">
             <DropdownMenu.Item asChild>
               <button
