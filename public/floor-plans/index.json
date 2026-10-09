@@ -2,6 +2,7 @@
  "floors": [
   {
    "building": "east-quadrangle",
+   "buildingName": "East Quad",
    "floor": 1,
    "sheet": "eq_1",
    "sha256": "dc1f258535a9c337fe040a6755600ac4e03c2cc900b6cacc78f9d9d25f245faa",
@@ -23,6 +24,10 @@
      42.273891
     ]
    ],
+   "width": 4014,
+   "height": 2059,
+   "footprint": "/floor-plans/footprints/east-quad.json",
+   "aligned": "auto",
    "usable": false,
    "fitMedianMeters": 3.371,
    "labeled": false,
@@ -30,6 +35,7 @@
   },
   {
    "building": "harold-t-and-vivian-b-shapiro-library",
+   "buildingName": "Shapiro Library",
    "floor": 1,
    "sheet": "ulib_1",
    "sha256": "c43ced9c309c4956b7ff5d9cb365f6b8d94cd3c91eb0dffbcbc79e20bf598ba7",
@@ -51,6 +57,10 @@
      42.2751652
     ]
    ],
+   "width": 1167,
+   "height": 2001,
+   "footprint": "/floor-plans/footprints/shapiro.json",
+   "aligned": "auto",
    "usable": true,
    "fitMedianMeters": 0.315,
    "labeled": false,
@@ -59,6 +69,7 @@
   },
   {
    "building": "harold-t-and-vivian-b-shapiro-library",
+   "buildingName": "Shapiro Library",
    "floor": 2,
    "sheet": "ulib_2",
    "sha256": "8b8fd3e8737e4623f14f30797583a8f5ac54d9186e58a0c09a1c84ffb3693144",
@@ -80,6 +91,10 @@
      42.2751918
     ]
    ],
+   "width": 1185,
+   "height": 1854,
+   "footprint": "/floor-plans/footprints/shapiro.json",
+   "aligned": "auto",
    "usable": true,
    "fitMedianMeters": 0.343,
    "labeled": true,
@@ -88,6 +103,7 @@
   },
   {
    "building": "harold-t-and-vivian-b-shapiro-library",
+   "buildingName": "Shapiro Library",
    "floor": 3,
    "sheet": "ulib_3",
    "sha256": "b83904be07cb36e86788348aa9e9fd6603a23bbaa6ff60ce0b297169b70fe20e",
@@ -109,6 +125,10 @@
      42.2750132
     ]
    ],
+   "width": 2200,
+   "height": 3400,
+   "footprint": "/floor-plans/footprints/shapiro.json",
+   "aligned": "auto",
    "usable": true,
    "fitMedianMeters": 0.328,
    "labeled": true,
@@ -117,6 +137,7 @@
   },
   {
    "building": "james-and-anne-duderstadt-center",
+   "buildingName": "Duderstadt Center",
    "floor": 1,
    "sheet": "dc_1",
    "sha256": "786123856a696e4e75e74026770b7b19623ca76b9bc119d433a19a4394cb8743",
@@ -138,6 +159,10 @@
      42.2904644
     ]
    ],
+   "width": 4524,
+   "height": 2868,
+   "footprint": "/floor-plans/footprints/duderstadt.json",
+   "aligned": "auto",
    "usable": false,
    "fitMedianMeters": 1.864,
    "labeled": false,
@@ -145,6 +170,7 @@
   },
   {
    "building": "james-and-anne-duderstadt-center",
+   "buildingName": "Duderstadt Center",
    "floor": 2,
    "sheet": "dc_2",
    "sha256": "78beac2b048872b92faa9a5ac60eb5b5addc078f3d6bec77676f933663ebe4ee",
@@ -166,6 +192,10 @@
      42.2905909
     ]
    ],
+   "width": 4134,
+   "height": 2370,
+   "footprint": "/floor-plans/footprints/duderstadt.json",
+   "aligned": "auto",
    "usable": false,
    "fitMedianMeters": 1.985,
    "labeled": false,
