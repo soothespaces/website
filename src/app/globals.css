@@ -32,6 +32,18 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/*
+ * The page column. Unlayered on purpose: Tailwind utilities live in
+ * @layer utilities, and unlayered CSS wins, so max-w-* or px-* on the same
+ * element cannot pull a page off --page-width / --page-gutter.
+ */
+.page-width {
+  width: 100%;
+  max-width: var(--page-width);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+
 @layer base {
   body {
     background: var(--background);

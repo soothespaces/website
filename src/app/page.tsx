@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FootnoteRef } from "@/components/footnote-ref";
+import { PageWidth } from "@/components/page-width";
 import { LandingHero } from "@/components/hero/landing-hero";
 import { COMMONS } from "@/components/hero/scenes";
 import { ROUTES } from "@/lib/site";
@@ -69,7 +70,7 @@ export default function Home() {
         </div>
       </LandingHero>
 
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-4 py-12 sm:py-16">
+      <PageWidth className="flex flex-col gap-16 py-12 sm:py-16">
         <section aria-labelledby="conditions" className="flex flex-col gap-6">
           <h2 id="conditions" className="text-2xl">
             Filter by how a space feels
@@ -115,7 +116,7 @@ export default function Home() {
           <h2 id="privacy" className="text-2xl">
             Anonymous by design
           </h2>
-          <p className="max-w-2xl text-muted-foreground">
+          <p className="text-muted-foreground">
             Check-ins describe the space, never the person. Nobody can see who
             checked in where; everyone sees the same totals.
           </p>
@@ -149,7 +150,7 @@ export default function Home() {
             </Link>
           </div>
         </section>
-      </div>
+      </PageWidth>
     </>
   );
 }
