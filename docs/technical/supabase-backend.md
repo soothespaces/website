@@ -269,6 +269,45 @@ the guest's localStorage value:
 Rows are created on first save (upsert from the client), not by a trigger on
 `auth.users`, so a bug here can never block sign-in.
 
+### Opening hours and Google places (added 2026-10-09)
+
+Migration `20261009140000_hours_and_google.sql`.
+
+- **`public.spaces.description`:** the "About the space" text from each Library
+  space page (plain text, blank-line paragraphs, `- ` list items). `summary` stays the
+  one-line teaser.
+- **`public.opening_hours`:** one row per (period, weekday, interval) for a building or
+  a space. A period is a date range with a `label` ("Fall and winter semester hours",
+  "Thanksgiving break hours"). For a date, use the rows of the **narrowest period that
+  covers it and lists that weekday** (ties: later `valid_from`); a weekday can have
+  several intervals. `opens`/`closes` null means closed; `closes <= opens` ends the next
+  day; `00:00`–`24:00` is all day. `access` is `public` or `mcard` for card-only hours.
+  The seed loads the Library CMS hours for every Library space and for the buildings
+  that are wholly libraries (Shapiro, Hatcher, Taubman HSL), dropping periods that ended
+  before the snapshot. Non-library buildings get hours from Google later (`source = 'google'`).
+  Example lookup:
+
+  ```sql
+  select h.* from public.opening_hours h
+  where h.building_slug = $1 and $2::date between h.valid_from and h.valid_until
+    and h.weekday = extract(dow from $2::date)
+    and (h.valid_until - h.valid_from, h.valid_from) = (
+      select g.valid_until - g.valid_from, g.valid_from from public.opening_hours g
+      where g.building_slug = $1 and $2::date between g.valid_from and g.valid_until
+        and g.weekday = extract(dow from $2::date)
+      order by 1, 2 desc limit 1);
+  ```
+- **`public.google_places`:** one Google Maps place per building from SerpApi's place
+  results: ids (`place_id`, `data_id`, `data_cid`), Google's name/address/position to
+  check the match, `types`, `rating`, `review_count`, `website`, `phone`, `located_in`,
+  `typical_time_spent`, `hours_last_updated`, `extensions` and `unsupported_extensions`
+  (attribute lists by category, e.g. `accessibility`), and `review_topics` (keyword +
+  mention count only, never reviewer names or text), plus `fetched_at`.
+- **`public.building_popular_times`:** Google's typical 0–100 busyness per building,
+  weekday and hour. Hours Google doesn't report have no row.
+
+All three are public read with no client writes, like `buildings`.
+
 ## RLS and grants
 
 Every table in `public` has RLS enabled. Policies use `(select auth.uid())` rather
@@ -751,13 +790,12 @@ MVP tables beyond what's above.
   nothing stored. "Recent check-ins" is `check_in_summary(..., since => '3 hours')`.
   Weekday × hour patterns (P2) are a `check_in_patterns()` function over the same
   table. Simulated demo data goes in a separate seed file, never production.
-  If the team adopts Google popular times via SerpApi
-  ([Data Sources § 11](data-sources.md#11-serpapi-google-maps-data-through-a-paid-scraping-api-researched-2026-10-08)),
-  a monthly script fills `public.building_popular_times` (`building_slug`,
-  `weekday` 0–6, `hour` 0–23, `busyness` 0–100, `fetched_at`; PK
-  `(building_slug, weekday, hour)`; public read) plus a `google_place_id` column on
-  `buildings`. The app reads only this table, never SerpApi. The key stays in the
-  script's environment as `SERPAPI_API_KEY`, never `NEXT_PUBLIC_*`.
+  The tables for Google popular times via SerpApi
+  ([Data Sources § 11](data-sources.md#11-serpapi-google-maps-data-through-a-paid-scraping-api-researched-2026-10-08))
+  exist since 2026-10-09 (see [Opening hours and Google places](#opening-hours-and-google-places)):
+  a monthly script, not yet written, fills `public.google_places` and
+  `public.building_popular_times`. The app reads only these tables, never SerpApi.
+  The key stays in the script's environment as `SERPAPI_API_KEY`, never `NEXT_PUBLIC_*`.
 - **WP2 needs profile and sync:** already covered by `user_settings.settings.needs`.
 - **WP3 search:** across about 60 spaces and 470 buildings, client-side filtering is
   enough. Add `pg_trgm` indexes only if search moves server-side.

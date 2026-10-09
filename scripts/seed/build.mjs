@@ -30,6 +30,13 @@ const official = (await readJson("raw/umich-buildings.json")).pois;
 const library = (await readJson("raw/umich-library-fass.json")).spaces;
 const mguideSpaces = await readJson("raw/mguide-study-spots.json");
 const libcalPages = await readJson("raw/libcal-items.json");
+const libraryCms = await readJson("raw/umich-library-cms.json");
+const librarySpacePages = await readJson("raw/umich-library-space-pages.json");
+// Periods that ended before the snapshot was taken are dropped. Using the
+// snapshot date, not today, keeps the output reproducible for the CI check.
+const snapshotDate = (await readFile(join(HERE, "raw", "SOURCES.md"), "utf8")).match(
+  /Fetched (\d{4}-\d{2}-\d{2})/,
+)[1];
 const overrides = await readJson("overrides.json");
 
 // ---------------------------------------------------------------- helpers
@@ -182,6 +189,31 @@ const fail = (message) => {
   throw new Error(message);
 };
 
+// "About the space" from each Library space page, as plain text: paragraphs
+// separated by blank lines, list items as "- ". The page's trailing "Other
+// study spaces on floor N" section is dropped; it's about other spaces.
+const ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', "#39": "'", nbsp: " " };
+const htmlText = (html) =>
+  html
+    .replace(/<li[^>]*>/g, "\n- ")
+    .replace(/<\/(p|ul|ol|h\d)>/g, "\n\n")
+    .replace(/<br\s*\/?>/g, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (_, e) => ENTITIES[e])
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+    .split("\n")
+    .map((line) => line.replace(/\s+/g, " ").trim())
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+const descriptionBySlug = new Map(
+  librarySpacePages.map((page) => {
+    const prose = page.main?.match(/<div class="prose ?"[^>]*>([\s\S]*?)<\/div>\s*<div class="find-another-link"/)?.[1];
+    const about = prose?.split(/<h2[\s>]/)[0];
+    return [page.slug, about ? htmlText(about) || null : null];
+  }),
+);
+
 const librarySpaces = library.map((s) => {
   const buildingSlug =
     overrides.libraryBuildings[s.building] ??
@@ -194,6 +226,7 @@ const librarySpaces = library.map((s) => {
     building_slug: buildingSlug,
     name: clean(s.title),
     summary: clean(s.bodySummary),
+    description: descriptionBySlug.get(s.slug) ?? null,
     floor: parseFloor(floorLabel),
     floor_label: floorLabel,
     noise_level: noise,
@@ -214,6 +247,7 @@ const mguideRows = mguideSpaces.map((s) => ({
   building_slug: s.buildingSlug,
   name: clean(s.name),
   summary: null,
+  description: null,
   floor: parseFloor(s.floor),
   floor_label: clean(s.floor),
   noise_level:
@@ -327,6 +361,95 @@ for (const grouping of unlistedGroupings) {
   }
 }
 
+// ---------------------------------------------------------------- opening hours
+
+// The Library CMS stores hours as periods (field_date_range) with one entry per
+// weekday: start/end as HHMM integers, or a comment such as "24 hours",
+// "Opens at 10am", "Closes at 6pm" or "Closed". "Opens at" and "Closes at" are
+// the edges of a stretch of 24-hour days, so they run to or from midnight.
+const hhmm = (n) => `${String(Math.floor(n / 100)).padStart(2, "0")}:${String(n % 100).padStart(2, "0")}`;
+const clock = (text, fallbackMeridiem) => {
+  const m = text.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/i) ?? fail(`Unreadable time "${text}"`);
+  let hour = Number(m[1]) % 12;
+  const meridiem = (m[3] ?? fallbackMeridiem)?.toLowerCase() ?? fail(`No am/pm in "${text}"`);
+  if (meridiem === "pm") hour += 12;
+  return `${String(hour).padStart(2, "0")}:${m[2] ?? "00"}`;
+};
+
+const libraryDay = (entry) => {
+  const comment = (entry.comment ?? "").trim().toLowerCase();
+  if (/^closed|^virtual only$|^by appointment$/.test(comment)) return [];
+  if (comment === "24 hours" || comment === "open 24 hours") return [{ opens: "00:00", closes: "24:00" }];
+  let m = comment.match(/^opens at (.+)$/);
+  if (m) return [{ opens: clock(m[1]), closes: "24:00" }];
+  m = comment.match(/^closes at (.+)$/);
+  if (m) {
+    const closes = clock(m[1]);
+    return [{ opens: "00:00", closes: closes === "00:00" ? "24:00" : closes }];
+  }
+  if (comment) {
+    // e.g. "11am - 1pm, 2 - 6pm"
+    return comment.split(",").map((range) => {
+      const [from, to] = range.split("-").map((part) => part.trim());
+      if (!to) fail(`Unreadable Library hours comment "${entry.comment}"`);
+      const meridiem = to.match(/(am|pm)$/)?.[1];
+      return { opens: clock(from, meridiem), closes: clock(to) };
+    });
+  }
+  if (entry.all_day) return [{ opens: "00:00", closes: "24:00" }];
+  if (entry.starthours == null || entry.endhours == null) fail(`Library hours entry without times: ${JSON.stringify(entry)}`);
+  return [{ opens: hhmm(entry.starthours), closes: hhmm(entry.endhours) }];
+};
+
+const cmsHours = new Map(
+  [...libraryCms.buildings.hours, ...libraryCms.locations.hours].map((p) => [p.id, p]),
+);
+const cmsBuildingByTitle = new Map(libraryCms.buildings.places.map((b) => [b.title, b]));
+const PERIOD_LABEL = (type) =>
+  type
+    .replace(/^paragraph--/, "")
+    .replace(/_/g, " ")
+    .replace(/^\w/, (c) => c.toUpperCase());
+
+const libraryHoursRows = (title, subject) => {
+  const building = cmsBuildingByTitle.get(title) ?? fail(`No Library CMS building "${title}"`);
+  const rows = [];
+  for (const id of building.hours) {
+    const period = cmsHours.get(id);
+    const range = period?.field_date_range;
+    if (!range?.value || !range.end_value || range.end_value < snapshotDate) continue;
+    for (const entry of period.field_hours_open ?? []) {
+      const intervals = libraryDay(entry);
+      const base = {
+        ...subject,
+        label: PERIOD_LABEL(period.type),
+        valid_from: range.value,
+        valid_until: range.end_value,
+        weekday: entry.day,
+        access: "public",
+        source: "um_library",
+        source_url: `${LIBRARY_ORIGIN}${building.path ?? ""}`,
+      };
+      if (!intervals.length) rows.push({ ...base, opens: null, closes: null });
+      for (const interval of intervals) rows.push({ ...base, ...interval });
+    }
+  }
+  return rows;
+};
+
+const openingHours = [
+  ...library.map((s) =>
+    libraryHoursRows(s.building, { building_slug: null, space_slug: s.slug.split("/").filter(Boolean).pop() }),
+  ),
+  ...Object.entries(overrides.libraryHoursBuildings).map(([title, slug]) =>
+    libraryHoursRows(title, { building_slug: slug, space_slug: null }),
+  ),
+].flat();
+for (const row of openingHours) {
+  if (row.building_slug && !buildingSlugs.has(row.building_slug)) fail(`Hours for unknown building ${row.building_slug}`);
+  if (row.opens !== null && row.opens === row.closes) fail(`Empty interval ${JSON.stringify(row)}`);
+}
+
 // ---------------------------------------------------------------- SQL
 
 const BUILDING_COLUMNS = [
@@ -335,7 +458,7 @@ const BUILDING_COLUMNS = [
   "elevator_access", "extra",
 ];
 const SPACE_COLUMNS = [
-  "slug", "building_slug", "name", "summary", "floor", "floor_label",
+  "slug", "building_slug", "name", "summary", "description", "floor", "floor_label",
   "noise_level", "features", "capacity", "image_url", "image_alt", "source",
   "source_url", "waitz_id", "is_listed",
 ];
@@ -359,6 +482,22 @@ const spaceValues = (s) =>
     return sql(s[c]);
   }).join(", ");
 
+const HOURS_COLUMNS = [
+  "space_slug", "building_slug", "label", "valid_from", "valid_until", "weekday",
+  "opens", "closes", "access", "source", "source_url",
+];
+const hoursValues = (row) => HOURS_COLUMNS.map((c) => sql(row[c])).join(", ");
+
+// opening_hours rows have no natural key, so the Library's rows are replaced
+// wholesale; rows from other sources are left alone.
+const hoursSql = [
+  "delete from public.opening_hours where source = 'um_library';",
+  "insert into public.opening_hours (building_slug, space_id, label, valid_from, valid_until, weekday, opens, closes, access, source, source_url)",
+  "select v.building_slug, s.id, v.label, v.valid_from::date, v.valid_until::date, v.weekday::smallint, v.opens::time, v.closes::time, v.access, v.source, v.source_url",
+  `from (values\n${openingHours.map((r) => `  (${hoursValues(r)})`).join(",\n")}\n) as v (${HOURS_COLUMNS.join(", ")})`,
+  "left join public.spaces s on s.slug = v.space_slug;",
+].join("\n");
+
 const bookableValues = (item) => BOOKABLE_COLUMNS.map((c) => sql(item[c])).join(", ");
 
 const upsert = (table, columns, rows, values, key) =>
@@ -380,7 +519,7 @@ const header = `-- Generated by scripts/seed/build.mjs from scripts/seed/raw/ (s
 -- hand: change overrides.json or re-fetch, then rebuild.
 --
 -- ${buildings.length} buildings (${buildings.filter((b) => b.footprint).length} with footprints), ${spaces.length} spaces (${listedCount} listed),
--- ${bookableItems.length} LibCal bookable items (${listedBookable} listed).
+-- ${bookableItems.length} LibCal bookable items (${listedBookable} listed), ${openingHours.length} Library opening-hours rows.
 -- Idempotent: safe to run again against a database that already has the rows.
 `;
 
@@ -393,6 +532,8 @@ await writeFile(
     upsert("buildings", BUILDING_COLUMNS, buildings, buildingValues, "slug"),
     "",
     upsert("spaces", SPACE_COLUMNS, spaces, spaceValues, "slug"),
+    "",
+    hoursSql,
     "",
     upsert(
       "bookable_items",
@@ -409,5 +550,5 @@ await writeFile(
 
 console.log(
   `Wrote ${OUT}: ${buildings.length} buildings, ${spaces.length} spaces (${listedCount} listed), ` +
-    `${bookableItems.length} bookable items (${listedBookable} listed)`,
+    `${bookableItems.length} bookable items (${listedBookable} listed), ${openingHours.length} opening-hours rows`,
 );

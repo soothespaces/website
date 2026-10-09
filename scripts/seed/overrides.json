@@ -63,5 +63,11 @@
     "Anatomage Table",
     "Anatomage Table On",
     "Microforms"
-  ]
+  ],
+  "_libraryHoursBuildings": "Library CMS buildings whose hours are the whole building's hours, -> buildings.slug. Every Library study space also gets its own library's hours.",
+  "libraryHoursBuildings": {
+    "Shapiro Library": "harold-t-and-vivian-b-shapiro-library",
+    "Hatcher Library North": "harlan-h-hatcher-graduate-library",
+    "Taubman Health Sciences Library": "alfred-a-taubman-health-sciences-library"
+  }
 }
