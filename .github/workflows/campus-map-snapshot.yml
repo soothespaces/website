@@ -1,0 +1,51 @@
+# Refreshes the committed campus map snapshots in scripts/campus-map/raw/ by
+# running scripts/campus-map/fetch.mjs on a GitHub runner (cloud dev sessions
+# can't reach gisapi.fo.umich.edu) and committing any change back to the
+# branch. Run it from the Actions tab, or push a change to fetch.mjs on a
+# feature branch.
+name: Campus map snapshot
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - "scripts/campus-map/fetch.mjs"
+      - ".github/workflows/campus-map-snapshot.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: campus-map-snapshot-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: node scripts/campus-map/fetch.mjs
+
+      - name: Report snapshot sizes
+        run: du -ah scripts/campus-map/raw | sort -h
+
+      - name: Commit refreshed snapshots
+        run: |
+          git add scripts/campus-map/raw
+          if git diff --cached --quiet; then
+            echo "Snapshots unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh campus map snapshots"
+          git push
