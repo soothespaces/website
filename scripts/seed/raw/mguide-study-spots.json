@@ -1,0 +1,391 @@
+[
+  {
+    "slug": "shapiro-library-1f",
+    "name": "Shapiro Library — 1st Floor",
+    "buildingSlug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": "1st Floor",
+    "lat": 42.2757,
+    "lng": -83.73721,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "printing",
+      "scanners"
+    ],
+    "noiseLevel": "quiet",
+    "capacity": 120,
+    "waitzId": "shapiro-1"
+  },
+  {
+    "slug": "shapiro-library-2f",
+    "name": "Shapiro Library — 2nd Floor",
+    "buildingSlug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": "2nd Floor",
+    "lat": 42.2757,
+    "lng": -83.73721,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "groupRooms",
+      "whiteboards"
+    ],
+    "noiseLevel": "moderate",
+    "capacity": 80,
+    "waitzId": "shapiro-2"
+  },
+  {
+    "slug": "shapiro-library-basement",
+    "name": "Shapiro Library — Basement (UGLI)",
+    "buildingSlug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": "Basement",
+    "lat": 42.2757,
+    "lng": -83.73721,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "computers",
+      "printing",
+      "groupRooms"
+    ],
+    "noiseLevel": "social",
+    "capacity": 200,
+    "waitzId": "ugli-basement"
+  },
+  {
+    "slug": "hatcher-library-north-reading",
+    "name": "Hatcher Graduate Library — North Reading Room",
+    "buildingSlug": "harlan-h-hatcher-graduate-library",
+    "floor": "2nd Floor",
+    "lat": 42.27615,
+    "lng": -83.73813,
+    "amenities": [
+      "wifi",
+      "outlets"
+    ],
+    "noiseLevel": "quiet",
+    "capacity": 60,
+    "waitzId": null
+  },
+  {
+    "slug": "hatcher-library-south-reading",
+    "name": "Hatcher Graduate Library — South Reading Room",
+    "buildingSlug": "harlan-h-hatcher-graduate-library",
+    "floor": "3rd Floor",
+    "lat": 42.27615,
+    "lng": -83.73813,
+    "amenities": [
+      "wifi",
+      "outlets"
+    ],
+    "noiseLevel": "quiet",
+    "capacity": 40,
+    "waitzId": null
+  },
+  {
+    "slug": "hatcher-library-reference",
+    "name": "Hatcher Graduate Library — Reference Room",
+    "buildingSlug": "harlan-h-hatcher-graduate-library",
+    "floor": "1st Floor",
+    "lat": 42.27615,
+    "lng": -83.73813,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "computers",
+      "printing",
+      "scanners"
+    ],
+    "noiseLevel": "moderate",
+    "capacity": 80,
+    "waitzId": null
+  },
+  {
+    "slug": "art-architecture-library",
+    "name": "Art & Architecture Library",
+    "buildingSlug": "art-and-architecture-building",
+    "floor": "2nd Floor",
+    "lat": 42.28963,
+    "lng": -83.71692,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "computers",
+      "printing",
+      "scanners"
+    ],
+    "noiseLevel": "quiet",
+    "capacity": 50,
+    "waitzId": null
+  },
+  {
+    "slug": "askwith-media-library",
+    "name": "Askwith Media Library",
+    "buildingSlug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": "1st Floor",
+    "lat": 42.2757,
+    "lng": -83.73721,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "computers"
+    ],
+    "noiseLevel": "quiet",
+    "capacity": 30,
+    "waitzId": null
+  },
+  {
+    "slug": "taubman-health-sciences-library",
+    "name": "Taubman Health Sciences Library",
+    "buildingSlug": "alfred-a-taubman-health-sciences-library",
+    "floor": "1st Floor",
+    "lat": 42.2836,
+    "lng": -83.73449,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "computers",
+      "printing",
+      "scanners",
+      "groupRooms"
+    ],
+    "noiseLevel": "quiet",
+    "capacity": 100,
+    "waitzId": null
+  },
+  {
+    "slug": "bentley-historical-library",
+    "name": "Bentley Historical Library — Reading Room",
+    "buildingSlug": "alvin-m-arvella-d-bentley-historical-library",
+    "floor": "1st Floor",
+    "lat": 42.28956,
+    "lng": -83.71242,
+    "amenities": [
+      "wifi",
+      "outlets"
+    ],
+    "noiseLevel": "quiet",
+    "capacity": 25,
+    "waitzId": null
+  },
+  {
+    "slug": "gerald-ford-library",
+    "name": "Gerald Ford Presidential Library — Reading Room",
+    "buildingSlug": "gerald-r-ford-library-1",
+    "floor": "1st Floor",
+    "lat": 42.28852,
+    "lng": -83.71227,
+    "amenities": [
+      "wifi",
+      "outlets"
+    ],
+    "noiseLevel": "quiet",
+    "capacity": 20,
+    "waitzId": null
+  },
+  {
+    "slug": "law-library-reading-room",
+    "name": "Law Library — Reading Room",
+    "buildingSlug": "william-w-cook-legal-research-library",
+    "floor": "Main Floor",
+    "lat": 42.27378,
+    "lng": -83.73926,
+    "amenities": [
+      "wifi",
+      "outlets"
+    ],
+    "noiseLevel": "quiet",
+    "capacity": 150,
+    "waitzId": null
+  },
+  {
+    "slug": "duderstadt-center-main",
+    "name": "Duderstadt Center — Main Study Area",
+    "buildingSlug": "james-and-anne-duderstadt-center",
+    "floor": "1st Floor",
+    "lat": 42.29117,
+    "lng": -83.71602,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "computers",
+      "printing",
+      "whiteboards"
+    ],
+    "noiseLevel": "moderate",
+    "capacity": 150,
+    "waitzId": "duderstadt-1"
+  },
+  {
+    "slug": "duderstadt-center-2f",
+    "name": "Duderstadt Center — 2nd Floor Media Center",
+    "buildingSlug": "james-and-anne-duderstadt-center",
+    "floor": "2nd Floor",
+    "lat": 42.29117,
+    "lng": -83.71602,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "computers",
+      "groupRooms",
+      "whiteboards"
+    ],
+    "noiseLevel": "moderate",
+    "capacity": 80,
+    "waitzId": "duderstadt-2"
+  },
+  {
+    "slug": "duderstadt-center-3f",
+    "name": "Duderstadt Center — 3rd Floor Quiet Study",
+    "buildingSlug": "james-and-anne-duderstadt-center",
+    "floor": "3rd Floor",
+    "lat": 42.29117,
+    "lng": -83.71602,
+    "amenities": [
+      "wifi",
+      "outlets"
+    ],
+    "noiseLevel": "quiet",
+    "capacity": 60,
+    "waitzId": "duderstadt-3"
+  },
+  {
+    "slug": "pierpont-commons-study",
+    "name": "Pierpont Commons — Study Lounge",
+    "buildingSlug": "wilbur-k-pierpont-commons",
+    "floor": "2nd Floor",
+    "lat": 42.2912,
+    "lng": -83.71751,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "whiteboards"
+    ],
+    "noiseLevel": "social",
+    "capacity": 60,
+    "waitzId": null
+  },
+  {
+    "slug": "michigan-union-study",
+    "name": "Michigan Union — 2nd Floor Study Areas",
+    "buildingSlug": "michigan-union",
+    "floor": "2nd Floor",
+    "lat": 42.27523,
+    "lng": -83.74155,
+    "amenities": [
+      "wifi",
+      "outlets"
+    ],
+    "noiseLevel": "moderate",
+    "capacity": 70,
+    "waitzId": null
+  },
+  {
+    "slug": "ross-winter-garden",
+    "name": "Ross School of Business — Winter Garden",
+    "buildingSlug": "stephen-m-ross-school-of-business-building",
+    "floor": "1st Floor",
+    "lat": 42.27257,
+    "lng": -83.73765,
+    "amenities": [
+      "wifi",
+      "outlets"
+    ],
+    "noiseLevel": "moderate",
+    "capacity": 100,
+    "waitzId": null
+  },
+  {
+    "slug": "north-quad-study-lounge",
+    "name": "North Quad — Study Lounge",
+    "buildingSlug": "north-quadrangle-residential-and-academic-complex",
+    "floor": "1st Floor",
+    "lat": 42.28055,
+    "lng": -83.74019,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "whiteboards",
+      "groupRooms"
+    ],
+    "noiseLevel": "moderate",
+    "capacity": 40,
+    "waitzId": null
+  },
+  {
+    "slug": "east-quad-study-lounge",
+    "name": "East Quad — Study Lounge",
+    "buildingSlug": "east-quadrangle",
+    "floor": "1st Floor",
+    "lat": 42.27274,
+    "lng": -83.73519,
+    "amenities": [
+      "wifi",
+      "outlets"
+    ],
+    "noiseLevel": "moderate",
+    "capacity": 30,
+    "waitzId": null
+  },
+  {
+    "slug": "south-quad-study-lounge",
+    "name": "South Quad — Study Lounge",
+    "buildingSlug": "south-quadrangle",
+    "floor": "1st Floor",
+    "lat": 42.27372,
+    "lng": -83.74203,
+    "amenities": [
+      "wifi",
+      "outlets"
+    ],
+    "noiseLevel": "moderate",
+    "capacity": 35,
+    "waitzId": null
+  },
+  {
+    "slug": "palmer-commons-gallery",
+    "name": "Palmer Commons — Gallery Study Area",
+    "buildingSlug": "palmer-commons",
+    "floor": "1st Floor",
+    "lat": 42.28081,
+    "lng": -83.73388,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "groupRooms"
+    ],
+    "noiseLevel": "moderate",
+    "capacity": 50,
+    "waitzId": null
+  },
+  {
+    "slug": "weiser-hall-commons",
+    "name": "Weiser Hall — Commons Study Area",
+    "buildingSlug": "weiser-hall",
+    "floor": "1st Floor",
+    "lat": 42.27646,
+    "lng": -83.73508,
+    "amenities": [
+      "wifi",
+      "outlets",
+      "whiteboards"
+    ],
+    "noiseLevel": "social",
+    "capacity": 45,
+    "waitzId": null
+  },
+  {
+    "slug": "dana-building-atrium",
+    "name": "Dana Building — Atrium Study Space",
+    "buildingSlug": "samuel-trask-dana-building",
+    "floor": "1st Floor",
+    "lat": 42.27733,
+    "lng": -83.73661,
+    "amenities": [
+      "wifi",
+      "outlets"
+    ],
+    "noiseLevel": "social",
+    "capacity": 30,
+    "waitzId": null
+  }
+]

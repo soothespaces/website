@@ -1,0 +1,47 @@
+# Refreshes the committed seed snapshots in scripts/seed/raw/ by running
+# scripts/seed/fetch.mjs on a GitHub runner and committing any change back to
+# the branch. Run it from the Actions tab, or push a change to fetch.mjs on a
+# feature branch.
+name: Seed snapshot
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - "scripts/seed/fetch.mjs"
+      - ".github/workflows/seed-snapshot.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: seed-snapshot-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: node scripts/seed/fetch.mjs
+
+      - name: Commit refreshed snapshots
+        run: |
+          git add scripts/seed/raw
+          if git diff --cached --quiet; then
+            echo "Snapshots unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh seed snapshots"
+          git push

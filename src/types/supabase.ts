@@ -3,6 +3,185 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      bookable_items: {
+        Row: {
+          booking_url: string;
+          building_slug: string | null;
+          capacity: number | null;
+          floor: number | null;
+          grouping: string | null;
+          instance: string;
+          is_listed: boolean;
+          kind: string;
+          libcal_item_id: number;
+          lid: number;
+          location_name: string | null;
+          room_number: string | null;
+          room_zone_id: string | null;
+          space_id: string | null;
+          thumbnail_url: string | null;
+          title: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          booking_url: string;
+          building_slug?: string | null;
+          capacity?: number | null;
+          floor?: number | null;
+          grouping?: string | null;
+          instance: string;
+          is_listed?: boolean;
+          kind: string;
+          libcal_item_id: number;
+          lid: number;
+          location_name?: string | null;
+          room_number?: string | null;
+          room_zone_id?: string | null;
+          space_id?: string | null;
+          thumbnail_url?: string | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          booking_url?: string;
+          building_slug?: string | null;
+          capacity?: number | null;
+          floor?: number | null;
+          grouping?: string | null;
+          instance?: string;
+          is_listed?: boolean;
+          kind?: string;
+          libcal_item_id?: number;
+          lid?: number;
+          location_name?: string | null;
+          room_number?: string | null;
+          room_zone_id?: string | null;
+          space_id?: string | null;
+          thumbnail_url?: string | null;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "bookable_items_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: false;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+          {
+            foreignKeyName: "bookable_items_room_zone_id_fkey";
+            columns: ["room_zone_id"];
+            isOneToOne: false;
+            referencedRelation: "room_zones";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bookable_items_space_id_fkey";
+            columns: ["space_id"];
+            isOneToOne: false;
+            referencedRelation: "spaces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      building_entrances: {
+        Row: {
+          accessible: boolean;
+          automatic: boolean;
+          building_name: string | null;
+          building_record_number: string | null;
+          building_slug: string | null;
+          floor_label: string | null;
+          fo_object_id: number | null;
+          id: string;
+          keypad: boolean;
+          lat: number;
+          lng: number;
+          location_description: string | null;
+          notes: string | null;
+          source: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          accessible: boolean;
+          automatic: boolean;
+          building_name?: string | null;
+          building_record_number?: string | null;
+          building_slug?: string | null;
+          floor_label?: string | null;
+          fo_object_id?: number | null;
+          id: string;
+          keypad?: boolean;
+          lat: number;
+          lng: number;
+          location_description?: string | null;
+          notes?: string | null;
+          source?: string;
+          updated_at?: string;
+        };
+        Update: {
+          accessible?: boolean;
+          automatic?: boolean;
+          building_name?: string | null;
+          building_record_number?: string | null;
+          building_slug?: string | null;
+          floor_label?: string | null;
+          fo_object_id?: number | null;
+          id?: string;
+          keypad?: boolean;
+          lat?: number;
+          lng?: number;
+          location_description?: string | null;
+          notes?: string | null;
+          source?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "building_entrances_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: false;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+        ];
+      };
+      building_popular_times: {
+        Row: {
+          building_slug: string;
+          busyness: number;
+          fetched_at: string;
+          hour: number;
+          weekday: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          building_slug: string;
+          busyness: number;
+          fetched_at: string;
+          hour: number;
+          weekday: number;
+        };
+        Update: {
+          building_slug?: string;
+          busyness?: number;
+          fetched_at?: string;
+          hour?: number;
+          weekday?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "building_popular_times_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: false;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+        ];
+      };
       buildings: {
         Row: {
           acronym: string | null;
@@ -115,18 +294,162 @@ export type Database = {
           },
         ];
       };
+      google_places: {
+        Row: {
+          address: string | null;
+          building_slug: string;
+          data_cid: string | null;
+          data_id: string | null;
+          extensions: NonNullable<Json>;
+          fetched_at: string;
+          hours_last_updated: string | null;
+          lat: number | null;
+          lng: number | null;
+          located_in: string | null;
+          name: string;
+          phone: string | null;
+          place_id: string;
+          rating: number | null;
+          review_count: number | null;
+          review_topics: NonNullable<Json>;
+          types: string[];
+          typical_time_spent: string | null;
+          unsupported_extensions: NonNullable<Json>;
+          website: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          address?: string | null;
+          building_slug: string;
+          data_cid?: string | null;
+          data_id?: string | null;
+          extensions?: NonNullable<Json>;
+          fetched_at: string;
+          hours_last_updated?: string | null;
+          lat?: number | null;
+          lng?: number | null;
+          located_in?: string | null;
+          name: string;
+          phone?: string | null;
+          place_id: string;
+          rating?: number | null;
+          review_count?: number | null;
+          review_topics?: NonNullable<Json>;
+          types?: string[];
+          typical_time_spent?: string | null;
+          unsupported_extensions?: NonNullable<Json>;
+          website?: string | null;
+        };
+        Update: {
+          address?: string | null;
+          building_slug?: string;
+          data_cid?: string | null;
+          data_id?: string | null;
+          extensions?: NonNullable<Json>;
+          fetched_at?: string;
+          hours_last_updated?: string | null;
+          lat?: number | null;
+          lng?: number | null;
+          located_in?: string | null;
+          name?: string;
+          phone?: string | null;
+          place_id?: string;
+          rating?: number | null;
+          review_count?: number | null;
+          review_topics?: NonNullable<Json>;
+          types?: string[];
+          typical_time_spent?: string | null;
+          unsupported_extensions?: NonNullable<Json>;
+          website?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "google_places_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: true;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+        ];
+      };
+      opening_hours: {
+        Row: {
+          access: string;
+          building_slug: string | null;
+          closes: string | null;
+          id: string;
+          label: string | null;
+          opens: string | null;
+          source: string;
+          source_url: string | null;
+          space_id: string | null;
+          valid_from: string;
+          valid_until: string;
+          weekday: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          access?: string;
+          building_slug?: string | null;
+          closes?: string | null;
+          id?: string;
+          label?: string | null;
+          opens?: string | null;
+          source: string;
+          source_url?: string | null;
+          space_id?: string | null;
+          valid_from: string;
+          valid_until: string;
+          weekday: number;
+        };
+        Update: {
+          access?: string;
+          building_slug?: string | null;
+          closes?: string | null;
+          id?: string;
+          label?: string | null;
+          opens?: string | null;
+          source?: string;
+          source_url?: string | null;
+          space_id?: string | null;
+          valid_from?: string;
+          valid_until?: string;
+          weekday?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "opening_hours_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: false;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+          {
+            foreignKeyName: "opening_hours_space_id_fkey";
+            columns: ["space_id"];
+            isOneToOne: false;
+            referencedRelation: "spaces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       photos: {
         Row: {
           alt: string;
           building_slug: string | null;
           credit: string;
+          floor: number | null;
+          heading: number | null;
           height: number;
           id: string;
           is_listed: boolean;
+          kind: string;
+          lat: number | null;
           license: string;
+          lng: number | null;
           path_prefix: string;
           sort_order: number;
-          source_url: string;
+          source_url: string | null;
           space_id: string | null;
           width: number;
           widths: number[];
@@ -136,13 +459,18 @@ export type Database = {
           alt: string;
           building_slug?: string | null;
           credit: string;
+          floor?: number | null;
+          heading?: number | null;
           height: number;
           id?: string;
           is_listed?: boolean;
+          kind?: string;
+          lat?: number | null;
           license: string;
+          lng?: number | null;
           path_prefix: string;
           sort_order?: number;
-          source_url: string;
+          source_url?: string | null;
           space_id?: string | null;
           width: number;
           widths: number[];
@@ -151,13 +479,18 @@ export type Database = {
           alt?: string;
           building_slug?: string | null;
           credit?: string;
+          floor?: number | null;
+          heading?: number | null;
           height?: number;
           id?: string;
           is_listed?: boolean;
+          kind?: string;
+          lat?: number | null;
           license?: string;
+          lng?: number | null;
           path_prefix?: string;
           sort_order?: number;
-          source_url?: string;
+          source_url?: string | null;
           space_id?: string | null;
           width?: number;
           widths?: number[];
@@ -235,6 +568,7 @@ export type Database = {
         Row: {
           building_slug: string;
           capacity: number | null;
+          description: string | null;
           features: Database["public"]["Enums"]["space_feature"][];
           floor: number | null;
           floor_label: string | null;
@@ -257,6 +591,7 @@ export type Database = {
         Insert: {
           building_slug: string;
           capacity?: number | null;
+          description?: string | null;
           features?: Database["public"]["Enums"]["space_feature"][];
           floor?: number | null;
           floor_label?: string | null;
@@ -278,6 +613,7 @@ export type Database = {
         Update: {
           building_slug?: string;
           capacity?: number | null;
+          description?: string | null;
           features?: Database["public"]["Enums"]["space_feature"][];
           floor?: number | null;
           floor_label?: string | null;
