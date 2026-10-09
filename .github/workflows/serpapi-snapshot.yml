@@ -46,6 +46,10 @@ jobs:
       - name: Commit saved responses
         if: always()
         run: |
+          if [ ! -d scripts/serpapi/raw ]; then
+            echo "Nothing saved yet."
+            exit 0
+          fi
           git add scripts/serpapi/raw
           if git diff --cached --quiet; then
             echo "Nothing new saved."
