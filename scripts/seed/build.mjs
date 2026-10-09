@@ -697,8 +697,8 @@ const googleValue = (row, c) => {
 };
 const POPULAR_COLUMNS = ["building_slug", "weekday", "hour", "busyness", "fetched_at"];
 const googleSql = [
-  "delete from public.building_popular_times;",
-  "delete from public.google_places;",
+  "delete from public.building_popular_times where building_slug is not null;",
+  "delete from public.google_places where building_slug is not null;",
   "delete from public.opening_hours where source = 'google';",
   ...(googleRows.length
     ? [

@@ -585,8 +585,14 @@ days, so an unedited response can still be fetched for free by its id.
 `scripts/seed/build.mjs` turns each saved place into a `public.google_places` row, adds
 Google's hours to `opening_hours` for buildings the Library doesn't cover (valid for 120
 days from the fetch, since Google gives no end date), and fills `building_popular_times`
-when a place has `popular_times`. As of 2026-10-09 neither Shapiro (by search and by
-`place_id`) nor the Michigan Union came back with popular times, so that table stays empty.
+when a place has `popular_times`.
+
+First full run (2026-10-09, 30 of 250 searches): all 27 buildings matched, within 50 m of
+our coordinates. Only **Hatcher, Mason Hall and the Earl V. Moore Building** came back with
+popular times. Shapiro has them on google.com/maps but not through SerpApi, whether looked
+up by search, `place_id` or `data` with coordinates; the raw Google HTML SerpApi archived
+has no busyness data either, so more searches won't fix it. 20 places have hours, all
+have accessibility attributes.
 
 ## 12. U-M Library CMS: hours, rooms and study-space pages (found 2026-10-09)
 
