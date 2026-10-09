@@ -179,6 +179,14 @@ const followups = targets.filter((t) => {
   return existsSync(path);
 });
 
+// plan.data_lookup: buildings already saved whose place should be fetched
+// again with the `data` parameter (its data_id plus real coordinates), the
+// same form as a Google Maps place link. A place_id lookup sends Google 0,0
+// coordinates, and its pages came back without popular times.
+const dataLookups = targets.filter(
+  (t) => plan.data_lookup?.includes(t.slug) && existsSync(join(RAW, "places", `${t.slug}.json`)),
+);
+
 const todo = targets.filter(
   (t) =>
     (!plan.only?.length || plan.only.includes(t.slug)) &&
@@ -206,6 +214,32 @@ try {
       place: scrub(body.place_results),
     });
     console.log(`${target.slug}: refetched by place_id, ${days ? `popular times for ${days} days` : "no popular times"}`);
+  }
+
+  for (const target of dataLookups) {
+    const path = join(RAW, "places", `${target.slug}.json`);
+    const saved = JSON.parse(await readFile(path, "utf8"));
+    const { data_id: dataId, gps_coordinates: gps } = saved.place;
+    if (!dataId || !gps) {
+      console.log(`${target.slug}: no data_id or coordinates saved; skipped.`);
+      continue;
+    }
+    const body = await search(target.slug, {
+      type: "place",
+      data: `!4m5!3m4!1s${dataId}!8m2!3d${gps.latitude}!4d${gps.longitude}`,
+    });
+    const days = Object.keys(body.place_results?.popular_times?.graph_results ?? {}).length;
+    // Only a richer place replaces the saved one.
+    if (days) {
+      await write(path, {
+        ...saved,
+        fetched_at: new Date().toISOString(),
+        search_ids: [...saved.search_ids, body.search_metadata?.id ?? null],
+        resolved_by: `data lookup after: ${saved.resolved_by}`,
+        place: scrub(body.place_results),
+      });
+    }
+    console.log(`${target.slug}: data lookup, ${days ? `popular times for ${days} days` : `no popular times (${body.error ?? "kept the saved place"})`}`);
   }
 
   for (const target of todo) {
