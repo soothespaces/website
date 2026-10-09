@@ -77,7 +77,8 @@ void main() {
 // Scene space, drawn once per scene. Everything here is static, so the whole
 // field is baked: the smooth-min distance to the sound sources (packed into RG)
 // the sound intensity that reaches each point (B, gamma encoded) and how
-// steep the distance field is there (A).
+// steep the distance field is there (A). With REFLECTED, the same is baked
+// for first-order reflections off the walls instead of the direct sound.
 export const FIELD_FRAGMENT = /* glsl */ `#version 300 es
 precision highp float;
 ${SEGMENTS}
@@ -96,9 +97,13 @@ const float SHADOW_SOFTNESS = 0.3; // the lower, the sharper
 // blocks either source the blend shrinks to nothing, so fields only merge
 // where both can be heard, never through a wall.
 const float BLEND = 1.6;
-// How much intensity still comes through a wall.
-const float LEAK = 0.06;
 const float GAMMA = 2.2;
+// Share of the intensity a wall reflects. Painted partitions and glass
+// absorb roughly 30-50% at speech frequencies.
+const float REFLECTANCE = 0.6;
+// Meters around a wall's end over which its reflection fades in, standing in
+// for diffraction at the edge.
+const float EDGE = 0.6;
 
 float sourceDist(vec2 p, int i) {
   float r = uSourceRounding[i];
@@ -114,24 +119,65 @@ vec2 towardSource(vec2 p, int i) {
   ));
 }
 
-// Soft shadow, sphere tracing from p to the nearest point of the source.
-// A ray that enters a wall counts as fully blocked: the walls are too thin
-// for the trace to go deep enough inside them on its own.
-float heard(vec2 p, int i) {
-  float distToSource = sourceDist(p, i);
-  if (distToSource <= 0.0) return 1.0;
-  vec2 rayDir = towardSource(p, i);
+float wallDistExcept(vec2 p, int skip) {
+  float d = 1e5;
+  for (int i = 0; i < WALL_COUNT; i++) {
+    if (i != skip) d = min(d, strokeDist(i, p));
+  }
+  return d;
+}
+
+// Soft shadow, sphere tracing from p along dir for dist meters. A ray that
+// enters a wall counts as fully blocked: the walls are too thin for the trace
+// to go deep enough inside them on its own. The skipped wall is the one a
+// reflection bounces off, which the ray ends at by design.
+float trace(vec2 p, vec2 dir, float dist, int skip) {
   float res = 1.0;
   float t = MIN_HIT_DIST;
   for (int s = 0; s < STEP_COUNT; s++) {
-    float h = wallDist(p + rayDir * t);
+    float h = wallDistExcept(p + dir * t, skip);
     if (h < 0.0) return 0.0;
     res = min(res, h / (SHADOW_SOFTNESS * t));
     t += clamp(h, MIN_HIT_DIST, MAX_TRACE_DIST);
-    if (t > distToSource) break;
+    if (t > dist) break;
   }
   res = clamp(res, 0.0, 1.0);
   return res * res * (3.0 - 2.0 * res);
+}
+
+float heard(vec2 p, int i, int skip) {
+  float dist = sourceDist(p, i);
+  if (dist <= 0.0) return 1.0;
+  return trace(p, towardSource(p, i), dist, skip);
+}
+
+struct Field {
+  float d;
+  float shadow;
+  vec2 grad;
+  float intensity;
+};
+
+// Merges one (real or mirrored) source into the field. raw is the path
+// length from the source's edge, grad its gradient, heardBy how much of it
+// gets past the walls. Sources that can't be heard at all don't take part,
+// so a blocked source never shapes the rings of one that can be heard.
+void add(inout Field f, int i, float raw, vec2 grad, float heardBy, float gain) {
+  if (heardBy <= 0.0) return;
+  float di = max(raw, 0.0);
+  // Polynomial smooth min; the same weight blends the shadows and the
+  // gradients (the smooth min's gradient is exactly that blend).
+  float k = max(BLEND * heardBy * f.shadow, 1e-3);
+  float h = clamp(0.5 + 0.5 * (f.d - di) / k, 0.0, 1.0);
+  f.d = mix(f.d, di, h) - k * h * (1.0 - h);
+  f.shadow = mix(f.shadow, heardBy, h);
+  f.grad = mix(f.grad, grad, h);
+
+  // Inverse square law, measured from the source's center and normalized
+  // to 1 at its edge. Uncorrelated sources add intensities.
+  float r0 = max(uSourceBox[i].z, uSourceBox[i].w);
+  float spread = r0 / (r0 + di);
+  f.intensity += gain * spread * spread * heardBy;
 }
 
 vec2 encode(float d) {
@@ -142,33 +188,52 @@ vec2 encode(float d) {
 
 void main() {
   vec2 p = uWorldMin + vUv * uWorldSize;
-  float d = 1e4;
-  float shadow = 1.0;
-  vec2 grad = vec2(0.0);
-  float intensity = 0.0;
+  Field f = Field(1e4, 1.0, vec2(0.0), 0.0);
   for (int i = 0; i < SOURCE_COUNT; i++) {
-    float raw = sourceDist(p, i);
-    float di = max(raw, 0.0);
-    float si = heard(p, i);
-    vec2 gi = raw > 0.0 ? -towardSource(p, i) : vec2(0.0);
-    // Polynomial smooth min; the same weight blends the shadows and the
-    // gradients (the smooth min's gradient is exactly that blend).
-    float k = max(BLEND * si * shadow, 1e-3);
-    float h = clamp(0.5 + 0.5 * (d - di) / k, 0.0, 1.0);
-    d = mix(d, di, h) - k * h * (1.0 - h);
-    shadow = mix(shadow, si, h);
-    grad = mix(grad, gi, h);
+#if REFLECTED
+    // Image sources: mirroring p across a wall turns the bounced path into
+    // a straight one to the real source.
+    vec2 center = uSourceBox[i].xy;
+    for (int j = 0; j < WALL_COUNT; j++) {
+      if (uSegB[j].x > 0.0) continue;
+      vec2 a = uSegA[j].xy;
+      vec2 b = uSegA[j].zw;
+      float len = length(b - a);
+      vec2 along = (b - a) / len;
+      vec2 n = vec2(-along.y, along.x);
+      float face = uSegB[j].y;
+      float sideP = dot(p - a, n);
+      float sideS = dot(center - a, n);
+      if (sideP * sideS <= 0.0 || abs(sideP) < face) continue;
 
-    // Inverse square law, measured from the source's center and normalized
-    // to 1 at its edge. Uncorrelated sources add intensities.
-    float r0 = max(uSourceBox[i].z, uSourceBox[i].w);
-    float spread = r0 / (r0 + di);
-    intensity += spread * spread * mix(LEAK, 1.0, si);
+      // Where the path from p to the image source crosses the wall.
+      vec2 image = center - 2.0 * sideS * n;
+      vec2 bounce = mix(p, image, sideP / (sideP + sideS));
+      float u = dot(bounce - a, along);
+      float onWall = smoothstep(-EDGE, EDGE, u) * smoothstep(-EDGE, EDGE, len - u);
+      if (onWall <= 0.0) continue;
+
+      vec2 atWall = bounce + n * sign(sideP) * (face + 0.05);
+      vec2 toWall = atWall - p;
+      float wallDistance = length(toWall);
+      float legs = heard(atWall, i, j);
+      if (wallDistance > 1e-3) legs *= trace(p, toWall / wallDistance, wallDistance, j);
+
+      vec2 mirrored = p - 2.0 * sideP * n;
+      float raw = sourceDist(mirrored, i);
+      vec2 g = raw > 0.0 ? -towardSource(mirrored, i) : vec2(0.0);
+      add(f, i, raw, g - 2.0 * dot(g, n) * n, onWall * legs, REFLECTANCE);
+    }
+#else
+    float raw = sourceDist(p, i);
+    vec2 g = raw > 0.0 ? -towardSource(p, i) : vec2(0.0);
+    add(f, i, raw, g, heard(p, i, -1), 1.0);
+#endif
   }
   fragColor = vec4(
-    encode(max(d, 0.0)),
-    pow(clamp(intensity, 0.0, 1.0), 1.0 / GAMMA),
-    min(length(grad), 1.0)
+    encode(max(f.d, 0.0)),
+    pow(clamp(f.intensity, 0.0, 1.0), 1.0 / GAMMA),
+    min(length(f.grad), 1.0)
   );
 }
 `;
@@ -178,6 +243,7 @@ export const COMPOSITE_FRAGMENT = /* glsl */ `#version 300 es
 precision highp float;
 uniform sampler2D uInk;
 uniform highp sampler2D uField;
+uniform highp sampler2D uEcho; // the same, for reflections off the walls
 uniform vec2 uFieldSize;
 uniform vec2 uRes;
 uniform vec2 uOffset;
@@ -200,21 +266,21 @@ float hash(float n) {
   return fract(sin(n * 91.3458) * 47453.5453);
 }
 
-vec3 texel(ivec2 c) {
-  vec4 t = texelFetch(uField, clamp(c, ivec2(0), ivec2(uFieldSize) - 1), 0) * 255.0;
+vec3 texel(highp sampler2D tex, ivec2 c) {
+  vec4 t = texelFetch(tex, clamp(c, ivec2(0), ivec2(uFieldSize) - 1), 0) * 255.0;
   return vec3((t.x * 256.0 + t.y) / 65535.0 * ${MAX_DISTANCE.toFixed(1)}, t.zw / 255.0);
 }
 
 // Bilinear filtering by hand, since the packed bytes can't be filtered.
-vec3 field(vec2 p) {
+vec3 field(highp sampler2D tex, vec2 p) {
   vec2 st = (p - uWorldMin) / uWorldSize * uFieldSize - 0.5;
   vec2 i = floor(st);
   vec2 f = st - i;
   ivec2 c = ivec2(i);
-  vec3 a = texel(c);
-  vec3 b = texel(c + ivec2(1, 0));
-  vec3 d = texel(c + ivec2(0, 1));
-  vec3 e = texel(c + ivec2(1, 1));
+  vec3 a = texel(tex, c);
+  vec3 b = texel(tex, c + ivec2(1, 0));
+  vec3 d = texel(tex, c + ivec2(0, 1));
+  vec3 e = texel(tex, c + ivec2(1, 1));
   return mix(mix(a, b, f.x), mix(d, e, f.x), f.y);
 }
 
@@ -223,6 +289,26 @@ float boxDist(vec2 p, vec4 box) {
   vec2 half_ = (box.zw - box.xy) * 0.5;
   vec2 q = abs(p - center) - half_;
   return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);
+}
+
+// Moving contour lines of one baked field. A reflected ring keeps the
+// index of the ring it bounced from, so it keeps that ring's strength too.
+float rings(vec3 sample_) {
+  float d = sample_.x;
+  // Already gamma encoded, so linear intensity reads as perceived brightness.
+  float level = sample_.y;
+  // Where the fields meet, the smooth min flattens out, so a fixed band of
+  // distance would cover more floor there and smear into a blob.
+  float slope = max(sample_.z, 0.05);
+
+  float x = d / SPACING - uTime * (SPEED / SPACING);
+  float ring = floor(x + 0.5);
+  float fromRing = abs(x - ring) * SPACING / slope; // meters of floor
+  float halfWidth = max(RING_WIDTH, uPx * 0.6);
+  float line = 1.0 - smoothstep(halfWidth, halfWidth + uPx * 1.2, fromRing);
+
+  float strength = mix(0.6, 1.0, hash(ring + 17.0));
+  return line * strength * smoothstep(0.0, 0.4, d) * level;
 }
 
 void over(inout vec4 dst, vec3 color, float alpha) {
@@ -238,13 +324,6 @@ void main() {
     return;
   }
 
-  vec3 sample_ = field(p);
-  float d = sample_.x;
-  // Already gamma encoded, so linear intensity reads as perceived brightness.
-  float level = sample_.y;
-  // Where the fields meet, the smooth min flattens out, so a fixed band of
-  // distance would cover more floor there and smear into a blob.
-  float slope = max(sample_.z, 0.05);
   vec2 fromMin = p - uBounds.xy;
   vec2 fromMax = uBounds.zw - p;
   float vignette = min(
@@ -252,14 +331,9 @@ void main() {
     min(smoothstep(0.0, 5.0, fromMax.x), smoothstep(0.0, 5.0, fromMax.y))
   );
 
-  float x = d / SPACING - uTime * (SPEED / SPACING);
-  float ring = floor(x + 0.5);
-  float fromRing = abs(x - ring) * SPACING / slope; // meters of floor
-  float halfWidth = max(RING_WIDTH, uPx * 0.6);
-  float line = 1.0 - smoothstep(halfWidth, halfWidth + uPx * 1.2, fromRing);
-
-  float strength = mix(0.6, 1.0, hash(ring + 17.0));
-  float ringAlpha = line * strength * smoothstep(0.0, 0.4, d) * level
+  float direct = rings(field(uField, p));
+  float echo = rings(field(uEcho, p));
+  float ringAlpha = (1.0 - (1.0 - direct) * (1.0 - echo))
     * uAlpha.w * mask * vignette;
 
   // A faint one-meter dot grid on the floor of the room itself.

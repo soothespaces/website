@@ -125,35 +125,47 @@ export function SceneCanvas({
         uPx: { value: 0.01 },
       };
       const geometry = new Triangle(gl);
-      const program = (fragment: string, uniforms: Record<string, { value: unknown }>) =>
+      const program = (
+        fragment: string,
+        uniforms: Record<string, { value: unknown }>,
+        defines: Record<string, number> = {},
+      ) =>
         new Program(gl, {
           vertex: VERTEX,
-          fragment: withDefines(fragment, packed.defines),
+          fragment: withDefines(fragment, { ...packed.defines, ...defines }),
           uniforms,
           depthTest: false,
           depthWrite: false,
         });
 
-      // The packed distance can't be filtered; the composite pass
-      // interpolates it itself.
-      const fieldTarget = new RenderTarget(gl, {
-        width: Math.min(1024, Math.ceil(worldSize[0] * FIELD_TEXELS_PER_METER)),
-        height: Math.min(1024, Math.ceil(worldSize[1] * FIELD_TEXELS_PER_METER)),
-        depth: false,
-        minFilter: gl.NEAREST,
-        magFilter: gl.NEAREST,
-      });
-      const fieldMesh = new Mesh(gl, {
-        geometry,
-        program: program(FIELD_FRAGMENT, {
-          ...segments,
-          uSourceBox: { value: packed.sourceBox },
-          uSourceRounding: { value: packed.sourceRounding },
-          uWorldMin: { value: worldMin },
-          uWorldSize: { value: worldSize },
-        }),
-      });
-      renderer.render({ scene: fieldMesh, target: fieldTarget });
+      // Direct sound and its reflections off the walls are baked separately,
+      // since each has its own wavefronts. The packed distance can't be
+      // filtered; the composite pass interpolates it itself.
+      const fieldUniforms = {
+        ...segments,
+        uSourceBox: { value: packed.sourceBox },
+        uSourceRounding: { value: packed.sourceRounding },
+        uWorldMin: { value: worldMin },
+        uWorldSize: { value: worldSize },
+      };
+      const bake = (reflected: boolean) => {
+        const target = new RenderTarget(gl, {
+          width: Math.min(1024, Math.ceil(worldSize[0] * FIELD_TEXELS_PER_METER)),
+          height: Math.min(1024, Math.ceil(worldSize[1] * FIELD_TEXELS_PER_METER)),
+          depth: false,
+          minFilter: gl.NEAREST,
+          magFilter: gl.NEAREST,
+        });
+        const mesh = new Mesh(gl, {
+          geometry,
+          program: program(FIELD_FRAGMENT, fieldUniforms, { REFLECTED: reflected ? 1 : 0 }),
+        });
+        renderer.render({ scene: mesh, target });
+        mesh.program.remove();
+        return target;
+      };
+      const fieldTarget = bake(false);
+      const echoTarget = bake(true);
 
       const inkTarget = new RenderTarget(gl, { width: 1, height: 1, depth: false });
       const inkMesh = new Mesh(gl, {
@@ -174,6 +186,7 @@ export function SceneCanvas({
           ...colors,
           uInk: { value: inkTarget.texture },
           uField: { value: fieldTarget.texture },
+          uEcho: { value: echoTarget.texture },
           uFieldSize: { value: [fieldTarget.width, fieldTarget.height] },
           uWorldMin: { value: worldMin },
           uWorldSize: { value: worldSize },
@@ -299,8 +312,8 @@ export function SceneCanvas({
         document.removeEventListener("visibilitychange", update);
         canvas.removeEventListener("webglcontextlost", onContextLost);
         canvas.removeEventListener("webglcontextrestored", onContextRestored);
-        for (const mesh of [fieldMesh, inkMesh, compositeMesh]) mesh.program.remove();
-        for (const target of [fieldTarget, inkTarget]) {
+        for (const mesh of [inkMesh, compositeMesh]) mesh.program.remove();
+        for (const target of [fieldTarget, echoTarget, inkTarget]) {
           gl.deleteFramebuffer(target.buffer);
           for (const texture of target.textures) gl.deleteTexture(texture.texture);
         }
