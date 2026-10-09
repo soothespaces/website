@@ -111,9 +111,9 @@
    ],
    "usable": true,
    "fitMedianMeters": 0.328,
-   "labeled": false,
+   "labeled": true,
    "geojson": "/floor-plans/harold-t-and-vivian-b-shapiro-library/3.geojson",
-   "rooms": 104
+   "rooms": 72
   },
   {
    "building": "james-and-anne-duderstadt-center",
