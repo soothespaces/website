@@ -649,7 +649,8 @@ scripts/seed/
 supabase/seed.sql   generated, committed, loaded by `supabase db reset` locally
 ```
 
-- `seed.sql` uses `insert ... on conflict (slug) do update`, so it's safe to run again.
+- `seed.sql` uses `insert ... on conflict (slug) do update` (`(instance, libcal_item_id)`
+  for bookable items), so it's safe to run again.
 - Production: migrations deploy through the Supabase GitHub integration on merge, but
   that doesn't run `seed.sql`. The WP3 owner runs it once against production with
   `psql "$SUPABASE_DB_URL" -f supabase/seed.sql`, and again after each snapshot
@@ -714,9 +715,13 @@ The migrations workflow runs `npx supabase test db`. The suite covers:
 These are sketched so the MVP schema doesn't box them in. None need changes to the
 MVP tables beyond what's above.
 
-- **WP6 LibCal:** `public.bookable_items` (PK `(instance, libcal_item_id)`, `lid`,
-  `kind` room/seat, `title`, `room_number`, `capacity`, `booking_url`, `thumbnail_url`,
-  nullable `space_id`/`room_zone_id`), public read. Availability itself is cached by
+- **WP6 LibCal:** `public.bookable_items` exists since 2026-10-09 (migration
+  `20261009120000_bookable_items.sql`), seeded from `raw/libcal-items.json`: PK
+  `(instance, libcal_item_id)`, `lid`, `kind` (LibCal's own `space`/`seat`, since
+  "spaces" include booths and game stations, not just rooms), `title`,
+  `location_name`, `grouping`, `building_slug`, `floor`, `room_number`, `capacity`,
+  `booking_url`, `thumbnail_url`, `is_listed`, and nullable `space_id`/`room_zone_id`
+  for later joins. Listed rows are public read. Availability itself is cached by
   the Next.js route handler (`revalidate: 300`), not stored. Add a
   `private.availability_cache` table only if the Vercel cache turns out not to be
   enough. Never store who booked what (ADR 0008).

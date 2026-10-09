@@ -1,13 +1,13 @@
 # Seed data
 
-Builds `supabase/seed.sql` (buildings and study spaces) from committed snapshots of
+Builds `supabase/seed.sql` (buildings, study spaces and LibCal bookable rooms and seats) from committed snapshots of
 public sources. See [Supabase Backend Plan § Seed data](../../docs/technical/supabase-backend.md#seed-data)
 for the design.
 
 | File | What |
 |---|---|
 | `raw/` | Snapshots of each source, plus `SOURCES.md` with URLs and fetch time. Never edit by hand. |
-| `overrides.json` | Hand mappings: Library building names to slugs, mguide noise and amenity mapping, mguide spaces to unlist. |
+| `overrides.json` | Hand mappings: Library building names and LibCal location ids to slugs, mguide noise and amenity mapping, mguide spaces and LibCal groupings to unlist. |
 | `fetch.mjs` | Pulls every source into `raw/`. |
 | `build.mjs` | `raw/` + `overrides.json` to `supabase/seed.sql`. |
 
@@ -25,4 +25,5 @@ that branch. Then run `npm run seed:build` and commit `supabase/seed.sql`.
   schema fails the PR.
 - **Production:** the GitHub integration deploys migrations but not the seed. Load it
   once after a refresh is merged (`psql "$SUPABASE_DB_URL" -f supabase/seed.sql`). It's
-  idempotent: every row is an upsert keyed on `slug`, and nothing is deleted.
+  idempotent: every row is an upsert on its key (`slug`, or `(instance, libcal_item_id)`
+  for bookable items), and nothing is deleted.

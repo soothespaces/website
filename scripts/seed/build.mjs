@@ -11,6 +11,8 @@
 // - Spaces: the U-M Library's 34 "Find a Study Space" records, then mguide.app's
 //   24 curated spaces. mguide spaces in buildings the Library covers are kept
 //   but unlisted (overrides.json).
+// - Bookable items: every LibCal room and seat from the three instances'
+//   location pages, with room number and floor parsed from the title.
 import { readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -27,6 +29,7 @@ const footprints = await readJson("raw/mguide-buildings-map.geojson");
 const official = (await readJson("raw/umich-buildings.json")).pois;
 const library = (await readJson("raw/umich-library-fass.json")).spaces;
 const mguideSpaces = await readJson("raw/mguide-study-spots.json");
+const libcalPages = await readJson("raw/libcal-items.json");
 const overrides = await readJson("overrides.json");
 
 // ---------------------------------------------------------------- helpers
@@ -241,6 +244,89 @@ for (const slug of unlisted) {
   if (!mguideSpaces.some((s) => s.slug === slug)) fail(`Unknown unlisted slug ${slug}`);
 }
 
+// ---------------------------------------------------------------- bookable items
+
+// Room number and floor from a LibCal title. The formats differ per location:
+//   "2nd Floor - 2122 - Study Room (Capacity 5)"   Shapiro
+//   "Carrel 3-01 (3001) (Capacity 1)", "4S - 50"    Hatcher carrels (no room)
+//   "Hatcher 212A", "DC 2344", "GGBL 2502 - ...",   building code + room
+//   "NCRC 028-G129 Seat 06", "2407 Mason Hall", "1133B"
+const libcalPlace = (title) => {
+  const text = title.replace(/\s*\(Capacity \d+\)\s*$/, "");
+  const floorFrom = (room) => {
+    const m = room?.match(/^(\d)\d{2,3}[A-Z]?$/);
+    return m ? Number(m[1]) : null;
+  };
+  let m = text.match(/^(\d)(?:st|nd|rd|th) Floor - (\S+)/);
+  if (m) return { floor: Number(m[1]), room_number: /^\d/.test(m[2]) ? m[2] : null };
+  m = text.match(/^Carrel (\d)-/) ?? text.match(/^(\d)S - \d+$/);
+  if (m) return { floor: Number(m[1]), room_number: null };
+  m = text.match(/^NCRC \d+-(G?\d+)\b/);
+  if (m) return { floor: m[1].startsWith("G") ? 0 : floorFrom(m[1]), room_number: m[1] };
+  m =
+    text.match(/^(?:Hatcher|DC|LBME|BBB|GGBL|FMCRB|CSRB) (\d{3,4}[A-Z]?)\b/) ??
+    text.match(/^(\d{4}[A-Z]?)(?: Mason Hall)?$/);
+  if (m) return { floor: floorFrom(m[1]), room_number: m[1] };
+  return { floor: null, room_number: null };
+};
+
+// Page titles read "Space Availability - Shapiro Undergraduate Library - LibCal
+// - ...". Some pages only carry the instance name; those give no location.
+const locationName = (title) => {
+  const parts = (title ?? "").split(" - ").map(clean);
+  const name = parts[1];
+  return name && !/^(?:LibCal|North Campus|Central Campus)$/.test(name) ? name : null;
+};
+const locationByLid = new Map();
+for (const page of libcalPages) {
+  const name = locationName(page.location);
+  if (name) locationByLid.set(`${page.instance}/${page.lid}`, name);
+}
+
+const unlistedGroupings = new Set(overrides.unlistedLibcalGroupings);
+const bookableByKey = new Map();
+for (const page of libcalPages) {
+  for (const item of page.items) {
+    if (item.unparsed) fail(`Unparsed LibCal item on ${page.url}: ${item.error}`);
+    const kind = item.url.split("/")[1];
+    const id = Number(item.url.split("/")[2]);
+    const key = `${page.instance}/${id}`;
+    const buildingSlug =
+      overrides.libcalBuildings[item.lid] ??
+      fail(`No building mapping for LibCal lid ${item.lid} (${item.title})`);
+    const grouping = clean(item.grouping);
+    bookableByKey.set(key, {
+      instance: page.instance,
+      libcal_item_id: id,
+      lid: item.lid,
+      kind,
+      title: clean(item.title),
+      location_name: locationByLid.get(`${page.instance}/${item.lid}`) ?? null,
+      grouping,
+      building_slug: buildingSlug,
+      ...libcalPlace(item.title),
+      capacity: number(item.capacity) > 0 ? number(item.capacity) : null,
+      booking_url: `https://${page.instance}${item.url}`,
+      thumbnail_url: clean(item.thumbnail),
+      is_listed: !unlistedGroupings.has(grouping),
+    });
+  }
+}
+const bookableItems = [...bookableByKey.values()].sort(
+  (a, b) => a.instance.localeCompare(b.instance) || a.libcal_item_id - b.libcal_item_id,
+);
+for (const item of bookableItems) {
+  if (item.kind !== "space" && item.kind !== "seat") fail(`Unknown LibCal kind ${item.kind}`);
+  if (!buildingSlugs.has(item.building_slug)) {
+    fail(`LibCal item ${item.title} references unknown building ${item.building_slug}`);
+  }
+}
+for (const grouping of unlistedGroupings) {
+  if (!bookableItems.some((item) => item.grouping === grouping)) {
+    fail(`Unknown unlisted LibCal grouping ${grouping}`);
+  }
+}
+
 // ---------------------------------------------------------------- SQL
 
 const BUILDING_COLUMNS = [
@@ -252,6 +338,12 @@ const SPACE_COLUMNS = [
   "slug", "building_slug", "name", "summary", "floor", "floor_label",
   "noise_level", "features", "capacity", "image_url", "image_alt", "source",
   "source_url", "waitz_id", "is_listed",
+];
+
+const BOOKABLE_COLUMNS = [
+  "instance", "libcal_item_id", "lid", "kind", "title", "location_name",
+  "grouping", "building_slug", "floor", "room_number", "capacity", "booking_url",
+  "thumbnail_url", "is_listed",
 ];
 
 const buildingValues = (b) =>
@@ -267,6 +359,8 @@ const spaceValues = (s) =>
     return sql(s[c]);
   }).join(", ");
 
+const bookableValues = (item) => BOOKABLE_COLUMNS.map((c) => sql(item[c])).join(", ");
+
 const upsert = (table, columns, rows, values, key) =>
   [
     `insert into public.${table} (${columns.join(", ")})`,
@@ -274,17 +368,19 @@ const upsert = (table, columns, rows, values, key) =>
     rows.map((r) => `  (${values(r)})`).join(",\n"),
     `on conflict (${key}) do update set`,
     columns
-      .filter((c) => c !== key)
+      .filter((c) => !key.split(", ").includes(c))
       .map((c) => `  ${c} = excluded.${c}`)
       .join(",\n") + ";",
   ].join("\n");
 
 const listedCount = spaces.filter((s) => s.is_listed).length;
+const listedBookable = bookableItems.filter((item) => item.is_listed).length;
 const header = `-- Generated by scripts/seed/build.mjs from scripts/seed/raw/ (see
 -- raw/SOURCES.md for where and when each snapshot was fetched). Don't edit by
 -- hand: change overrides.json or re-fetch, then rebuild.
 --
--- ${buildings.length} buildings (${buildings.filter((b) => b.footprint).length} with footprints), ${spaces.length} spaces (${listedCount} listed).
+-- ${buildings.length} buildings (${buildings.filter((b) => b.footprint).length} with footprints), ${spaces.length} spaces (${listedCount} listed),
+-- ${bookableItems.length} LibCal bookable items (${listedBookable} listed).
 -- Idempotent: safe to run again against a database that already has the rows.
 `;
 
@@ -298,11 +394,20 @@ await writeFile(
     "",
     upsert("spaces", SPACE_COLUMNS, spaces, spaceValues, "slug"),
     "",
+    upsert(
+      "bookable_items",
+      BOOKABLE_COLUMNS,
+      bookableItems,
+      bookableValues,
+      "instance, libcal_item_id",
+    ),
+    "",
     "commit;",
     "",
   ].join("\n"),
 );
 
 console.log(
-  `Wrote ${OUT}: ${buildings.length} buildings, ${spaces.length} spaces (${listedCount} listed)`,
+  `Wrote ${OUT}: ${buildings.length} buildings, ${spaces.length} spaces (${listedCount} listed), ` +
+    `${bookableItems.length} bookable items (${listedBookable} listed)`,
 );

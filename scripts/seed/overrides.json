@@ -37,5 +37,31 @@
     "duderstadt-center-2f",
     "duderstadt-center-3f",
     "taubman-health-sciences-library"
+  ],
+  "_libcalBuildings": "LibCal location id (the item's own lid) -> buildings.slug. CVGA is the Computer & Video Game Archive in the Duderstadt Center.",
+  "libcalBuildings": {
+    "2761": "harold-t-and-vivian-b-shapiro-library",
+    "3509": "harlan-h-hatcher-graduate-library",
+    "23105": "harlan-h-hatcher-graduate-library",
+    "14410": "harlan-h-hatcher-graduate-library",
+    "14566": "harlan-h-hatcher-graduate-library",
+    "4183": "alfred-a-taubman-health-sciences-library",
+    "4004": "james-and-anne-duderstadt-center",
+    "11261": "james-and-anne-duderstadt-center",
+    "11258": "bob-and-betty-beyster-building",
+    "11265": "george-g-gg-brown-laboratories",
+    "11359": "ford-robotics-building",
+    "14919": "ann-and-robert-h-lurie-biomedical-engineering-building",
+    "11414": "north-campus-research-complex-building-28",
+    "15851": "climate-and-space-research-building-csrb",
+    "23054": "francois-xavier-bagnoud-building",
+    "21968": "mason-hall"
+  },
+  "_unlistedLibcalGroupings": "LibCal groupings that aren't study space (game stations, anatomy tables, microform readers). Kept in bookable_items but unlisted.",
+  "unlistedLibcalGroupings": [
+    "CVGA Station",
+    "Anatomage Table",
+    "Anatomage Table On",
+    "Microforms"
   ]
 }

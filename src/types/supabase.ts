@@ -3,6 +3,89 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      bookable_items: {
+        Row: {
+          booking_url: string;
+          building_slug: string | null;
+          capacity: number | null;
+          floor: number | null;
+          grouping: string | null;
+          instance: string;
+          is_listed: boolean;
+          kind: string;
+          libcal_item_id: number;
+          lid: number;
+          location_name: string | null;
+          room_number: string | null;
+          room_zone_id: string | null;
+          space_id: string | null;
+          thumbnail_url: string | null;
+          title: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          booking_url: string;
+          building_slug?: string | null;
+          capacity?: number | null;
+          floor?: number | null;
+          grouping?: string | null;
+          instance: string;
+          is_listed?: boolean;
+          kind: string;
+          libcal_item_id: number;
+          lid: number;
+          location_name?: string | null;
+          room_number?: string | null;
+          room_zone_id?: string | null;
+          space_id?: string | null;
+          thumbnail_url?: string | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          booking_url?: string;
+          building_slug?: string | null;
+          capacity?: number | null;
+          floor?: number | null;
+          grouping?: string | null;
+          instance?: string;
+          is_listed?: boolean;
+          kind?: string;
+          libcal_item_id?: number;
+          lid?: number;
+          location_name?: string | null;
+          room_number?: string | null;
+          room_zone_id?: string | null;
+          space_id?: string | null;
+          thumbnail_url?: string | null;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "bookable_items_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: false;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+          {
+            foreignKeyName: "bookable_items_room_zone_id_fkey";
+            columns: ["room_zone_id"];
+            isOneToOne: false;
+            referencedRelation: "room_zones";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bookable_items_space_id_fkey";
+            columns: ["space_id"];
+            isOneToOne: false;
+            referencedRelation: "spaces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       buildings: {
         Row: {
           acronym: string | null;
