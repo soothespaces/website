@@ -4,6 +4,8 @@
  "width": 4134,
  "height": 2370,
  "wall": 200,
+ "close": 0,
+ "upHint": 0.0,
  "footprint": "footprints/duderstadt.json",
  "spurDropped": false,
  "transform": "similarity",

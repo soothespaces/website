@@ -4,6 +4,8 @@
  "width": 1167,
  "height": 2001,
  "wall": 200,
+ "close": 0,
+ "upHint": 0.0,
  "footprint": "footprints/shapiro.json",
  "spurDropped": true,
  "transform": "similarity",
