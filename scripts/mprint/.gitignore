@@ -1,0 +1,5 @@
+# Downloaded sheets and generated previews/masks
+*.png
+sheets/
+out/
+__pycache__/

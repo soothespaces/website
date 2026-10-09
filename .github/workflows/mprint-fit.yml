@@ -1,0 +1,73 @@
+# Runs scripts/mprint/pipeline.py: fits every sheet in sheets.json onto its
+# building footprint (scripts/mprint/alignments/), writes map-ready GeoJSON
+# for the usable ones (public/floor-plans/), and commits both. Runs on a
+# GitHub runner because cloud dev sessions can't reach mprint.umich.edu. The
+# preview PNGs are a run artifact, not committed. Run it from the Actions
+# tab, or push a change to the pipeline on a feature branch.
+name: MPrint fit
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - "scripts/mprint/fit_outline.py"
+      - "scripts/mprint/vectorize.py"
+      - "scripts/mprint/pipeline.py"
+      - "scripts/mprint/geom.py"
+      - "scripts/mprint/sheets.json"
+      - "scripts/mprint/footprints/**"
+      - "scripts/mprint/labels/**"
+      - "scripts/mprint/read_rooms.py"
+      - "scripts/mprint/label_rooms.py"
+      - "scripts/mprint/room_names.py"
+      - "scripts/mprint/readings/**"
+      - "scripts/mprint/rooms/**"
+      - ".github/workflows/mprint-fit.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mprint-fit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fit:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: scripts/mprint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install numpy pillow scipy
+
+      - run: python3 test_vectorize.py
+
+      - name: Fit and vectorize every sheet in sheets.json
+        run: python3 pipeline.py --sheets sheets --previews out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mprint-fit-previews
+          path: scripts/mprint/out/
+
+      - name: Commit alignments and GeoJSON
+        run: |
+          git add alignments ../../public/floor-plans
+          if git diff --cached --quiet; then
+            echo "Alignments and floor-plan GeoJSON unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refit MPrint sheets and regenerate floor-plan GeoJSON"
+          git push

@@ -1,0 +1,16 @@
+{
+  "image": "dc_2.png",
+  "source": "https://mprint.umich.edu/assets/floorplans/dc/dc_2.png",
+  "sha256": "78beac2b048872b92faa9a5ac60eb5b5addc078f3d6bec77676f933663ebe4ee",
+  "readBy": "visual read of the sheet, 2026-10-09",
+  "libcal": {
+    "instance": "umich-nc.libcal.com",
+    "lid": 11261,
+    "source": "scripts/seed/raw/libcal-items.json on pull request 14",
+    "rooms": ["2340", "2344", "2348", "2352", "2360", "2364", "2368", "2372", "2374", "2380", "2382", "2384"]
+  },
+  "foundOnPlan": ["2340", "2344", "2348", "2352", "2360", "2364", "2368", "2372", "2380", "2382", "2384"],
+  "missingFromPlan": ["2374"],
+  "note": "The study-room run is 2360, 2364, 2368, 2372, 2376. LibCal lists 2374 and not 2376. 2378, 2386 and 2388 are on the plan beside 2380-2384 and are not in LibCal. Extensions (2335A-G, 2356A-E, 2321A and the rest) and letter classes (2C corridor, 2S stair, 2E elevator, 2V vestibule) are on the sheet and are not LibCal rooms.",
+  "ocr": "Tesseract at 4x, psm 11, read the axis-aligned tags 2380, 2382 and 2384 at 96% confidence and misread 2C38 as 2038. A 15-degree rotation sweep of the rotated 2340-2352 column returned no room numbers."
+}
