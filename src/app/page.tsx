@@ -45,7 +45,7 @@ const buttonBase =
 export default function Home() {
   return (
     <>
-      <section aria-labelledby="hero" className="mx-auto w-full max-w-6xl px-4 py-12 sm:py-16 lg:py-20">
+      <section aria-labelledby="hero" className="mx-auto w-full max-w-5xl px-4 py-12 sm:py-16 lg:py-20">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <div className="flex max-w-xl flex-col gap-6">
             <h1 id="hero" className="text-4xl sm:text-5xl">

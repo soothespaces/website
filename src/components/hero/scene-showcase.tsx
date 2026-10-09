@@ -60,7 +60,7 @@ export function SceneShowcase({
         reducedMotion={reducedMotion}
         className="absolute inset-0 -z-10 size-full"
       />
-      <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-16 sm:py-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-6 lg:py-24">
+      <div className="mx-auto grid w-full max-w-5xl items-center gap-10 px-4 py-16 sm:py-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-6 lg:py-24">
         <div className="flex max-w-xl flex-col gap-6">{children}</div>
         <figure
           ref={stageRef}
