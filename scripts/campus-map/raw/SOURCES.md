@@ -1,6 +1,6 @@
 # Campus map sources
 
-Fetched 2026-10-09T19:49:08.859Z by `node scripts/campus-map/fetch.mjs` from the U-M Facilities &
+Fetched 2026-10-09T22:14:53.640Z by `node scripts/campus-map/fetch.mjs` from the U-M Facilities &
 Operations ArcGIS Server behind https://map.fo.umich.edu/. Don't edit these files by hand;
 re-run the script to refresh them.
 
