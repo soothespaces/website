@@ -48,13 +48,6 @@ def alignment_corners(path: str, image: str, width: int, height: int) -> list:
     return corners
 
 
-def _centroid(mask: np.ndarray) -> list[int] | None:
-    ys, xs = np.nonzero(mask)
-    if len(xs) == 0:
-        return None
-    return [int(round(float(xs.mean()))), int(round(float(ys.mean())))]
-
-
 def _claim_band(band: np.ndarray, room_ids: np.ndarray, labels: np.ndarray, dilation: int) -> np.ndarray:
     """Return dilation-band pixels on the room side of a wall, labeled by the nearest room.
 
@@ -97,37 +90,47 @@ def room_id_mask(gray: np.ndarray, labels: np.ndarray, spec: dict) -> tuple[np.n
     for cid, number in spec["labels"].items():
         if number:
             groups.setdefault(str(number), []).append(int(cid))
-    room_ids = np.zeros(labels.shape, dtype=np.int32)
+    lookup = np.zeros(int(labels.max()) + 1, dtype=np.int32)
     records = []
     for index, number in enumerate(sorted(groups), start=1):
-        for cid in groups[number]:
-            room_ids[labels == cid] = index
+        lookup[groups[number]] = index
         records.append({
             "id": index,
             "roomNumber": None if spec.get("_anonymous") else number,
             "componentIds": groups[number],
         })
+    room_ids = lookup[labels]
 
     closed = ndimage.binary_dilation(ink, iterations=dilation) if dilation else ink
     band = closed & ~ink & (room_ids == 0)
     claimed = _claim_band(band, room_ids, labels, dilation)
     room_ids[claimed > 0] = claimed[claimed > 0]
 
-    blocked = np.zeros(labels.shape, dtype=bool)
-    for cid, number in spec["labels"].items():
-        if not number:
-            blocked[labels == int(cid)] = True
-    for record in records:
-        mask = room_ids == record["id"]
+    blocked_lookup = np.zeros(int(labels.max()) + 1, dtype=bool)
+    blocked_lookup[[int(cid) for cid, number in spec["labels"].items() if not number]] = True
+    blocked = blocked_lookup[labels]
+    # A hole the room encloses lies inside the room's bounding box, so each
+    # room is processed on that crop.
+    boxes = ndimage.find_objects(room_ids, max_label=len(records))
+    for record, box in zip(records, boxes):
+        if box is None:
+            record["pixelArea"], record["centroid"] = 0, None
+            continue
+        ids, block = room_ids[box], blocked[box]
+        mask = ids == record["id"]
         holes, count = ndimage.label(ndimage.binary_fill_holes(mask) & ~mask)
         for hole_id in range(1, count + 1):
             hole = holes == hole_id
-            if (hole & blocked).any() or np.any((room_ids[hole] != 0) & (room_ids[hole] != record["id"])):
+            if (hole & block).any() or np.any((ids[hole] != 0) & (ids[hole] != record["id"])):
                 continue
-            room_ids[hole] = record["id"]
-        ys, xs = np.nonzero(room_ids == record["id"])
-        record["pixelArea"] = int(len(xs))
-        record["centroid"] = _centroid(room_ids == record["id"])
+            ids[hole] = record["id"]
+        mask = ids == record["id"]
+        record["pixelArea"] = int(mask.sum())
+        ys, xs = np.nonzero(mask)
+        record["centroid"] = None if len(xs) == 0 else [
+            int(round(float((xs + box[1].start).mean()))),
+            int(round(float((ys + box[0].start).mean()))),
+        ]
     return room_ids, records
 
 
@@ -248,15 +251,22 @@ def render_preview(rgb: Image.Image, room_ids: np.ndarray, records: list[dict], 
     # A wall ring's hole is the whole room interior. Punching that hole on a
     # shared canvas would erase columns and door swings drawn earlier, so each
     # polygon is rasterized on its own and OR-ed in.
+    # Each polygon is drawn on a crop of its own bounding box; a full-sheet
+    # canvas per polygon took minutes on a 2200×3400 sheet.
     ink_acc = np.zeros((height, width), dtype=bool)
-    scratch = Image.new("L", (width, height), 0)
-    scratch_draw = ImageDraw.Draw(scratch)
     for exterior, holes in mask_polygons(ink, simplify, min_area=1.0):
-        scratch_draw.rectangle([0, 0, width, height], fill=0)
-        scratch_draw.polygon([tuple(p) for p in exterior[:-1]], fill=255)
+        x0, y0 = np.floor(exterior.min(axis=0)).astype(int)
+        x1, y1 = np.ceil(exterior.max(axis=0)).astype(int) + 1
+        x0, y0, x1, y1 = max(x0, 0), max(y0, 0), min(x1, width), min(y1, height)
+        if x1 <= x0 or y1 <= y0:
+            continue
+        scratch = Image.new("L", (x1 - x0, y1 - y0), 0)
+        scratch_draw = ImageDraw.Draw(scratch)
+        offset = np.array([x0, y0])
+        scratch_draw.polygon([tuple(p) for p in exterior[:-1] - offset], fill=255)
         for hole in holes:
-            scratch_draw.polygon([tuple(p) for p in hole[:-1]], fill=0)
-        ink_acc |= np.asarray(scratch) > 0
+            scratch_draw.polygon([tuple(p) for p in hole[:-1] - offset], fill=0)
+        ink_acc[y0:y1, x0:x1] |= np.asarray(scratch) > 0
     arr = np.array(vector)
     arr[ink_acc] = (25, 25, 25)
     vector = Image.fromarray(arr)

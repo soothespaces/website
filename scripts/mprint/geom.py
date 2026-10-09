@@ -154,17 +154,14 @@ def simplify_ring(ring: np.ndarray, epsilon: float) -> np.ndarray | None:
 
 def point_in_ring(point: np.ndarray, ring: np.ndarray) -> bool:
     x, y = float(point[0]), float(point[1])
-    pts = ring[:-1]
-    n = len(pts)
-    inside = False
-    for i in range(n):
-        x1, y1 = pts[i]
-        x2, y2 = pts[(i + 1) % n]
-        if (y1 > y) != (y2 > y):
-            xinter = x1 + (y - y1) * (x2 - x1) / (y2 - y1)
-            if xinter > x:
-                inside = not inside
-    return inside
+    a = np.asarray(ring[:-1], dtype=float)
+    b = np.roll(a, -1, axis=0)
+    crosses = (a[:, 1] > y) != (b[:, 1] > y)
+    if not crosses.any():
+        return False
+    a, b = a[crosses], b[crosses]
+    xinter = a[:, 0] + (y - a[:, 1]) * (b[:, 0] - a[:, 0]) / (b[:, 1] - a[:, 1])
+    return bool(np.count_nonzero(xinter > x) % 2)
 
 
 def _interior_point(ring: np.ndarray) -> np.ndarray:
@@ -200,10 +197,15 @@ def polygons_from_rings(rings: list[np.ndarray], min_area: float) -> list[tuple[
         elif area <= -min_area:
             holes.append(ring)
     exteriors.sort(key=signed_area)
+    lo = np.array([e.min(axis=0) for e in exteriors]).reshape(-1, 2)
+    hi = np.array([e.max(axis=0) for e in exteriors]).reshape(-1, 2)
     grouped: list[list[np.ndarray]] = [[] for _ in exteriors]
     for hole in holes:
         pt = _interior_point(hole)
-        for i, exterior in enumerate(exteriors):
+        # Bounding boxes first; the ring test is only for the few that can hold it.
+        candidates = np.nonzero(np.all((lo <= pt) & (pt <= hi), axis=1))[0]
+        for i in candidates:
+            exterior = exteriors[i]
             if point_in_ring(pt, exterior):
                 grouped[i].append(hole)
                 break
@@ -211,9 +213,17 @@ def polygons_from_rings(rings: list[np.ndarray], min_area: float) -> list[tuple[
 
 
 def mask_polygons(mask: np.ndarray, simplify: float, min_area: float = 0.5) -> list[tuple[np.ndarray, list[np.ndarray]]]:
+    mask = np.asarray(mask, dtype=bool)
+    rows, cols = np.any(mask, axis=1), np.any(mask, axis=0)
+    if not rows.any():
+        return []
+    # Trace only the mask's bounding box; a room is a small part of the sheet.
+    y0, y1 = np.nonzero(rows)[0][[0, -1]]
+    x0, x1 = np.nonzero(cols)[0][[0, -1]]
+    offset = np.array([x0, y0], dtype=float)
     rings = []
-    for ring in rings_from_mask(mask):
-        simplified = simplify_ring(ring, simplify)
+    for ring in rings_from_mask(mask[y0 : y1 + 1, x0 : x1 + 1]):
+        simplified = simplify_ring(ring + offset, simplify)
         if simplified is not None:
             rings.append(simplified)
     return polygons_from_rings(rings, min_area)

@@ -37,10 +37,22 @@ the outer wall before the outside is flood-filled (Shapiro floor 3 needs 6;
 at 50 it also bridges Duderstadt's ring of outer columns). `--up DEG` is a
 rough bearing for the sheet's top when it isn't north (East Quad: 90).
 
-The `MPrint fit` workflow (`.github/workflows/mprint-fit.yml`) downloads every
-sheet listed there, fits it, and commits `alignments/`; the overlays are a run
-artifact. It runs on a GitHub runner because cloud dev sessions can't reach
-mprint.umich.edu. Add a sheet there rather than committing a local fit.
+### The pipeline
+
+`pipeline.py` runs every sheet in `sheets.json` end to end: download, fit,
+and, when the fit is usable, vectorize into
+`public/floor-plans/<building slug>/<floor>.geojson`.
+`public/floor-plans/index.json` lists every floor with its corners, whether
+the fit is usable, and its GeoJSON path. Each GeoJSON has `layer: "room"`
+polygons (with `roomNumber` when the floor has a labels file) and one
+`layer: "structure"` MultiPolygon of the drawing's ink. In MapLibre, add it as
+a GeoJSON source and draw rooms as a fill and structure as a dark fill above
+it. Unlike the raster, it stays sharp at every zoom.
+
+The `MPrint fit` workflow (`.github/workflows/mprint-fit.yml`) runs the
+pipeline on a GitHub runner, because cloud dev sessions can't reach
+mprint.umich.edu, and commits `alignments/` and `public/floor-plans/`. To add
+a floor, add a line to `sheets.json` and push; don't commit a local run.
 
 `alignments/` is the committed corner record (one file per sheet, with the
 image sha256). A fit with `usable: false` did not land on the footprint; don't

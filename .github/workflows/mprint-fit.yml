@@ -1,8 +1,9 @@
-# Re-fits the MPrint sheets onto their building footprints and commits the
-# corner records in scripts/mprint/alignments/. Runs on a GitHub runner
-# because cloud dev sessions can't reach mprint.umich.edu. The overlay PNGs
-# are uploaded as a run artifact, not committed. Run it from the Actions tab,
-# or push a change to the fitter on a feature branch.
+# Runs scripts/mprint/pipeline.py: fits every sheet in sheets.json onto its
+# building footprint (scripts/mprint/alignments/), writes map-ready GeoJSON
+# for the usable ones (public/floor-plans/), and commits both. Runs on a
+# GitHub runner because cloud dev sessions can't reach mprint.umich.edu. The
+# preview PNGs are a run artifact, not committed. Run it from the Actions
+# tab, or push a change to the pipeline on a feature branch.
 name: MPrint fit
 
 on:
@@ -12,8 +13,12 @@ on:
       - main
     paths:
       - "scripts/mprint/fit_outline.py"
+      - "scripts/mprint/vectorize.py"
+      - "scripts/mprint/pipeline.py"
       - "scripts/mprint/geom.py"
+      - "scripts/mprint/sheets.json"
       - "scripts/mprint/footprints/**"
+      - "scripts/mprint/labels/**"
       - ".github/workflows/mprint-fit.yml"
 
 permissions:
@@ -42,39 +47,22 @@ jobs:
 
       - run: python3 test_vectorize.py
 
-      - name: Download sheets
-        run: |
-          for sheet in ulib/ulib_1 ulib/ulib_2 ulib/ulib_3 dc/dc_1 dc/dc_2 eq/eq_1; do
-            curl -fsSL -o "$(basename "$sheet").png" "https://mprint.umich.edu/assets/floorplans/$sheet.png"
-          done
-          sha256sum *.png
-
-      - name: Fit
-        run: |
-          python3 fit_outline.py ulib_1.png footprints/shapiro.json --out alignments/ulib_1.json --preview out/ulib_1_fit.png
-          python3 fit_outline.py ulib_2.png footprints/shapiro.json --out alignments/ulib_2.json --preview out/ulib_2_fit.png
-          # Floor 3's window bands leave gaps in the outer wall.
-          python3 fit_outline.py ulib_3.png footprints/shapiro.json --close 6 --out alignments/ulib_3.json --preview out/ulib_3_fit.png
-          # FO draws Duderstadt at the ring of outer columns; a wide close bridges them.
-          python3 fit_outline.py dc_1.png footprints/duderstadt.json --close 50 --out alignments/dc_1.json --preview out/dc_1_fit.png
-          python3 fit_outline.py dc_2.png footprints/duderstadt.json --out alignments/dc_2.json --preview out/dc_2_fit.png
-          # East Quad's sheet has east at the top.
-          python3 fit_outline.py eq_1.png footprints/east-quad.json --up 90 --out alignments/eq_1.json --preview out/eq_1_fit.png
-          git diff --stat -- alignments
+      - name: Fit and vectorize every sheet in sheets.json
+        run: python3 pipeline.py --sheets sheets --previews out
 
       - uses: actions/upload-artifact@v4
         with:
           name: mprint-fit-previews
           path: scripts/mprint/out/
 
-      - name: Commit refreshed alignments
+      - name: Commit alignments and GeoJSON
         run: |
-          git add alignments
+          git add alignments ../../public/floor-plans
           if git diff --cached --quiet; then
-            echo "Alignments unchanged."
+            echo "Alignments and floor-plan GeoJSON unchanged."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Refit MPrint sheets onto their footprints"
+          git commit -m "Refit MPrint sheets and regenerate floor-plan GeoJSON"
           git push
