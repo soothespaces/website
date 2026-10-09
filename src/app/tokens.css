@@ -13,6 +13,7 @@
  *   data-contrast  normal | more     prefers-contrast
  *   data-palette   cvd               (opt-in only)
  *   data-text      112 | 125 | 150   (browser zoom still applies on top)
+ *   data-motion    reduce            prefers-reduced-motion
  *
  * Contrast against the page background: text >= 4.5:1 (AA), control borders
  * and the focus ring >= 3:1, high contrast and the colorblind palette >= 7:1.

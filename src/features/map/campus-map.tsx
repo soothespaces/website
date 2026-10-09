@@ -4,6 +4,7 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { ReactNode } from "react";
 import Map, { NavigationControl } from "react-map-gl/maplibre";
+import { useReducedMotion } from "@/lib/settings/use-reduced-motion";
 import { useResolvedTheme } from "@/lib/use-resolved-theme";
 import {
   CAMPUS_BOUNDS,
@@ -21,6 +22,7 @@ import "./campus-map.css";
 // <Marker>); those are re-applied after every style change.
 export default function CampusMap({ children }: { children?: ReactNode }) {
   const theme = useResolvedTheme();
+  const reducedMotion = useReducedMotion();
 
   return (
     <div data-map-theme={theme} className="absolute inset-0 bg-muted">
@@ -29,6 +31,7 @@ export default function CampusMap({ children }: { children?: ReactNode }) {
         mapLib={maplibregl}
         mapStyle={mapStyleUrl(theme)}
         initialViewState={CAMPUS_INITIAL_VIEW}
+        fadeDuration={reducedMotion ? 0 : 300}
         minZoom={CAMPUS_MIN_ZOOM}
         maxZoom={CAMPUS_MAX_ZOOM}
         maxBounds={CAMPUS_BOUNDS}

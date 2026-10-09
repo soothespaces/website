@@ -13,6 +13,7 @@ export const ROUTES = {
 export const NAV_LINKS = [
   { href: ROUTES.map, label: "Map" },
   { href: ROUTES.help, label: "Help" },
+  { href: ROUTES.accountPreferences, label: "Preferences" },
 ] as const;
 
 export type HelpTopic = {
@@ -34,7 +35,7 @@ export const HELP_TOPICS: HelpTopic[] = [
       {
         question: "Do I need an account?",
         answer:
-          "No. Anyone can browse the map and read check-in totals. You only need to sign in to check in.",
+          "No. Anyone can browse the map and read check-in totals. You only need to sign in to check in, or to save preferences to your account.",
       },
       {
         question: "Where does the information come from?",
@@ -71,7 +72,7 @@ export const HELP_TOPICS: HelpTopic[] = [
       {
         question: "Where are my account preferences?",
         answer:
-          "Once you're signed in, select your profile in the top corner of any page, then Account preferences.",
+          "Open Preferences in the header on any page. After you sign in, you can also open Account preferences from your profile menu.",
       },
     ],
   },
@@ -82,7 +83,7 @@ export const HELP_TOPICS: HelpTopic[] = [
       {
         question: "Can I change contrast, text size or motion?",
         answer:
-          "Soothe Spaces follows your device's light or dark, contrast and reduced-motion settings. In-app controls for theme, high contrast, text size and reduced motion are on the way.",
+          "Yes. Open Preferences to set the theme, contrast, text size, and motion. Soothe Spaces follows your device until you choose otherwise. Without an account, those choices stay on this device. Sign in with your @umich.edu account to save them to your account.",
       },
     ],
   },
