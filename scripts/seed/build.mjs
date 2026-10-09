@@ -1,5 +1,6 @@
 // Turns the committed snapshots in scripts/seed/raw/ plus overrides.json into
-// supabase/seed.sql: idempotent upserts for public.buildings and public.spaces.
+// supabase/seed.sql: idempotent upserts for public.buildings, public.spaces and
+// the tables that hang off them.
 //
 //   node scripts/seed/build.mjs
 //
@@ -15,7 +16,10 @@
 //   location pages, with room number and floor parsed from the title.
 // - Building entrances: every exterior door on the U-M Facilities campus map
 //   (scripts/campus-map/raw/), linked to a building by record number.
-import { readFile, writeFile } from "node:fs/promises";
+// - Google places: the Google Maps place saved for each building by
+//   scripts/serpapi/fetch.mjs, plus its hours for buildings the Library
+//   doesn't cover and its popular times when Google has them.
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -42,6 +46,12 @@ const snapshotDate = (await readFile(join(HERE, "raw", "SOURCES.md"), "utf8")).m
   /Fetched (\d{4}-\d{2}-\d{2})/,
 )[1];
 const overrides = await readJson("overrides.json");
+const googlePlaces = await Promise.all(
+  (await readdir(join(HERE, "..", "serpapi", "raw", "places")))
+    .filter((name) => name.endsWith(".json"))
+    .sort()
+    .map((name) => readJson(`../serpapi/raw/places/${name}`)),
+);
 
 // ---------------------------------------------------------------- helpers
 
@@ -505,6 +515,111 @@ const entrances = foAccessibility.doors
   .sort((a, b) => a.fo_object_id - b.fo_object_id);
 const linkedEntrances = entrances.filter((e) => e.building_slug).length;
 
+// ---------------------------------------------------------------- Google places
+
+// Place results list attributes as one-key objects per category
+// ([{ "accessibility": [...] }, ...]); the table keeps one object.
+const byCategory = (list) => Object.assign({}, ...(list ?? []));
+const WEEKDAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+const GOOGLE_HOURS_DAYS = 120;
+const addDays = (date, days) => new Date(Date.parse(date) + days * 86400000).toISOString().slice(0, 10);
+
+// Google writes a day as "Open 24 hours", "Closed" or comma-separated
+// intervals with an en dash, giving AM/PM on the end time only when both ends
+// share it ("1–5 PM", but "11 AM–1 PM").
+const googleDay = (text) => {
+  const day = text.replace(/\s+/g, " ").trim();
+  if (/^closed$/i.test(day)) return [];
+  if (/^open 24 hours$/i.test(day)) return [{ opens: "00:00", closes: "24:00" }];
+  return day.split(",").map((range) => {
+    const [from, to] = range.split(/[–-]/).map((part) => part.trim());
+    if (!to) fail(`Unreadable Google hours "${text}"`);
+    const closes = clock(to);
+    const meridiem = to.match(/(am|pm)$/i)?.[1];
+    let opens = clock(from, meridiem);
+    // "11–1 PM" is 11 AM to 1 PM.
+    if (!/(am|pm)$/i.test(from) && opens > closes && meridiem?.toLowerCase() === "pm") opens = clock(from, "am");
+    return { opens, closes };
+  });
+};
+
+const libraryHourBuildings = new Set(Object.values(overrides.libraryHoursBuildings));
+const googleRows = [];
+const googleHours = [];
+const popularTimes = [];
+for (const saved of googlePlaces) {
+  const p = saved.place;
+  if (!buildingSlugs.has(saved.slug)) fail(`Google place for unknown building ${saved.slug}`);
+  if (saved.distance_from_ours_m > 300) fail(`Google place for ${saved.slug} is ${saved.distance_from_ours_m} m away`);
+  const fetchedAt = saved.fetched_at;
+  googleRows.push({
+    building_slug: saved.slug,
+    place_id: p.place_id,
+    data_id: p.data_id ?? null,
+    data_cid: p.data_cid ?? null,
+    name: p.title,
+    address: p.address ?? null,
+    lat: p.gps_coordinates?.latitude ?? null,
+    lng: p.gps_coordinates?.longitude ?? null,
+    types: [p.type ?? []].flat(),
+    rating: number(p.rating),
+    review_count: number(p.reviews),
+    website: p.website ?? null,
+    phone: p.phone ?? null,
+    located_in: p.located_in ?? null,
+    typical_time_spent: p.popular_times?.live_hash?.time_spent ?? null,
+    hours_last_updated: p.hours_last_updated ?? null,
+    extensions: byCategory(p.extensions),
+    unsupported_extensions: byCategory(p.unsupported_extensions),
+    review_topics: (p.user_reviews?.topics ?? []).map((t) => ({ keyword: t.keyword, mentions: t.mentions })),
+    fetched_at: fetchedAt,
+  });
+
+  // Google's hours are its current regular week with no end date, so they
+  // count for GOOGLE_HOURS_DAYS from the fetch and then lapse until refetched.
+  // The Library's own hours win for its buildings.
+  if (!libraryHourBuildings.has(saved.slug)) {
+    for (const entry of p.hours ?? []) {
+      const [[name, text]] = Object.entries(entry);
+      const weekday = WEEKDAYS.indexOf(name.toLowerCase());
+      if (weekday < 0) fail(`Unknown weekday "${name}" in Google hours for ${saved.slug}`);
+      const base = {
+        space_slug: null,
+        building_slug: saved.slug,
+        label: "Regular hours (Google Maps)",
+        valid_from: fetchedAt.slice(0, 10),
+        valid_until: addDays(fetchedAt, GOOGLE_HOURS_DAYS),
+        weekday,
+        access: "public",
+        source: "google",
+        source_url: `https://www.google.com/maps/place/?q=place_id:${p.place_id}`,
+      };
+      const intervals = googleDay(text);
+      if (!intervals.length) googleHours.push({ ...base, opens: null, closes: null });
+      for (const interval of intervals) googleHours.push({ ...base, ...interval });
+    }
+  }
+
+  // graph_results: { sunday: [{ time: "6 AM", busyness_score: 12 }, ...], ... }
+  for (const [name, hours] of Object.entries(p.popular_times?.graph_results ?? {})) {
+    const weekday = WEEKDAYS.indexOf(name.toLowerCase());
+    if (weekday < 0) fail(`Unknown weekday "${name}" in popular times for ${saved.slug}`);
+    for (const h of hours) {
+      if (typeof h.busyness_score !== "number") continue;
+      popularTimes.push({
+        building_slug: saved.slug,
+        weekday,
+        hour: Number(clock(h.time).slice(0, 2)),
+        busyness: h.busyness_score,
+        fetched_at: fetchedAt,
+      });
+    }
+  }
+}
+for (const row of googleHours) {
+  if (row.opens !== null && row.opens === row.closes) fail(`Empty interval ${JSON.stringify(row)}`);
+}
+
 // ---------------------------------------------------------------- SQL
 
 const BUILDING_COLUMNS = [
@@ -567,6 +682,47 @@ const entrancesSql = [
   entrances.map((e) => `  (${ENTRANCE_COLUMNS.map((c) => sql(e[c])).join(", ")})`).join(",\n") + ";",
 ].join("\n");
 
+// Google rows are replaced wholesale too: a building whose place file is
+// deleted loses its place, hours and popular times.
+const GOOGLE_COLUMNS = [
+  "building_slug", "place_id", "data_id", "data_cid", "name", "address", "lat", "lng",
+  "types", "rating", "review_count", "website", "phone", "located_in",
+  "typical_time_spent", "hours_last_updated", "extensions", "unsupported_extensions",
+  "review_topics", "fetched_at",
+];
+const googleValue = (row, c) => {
+  if (c === "types") return `${sql(`{${row.types.map((t) => `"${t.replace(/["\\]/g, "\\$&")}"`).join(",")}}`)}::text[]`;
+  if (["extensions", "unsupported_extensions", "review_topics"].includes(c)) return jsonb(row[c]);
+  return sql(row[c]);
+};
+const POPULAR_COLUMNS = ["building_slug", "weekday", "hour", "busyness", "fetched_at"];
+const googleSql = [
+  "delete from public.building_popular_times;",
+  "delete from public.google_places;",
+  "delete from public.opening_hours where source = 'google';",
+  ...(googleRows.length
+    ? [
+        `insert into public.google_places (${GOOGLE_COLUMNS.join(", ")})`,
+        "values",
+        googleRows.map((r) => `  (${GOOGLE_COLUMNS.map((c) => googleValue(r, c)).join(", ")})`).join(",\n") + ";",
+      ]
+    : []),
+  ...(googleHours.length
+    ? [
+        "insert into public.opening_hours (building_slug, space_id, label, valid_from, valid_until, weekday, opens, closes, access, source, source_url)",
+        "select v.building_slug, null, v.label, v.valid_from::date, v.valid_until::date, v.weekday::smallint, v.opens::time, v.closes::time, v.access, v.source, v.source_url",
+        `from (values\n${googleHours.map((r) => `  (${hoursValues(r)})`).join(",\n")}\n) as v (${HOURS_COLUMNS.join(", ")});`,
+      ]
+    : []),
+  ...(popularTimes.length
+    ? [
+        `insert into public.building_popular_times (${POPULAR_COLUMNS.join(", ")})`,
+        "values",
+        popularTimes.map((r) => `  (${POPULAR_COLUMNS.map((c) => sql(r[c])).join(", ")})`).join(",\n") + ";",
+      ]
+    : []),
+].join("\n");
+
 const bookableValues = (item) => BOOKABLE_COLUMNS.map((c) => sql(item[c])).join(", ");
 
 const upsert = (table, columns, rows, values, key) =>
@@ -583,13 +739,14 @@ const upsert = (table, columns, rows, values, key) =>
 
 const listedCount = spaces.filter((s) => s.is_listed).length;
 const listedBookable = bookableItems.filter((item) => item.is_listed).length;
-const header = `-- Generated by scripts/seed/build.mjs from scripts/seed/raw/ (see
+const header = `-- Generated by scripts/seed/build.mjs from scripts/seed/raw/ and scripts/serpapi/raw/ (see
 -- raw/SOURCES.md for where and when each snapshot was fetched). Don't edit by
 -- hand: change overrides.json or re-fetch, then rebuild.
 --
 -- ${buildings.length} buildings (${buildings.filter((b) => b.footprint).length} with footprints), ${spaces.length} spaces (${listedCount} listed),
 -- ${bookableItems.length} LibCal bookable items (${listedBookable} listed), ${openingHours.length} Library opening-hours rows,
 -- ${entrances.length} building entrances (${linkedEntrances} linked to a building).
+-- ${googleRows.length} Google places (scripts/serpapi/raw/places/), ${googleHours.length} Google opening-hours rows, ${popularTimes.length} popular-times rows.
 -- Idempotent: safe to run again against a database that already has the rows.
 `;
 
@@ -615,6 +772,8 @@ await writeFile(
     "",
     entrancesSql,
     "",
+    googleSql,
+    "",
     "commit;",
     "",
   ].join("\n"),
@@ -623,5 +782,6 @@ await writeFile(
 console.log(
   `Wrote ${OUT}: ${buildings.length} buildings, ${spaces.length} spaces (${listedCount} listed), ` +
     `${bookableItems.length} bookable items (${listedBookable} listed), ${openingHours.length} opening-hours rows, ` +
-    `${entrances.length} entrances (${linkedEntrances} linked)`,
+    `${entrances.length} entrances (${linkedEntrances} linked), ${googleRows.length} Google places ` +
+    `(${googleHours.length} hours rows, ${popularTimes.length} popular-times rows)`,
 );

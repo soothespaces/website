@@ -9,6 +9,7 @@ on:
     paths:
       - "supabase/**"
       - "scripts/seed/**"
+      - "scripts/serpapi/raw/places/**"
       - ".github/workflows/supabase-migrations.yml"
   workflow_dispatch:
 

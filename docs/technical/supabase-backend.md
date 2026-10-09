@@ -284,7 +284,9 @@ Migration `20261009140000_hours_and_google.sql`.
   day; `00:00`–`24:00` is all day. `access` is `public` or `mcard` for card-only hours.
   The seed loads the Library CMS hours for every Library space and for the buildings
   that are wholly libraries (Shapiro, Hatcher, Taubman HSL), dropping periods that ended
-  before the snapshot. Non-library buildings get hours from Google later (`source = 'google'`).
+  before the snapshot. Other buildings with a saved Google place get Google's regular week
+  (`source = 'google'`, label "Regular hours (Google Maps)"), valid for 120 days from the
+  fetch since Google gives no end date.
   Example lookup:
 
   ```sql

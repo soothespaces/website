@@ -582,6 +582,12 @@ removed, and the key redacted), the resolved place per building, unresolved buil
 with their candidates, and a ledger of every search. SerpApi keeps each search for 31
 days, so an unedited response can still be fetched for free by its id.
 
+`scripts/seed/build.mjs` turns each saved place into a `public.google_places` row, adds
+Google's hours to `opening_hours` for buildings the Library doesn't cover (valid for 120
+days from the fetch, since Google gives no end date), and fills `building_popular_times`
+when a place has `popular_times`. As of 2026-10-09 neither Shapiro (by search and by
+`place_id`) nor the Michigan Union came back with popular times, so that table stays empty.
+
 ## 12. U-M Library CMS: hours, rooms and study-space pages (found 2026-10-09)
 
 lib.umich.edu is built from a Drupal CMS whose JSON:API is public at
