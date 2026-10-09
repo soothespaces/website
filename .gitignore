@@ -44,3 +44,6 @@ next-env.d.ts
 # python
 __pycache__/
 *.pyc
+
+# photo originals (scripts/photos/README.md)
+scripts/photos/originals/

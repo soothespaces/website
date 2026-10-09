@@ -554,7 +554,9 @@ in the app's code.
 **Script** (`scripts/photos/`, WP3), run locally with the secret key:
 
 1. Read `scripts/photos/photos.json`, a committed list of entries:
-   `{ building_slug | space_slug, source_url, alt, credit, license }`.
+   `{ building_slug | space_slug, file | source_url, alt, credit, license, kind?,
+   floor?, lat?, lng?, heading? }`. The format is in
+   [scripts/photos/README.md](../../scripts/photos/README.md).
 2. Download each photo. Use `sharp` to auto-rotate it and strip EXIF (EXIF can include
    the photographer's GPS location), then write WebP at widths 480, 960 and 1600
    (never upscaled), quality 75.
@@ -562,6 +564,26 @@ in the app's code.
    `cacheControl: '31536000'`. Every re-export gets a new `photo_id`, so the long
    cache is never wrong.
 4. Upsert the `public.photos` row.
+
+The script is `scripts/photos/import.mjs` (`npm run photos:import`). Files are named
+by a hash of the original, so re-runs are safe; `--prune` deletes rows no longer in
+`photos.json`.
+
+**Placement and panoramas (added 2026-10-09, migration
+`20261009130000_photo_placement.sql`).** The team's own photos say where they were
+taken, so the app can show the photos nearest a room or bookable item instead of only
+"photos of this building":
+
+- `floor`, plus `lat`/`lng` of where the photographer stood and an optional
+  `heading` (compass direction faced). Map coordinates, not floor-plan pixels: MPrint
+  crops each floor differently, while each `floor_plans.corners` ties its image to the
+  map, so a room centroid converts to lat/lng for a nearest-photo lookup and placements
+  survive re-exports or vectorized plans. Place them by clicking a map, not from phone
+  GPS.
+- `kind` is `photo` or `panorama`. Panoramas are 2:1 equirectangular images (for
+  example from the Ricoh Theta Z1 in the U-M equipment loan catalog), stored at widths
+  2048 and 4096 for a 360° viewer such as Pannellum or Photo Sphere Viewer.
+- `source_url` is now optional, since team photos have no page to link to.
 
 ```sql
 create table public.photos (
