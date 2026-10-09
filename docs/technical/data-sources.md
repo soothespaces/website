@@ -611,6 +611,8 @@ and the basemap and curb ramps into `public/campus-map/*.geojson`;
 `scripts/campus-map/style.mjs` turns the renderers into MapLibre layers in
 `public/campus-map/style.json`. The container can't reach `gisapi.fo.umich.edu`, so the
 **Campus map snapshot** workflow runs the fetch on a GitHub runner.
+The map draws the basemap, curb ramps and accessible doors (see
+[Architecture § Campus map](architecture.md#campus-map)).
 
 ## Gaps relative to what the app needs
 
