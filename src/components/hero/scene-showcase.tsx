@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { PageWidth } from "@/components/page-width";
 import { SpaceChip } from "@/components/ui/space-chip";
 import { SceneCanvas } from "./scene-canvas";
 import type { StudyScene } from "./scenes";
@@ -60,8 +61,8 @@ export function SceneShowcase({
         reducedMotion={reducedMotion}
         className="absolute inset-0 -z-10 size-full"
       />
-      <div className="mx-auto grid w-full max-w-5xl items-center gap-10 px-4 py-16 sm:py-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-6 lg:py-24">
-        <div className="flex max-w-xl flex-col gap-6">{children}</div>
+      <PageWidth className="grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-6 lg:py-24">
+        <div className="flex flex-col gap-6">{children}</div>
         <figure
           ref={stageRef}
           className="relative w-full translate-x-[6%]"
@@ -105,7 +106,7 @@ export function SceneShowcase({
             </button>
           )}
         </figure>
-      </div>
+      </PageWidth>
     </section>
   );
 }

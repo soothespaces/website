@@ -269,6 +269,61 @@ the guest's localStorage value:
 Rows are created on first save (upsert from the client), not by a trigger on
 `auth.users`, so a bug here can never block sign-in.
 
+### Opening hours and Google places (added 2026-10-09)
+
+Migration `20261009140000_hours_and_google.sql`.
+
+- **`public.spaces.description`:** the "About the space" text from each Library
+  space page (plain text, blank-line paragraphs, `- ` list items). `summary` stays the
+  one-line teaser.
+- **`public.opening_hours`:** one row per (period, weekday, interval) for a building or
+  a space. A period is a date range with a `label` ("Fall and winter semester hours",
+  "Thanksgiving break hours"). For a date, use the rows of the **narrowest period that
+  covers it and lists that weekday** (ties: later `valid_from`); a weekday can have
+  several intervals. `opens`/`closes` null means closed; `closes <= opens` ends the next
+  day; `00:00`–`24:00` is all day. `access` is `public` or `mcard` for card-only hours.
+  The seed loads the Library CMS hours for every Library space and for the buildings
+  that are wholly libraries (Shapiro, Hatcher, Taubman HSL), dropping periods that ended
+  before the snapshot. Non-library buildings get hours from Google later (`source = 'google'`).
+  Example lookup:
+
+  ```sql
+  select h.* from public.opening_hours h
+  where h.building_slug = $1 and $2::date between h.valid_from and h.valid_until
+    and h.weekday = extract(dow from $2::date)
+    and (h.valid_until - h.valid_from, h.valid_from) = (
+      select g.valid_until - g.valid_from, g.valid_from from public.opening_hours g
+      where g.building_slug = $1 and $2::date between g.valid_from and g.valid_until
+        and g.weekday = extract(dow from $2::date)
+      order by 1, 2 desc limit 1);
+  ```
+- **`public.google_places`:** one Google Maps place per building from SerpApi's place
+  results: ids (`place_id`, `data_id`, `data_cid`), Google's name/address/position to
+  check the match, `types`, `rating`, `review_count`, `website`, `phone`, `located_in`,
+  `typical_time_spent`, `hours_last_updated`, `extensions` and `unsupported_extensions`
+  (attribute lists by category, e.g. `accessibility`), and `review_topics` (keyword +
+  mention count only, never reviewer names or text), plus `fetched_at`.
+- **`public.building_popular_times`:** Google's typical 0–100 busyness per building,
+  weekday and hour. Hours Google doesn't report have no row.
+
+All three are public read with no client writes, like `buildings`.
+
+### Building entrances (added 2026-10-09)
+
+Migration `20261009150000_building_entrances.sql`. **`public.building_entrances`** has
+one row per exterior door from the U-M Facilities & Operations campus map
+([Data Sources § 13](data-sources.md#13-u-m-facilities-campus-map-found-2026-10-09)):
+position, `accessible` and `automatic` (FO rates every door on both), `keypad`,
+`floor_label` as FO writes it (`01`, `0G`, `0B`), `location_description` (FO's
+plain-language "east section of the building, 120 feet west of Lurie Tower…") and
+survey `notes` ("More than 5 lbs of force required to open"). Doors carry FO's building
+record number, which matches `buildings.official_id` or `extra->>'buildingRecordNumber'`;
+the seed links 1,281 of 2,653 doors (655 of the 890 accessible ones) to a building
+slug. The rest are on buildings we don't list (housing, off-campus offices) and keep the
+record number and FO's `building_name`. `id` is FO's GlobalID; the seed replaces every
+`source = 'fo_campus_map'` row on each run and leaves `manual` rows alone. Public read,
+no client writes.
+
 ## RLS and grants
 
 Every table in `public` has RLS enabled. Policies use `(select auth.uid())` rather
@@ -554,7 +609,9 @@ in the app's code.
 **Script** (`scripts/photos/`, WP3), run locally with the secret key:
 
 1. Read `scripts/photos/photos.json`, a committed list of entries:
-   `{ building_slug | space_slug, source_url, alt, credit, license }`.
+   `{ building_slug | space_slug, file | source_url, alt, credit, license, kind?,
+   floor?, lat?, lng?, heading? }`. The format is in
+   [scripts/photos/README.md](../../scripts/photos/README.md).
 2. Download each photo. Use `sharp` to auto-rotate it and strip EXIF (EXIF can include
    the photographer's GPS location), then write WebP at widths 480, 960 and 1600
    (never upscaled), quality 75.
@@ -562,6 +619,26 @@ in the app's code.
    `cacheControl: '31536000'`. Every re-export gets a new `photo_id`, so the long
    cache is never wrong.
 4. Upsert the `public.photos` row.
+
+The script is `scripts/photos/import.mjs` (`npm run photos:import`). Files are named
+by a hash of the original, so re-runs are safe; `--prune` deletes rows no longer in
+`photos.json`.
+
+**Placement and panoramas (added 2026-10-09, migration
+`20261009130000_photo_placement.sql`).** The team's own photos say where they were
+taken, so the app can show the photos nearest a room or bookable item instead of only
+"photos of this building":
+
+- `floor`, plus `lat`/`lng` of where the photographer stood and an optional
+  `heading` (compass direction faced). Map coordinates, not floor-plan pixels: MPrint
+  crops each floor differently, while each `floor_plans.corners` ties its image to the
+  map, so a room centroid converts to lat/lng for a nearest-photo lookup and placements
+  survive re-exports or vectorized plans. Place them by clicking a map, not from phone
+  GPS.
+- `kind` is `photo` or `panorama`. Panoramas are 2:1 equirectangular images (for
+  example from the Ricoh Theta Z1 in the U-M equipment loan catalog), stored at widths
+  2048 and 4096 for a 360° viewer such as Pannellum or Photo Sphere Viewer.
+- `source_url` is now optional, since team photos have no page to link to.
 
 ```sql
 create table public.photos (
@@ -610,9 +687,11 @@ by accident.
 
 ## Seed data
 
-### Is the raw data in the repo? No
+### Is the raw data in the repo? Yes, since 2026-10-09
 
-Checked every branch and the full git history on 2026-10-08. The only data file
+Snapshots of the MVP sources are now committed under `scripts/seed/raw/` (see
+[scripts/seed/README.md](../../scripts/seed/README.md)). Before that, as checked on
+every branch and the full git history on 2026-10-08, the only data file
 anywhere is `scripts/mprint/labels/ulib_2.json` (Shapiro floor 2 room labels). Missing:
 
 | Source | Records | Status |
@@ -647,7 +726,8 @@ scripts/seed/
 supabase/seed.sql   generated, committed, loaded by `supabase db reset` locally
 ```
 
-- `seed.sql` uses `insert ... on conflict (slug) do update`, so it's safe to run again.
+- `seed.sql` uses `insert ... on conflict (slug) do update` (`(instance, libcal_item_id)`
+  for bookable items), so it's safe to run again.
 - Production: migrations deploy through the Supabase GitHub integration on merge, but
   that doesn't run `seed.sql`. The WP3 owner runs it once against production with
   `psql "$SUPABASE_DB_URL" -f supabase/seed.sql`, and again after each snapshot
@@ -676,8 +756,14 @@ supabase/migrations/
   20261008193500_check_in_aggregates.sql   WP4      check_in_summary(), check_in_overview()
   20261008193600_user_settings.sql         WP2      table, owner-only RLS
   20261008193700_photos.sql                WP3      metadata, RLS, photos bucket
+  20261009120000_bookable_items.sql        WP6      LibCal rooms and seats
+  20261009130000_photo_placement.sql       WP3      photo kind, floor, position, heading
+  20261009140000_hours_and_google.sql      WP3      opening_hours, google_places, popular times
+  20261009150000_building_entrances.sql    WP3      exterior doors from the FO campus map
 supabase/tests/
   mvp_backend.test.sql                     shared   pgTAP, run by `supabase test db`
+  bookable_items.test.sql, photo_placement.test.sql, hours_and_google.test.sql,
+  building_entrances.test.sql              per-migration checks
 ```
 
 After each merge, run `npm run db:types` so `src/types/supabase.ts` matches.
@@ -712,9 +798,13 @@ The migrations workflow runs `npx supabase test db`. The suite covers:
 These are sketched so the MVP schema doesn't box them in. None need changes to the
 MVP tables beyond what's above.
 
-- **WP6 LibCal:** `public.bookable_items` (PK `(instance, libcal_item_id)`, `lid`,
-  `kind` room/seat, `title`, `room_number`, `capacity`, `booking_url`, `thumbnail_url`,
-  nullable `space_id`/`room_zone_id`), public read. Availability itself is cached by
+- **WP6 LibCal:** `public.bookable_items` exists since 2026-10-09 (migration
+  `20261009120000_bookable_items.sql`), seeded from `raw/libcal-items.json`: PK
+  `(instance, libcal_item_id)`, `lid`, `kind` (LibCal's own `space`/`seat`, since
+  "spaces" include booths and game stations, not just rooms), `title`,
+  `location_name`, `grouping`, `building_slug`, `floor`, `room_number`, `capacity`,
+  `booking_url`, `thumbnail_url`, `is_listed`, and nullable `space_id`/`room_zone_id`
+  for later joins. Listed rows are public read. Availability itself is cached by
   the Next.js route handler (`revalidate: 300`), not stored. Add a
   `private.availability_cache` table only if the Vercel cache turns out not to be
   enough. Never store who booked what (ADR 0008).
@@ -722,13 +812,12 @@ MVP tables beyond what's above.
   nothing stored. "Recent check-ins" is `check_in_summary(..., since => '3 hours')`.
   Weekday × hour patterns (P2) are a `check_in_patterns()` function over the same
   table. Simulated demo data goes in a separate seed file, never production.
-  If the team adopts Google popular times via SerpApi
-  ([Data Sources § 11](data-sources.md#11-serpapi-google-maps-data-through-a-paid-scraping-api-researched-2026-10-08)),
-  a monthly script fills `public.building_popular_times` (`building_slug`,
-  `weekday` 0–6, `hour` 0–23, `busyness` 0–100, `fetched_at`; PK
-  `(building_slug, weekday, hour)`; public read) plus a `google_place_id` column on
-  `buildings`. The app reads only this table, never SerpApi. The key stays in the
-  script's environment as `SERPAPI_API_KEY`, never `NEXT_PUBLIC_*`.
+  The tables for Google popular times via SerpApi
+  ([Data Sources § 11](data-sources.md#11-serpapi-google-maps-data-through-a-paid-scraping-api-researched-2026-10-08))
+  exist since 2026-10-09 (see [Opening hours and Google places](#opening-hours-and-google-places)):
+  a monthly script, not yet written, fills `public.google_places` and
+  `public.building_popular_times`. The app reads only these tables, never SerpApi.
+  The key stays in the script's environment as `SERPAPI_API_KEY`, never `NEXT_PUBLIC_*`.
 - **WP2 needs profile and sync:** already covered by `user_settings.settings.needs`.
 - **WP3 search:** across about 60 spaces and 470 buildings, client-side filtering is
   enough. Add `pg_trgm` indexes only if search moves server-side.

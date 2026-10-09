@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FootnoteRef } from "@/components/footnote-ref";
+import { PageWidth } from "@/components/page-width";
 import { SceneShowcase } from "@/components/hero/scene-showcase";
 import { COMMONS } from "@/components/hero/scenes";
 import { ROUTES } from "@/lib/site";
@@ -45,9 +46,9 @@ const buttonBase =
 export default function Home() {
   return (
     <>
-      <section aria-labelledby="hero" className="mx-auto w-full max-w-5xl px-4 py-12 sm:py-16 lg:py-20">
-        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="flex max-w-xl flex-col gap-6">
+      <section aria-labelledby="hero">
+        <PageWidth className="grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-2 lg:gap-16 lg:py-20">
+          <div className="flex flex-col gap-6">
             <h1 id="hero" className="text-4xl sm:text-5xl">
               Find a study space that feels right.
             </h1>
@@ -89,7 +90,7 @@ export default function Home() {
               className="aspect-[4/3] size-full object-cover"
             />
           </div>
-        </div>
+        </PageWidth>
       </section>
 
       <SceneShowcase scene={COMMONS} labelledBy="sound-demo">
@@ -104,7 +105,7 @@ export default function Home() {
         </p>
       </SceneShowcase>
 
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-4 py-12 sm:py-16">
+      <PageWidth className="flex flex-col gap-16 py-12 sm:py-16">
         <section aria-labelledby="conditions" className="flex flex-col gap-6">
           <h2 id="conditions" className="text-2xl">
             Filter by how a space feels
@@ -150,7 +151,7 @@ export default function Home() {
           <h2 id="privacy" className="text-2xl">
             Anonymous by design
           </h2>
-          <p className="max-w-2xl text-muted-foreground">
+          <p className="text-muted-foreground">
             Check-ins describe the space, never the person. Nobody can see who
             checked in where; everyone sees the same totals.
           </p>
@@ -184,7 +185,7 @@ export default function Home() {
             </Link>
           </div>
         </section>
-      </div>
+      </PageWidth>
     </>
   );
 }

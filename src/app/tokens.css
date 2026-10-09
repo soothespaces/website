@@ -22,6 +22,9 @@
 /* Light (default) */
 :root {
   color-scheme: light;
+  /* One page column. PageWidth is the only thing that reads these. */
+  --page-width: 64rem;
+  --page-gutter: 1rem;
   --background: #ffffff;
   --foreground: #171717;
   --card: #ffffff;
