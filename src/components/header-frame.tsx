@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { Collapsible } from "radix-ui";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { NAV_LINKS, ROUTES } from "@/lib/site";
+import { Button } from "./ui/button";
+import { CloseIcon, MenuIcon } from "./ui/icons";
 import { LogoMark, Wordmark } from "./logo";
 import { PageWidth } from "./page-width";
 
@@ -35,27 +37,6 @@ function NavLinks({
         </li>
       ))}
     </ul>
-  );
-}
-
-function MenuIcon({ open }: { open: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="size-6"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      {open ? (
-        <path d="M6 6l12 12M18 6L6 18" />
-      ) : (
-        <path d="M4 7h16M4 12h16M4 17h16" />
-      )}
-    </svg>
   );
 }
 
@@ -116,12 +97,16 @@ export function HeaderFrame({ account }: { account: ReactNode }) {
 
           <div className="ml-auto flex shrink-0 items-center gap-2">
             {account}
-            <Collapsible.Trigger
-              ref={triggerRef}
-              className="inline-flex size-11 items-center justify-center rounded-md border border-input hover:bg-accent md:hidden"
-            >
-              <MenuIcon open={open} />
-              <span className="sr-only">Menu</span>
+            <Collapsible.Trigger asChild>
+              <Button
+                ref={triggerRef}
+                variant="outline"
+                size="icon"
+                className="md:hidden"
+                aria-label={open ? "Close menu" : "Open menu"}
+              >
+                {open ? <CloseIcon size="lg" /> : <MenuIcon size="lg" />}
+              </Button>
             </Collapsible.Trigger>
           </div>
         </PageWidth>

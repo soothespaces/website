@@ -3,8 +3,9 @@
  *
  * Components only use the semantic variables below (through the Tailwind
  * classes mapped in globals.css: bg-background, text-muted-foreground,
- * bg-primary, bg-destructive, ...). Names follow shadcn/ui so its components
- * drop in unchanged; `primary` is our one accent color.
+ * bg-primary, bg-destructive, ...). Names follow the shadcn vocabulary;
+ * `primary` is our one accent color. Do not install the shadcn kit
+ * (ADR 0010).
  *
  * Each display setting is a data-* attribute on <html>. "System" means the
  * attribute is absent, and the matching media query decides instead:

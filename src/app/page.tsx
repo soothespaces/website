@@ -4,6 +4,7 @@ import { FootnoteRef } from "@/components/footnote-ref";
 import { PageWidth } from "@/components/page-width";
 import { SceneShowcase } from "@/components/hero/scene-showcase";
 import { COMMONS } from "@/components/hero/scenes";
+import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/site";
 
 const CONDITIONS = [
@@ -40,9 +41,6 @@ const STEPS = [
   },
 ];
 
-const buttonBase =
-  "inline-flex min-h-11 items-center justify-center rounded-md px-5 font-medium";
-
 export default function Home() {
   return (
     <>
@@ -58,18 +56,12 @@ export default function Home() {
               <FootnoteRef id="library-spaces" />.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Link
-                href={ROUTES.map}
-                className={`${buttonBase} bg-primary text-primary-foreground hover:bg-primary/90`}
-              >
-                Open the map
-              </Link>
-              <Link
-                href="#how-it-works"
-                className={`${buttonBase} border border-input bg-background hover:bg-accent`}
-              >
-                How it works
-              </Link>
+              <Button asChild>
+                <Link href={ROUTES.map}>Open the map</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="#how-it-works">How it works</Link>
+              </Button>
             </div>
           </div>
           {/*
@@ -171,18 +163,12 @@ export default function Home() {
             Browsing is open to everyone. Sign up only when you want to check in.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link
-              href={ROUTES.map}
-              className={`${buttonBase} bg-primary text-primary-foreground hover:bg-primary/90`}
-            >
-              Open the map
-            </Link>
-            <Link
-              href={ROUTES.signIn}
-              className={`${buttonBase} border border-input hover:bg-accent`}
-            >
-              Sign up
-            </Link>
+            <Button asChild>
+              <Link href={ROUTES.map}>Open the map</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href={ROUTES.signIn}>Sign up</Link>
+            </Button>
           </div>
         </section>
       </PageWidth>
