@@ -24,6 +24,7 @@ on:
       - "scripts/mprint/room_names.py"
       - "scripts/mprint/readings/**"
       - "scripts/mprint/rooms/**"
+      - "scripts/mprint/manual/**"
       - ".github/workflows/mprint-fit.yml"
 
 permissions:

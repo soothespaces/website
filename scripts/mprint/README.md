@@ -54,6 +54,15 @@ pipeline on a GitHub runner, because cloud dev sessions can't reach
 mprint.umich.edu, and commits `alignments/` and `public/floor-plans/`. To add
 a floor, add a line to `sheets.json` and push; don't commit a local run.
 
+### Aligning a floor by hand
+
+When the automatic fit misses (`usable: false`, as for East Quad and
+Duderstadt), open `/admin/floors` on the site, pick the floor, and drag the
+sheet onto the orange footprint (ADR 0005). Download the result and commit it
+as `manual/<sheet>.json`; the pipeline then uses those corners instead of the
+fit, marks the floor `aligned: "manual"`, and writes its GeoJSON. The fit's
+own numbers stay in `alignments/<sheet>.json` under `fit`.
+
 `alignments/` is the committed corner record (one file per sheet, with the
 image sha256). A fit with `usable: false` did not land on the footprint; don't
 drape that sheet from those corners. `footprints/shapiro.json` is FO's Shapiro
