@@ -54,8 +54,8 @@ function LayersIcon() {
   );
 }
 
-// Toggles for the map's layers, with a key for each. Open by default on wide
-// screens; on phones it starts as a button so it doesn't cover the map.
+// Toggles for the map's layers, with a key for each. Starts as a button so
+// it doesn't cover the map; on phones it sits under the search bar.
 export function LayersPanel({
   shown,
   onChange,
@@ -65,13 +65,13 @@ export function LayersPanel({
   onChange: (shown: LayerToggles) => void;
   error: string | null;
 }) {
-  const [open, setOpen] = useState(() => window.matchMedia("(min-width: 40rem)").matches);
+  const [open, setOpen] = useState(false);
 
   return (
     <Collapsible.Root
       open={open}
       onOpenChange={setOpen}
-      className="absolute left-2.5 top-2.5 z-10 max-w-[calc(100%-5rem)] rounded-md bg-card text-card-foreground shadow-[0_0_0_1px_var(--input)]"
+      className="absolute top-[4.25rem] left-2.5 z-10 rounded-md md:top-2.5 bg-card text-card-foreground shadow-[0_0_0_1px_var(--input)]"
     >
       <Collapsible.Trigger className="flex min-h-11 w-full items-center gap-2 rounded-md px-3 text-sm font-medium hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
         <LayersIcon />
@@ -96,7 +96,7 @@ export function LayersPanel({
             </label>
           ))}
           {error ? (
-            <p role="status" className="mt-1 max-w-56 text-xs text-muted-foreground">
+            <p role="status" className="mt-1 w-0 min-w-full text-xs text-muted-foreground">
               {error} Entrances and study spaces aren&rsquo;t shown.
             </p>
           ) : null}

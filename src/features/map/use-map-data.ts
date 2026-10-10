@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
+import { SPACE_SUMMARY_SELECT, type SpaceSummary } from "@/features/spaces";
 import type { Database } from "@/types/supabase";
 
 type Tables = Database["public"]["Tables"];
@@ -21,10 +22,7 @@ export type Entrance = Pick<
   | "notes"
 >;
 
-export type MapSpace = Pick<
-  Tables["spaces"]["Row"],
-  "slug" | "name" | "summary" | "floor_label" | "noise_level" | "features" | "lat" | "lng"
-> & { building: Pick<Tables["buildings"]["Row"], "slug" | "name" | "lat" | "lng"> | null };
+export type MapSpace = SpaceSummary;
 
 // The spaces at one spot: a building's spaces share its coordinates, and a
 // space with coordinates of its own gets a spot to itself.
@@ -36,9 +34,11 @@ export type SpaceSpot = {
   spaces: MapSpace[];
 };
 
+export type MapBuilding = { slug: string; name: string; lat: number | null; lng: number | null };
+
 // Our building for each FO building record number (FO's loc_ObjectNum, also
 // buildings.official_id or mguide's extra.buildingRecordNumber).
-export type BuildingIndex = Map<string, { slug: string; name: string }>;
+export type BuildingIndex = Map<string, MapBuilding>;
 
 const PAGE = 1000; // PostgREST's default row cap on Supabase
 
@@ -72,21 +72,36 @@ function spotsFor(spaces: MapSpace[]): SpaceSpot[] {
 
 export type MapData = {
   entrances: Entrance[];
-  spaces: SpaceSpot[];
+  // Listed study spaces, by name.
+  spaces: MapSpace[];
+  // The same spaces grouped by where their pin goes.
+  spots: SpaceSpot[];
   buildings: BuildingIndex;
+  // Our buildings by slug, with their FO record number when known.
+  buildingsBySlug: Map<string, MapBuilding & { recordNumber: string | null }>;
+  // False until the first read finishes (or fails).
+  loaded: boolean;
   // Set when Supabase isn't configured or a read failed; the map still works
   // without these layers.
   error: string | null;
 };
 
-const EMPTY: MapData = { entrances: [], spaces: [], buildings: new Map(), error: null };
+const EMPTY: MapData = {
+  entrances: [],
+  spaces: [],
+  spots: [],
+  buildings: new Map(),
+  buildingsBySlug: new Map(),
+  loaded: false,
+  error: null,
+};
 
 // The public reference data the map draws from Supabase: accessible
 // entrances, listed study spaces by pin, and building names for FO's
 // buildings.
 export function useMapData(): MapData {
   const [data, setData] = useState<MapData>(() =>
-    getSupabaseEnv() ? EMPTY : { ...EMPTY, error: "Supabase isn't configured." },
+    getSupabaseEnv() ? EMPTY : { ...EMPTY, loaded: true, error: "Supabase isn't configured." },
   );
 
   useEffect(() => {
@@ -108,33 +123,36 @@ export function useMapData(): MapData {
       readAll<MapSpace>((from, to) =>
         supabase
           .from("spaces")
-          .select(
-            "slug, name, summary, floor_label, noise_level, features, lat, lng, building:buildings(slug, name, lat, lng)",
-          )
+          .select(SPACE_SUMMARY_SELECT)
           .eq("is_listed", true)
           .order("name")
           .range(from, to),
       ),
-      readAll<{ slug: string; name: string; official_id: string | null; record: string | null }>((from, to) =>
+      readAll<MapBuilding & { official_id: string | null; record: string | null }>((from, to) =>
         supabase
           .from("buildings")
-          .select("slug, name, official_id, record:extra->>buildingRecordNumber")
+          .select("slug, name, lat, lng, official_id, record:extra->>buildingRecordNumber")
           .order("slug")
           .range(from, to),
       ),
     ])
       .then(([entrances, spaces, rows]) => {
         const buildings: BuildingIndex = new Map();
-        for (const row of rows) {
-          for (const id of [row.official_id, row.record]) {
-            if (id && !buildings.has(id)) buildings.set(id, { slug: row.slug, name: row.name });
+        const buildingsBySlug: MapData["buildingsBySlug"] = new Map();
+        for (const { slug, name, lat, lng, official_id, record } of rows) {
+          const building = { slug, name, lat, lng };
+          for (const id of [official_id, record]) {
+            if (id && !buildings.has(id)) buildings.set(id, building);
           }
+          buildingsBySlug.set(slug, { ...building, recordNumber: official_id ?? record });
         }
-        if (!cancelled) setData({ entrances, spaces: spotsFor(spaces), buildings, error: null });
+        if (!cancelled) {
+          setData({ entrances, spaces, spots: spotsFor(spaces), buildings, buildingsBySlug, loaded: true, error: null });
+        }
       })
       .catch((error: unknown) => {
         console.error("Map data failed to load", error);
-        if (!cancelled) setData({ ...EMPTY, error: "Map data failed to load." });
+        if (!cancelled) setData({ ...EMPTY, loaded: true, error: "Map data failed to load." });
       });
 
     return () => {

@@ -1,63 +1,20 @@
 "use client";
 
 import type { LngLatLike, MapMouseEvent } from "maplibre-gl";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Popup, useMap } from "react-map-gl/maplibre";
-import { SpaceChip, type SpaceChipTag } from "@/components/ui/space-chip";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { useResolvedTheme } from "@/lib/use-resolved-theme";
 import { CurbRampLayer, ENTRANCES_LAYER, EntranceLayer } from "./layers/accessibility";
 import { BUILDINGS_HIT_LAYER, BuildingLayers } from "./layers/buildings";
 import { CampusDetailLayers, FO_BUILDINGS_SOURCE } from "./layers/campus-detail";
 import { FLOOR_PLAN_MIN_ZOOM, FloorPlanLayers } from "./layers/floor-plans";
 import { SpacePins } from "./layers/space-pins";
-import { LayersPanel, type LayerToggles } from "./layers-panel";
+import { LayersPanel } from "./layers-panel";
+import { WIDE_QUERY } from "./map-layout-config";
+import { type MapSelection, useMapState, useSelectedBuilding } from "./map-state";
 import { useMapColors } from "./use-map-colors";
-import { type Entrance, type MapSpace, type SpaceSpot, useMapData } from "./use-map-data";
-
-export type SelectedBuilding = {
-  // FO's building record number (loc_ObjectNum).
-  recordNumber: string;
-  name: string;
-  // Our building, when we list it.
-  slug: string | null;
-};
-
-type Selection =
-  | { kind: "building"; building: SelectedBuilding; at: [number, number] }
-  | { kind: "entrance"; entrance: Entrance }
-  | { kind: "spot"; spot: SpaceSpot };
-
-const NOISE_LABELS: Record<NonNullable<MapSpace["noise_level"]>, string> = {
-  quiet: "Quiet",
-  low_noise: "Low noise",
-  conversational: "Conversational",
-  loud: "Loud",
-};
-
-const FEATURE_LABELS: Record<MapSpace["features"][number], string> = {
-  natural_light: "Natural light",
-  wheelchair_accessible: "Wheelchair accessible",
-  all_gender_restroom_on_floor: "All-gender restroom",
-  whiteboards: "Whiteboards",
-  bookable: "Bookable",
-  external_monitors: "Monitors",
-  outlets: "Outlets",
-  computers: "Computers",
-  printing: "Printing",
-  scanners: "Scanners",
-  group_rooms: "Group rooms",
-};
-
-function spaceTags(space: MapSpace): SpaceChipTag[] {
-  const tags: SpaceChipTag[] = [];
-  if (space.noise_level) {
-    tags.push({ label: NOISE_LABELS[space.noise_level], icon: "sound", emphasis: true });
-  }
-  for (const feature of space.features.slice(0, 3)) {
-    tags.push({ label: FEATURE_LABELS[feature], icon: feature === "natural_light" ? "light" : undefined });
-  }
-  return tags;
-}
+import type { Entrance, SpaceSpot } from "./use-map-data";
 
 // FO's floor labels: "01", "0G" (ground), "0B" (basement), "1-4" and so on.
 function floorName(label: string) {
@@ -75,43 +32,34 @@ const TAP_SLOP = 10;
 const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // The campus map's contents: FO's campus detail, accessible entrances and
-// curb ramps, clickable buildings, study-space pins, and the layers panel.
-// Render inside <CampusMap>.
+// curb ramps, clickable buildings, study-space pins, floor plans and the
+// layers panel. What's selected lives in useMapState(), shared with the
+// side panel. Render inside <CampusMap> and <MapStateProvider>.
 export function MapExplorer() {
   const theme = useResolvedTheme();
   const colors = useMapColors();
-  const { entrances, spaces, buildings, error } = useMapData();
+  const wide = useMediaQuery(WIDE_QUERY);
+  const { data, selection, select, clear, camera, entrance, setEntrance, layers, setLayers, floorPlans, floor } =
+    useMapState();
+  const { entrances, spots, buildings, buildingsBySlug, spaces, error } = data;
   const map = useMap().current?.getMap();
-  const [shown, setShown] = useState<LayerToggles>({
-    campus: true,
-    entrances: true,
-    curbRamps: true,
-    spaces: true,
-  });
-  const [selection, setSelection] = useState<Selection | null>(null);
+  const selectedBuilding = useSelectedBuilding();
 
   const entrancesById = useMemo(() => new Map(entrances.map((e) => [e.id, e])), [entrances]);
-  const entranceCounts = useMemo(() => {
-    const counts = new Map<string, { accessible: number; automatic: number }>();
-    for (const entrance of entrances) {
-      if (!entrance.building_record_number) continue;
-      const count = counts.get(entrance.building_record_number) ?? { accessible: 0, automatic: 0 };
-      count.accessible += 1;
-      if (entrance.automatic) count.automatic += 1;
-      counts.set(entrance.building_record_number, count);
-    }
-    return counts;
-  }, [entrances]);
 
-  // A click picks the entrance or building under the pointer, or clears the
-  // selection on empty ground. Space pins handle their own clicks.
+  // Move the camera when something asks for a selection to be shown: a
+  // click on the map, a pin, or a search result.
   useEffect(() => {
-    if (!map) return;
+    if (!map || !camera) return;
+    const duration = prefersReducedMotion() ? 0 : 600;
+    // On phones the selection sheet covers the bottom of the map.
+    const padding = wide
+      ? { top: 40, left: 40, right: 40, bottom: 40 }
+      : { top: 72, left: 24, right: 24, bottom: map.getContainer().clientHeight * 0.45 };
 
-    function zoomToBuilding(recordNumber: string) {
-      if (!map) return;
+    function boundsOfBuilding(recordNumber: string) {
       // The footprint can be split across tiles, so take every piece.
-      const pieces = map.querySourceFeatures(FO_BUILDINGS_SOURCE, {
+      const pieces = map!.querySourceFeatures(FO_BUILDINGS_SOURCE, {
         filter: ["==", ["get", "loc_ObjectNum"], recordNumber],
       });
       let [west, south, east, north] = [Infinity, Infinity, -Infinity, -Infinity];
@@ -126,19 +74,42 @@ export function MapExplorer() {
           north = Math.max(north, lat);
         }
       }
-      if (west === Infinity) return;
-      const camera = map.cameraForBounds(
-        [
-          [west, south],
-          [east, north],
-        ],
-        { padding: 80, maxZoom: 18 },
-      );
-      if (!camera) return;
-      // Zoom in far enough for floor plans, but never zoom out.
-      const zoom = Math.max(map.getZoom(), FLOOR_PLAN_MIN_ZOOM, Math.min(camera.zoom ?? 0, 18));
-      map.easeTo({ center: camera.center as LngLatLike, zoom, duration: prefersReducedMotion() ? 0 : 600 });
+      return west === Infinity ? null : ([[west, south], [east, north]] as [[number, number], [number, number]]);
     }
+
+    function show(target: MapSelection) {
+      if (!map) return;
+      if (target.kind === "building") {
+        const bounds = target.recordNumber ? boundsOfBuilding(target.recordNumber) : null;
+        const fit = bounds ? map.cameraForBounds(bounds, { padding, maxZoom: 18 }) : null;
+        const ours = target.slug ? buildingsBySlug.get(target.slug) : undefined;
+        const center = bounds
+          ? [(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2]
+          : ours?.lng != null && ours.lat != null
+            ? [ours.lng, ours.lat]
+            : null;
+        if (!center) return;
+        // Zoom in far enough for floor plans, but never zoom out.
+        const zoom = Math.max(map.getZoom(), FLOOR_PLAN_MIN_ZOOM, Math.min(fit?.zoom ?? 0, 18));
+        map.easeTo({ center: center as LngLatLike, zoom, padding, duration });
+        return;
+      }
+      const space = spaces.find((s) => s.slug === target.slug);
+      const lng = space?.lng ?? space?.building?.lng;
+      const lat = space?.lat ?? space?.building?.lat;
+      if (lng == null || lat == null) return;
+      map.easeTo({ center: [lng, lat], zoom: Math.max(map.getZoom(), FLOOR_PLAN_MIN_ZOOM), padding, duration });
+    }
+
+    show(camera.selection);
+    // Only a new request moves the camera, not new data or a resize.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, camera]);
+
+  // A click picks the entrance or building under the pointer, or clears the
+  // selection on empty ground. Space pins handle their own clicks.
+  useEffect(() => {
+    if (!map) return;
 
     function onClick(event: MapMouseEvent) {
       if (!map) return;
@@ -159,27 +130,22 @@ export function MapExplorer() {
           ? map.queryRenderedFeatures(event.point, { layers: [BUILDINGS_HIT_LAYER] })
           : [];
       if (hit?.layer.id === ENTRANCES_LAYER) {
-        const entrance = entrancesById.get(hit.properties.id);
-        setSelection(entrance ? { kind: "entrance", entrance } : null);
-      } else if (hit?.layer.id === BUILDINGS_HIT_LAYER) {
-        const recordNumber: string | undefined = hit.properties.loc_ObjectNum;
-        if (!recordNumber) {
-          setSelection(null);
-          return;
-        }
+        setEntrance(entrancesById.get(hit.properties.id) ?? null);
+      } else if (hit?.layer.id === BUILDINGS_HIT_LAYER && hit.properties.loc_ObjectNum) {
+        const recordNumber: string = hit.properties.loc_ObjectNum;
         const ours = buildings.get(recordNumber);
-        setSelection({
-          kind: "building",
-          building: {
+        select(
+          {
+            kind: "building",
             recordNumber,
-            name: ours?.name ?? hit.properties.ObjectName ?? "Building",
             slug: ours?.slug ?? null,
+            name: ours?.name ?? hit.properties.ObjectName ?? "Building",
           },
-          at: [event.lngLat.lng, event.lngLat.lat],
-        });
-        zoomToBuilding(recordNumber);
+          { replace: true },
+        );
       } else {
-        setSelection(null);
+        setEntrance(null);
+        clear();
       }
     }
 
@@ -199,125 +165,84 @@ export function MapExplorer() {
         map.off("mouseleave", layer, grab);
       }
     };
-  }, [map, entrancesById, buildings]);
+  }, [map, entrancesById, buildings, select, clear, setEntrance]);
 
-  // Escape closes the popup.
+  // Escape closes the entrance popup.
   useEffect(() => {
-    if (!selection) return;
+    if (!entrance) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSelection(null);
+      if (event.key === "Escape") setEntrance(null);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [selection]);
+  }, [entrance, setEntrance]);
 
-  const selectedBuilding =
-    selection?.kind === "building"
-      ? selection.building
-      : selection?.kind === "entrance" && selection.entrance.building_record_number
-        ? {
-            recordNumber: selection.entrance.building_record_number,
-            name: buildings.get(selection.entrance.building_record_number)?.name ?? "",
-            slug: selection.entrance.building_slug,
-          }
-        : null;
+  function onSelectSpot(spot: SpaceSpot) {
+    if (spot.key.startsWith("space:")) {
+      select({ kind: "space", slug: spot.spaces[0].slug }, { replace: true });
+      return;
+    }
+    const slug = spot.key.slice("building:".length);
+    const ours = buildingsBySlug.get(slug);
+    select({ kind: "building", slug, recordNumber: ours?.recordNumber ?? null, name: spot.name }, { replace: true });
+  }
+
+  const selectedSpace = selection?.kind === "space" ? spaces.find((s) => s.slug === selection.slug) : undefined;
+  const selectedSpotKey = selectedSpace
+    ? selectedSpace.lat != null && selectedSpace.lng != null
+      ? `space:${selectedSpace.slug}`
+      : `building:${selectedSpace.building?.slug}`
+    : selectedBuilding?.slug
+      ? `building:${selectedBuilding.slug}`
+      : null;
+
+  const outlined =
+    selectedBuilding?.recordNumber ??
+    (entrance?.building_record_number ? entrance.building_record_number : null);
+  const plan =
+    selectedBuilding?.slug && floor != null
+      ? floorPlans.get(selectedBuilding.slug)?.find((f) => f.floor === floor)
+      : undefined;
 
   return (
     <>
-      <CampusDetailLayers theme={theme} visible={shown.campus} />
-      <BuildingLayers selectedRecordNumber={selectedBuilding?.recordNumber ?? null} colors={colors} />
-      <FloorPlanLayers building={selection?.kind === "building" ? selection.building : null} />
-      <CurbRampLayer colors={colors} visible={shown.curbRamps} />
-      <EntranceLayer entrances={entrances} colors={colors} visible={shown.entrances} />
-      {shown.spaces ? (
-        <SpacePins
-          spots={spaces}
-          selectedKey={selection?.kind === "spot" ? selection.spot.key : null}
-          onSelect={(spot) => setSelection({ kind: "spot", spot })}
-        />
-      ) : null}
+      <CampusDetailLayers theme={theme} visible={layers.campus} />
+      <BuildingLayers selectedRecordNumber={outlined} colors={colors} />
+      <FloorPlanLayers plan={plan ?? null} colors={colors} />
+      <CurbRampLayer colors={colors} visible={layers.curbRamps} />
+      <EntranceLayer entrances={entrances} colors={colors} visible={layers.entrances} />
+      {layers.spaces ? <SpacePins spots={spots} selectedKey={selectedSpotKey} onSelect={onSelectSpot} /> : null}
 
-      {selection ? (
-        <SelectionPopup
-          selection={selection}
-          entranceCounts={entranceCounts}
-          buildings={buildings}
-          onClose={() => setSelection(null)}
-        />
-      ) : null}
+      {entrance ? <EntrancePopup entrance={entrance} onClose={() => setEntrance(null)} /> : null}
 
-      <LayersPanel shown={shown} onChange={setShown} error={error} />
+      <LayersPanel shown={layers} onChange={setLayers} error={error} />
     </>
   );
 }
 
-function SelectionPopup({
-  selection,
-  entranceCounts,
-  buildings,
-  onClose,
-}: {
-  selection: Selection;
-  entranceCounts: Map<string, { accessible: number; automatic: number }>;
-  buildings: ReturnType<typeof useMapData>["buildings"];
-  onClose: () => void;
-}) {
-  // The map's own clicks set and clear the selection, so the popup doesn't
-  // close itself on them.
-  const common = { closeOnClick: false, onClose, maxWidth: "18rem" } as const;
-
-  if (selection.kind === "spot") {
-    const { spot } = selection;
-    return (
-      <Popup {...common} longitude={spot.lng} latitude={spot.lat} offset={16} className="map-popup">
-        <div className="flex flex-col gap-2">
-          <span className="text-sm font-semibold">{spot.name}</span>
-          <ul
-            aria-label={`Study spaces in ${spot.name}`}
-            className="-mr-6 flex max-h-80 flex-col gap-2 overflow-y-auto overscroll-contain pr-1"
-          >
-            {spot.spaces.map((space) => (
-              <li key={space.slug}>
-                <SpaceChip name={space.name} tags={spaceTags(space)} footnote={space.floor_label ?? undefined} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Popup>
-    );
-  }
-
-  if (selection.kind === "entrance") {
-    const { entrance } = selection;
-    const building = entrance.building_record_number ? buildings.get(entrance.building_record_number) : undefined;
-    return (
-      <Popup {...common} longitude={entrance.lng} latitude={entrance.lat} offset={12} className="map-popup">
-        <div className="flex flex-col gap-1 text-sm">
-          {building ? <span className="text-xs text-muted-foreground">{building.name}</span> : null}
-          <span className="font-semibold">
-            {entrance.automatic ? "Accessible entrance, automatic door" : "Accessible entrance, manual door"}
-          </span>
-          {entrance.floor_label ? <span>{floorName(entrance.floor_label)}</span> : null}
-          {entrance.location_description ? <span>{sentence(entrance.location_description)}</span> : null}
-          {entrance.notes ? <span className="text-muted-foreground">{entrance.notes}</span> : null}
-        </div>
-      </Popup>
-    );
-  }
-
-  const { building, at } = selection;
-  const count = entranceCounts.get(building.recordNumber);
+function EntrancePopup({ entrance, onClose }: { entrance: Entrance; onClose: () => void }) {
+  const { data } = useMapState();
+  const building = entrance.building_record_number ? data.buildings.get(entrance.building_record_number) : undefined;
   return (
-    <Popup {...common} longitude={at[0]} latitude={at[1]} className="map-popup">
+    // The map's own clicks set and clear the entrance, so the popup doesn't
+    // close itself on them.
+    <Popup
+      closeOnClick={false}
+      onClose={onClose}
+      maxWidth="18rem"
+      longitude={entrance.lng}
+      latitude={entrance.lat}
+      offset={12}
+      className="map-popup"
+    >
       <div className="flex flex-col gap-1 text-sm">
-        <span className="font-semibold">{building.name}</span>
-        {entranceCounts.size ? (
-          <span className="text-muted-foreground">
-            {count
-              ? `${count.accessible} accessible ${count.accessible === 1 ? "entrance" : "entrances"}, ${count.automatic} automatic`
-              : "No accessible entrances on record"}
-          </span>
-        ) : null}
+        {building ? <span className="text-xs text-muted-foreground">{building.name}</span> : null}
+        <span className="font-semibold">
+          {entrance.automatic ? "Accessible entrance, automatic door" : "Accessible entrance, manual door"}
+        </span>
+        {entrance.floor_label ? <span>{floorName(entrance.floor_label)}</span> : null}
+        {entrance.location_description ? <span>{sentence(entrance.location_description)}</span> : null}
+        {entrance.notes ? <span className="text-muted-foreground">{entrance.notes}</span> : null}
       </div>
     </Popup>
   );
