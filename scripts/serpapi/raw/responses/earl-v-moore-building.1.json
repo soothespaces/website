@@ -1,0 +1,943 @@
+{
+  "search_metadata": {
+    "id": "6ac95636c4f20f9b0216e148",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/8TkGJQBKMXX_p2TLW_SXGLcHNdbK_xxgmi_2skotGng/6ac95636c4f20f9b0216e148.json",
+    "markdown_endpoint": "https://serpapi.com/searches/8TkGJQBKMXX_p2TLW_SXGLcHNdbK_xxgmi_2skotGng/6ac95636c4f20f9b0216e148.md",
+    "created_at": "2026-10-09 21:01:42 UTC",
+    "processed_at": "2026-10-09 21:01:42 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/Earl+V.+Moore+Building%2C+1100+Baits+Dr%2C+Ann+Arbor%2C+MI/@42.29014,-83.72101,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/8TkGJQBKMXX_p2TLW_SXGLcHNdbK_xxgmi_2skotGng/6ac95636c4f20f9b0216e148.html",
+    "prettify_html_file": "https://serpapi.com/searches/8TkGJQBKMXX_p2TLW_SXGLcHNdbK_xxgmi_2skotGng/6ac95636c4f20f9b0216e148.prettify",
+    "total_time_taken": 0.73
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "Earl V. Moore Building, 1100 Baits Dr, Ann Arbor, MI",
+    "ll": "@42.29014,-83.72101,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Showing results for type: \"place\" instead of type: \"search\"",
+    "query_displayed": "Earl V. Moore Building, 1100 Baits Dr, Ann Arbor, MI"
+  },
+  "place_results": {
+    "title": "Earl V. Moore Building",
+    "place_id": "ChIJe9hht2KuPIgRRJGfwvJpjDE",
+    "data_id": "0x883cae62b761d87b:0x318c69f2c29f9144",
+    "data_cid": "3570345095966200132",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae62b761d87b%3A0x318c69f2c29f9144&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae62b761d87b%3A0x318c69f2c29f9144&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2898411,
+      "longitude": -83.7208239
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJe9hht2KuPIgRRJGfwvJpjDE",
+    "provider_id": "/g/11cmdh588f",
+    "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QM8RAUu01nrKSIt9TtgJww0AqnwBgmxiayRFYb_fbUzUhDgBMlHG5UFxIvajFwRvVJTzUQRJxGr9vohggz6t-6GoxEUIRz6YKCI1hNFwJG99PB1RmW3xseS4VkZHrje-0RDz0=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/3sWnJ3icHcRdDsEwAADgE3XrgkUlHjbsTwilFl6EpVpsLWut1QO6g9tIfA_f98O1fqiR79e85zEpWU1firaVFJoK7VWy8dlDgUoB5UfL8vpG68UQR-QFA9HON7lGW80KY2D0FCZmjb2e3jjZn4-XM3GET1m8qLN0QBKbd6dbYnC3K7aOrHFh0xZ1kjPmQg3CVNoZybEL9_NJHvBlYooUoVUc4KbsWUU3_d39kLU3CiCeOjg2AYQQ8P8VED-NWETp",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 0
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 0
+      },
+      {
+        "stars": 4,
+        "amount": 0
+      },
+      {
+        "stars": 5,
+        "amount": 3
+      }
+    ],
+    "rating": 5,
+    "reviews": 3,
+    "type": [
+      "Music school"
+    ],
+    "type_ids": [
+      "music_school"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      }
+    ],
+    "address": "1100 Baits Dr, Ann Arbor, MI 48109",
+    "country": "United States",
+    "website": "https://smtd.umich.edu/facilities/earl-v-moore-building/",
+    "open_state": "Open · Closes 7 PM",
+    "plus_code": "77QH+WM Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "7 AM–7 PM"
+      },
+      {
+        "saturday": "7 AM–7 PM"
+      },
+      {
+        "sunday": "7 AM–7 PM"
+      },
+      {
+        "monday": "7 AM–7 PM"
+      },
+      {
+        "tuesday": "7 AM–7 PM"
+      },
+      {
+        "wednesday": "7 AM–7 PM"
+      },
+      {
+        "thursday": "7 AM–7 PM"
+      }
+    ],
+    "images": [
+      {
+        "title": "All",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QM8RAUu01nrKSIt9TtgJww0AqnwBgmxiayRFYb_fbUzUhDgBMlHG5UFxIvajFwRvVJTzUQRJxGr9vohggz6t-6GoxEUIRz6YKCI1hNFwJG99PB1RmW3xseS4VkZHrje-0RDz0=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/3sWnJ3icHcRdDsEwAADgE3XrgkUlHjbsTwilFl6EpVpsLWut1QO6g9tIfA_f98O1fqiR79e85zEpWU1firaVFJoK7VWy8dlDgUoB5UfL8vpG68UQR-QFA9HON7lGW80KY2D0FCZmjb2e3jjZn4-XM3GET1m8qLN0QBKbd6dbYnC3K7aOrHFh0xZ1kjPmQg3CVNoZybEL9_NJHvBlYooUoVUc4KbsWUU3_d39kLU3CiCeOjg2AYQQ8P8VED-NWETp"
+      },
+      {
+        "title": "Street View & 360°",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TTHM0pud7sgUNoXQBoJNzWTKhD7LecG3z_RS5zEsUl8PYgUJBnqu3zvgLUX30G5r7F7Oej63659zrik7xZyLWC_Y8vjMquAi_t5k5n7o_3NioX5lpRlb803nFBkyGJiTpKflU=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/2vKq3HicHcRdboIwAADgEyE1TS2a-CCbsiDiHw3oC4m1K5XaVlqc9IDeYbdZsu_h-303zhk7C0PZwBHXmkvWW9ZRrRxTbkT1PeTGBtQGNlzkpRimRfG1Aaa_YstJrqt9rNPcl8W6-cQZown09eGI_NISGe1OnKSxevTQP3lGKggS1OEV3rLbBE7Q1Heixa_zkJUf9Sl63jaPfiFqh1qksK5hLnSFpDnISwSgWsXtkKSiMOtvSeY_YwBA0PxPA_UHJ4ZEfw"
+      },
+      {
+        "title": "Videos",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9SRhSoR29EauAGf8NuH1zvZj2lV7o6X_LLFf6fJit_1a1MDn3cSCm_rAkrBIsKHpmkstc6qTOi7Fph1lzLBtJsmEOMzQSEcbZIq9Fhaslf_9gm1oQP9A3VdVTXmh0wDWQ8IEqpMJg=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/Fodm6XicHcRBjoIwFADQEyFUErQmLnCEEQQVIWjcEKYDLdrSwi8auaFH8DYmvsV7v5jWChamyZk9oVJSXg1Q9US2umr1hEhhUgUGAQNMd3dqnjg9slQep9grB_e3nu-GDRrvl-uU5zPpnIso8munDhtdoBLF69Ym6Y8oevfWrwLYbpS4gSZOl-2bma8Y4mO00iEIbx-PSeqRv0vQYZ-VwOsCU4FkcsCunf_n2Vkw67E-JfPA61Qc0uUDWZZlsO_EaD8MzkW4"
+      }
+    ],
+    "at_this_place": {
+      "type": [
+        {
+          "title": "Other",
+          "places": 2
+        }
+      ],
+      "places": [
+        {
+          "position": 1,
+          "title": "Music Library",
+          "data_id": "0x883cae62c58b2b35:0x60a77e42aa70d7fb",
+          "data_cid": "6964674173544224763",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae62c58b2b35%3A0x60a77e42aa70d7fb&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883cae62c58b2b35%3A0x60a77e42aa70d7fb&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2903729,
+            "longitude": -83.7210063
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883cae62c58b2b35%3A0x60a77e42aa70d7fb%218m2%213d42.2903729%214d-83.7210063&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 5,
+          "reviews": 5,
+          "type": "Library",
+          "type_id": "library",
+          "address": "1100 Baits Dr, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Closed · Opens 1 PM Sun",
+          "hours": [
+            {
+              "friday": "9 AM–5 PM"
+            },
+            {
+              "saturday": "Closed"
+            },
+            {
+              "sunday": "1–8 PM"
+            },
+            {
+              "monday": "9 AM–8 PM"
+            },
+            {
+              "tuesday": "9 AM–8 PM"
+            },
+            {
+              "wednesday": "9 AM–8 PM"
+            },
+            {
+              "thursday": "9 AM–8 PM"
+            }
+          ],
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLfqvqP6MSpodYqrbOij7YCKrU7aQUOdknuzpocIKOoTFeILZKyrwYmVJ3E3uM9s32luAN87V9UcEQupeJE9z1PK6CNC7QqhEFIb2aiYQMv35uuaJzimi0vGJVPzVObR7Siwp_Qvxw0FfAyJ=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLfqvqP6MSpodYqrbOij7YCKrU7aQUOdknuzpocIKOoTFeILZKyrwYmVJ3E3uM9s32luAN87V9UcEQupeJE9z1PK6CNC7QqhEFIb2aiYQMv35uuaJzimi0vGJVPzVObR7Siwp_Qvxw0FfAyJ=w86-h86-n-k-no"
+        },
+        {
+          "position": 2,
+          "title": "McIntosh Theater",
+          "data_id": "0x883caf43032183c9:0x4c93dfd9c6ffa63c",
+          "data_cid": "5518000094898529852",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf43032183c9%3A0x4c93dfd9c6ffa63c&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf43032183c9%3A0x4c93dfd9c6ffa63c&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2899269,
+            "longitude": -83.7207049
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf43032183c9%3A0x4c93dfd9c6ffa63c%218m2%213d42.2899269%214d-83.7207049&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 3.5,
+          "reviews": 2,
+          "type": "Performing arts theater",
+          "type_id": "performing_arts_theater",
+          "address": "1100 Baits Dr, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "thumbanil": "https://lh3.googleusercontent.com/grass-cs/AABkmLdl9dbEJgqnemVhFQn_rI01JBU0QROQnLxB8B6SRKKOMlSdpSFC8-5JLJt-qEJ4VAzShf1et0sOlsSlr3QUJxnVv68c7rZY8m6O3-b8iYQ-Qj7V1Pp1bXWbugRiiH_aEJi7IGbv=w86-h86-n-k-no",
+          "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLdl9dbEJgqnemVhFQn_rI01JBU0QROQnLxB8B6SRKKOMlSdpSFC8-5JLJt-qEJ4VAzShf1et0sOlsSlr3QUJxnVv68c7rZY8m6O3-b8iYQ-Qj7V1Pp1bXWbugRiiH_aEJi7IGbv=w86-h86-n-k-no"
+        }
+      ]
+    },
+    "user_reviews": {
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "Beautiful!!!",
+          "date": "3 years ago",
+          "date_iso8601": "2023-06-08T00:45:15+00:00"
+        },
+        {
+          "rating": 5,
+          "date": "8 months ago",
+          "date_iso8601": "2026-01-18T19:03:28+00:00"
+        },
+        {
+          "rating": 5,
+          "date": "a year ago",
+          "date_iso8601": "2025-04-12T15:38:02+00:00"
+        }
+      ]
+    },
+    "people_also_search_for": [
+      {
+        "search_term": "People also search for",
+        "local_results": [
+          {
+            "position": 1,
+            "title": "Revelli Hall",
+            "data_id": "0x0:0x5cd969b66b9128ba",
+            "data_cid": "6690494953645222074",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x5cd969b66b9128ba&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x5cd969b66b9128ba&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2692303,
+              "longitude": -83.7446913
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x5cd969b66b9128ba%218m2%213d42.2692303%214d-83.7446913&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.9,
+            "reviews": 14,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9T-nAvt4jgC__9_SnUWgNMyybHusJDEx-h9WebgIdr9zqP2UY8u2HF83UsBD6b9Li8bWMYzHVOfa3lxh-BO85ukqtoyTSE-RADab1xsFiDElmqDlWDjkAXe1O30Sx5HTMq0hSo=w156-h156-n-k-no",
+            "type": [
+              "Academic department",
+              "Music college"
+            ]
+          },
+          {
+            "position": 2,
+            "title": "Morris Lawrence Building (ML)",
+            "data_id": "0x0:0x4da8576f43d9c230",
+            "data_cid": "5595818672399172144",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x4da8576f43d9c230&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x4da8576f43d9c230&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2623767,
+              "longitude": -83.6622484
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x4da8576f43d9c230%218m2%213d42.2623767%214d-83.6622484&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.8,
+            "reviews": 50,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QP2_TkZDCGt0swbouvKe6LXnLcaPO_sun_cyQ6ym_WDITSCd3Sgp0N5nkqCZy2PHjQ0fGFZHOrbaLvXZO6jKB7kB2fx13uXdpakdinn71KTx_w-VhpoOyh_F1q5SoZWS2tSrUV=w156-h156-n-k-no",
+            "type": [
+              "Auditorium",
+              "College"
+            ]
+          },
+          {
+            "position": 3,
+            "title": "Stamps Auditorium",
+            "data_id": "0x0:0x4afa30c646a3067",
+            "data_cid": "337667770695692391",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x4afa30c646a3067&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x4afa30c646a3067&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2920709,
+              "longitude": -83.7168536
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x4afa30c646a3067%218m2%213d42.2920709%214d-83.7168536&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4,
+            "reviews": 7,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TakmnKmDGEhPHxcdWrwmtLruGZ5nBnxRunKCkdyKxG0pABnVwSgEZ2q38c-X3EiySSAVMRocma-OI--B15BWnhob9sGWK6hmtcjBzJLR7PmWkUoPM5oIgNzli9JA_oAojj9cfkW_8tDJLH=w156-h156-n-k-no",
+            "type": [
+              "Auditorium"
+            ]
+          },
+          {
+            "position": 4,
+            "title": "Alexander Music Building",
+            "data_id": "0x0:0x907eeabcd72c44b1",
+            "data_cid": "10412017485311919281",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x907eeabcd72c44b1&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x907eeabcd72c44b1&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2496507,
+              "longitude": -83.6202553
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x907eeabcd72c44b1%218m2%213d42.2496507%214d-83.6202553&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.1,
+            "reviews": 12,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9SpQvAxK6h_mXGXaZtFCqoPhjW44pAJPl3odN1lw7AcIRFGZPKxrekx9Pb9W6iEF30Bkpfvk-lVUCddq5hdwiS3qHgvzNmTr-JMntXDN4bvuH0NsGnZ4C7Xc-Ua-sX2o7plrO7046A-FjKk=w156-h156-n-k-no",
+            "type": [
+              "Music school",
+              "Dance school"
+            ]
+          },
+          {
+            "position": 5,
+            "title": "Weiser Hall",
+            "data_id": "0x0:0xf3c43cc4fee3ad8b",
+            "data_cid": "17565231263439367563",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xf3c43cc4fee3ad8b&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xf3c43cc4fee3ad8b&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.276890099999996,
+              "longitude": -83.734888
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xf3c43cc4fee3ad8b%218m2%213d42.276890099999996%214d-83.734888&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 3.8,
+            "reviews": 32,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TkJzaY_6oiRkKwpX5Bfhja4I6Ol0N7ESVVCMenHo974s3enhbnhd-Nl8QIL78EC-xafQDVYXqXLlTkHXNIMWKZqE-Xchh4KzXpf5G7hMYE8rW0AiSLRpYGp1YFfrlRM88SmCVd=w156-h156-n-k-no",
+            "type": [
+              "Academic department",
+              "Educational institution"
+            ]
+          }
+        ]
+      }
+    ],
+    "popular_times": {
+      "current_day": "friday",
+      "live_hash": {
+        "info": "Busier than usual",
+        "time_spent": "People typically spend 1.5-4 hours here"
+      },
+      "graph_results": {
+        "sunday": [
+          {
+            "time": "6 AM",
+            "busyness_score": 0
+          },
+          {
+            "time": "7 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 29
+          },
+          {
+            "time": "8 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 36
+          },
+          {
+            "time": "9 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 45
+          },
+          {
+            "time": "10 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 55
+          },
+          {
+            "time": "11 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 60
+          },
+          {
+            "time": "12 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 63
+          },
+          {
+            "time": "1 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 55
+          },
+          {
+            "time": "2 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 62
+          },
+          {
+            "time": "3 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 73
+          },
+          {
+            "time": "4 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 72
+          },
+          {
+            "time": "5 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 72
+          },
+          {
+            "time": "6 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 80
+          },
+          {
+            "time": "7 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "8 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "9 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "10 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "11 PM",
+            "busyness_score": 0
+          }
+        ],
+        "monday": [
+          {
+            "time": "6 AM",
+            "busyness_score": 0
+          },
+          {
+            "time": "7 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 45
+          },
+          {
+            "time": "8 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 50
+          },
+          {
+            "time": "9 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 50
+          },
+          {
+            "time": "10 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 57
+          },
+          {
+            "time": "11 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 68
+          },
+          {
+            "time": "12 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 81
+          },
+          {
+            "time": "1 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 88
+          },
+          {
+            "time": "2 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 86
+          },
+          {
+            "time": "3 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 88
+          },
+          {
+            "time": "4 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 91
+          },
+          {
+            "time": "5 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 85
+          },
+          {
+            "time": "6 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 62
+          },
+          {
+            "time": "7 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "8 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "9 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "10 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "11 PM",
+            "busyness_score": 0
+          }
+        ],
+        "tuesday": [
+          {
+            "time": "6 AM",
+            "busyness_score": 0
+          },
+          {
+            "time": "7 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 36
+          },
+          {
+            "time": "8 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 45
+          },
+          {
+            "time": "9 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 63
+          },
+          {
+            "time": "10 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 75
+          },
+          {
+            "time": "11 AM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 98
+          },
+          {
+            "time": "12 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 100
+          },
+          {
+            "time": "1 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 95
+          },
+          {
+            "time": "2 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 73
+          },
+          {
+            "time": "3 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 60
+          },
+          {
+            "time": "4 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 52
+          },
+          {
+            "time": "5 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 59
+          },
+          {
+            "time": "6 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 68
+          },
+          {
+            "time": "7 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "8 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "9 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "10 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "11 PM",
+            "busyness_score": 0
+          }
+        ],
+        "wednesday": [
+          {
+            "time": "6 AM",
+            "busyness_score": 0
+          },
+          {
+            "time": "7 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 37
+          },
+          {
+            "time": "8 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 57
+          },
+          {
+            "time": "9 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 60
+          },
+          {
+            "time": "10 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 55
+          },
+          {
+            "time": "11 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 55
+          },
+          {
+            "time": "12 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 57
+          },
+          {
+            "time": "1 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 60
+          },
+          {
+            "time": "2 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 67
+          },
+          {
+            "time": "3 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 68
+          },
+          {
+            "time": "4 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 63
+          },
+          {
+            "time": "5 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 57
+          },
+          {
+            "time": "6 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 50
+          },
+          {
+            "time": "7 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "8 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "9 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "10 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "11 PM",
+            "busyness_score": 0
+          }
+        ],
+        "thursday": [
+          {
+            "time": "6 AM",
+            "busyness_score": 0
+          },
+          {
+            "time": "7 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 40
+          },
+          {
+            "time": "8 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 54
+          },
+          {
+            "time": "9 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 67
+          },
+          {
+            "time": "10 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 77
+          },
+          {
+            "time": "11 AM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 88
+          },
+          {
+            "time": "12 PM",
+            "info": "Usually as busy as it gets",
+            "busyness_score": 81
+          },
+          {
+            "time": "1 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 73
+          },
+          {
+            "time": "2 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 52
+          },
+          {
+            "time": "3 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 50
+          },
+          {
+            "time": "4 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 59
+          },
+          {
+            "time": "5 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 68
+          },
+          {
+            "time": "6 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 65
+          },
+          {
+            "time": "7 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "8 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "9 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "10 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "11 PM",
+            "busyness_score": 0
+          }
+        ],
+        "friday": [
+          {
+            "time": "6 AM",
+            "busyness_score": 0
+          },
+          {
+            "time": "7 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 29
+          },
+          {
+            "time": "8 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 37
+          },
+          {
+            "time": "9 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 47
+          },
+          {
+            "time": "10 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 50
+          },
+          {
+            "time": "11 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 47
+          },
+          {
+            "time": "12 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 50
+          },
+          {
+            "time": "1 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 62
+          },
+          {
+            "time": "2 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 72
+          },
+          {
+            "time": "3 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 62
+          },
+          {
+            "time": "4 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 54
+          },
+          {
+            "time": "5 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 44,
+            "live_busyness_score": 100,
+            "current": true
+          },
+          {
+            "time": "6 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 37
+          },
+          {
+            "time": "7 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "8 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "9 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "10 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "11 PM",
+            "busyness_score": 0
+          }
+        ],
+        "saturday": [
+          {
+            "time": "6 AM",
+            "busyness_score": 0
+          },
+          {
+            "time": "7 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 26
+          },
+          {
+            "time": "8 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 29
+          },
+          {
+            "time": "9 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 31
+          },
+          {
+            "time": "10 AM",
+            "info": "Usually not too busy",
+            "busyness_score": 44
+          },
+          {
+            "time": "11 AM",
+            "info": "Usually a little busy",
+            "busyness_score": 50
+          },
+          {
+            "time": "12 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 47
+          },
+          {
+            "time": "1 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 52
+          },
+          {
+            "time": "2 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 50
+          },
+          {
+            "time": "3 PM",
+            "info": "Usually a little busy",
+            "busyness_score": 54
+          },
+          {
+            "time": "4 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 45
+          },
+          {
+            "time": "5 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 42
+          },
+          {
+            "time": "6 PM",
+            "info": "Usually not too busy",
+            "busyness_score": 44
+          },
+          {
+            "time": "7 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "8 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "9 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "10 PM",
+            "busyness_score": 0
+          },
+          {
+            "time": "11 PM",
+            "busyness_score": 0
+          }
+        ]
+      }
+    },
+    "web_results_link": "https://www.google.com/search?q=local+guide+program&ibp=gwp;0,26,OioKKCIkRWFybCBWLiBNb29yZSBCdWlsZGluZyBBbm4gQXJib3IsIE1JKAI&pcl=lp",
+    "serpapi_web_results_link": "https://serpapi.com/search.json?device=desktop&engine=google&google_domain=google.com&ibp=gwp%3B0%2C26%2COioKKCIkRWFybCBWLiBNb29yZSBCdWlsZGluZyBBbm4gQXJib3IsIE1JKAI&q=local+guide+program"
+  }
+}

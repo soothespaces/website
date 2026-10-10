@@ -1,0 +1,249 @@
+{
+  "slug": "stephen-m-ross-school-of-business-building",
+  "query": "Ross School of Business, 701 Tappan Ave, Ann Arbor, MI",
+  "fetched_at": "2026-10-09T21:02:02.484Z",
+  "search_ids": [
+    "6ac956471bd4f0285198b3f9"
+  ],
+  "resolved_by": "search opened the place",
+  "distance_from_ours_m": 48,
+  "place": {
+    "title": "Ross School of Business",
+    "place_id": "ChIJkyouNEauPIgRhYtgXkia_aM",
+    "data_id": "0x883cae46342e2a93:0xa3fd9a485e608b85",
+    "data_cid": "11816770632901757829",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae46342e2a93%3A0xa3fd9a485e608b85&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae46342e2a93%3A0xa3fd9a485e608b85&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2729691,
+      "longitude": -83.7378629
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJkyouNEauPIgRhYtgXkia_aM",
+    "provider_id": "/m/068cw6",
+    "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TtgEE1-7QL_AaCQrF5Y6xsnSHpBAXMaa-Dapv3yx6cs09cmnGjyZ9ER_LUuYaWNr1Q2yc_8Nv6jJIkEZcAU9O7c8xbcjY0Hof-eTKJQBKeL_VZ6JEZZ_maWt9VmstzITZPAGuQyA=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/JpmK23icHcRRToMwGADgE3UUl7HVxIfO1W0M0U42pC9N_VNBHC2hZVJv6BG8jYnfw_f703jfu9soujTzWW1tfdGj0wNY47XxM7BdVPcOgUMuonn5EUjha8ZitOSZpOqeDw-LKpmcedn1a_r6qBTaqP46D1MCDhPozLYNgrCjzE5jpcp8iPlNALnKr0mb7j-ZAHoiT0tYTW_QVnhn35EuDilfH3QmzyJJmRCyU6Un5875730hnul25IHefcUYY9T8D8j8Abf6RPo",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 4
+      },
+      {
+        "stars": 2,
+        "amount": 2
+      },
+      {
+        "stars": 3,
+        "amount": 3
+      },
+      {
+        "stars": 4,
+        "amount": 9
+      },
+      {
+        "stars": 5,
+        "amount": 152
+      }
+    ],
+    "rating": 4.8,
+    "reviews": 170,
+    "type": [
+      "Business school",
+      "Academic department"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot",
+          "Wheelchair accessible restroom",
+          "Wheelchair accessible seating"
+        ]
+      }
+    ],
+    "address": "701 Tappan Ave, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "website": "https://michiganross.umich.edu/",
+    "phone": "(734) 763-5796",
+    "open_state": "Open · Closes 10 PM",
+    "plus_code": "77F6+5V Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "7 AM–10 PM"
+      },
+      {
+        "saturday": "7 AM–10 PM"
+      },
+      {
+        "sunday": "7 AM–10 PM"
+      },
+      {
+        "monday": "7 AM–10 PM"
+      },
+      {
+        "tuesday": "7 AM–10 PM"
+      },
+      {
+        "wednesday": "7 AM–10 PM"
+      },
+      {
+        "thursday": "7 AM–10 PM"
+      }
+    ],
+    "at_this_place": {
+      "type": [
+        {
+          "title": "Food & Drink",
+          "places": 1
+        },
+        {
+          "title": "Other",
+          "places": 3
+        }
+      ],
+      "places": [
+        {
+          "position": 1,
+          "title": "Seigle Café",
+          "data_id": "0x883caf7e036ab07d:0xa705a7033ddc0e31",
+          "data_cid": "12035209211582090801",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf7e036ab07d%3A0xa705a7033ddc0e31&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf7e036ab07d%3A0xa705a7033ddc0e31&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2728767,
+            "longitude": -83.73765329999999
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf7e036ab07d%3A0xa705a7033ddc0e31%218m2%213d42.2728767%214d-83.73765329999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 4,
+          "reviews": 4,
+          "type": "Cafe",
+          "type_id": "cafe",
+          "address": "701 Tappan Ave, Ann Arbor, MI 48109",
+          "location": "Floor 1",
+          "open_state": "Closed · Opens 9 AM Mon",
+          "hours": [
+            {
+              "friday": "9 AM–4 PM"
+            },
+            {
+              "saturday": "Closed"
+            },
+            {
+              "sunday": "Closed"
+            },
+            {
+              "monday": "9 AM–6 PM"
+            },
+            {
+              "tuesday": "9 AM–6 PM"
+            },
+            {
+              "wednesday": "9 AM–6 PM"
+            },
+            {
+              "thursday": "9 AM–6 PM"
+            }
+          ]
+        },
+        {
+          "position": 2,
+          "title": "TAMID Group at Michigan",
+          "data_id": "0x883caf0051e8a05d:0x99195d728c1dfaca",
+          "data_cid": "11031951508779170506",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf0051e8a05d%3A0x99195d728c1dfaca&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf0051e8a05d%3A0x99195d728c1dfaca&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2725296,
+            "longitude": -83.737749
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf0051e8a05d%3A0x99195d728c1dfaca%218m2%213d42.2725296%214d-83.737749&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 5,
+          "reviews": 1,
+          "type": "Association / Organization",
+          "type_id": "association_or_organization",
+          "address": "701 Tappan Ave, Ann Arbor, MI 48104",
+          "location": "Floor 1"
+        },
+        {
+          "position": 3,
+          "title": "Tozzi Electronic Business and Finance Center",
+          "data_id": "0x883caf5aa1b068a1:0x499667fb746a12d1",
+          "data_cid": "5302539940962898641",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf5aa1b068a1%3A0x499667fb746a12d1&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf5aa1b068a1%3A0x499667fb746a12d1&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.272892299999995,
+            "longitude": -83.7376776
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf5aa1b068a1%3A0x499667fb746a12d1%218m2%213d42.272892299999995%214d-83.7376776&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "University",
+          "type_id": "university",
+          "address": "701 Tappan Ave, Ann Arbor, MI 48109",
+          "location": "Floor 1"
+        },
+        {
+          "position": 4,
+          "title": "UMich Samuel Zell and Robert H. Lurie Institute for Entrepreneurial Studies",
+          "data_id": "0x883caf22476b0a3f:0xd74d89de75b28d21",
+          "data_cid": "15514207879911607585",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf22476b0a3f%3A0xd74d89de75b28d21&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf22476b0a3f%3A0xd74d89de75b28d21&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.2727776,
+            "longitude": -83.737529
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf22476b0a3f%3A0xd74d89de75b28d21%218m2%213d42.2727776%214d-83.737529&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "type": "Research institute",
+          "type_id": "research_institute",
+          "address": "701 Tappan Ave R2420, Ann Arbor, MI 48109",
+          "location": "Floor 1"
+        }
+      ]
+    },
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"Amazing architecture, amazing decor and atmosphere inside.\""
+        },
+        {
+          "snippet": "\"I enjoyed studying here on occasion as a student.\""
+        },
+        {
+          "snippet": "\"It's a beautiful location, and an aspiration to go here.\""
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "As a proud parent of an MBA graduate from the Ross School of Business, it was a privilege to visit the campus. The school offers an inspiring learning environment with outstanding facilities, collaborative spaces, and a vibrant academic culture. Seeing where my son studied gave me a deep appreciation for the quality of education and the opportunities Ross provides. A truly world-class business school.",
+          "date": "3 months ago",
+          "date_iso8601": "2026-06-27T10:21:29+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Visited the Ross School of Business at the university of Michigan for a graduation in the executive Masters of Business Administration program.  This program has two cohorts, one in Ann Arbor and the other in Los Angeles California.  The 106 dual cohorts graduated simultaneously here in Ann Arbor.  A lovely auditorium and free parking in the attached garage building.  Highly recommended.  Go Blue!!",
+          "date": "a year ago",
+          "date_iso8601": "2025-05-01T20:39:16+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Super sharp interior design. Starbuck inside the building on school hours",
+          "date": "2 months ago",
+          "date_iso8601": "2026-07-20T01:19:37+00:00"
+        },
+        {
+          "rating": 1,
+          "description": "There’s a group of kids that are obnoxious and are uptight that refused to do anything right including the front desk lady that’s in the morning shift. She’s rude as well.",
+          "date": "2 months ago",
+          "date_iso8601": "2026-07-16T16:03:13+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "I love the architecture design at all, but let me tell it’s full of art inside of the building!",
+          "date": "5 years ago",
+          "date_iso8601": "2021-10-08T16:13:16+00:00"
+        }
+      ]
+    }
+  }
+}

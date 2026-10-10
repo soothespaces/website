@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CampusMap, CampusMapProvider } from "@/features/map";
+import { CampusMap, CampusMapProvider, MapExplorer } from "@/features/map";
 
 export const metadata: Metadata = {
   title: "Map",
@@ -13,7 +13,9 @@ export default function MapPage() {
       {/* Fills the first screen below the header (4rem plus its 1px border),
           even when a footer follows. */}
       <div className="relative min-h-[calc(100dvh-4rem-1px)] flex-1">
-        <CampusMap />
+        <CampusMap>
+          <MapExplorer />
+        </CampusMap>
       </div>
     </CampusMapProvider>
   );

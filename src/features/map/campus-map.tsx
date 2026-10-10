@@ -3,7 +3,7 @@
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { ReactNode } from "react";
-import Map, { NavigationControl } from "react-map-gl/maplibre";
+import Map, { GeolocateControl, NavigationControl, ScaleControl } from "react-map-gl/maplibre";
 import { useResolvedTheme } from "@/lib/use-resolved-theme";
 import {
   CAMPUS_BOUNDS,
@@ -14,11 +14,13 @@ import {
   mapStyleUrl,
 } from "./config";
 import "./campus-map.css";
+import { LayerSlots } from "./slots";
 
 // The campus base map. Changing theme swaps the whole style, which drops
 // anything added imperatively with map.addSource/addLayer. Add sources,
 // layers and markers as react-map-gl children instead (<Source>, <Layer>,
-// <Marker>); those are re-applied after every style change.
+// <Marker>); those are re-applied after every style change. Give each layer
+// a beforeId from SLOTS so it lands in the right band (see ./slots).
 export default function CampusMap({ children }: { children?: ReactNode }) {
   const theme = useResolvedTheme();
 
@@ -54,6 +56,9 @@ export default function CampusMap({ children }: { children?: ReactNode }) {
         style={{ width: "100%", height: "100%" }}
       >
         <NavigationControl position="top-right" showCompass={false} />
+        <GeolocateControl position="top-right" />
+        <ScaleControl position="bottom-left" />
+        <LayerSlots />
         {children}
       </Map>
     </div>
