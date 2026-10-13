@@ -616,6 +616,18 @@ for (const saved of googlePlaces) {
     }
   }
 }
+// Hand-copied curves fill in buildings SerpApi returned none for.
+const manualPopularTimes = await readJson("manual-popular-times.json");
+for (const [slug, entry] of Object.entries(manualPopularTimes)) {
+  if (slug.startsWith("_")) continue;
+  if (!buildingSlugs.has(slug)) fail(`Manual popular times for unknown building ${slug}`);
+  if (popularTimes.some((row) => row.building_slug === slug)) continue;
+  for (const [weekday, hours] of Object.entries(entry.weekdays)) {
+    for (const [hour, busyness] of hours) {
+      popularTimes.push({ building_slug: slug, weekday: Number(weekday), hour, busyness, fetched_at: entry.fetched_at });
+    }
+  }
+}
 for (const row of googleHours) {
   if (row.opens !== null && row.opens === row.closes) fail(`Empty interval ${JSON.stringify(row)}`);
 }

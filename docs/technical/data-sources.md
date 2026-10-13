@@ -591,7 +591,8 @@ First full run (2026-10-09, 30 of 250 searches): all 27 buildings matched, withi
 our coordinates. Only **Hatcher, Mason Hall and the Earl V. Moore Building** came back with
 popular times. Shapiro has them on google.com/maps but not through SerpApi, whether looked
 up by search, `place_id` or `data` with coordinates; the raw Google HTML SerpApi archived
-has no busyness data either, so more searches won't fix it. 20 places have hours, all
+has no busyness data either, so more searches won't fix it. Tanner copied Shapiro's curve from Google Maps by hand on 2026-10-13; it lives in
+`scripts/seed/manual-popular-times.json`, which the seed uses for buildings SerpApi has no curve for. 20 places have hours, all
 have accessibility attributes.
 
 ## 12. U-M Library CMS: hours, rooms and study-space pages (found 2026-10-09)
