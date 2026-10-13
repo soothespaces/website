@@ -45,9 +45,10 @@ export async function uploadPhoto(form: FormData): Promise<ActionResult> {
     return { ok: false, error: `A panorama must be a 2:1 equirectangular image; this one is ${width}×${height}.` };
   }
 
-  // Named by content, like the import script, so a re-upload of the same
-  // photo is caught and a replaced file never hits a stale cache.
-  const hash = createHash("sha256").update(oriented.data).digest("hex").slice(0, 16);
+  // Named by a hash of the uploaded bytes, like the import script, so a
+  // re-upload of the same file is caught and a replaced file never hits a
+  // stale cache.
+  const hash = createHash("sha256").update(original).digest("hex").slice(0, 16);
   const prefix = `buildings/${tags.buildingSlug}/${hash}`;
   const widths = widthsFor(details.kind, width);
 
