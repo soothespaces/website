@@ -468,6 +468,7 @@ export type Database = {
         Row: {
           alt: string;
           building_slug: string | null;
+          created_at: string;
           credit: string;
           floor: number | null;
           heading: number | null;
@@ -479,9 +480,12 @@ export type Database = {
           license: string;
           lng: number | null;
           path_prefix: string;
+          room_number: string | null;
           sort_order: number;
           source_url: string | null;
           space_id: string | null;
+          updated_at: string;
+          uploaded_by: string | null;
           width: number;
           widths: number[];
         };
@@ -489,6 +493,7 @@ export type Database = {
         Insert: {
           alt: string;
           building_slug?: string | null;
+          created_at?: string;
           credit: string;
           floor?: number | null;
           heading?: number | null;
@@ -500,15 +505,19 @@ export type Database = {
           license: string;
           lng?: number | null;
           path_prefix: string;
+          room_number?: string | null;
           sort_order?: number;
           source_url?: string | null;
           space_id?: string | null;
+          updated_at?: string;
+          uploaded_by?: string | null;
           width: number;
           widths: number[];
         };
         Update: {
           alt?: string;
           building_slug?: string | null;
+          created_at?: string;
           credit?: string;
           floor?: number | null;
           heading?: number | null;
@@ -520,9 +529,12 @@ export type Database = {
           license?: string;
           lng?: number | null;
           path_prefix?: string;
+          room_number?: string | null;
           sort_order?: number;
           source_url?: string | null;
           space_id?: string | null;
+          updated_at?: string;
+          uploaded_by?: string | null;
           width?: number;
           widths?: number[];
         };
