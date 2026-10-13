@@ -3,12 +3,13 @@
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "@/features/map/campus-map.css";
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition, type KeyboardEvent, type ReactNode } from "react";
 import Map, { Layer, Marker, NavigationControl, Source, type MapRef } from "react-map-gl/maplibre";
 import type { ImageSource } from "maplibre-gl";
 import { mapStyleUrl } from "@/features/map/config";
 import { useSession } from "@/lib/auth/use-session";
 import { useResolvedTheme } from "@/lib/use-resolved-theme";
+import { saveAlignment } from "./actions";
 import type { FloorRecord } from "./floors";
 import {
   cornersOf,
@@ -19,6 +20,9 @@ import {
   type LngLat,
   type Placement,
 } from "./geometry";
+import type { SavedAlignment } from "./saved";
+
+type Saved = SavedAlignment & { onMap: boolean };
 
 const CORNER_NAMES = ["top-left", "top-right", "bottom-right", "bottom-left"];
 
@@ -26,13 +30,28 @@ const CORNER_NAMES = ["top-left", "top-right", "bottom-right", "bottom-left"];
 // walls line up: drag the middle handle to move, a corner handle to rotate
 // and scale, or use the keyboard for fine steps. The result is the four
 // corners the pipeline (and MapLibre) use to place the floor.
-export default function AlignmentEditor({ record, sheetUrl }: { record: FloorRecord; sheetUrl: string }) {
+export default function AlignmentEditor({
+  record,
+  sheetUrl,
+  saved: savedProp,
+}: {
+  record: FloorRecord;
+  sheetUrl: string;
+  /** The last alignment an admin saved for this sheet, if any. */
+  saved: Saved | null;
+}) {
   const { width, height } = record;
   const theme = useResolvedTheme();
   const { user } = useSession();
   const mapRef = useRef<MapRef>(null);
-  const initial = useMemo(() => placementOf(record.corners, width, height), [record.corners, width, height]);
+  const startCorners = savedProp?.corners ?? record.corners;
+  const initial = useMemo(() => placementOf(startCorners, width, height), [startCorners, width, height]);
   const [placement, setPlacement] = useState<Placement>(initial);
+  // What Reset goes back to: the placement when the page loaded, or at the last save.
+  const [baseline, setBaseline] = useState<Placement>(initial);
+  const [saved, setSaved] = useState(savedProp);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saving, startSaving] = useTransition();
   const [opacity, setOpacity] = useState(0.6);
   const [showFootprint, setShowFootprint] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -51,7 +70,7 @@ export default function AlignmentEditor({ record, sheetUrl }: { record: FloorRec
     applyCorners();
   }, [corners, applyCorners]);
 
-  const changed = placement !== initial;
+  const changed = placement !== baseline;
   const output = useMemo(
     () => ({
       sheet: record.sheet,
@@ -97,13 +116,33 @@ export default function AlignmentEditor({ record, sheetUrl }: { record: FloorRec
     URL.revokeObjectURL(url);
   }
 
+  function save() {
+    const at = placement;
+    setSaveError(null);
+    startSaving(async () => {
+      const result = await saveAlignment(record.sheet, output.corners);
+      if (!result.ok) {
+        setSaveError(result.error);
+        return;
+      }
+      setBaseline(at);
+      setSaved({
+        ...output,
+        corners: output.corners as Corners,
+        alignedBy: user?.email ?? "you",
+        alignedAt: result.alignedAt,
+        onMap: false,
+      });
+    });
+  }
+
   async function copy() {
     await navigator.clipboard.writeText(json);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
 
-  const bounds = useMemo(() => boundsOf(record.corners), [record.corners]);
+  const bounds = useMemo(() => boundsOf(startCorners), [startCorners]);
 
   return (
     <div className="flex flex-1 flex-col lg:flex-row">
@@ -183,7 +222,9 @@ export default function AlignmentEditor({ record, sheetUrl }: { record: FloorRec
 
       <aside className="flex w-full flex-col gap-5 border-t border-border p-4 text-sm lg:w-80 lg:border-t-0 lg:border-l">
         <p className="text-muted-foreground">
-          {record.aligned === "manual"
+          {saved
+            ? `Saved by ${saved.alignedBy} on ${new Date(saved.alignedAt).toLocaleDateString()}.`
+            : record.aligned === "manual"
             ? "Aligned by hand."
             : record.usable
               ? `The automatic fit is ${record.fitMedianMeters.toFixed(2)} m from the footprint (median).`
@@ -231,29 +272,37 @@ export default function AlignmentEditor({ record, sheetUrl }: { record: FloorRec
         <div className="flex flex-col gap-2">
           <button
             type="button"
-            onClick={download}
-            disabled={!changed}
+            onClick={save}
+            disabled={!changed || saving}
             className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground disabled:opacity-50"
           >
-            Download alignment
+            {saving ? "Saving…" : "Save alignment"}
           </button>
+          {saveError && (
+            <p role="alert" className="text-destructive">
+              {saveError}
+            </p>
+          )}
           <div className="flex gap-2">
-            <button type="button" onClick={copy} className="flex-1 rounded-md border border-input px-4 py-2 hover:bg-accent">
-              {copied ? "Copied" : "Copy JSON"}
-            </button>
             <button
               type="button"
-              onClick={() => setPlacement(initial)}
+              onClick={() => setPlacement(baseline)}
               disabled={!changed}
               className="flex-1 rounded-md border border-input px-4 py-2 hover:bg-accent disabled:opacity-50"
             >
               Reset
             </button>
+            <button type="button" onClick={download} className="flex-1 rounded-md border border-input px-4 py-2 hover:bg-accent">
+              Download
+            </button>
+            <button type="button" onClick={copy} className="flex-1 rounded-md border border-input px-4 py-2 hover:bg-accent">
+              {copied ? "Copied" : "Copy"}
+            </button>
           </div>
-          <p className="text-muted-foreground">
-            Save the file as <code className="font-mono text-xs">scripts/mprint/manual/{record.sheet}.json</code> and
-            push it. The pipeline then uses these corners and puts the floor on the map. Saving straight from this
-            page comes with the review queue.
+          <p role="status" className="text-muted-foreground">
+            {saved && !saved.onMap
+              ? "Saved. The map picks these corners up the next time the MPrint fit workflow runs."
+              : "Saving stores the corners in Supabase. The MPrint fit workflow uses them instead of the automatic fit the next time it runs."}
           </p>
         </div>
       </aside>

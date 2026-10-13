@@ -1,5 +1,5 @@
-import { canAdminFloors } from "@/features/floor-alignment/access";
 import { findSheet } from "@/features/floor-alignment/floors";
+import { isAdmin } from "@/lib/auth/admin";
 
 // MPrint serves its sheets without CORS headers, and the map draws the
 // sheet as a WebGL texture, which needs them. This passes the PNG through
@@ -8,7 +8,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/admin/floors/sh
   const { sheet } = await ctx.params;
   const record = findSheet(sheet);
   if (!record) return new Response("Unknown sheet", { status: 404 });
-  if (!(await canAdminFloors())) return new Response("Sign in first", { status: 401 });
+  if (!(await isAdmin())) return new Response("Admins only", { status: 403 });
 
   const tag = sheet.slice(0, sheet.lastIndexOf("_"));
   const upstream = await fetch(`https://mprint.umich.edu/assets/floorplans/${tag}/${sheet}.png`, {

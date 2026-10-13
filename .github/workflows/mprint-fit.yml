@@ -54,6 +54,12 @@ jobs:
       - run: python3 test_vectorize.py
 
       - name: Fit and vectorize every sheet in sheets.json
+        # Alignments saved in /admin/floors come from Supabase. Both values
+        # are public (the same ones the site ships to browsers); set them as
+        # repository variables.
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
         run: python3 pipeline.py --sheets sheets --previews out
 
       - uses: actions/upload-artifact@v4

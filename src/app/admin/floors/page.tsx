@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ContentPage } from "@/components/content-page";
 import { floors } from "@/features/floor-alignment/floors";
+import { getSavedAlignments, isOnMap, savedFor, type SavedAlignment } from "@/features/floor-alignment/saved";
 
 export const metadata: Metadata = {
   title: "Floor plans",
 };
 
-export default function FloorPlansAdminPage() {
+export default async function FloorPlansAdminPage() {
+  const saved = await getSavedAlignments();
   const buildings = Map.groupBy(floors, (f) => f.building);
   return (
     <ContentPage
@@ -29,7 +31,7 @@ export default function FloorPlansAdminPage() {
                     <span className="font-mono text-sm text-muted-foreground">{f.sheet}</span>
                   </span>
                   <span className="text-sm text-muted-foreground">
-                    {status(f)}
+                    {status(f, savedFor(f, saved))}
                   </span>
                 </Link>
               </li>
@@ -41,7 +43,8 @@ export default function FloorPlansAdminPage() {
   );
 }
 
-function status(f: (typeof floors)[number]) {
+function status(f: (typeof floors)[number], saved: SavedAlignment | null) {
+  if (saved && !isOnMap(f, saved)) return `Saved by ${saved.alignedBy}, waiting for the pipeline`;
   if (f.aligned === "manual") return "Aligned by hand";
   if (f.usable) return `Fitted automatically, ${f.fitMedianMeters.toFixed(2)} m median`;
   return `Needs alignment (automatic fit missed by ${f.fitMedianMeters.toFixed(1)} m)`;

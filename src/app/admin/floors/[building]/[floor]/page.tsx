@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AlignmentEditor } from "@/features/floor-alignment";
 import { findFloor } from "@/features/floor-alignment/floors";
+import { getSavedAlignments, isOnMap, savedFor } from "@/features/floor-alignment/saved";
 
 export async function generateMetadata({
   params,
@@ -18,6 +19,7 @@ export default async function FloorAlignmentPage({
   const { building, floor } = await params;
   const record = findFloor(building, floor);
   if (!record) notFound();
+  const saved = savedFor(record, await getSavedAlignments());
 
   return (
     <div className="flex min-h-[calc(100dvh-4rem-1px)] flex-1 flex-col">
@@ -32,6 +34,7 @@ export default async function FloorAlignmentPage({
       <AlignmentEditor
         record={record}
         sheetUrl={`/admin/floors/sheets/${record.sheet}`}
+        saved={saved && { ...saved, onMap: isOnMap(record, saved) }}
       />
     </div>
   );

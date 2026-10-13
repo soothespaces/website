@@ -20,6 +20,7 @@ Usage (from scripts/mprint):
 
 import argparse
 import json
+import os
 import sys
 import urllib.request
 from pathlib import Path
@@ -75,7 +76,28 @@ def publish_footprint(footprint: str) -> str:
     return "/" + dest.relative_to(PUBLIC.parent).as_posix()
 
 
-def run(entry: dict, sheets: Path, previews: Path | None) -> dict:
+def load_saved_alignments() -> dict[str, dict]:
+    """
+    Alignments admins saved from the editor (/admin/floors), from Supabase's
+    public.floor_alignments. Anyone may read that table, so the publishable
+    key is enough. Without SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY set this
+    returns nothing and only scripts/mprint/manual/ is used.
+    """
+    url, key = os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_PUBLISHABLE_KEY")
+    if not url or not key:
+        print("SUPABASE_URL or SUPABASE_PUBLISHABLE_KEY not set; using scripts/mprint/manual/ only", file=sys.stderr)
+        return {}
+    request = urllib.request.Request(
+        f"{url.rstrip('/')}/rest/v1/floor_alignments?select=sheet,sha256,width,height,corners,aligned_by,aligned_at",
+        headers={"apikey": key, "Accept": "application/json"},
+    )
+    with urllib.request.urlopen(request, timeout=30) as response:
+        rows = json.load(response)
+    print(f"{len(rows)} saved alignment(s) in Supabase", file=sys.stderr)
+    return {row["sheet"]: row for row in rows}
+
+
+def run(entry: dict, sheets: Path, previews: Path | None, saved: dict[str, dict]) -> dict:
     sheet = entry["sheet"]
     image = fetch(sheet, sheets)
     fit = fit_plan(str(image), str(HERE / entry["footprint"]), None, 200, 1.0,
@@ -92,6 +114,15 @@ def run(entry: dict, sheets: Path, previews: Path | None) -> dict:
             sys.exit(f"{manual_path} is for a {manual['width']}×{manual['height']} sheet; {sheet} is {fit['width']}×{fit['height']}")
         fit.update(corners=manual["corners"], usable=True, aligned="manual",
                    alignedBy=manual.get("alignedBy"), alignedAt=manual.get("alignedAt"))
+    row = saved.get(sheet)
+    if row and (row["sha256"], row["width"], row["height"]) != (fit["sha256"], fit["width"], fit["height"]):
+        # MPrint replaced the sheet since it was aligned; the old corners
+        # would misplace the new drawing, so fall back and say so.
+        print(f"{sheet}: saved alignment is for a different version of the sheet; ignoring it", file=sys.stderr)
+    elif row:
+        # Saved from the editor; newer than (and replaces) any manual/ file.
+        fit.update(corners=row["corners"], usable=True, aligned="manual",
+                   alignedBy=row["aligned_by"], alignedAt=row["aligned_at"][:10])
     alignment = HERE / "alignments" / f"{sheet}.json"
     alignment.write_text(json.dumps(fit, indent=1) + "\n")
     if previews:
@@ -152,11 +183,12 @@ def main() -> None:
     if previews:
         previews.mkdir(parents=True, exist_ok=True)
     index_path = PUBLIC / "index.json"
+    saved = load_saved_alignments()
     index = {(f["building"], f["floor"]): f for f in json.loads(index_path.read_text())["floors"]} if index_path.exists() else {}
     for entry in manifest:
         if args.only and entry["sheet"] not in args.only:
             continue
-        record = run(entry, Path(args.sheets), previews)
+        record = run(entry, Path(args.sheets), previews, saved)
         index[(record["building"], record["floor"])] = record
         state = f"{record['rooms']} rooms -> {record['geojson']}" if record["geojson"] else "fit not usable, no GeoJSON"
         print(f"{entry['sheet']}: median {record['fitMedianMeters']} m, {state}", file=sys.stderr)
