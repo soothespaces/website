@@ -103,22 +103,20 @@ select is(
   'a student cannot see an unlisted photo'
 );
 
-delete from storage.objects where bucket_id = 'photos' and name = 'buildings/test-photo-hall/abc-480.webp';
-
-reset role;
 select is(
   (select count(*)::int from storage.objects where bucket_id = 'photos' and name = 'buildings/test-photo-hall/abc-480.webp'),
-  1,
-  'a student cannot remove a photo file'
+  0,
+  'a student cannot list photo files'
 );
 
--- An admin can remove the photo and its files.
+-- An admin can remove the photo. Storage blocks deleting files with SQL
+-- (storage.protect_delete), so the app removes them through the Storage API;
+-- check the policy that lets it is there.
 set local role authenticated;
 set local request.jwt.claims =
   '{"sub":"22222222-2222-2222-2222-222222222222","email":"tkaslan@umich.edu","role":"authenticated"}';
 
 delete from public.photos where path_prefix = 'photos/buildings/test-photo-hall/abc';
-delete from storage.objects where bucket_id = 'photos' and name = 'buildings/test-photo-hall/abc-480.webp';
 
 reset role;
 select is(
@@ -127,10 +125,13 @@ select is(
   'an admin can remove a photo'
 );
 
-select is(
-  (select count(*)::int from storage.objects where bucket_id = 'photos' and name = 'buildings/test-photo-hall/abc-480.webp'),
-  0,
-  'an admin can remove a photo file'
+select ok(
+  exists (
+    select 1 from pg_policies
+    where schemaname = 'storage' and tablename = 'objects'
+      and policyname = 'admins can remove photo files' and cmd = 'DELETE'
+  ),
+  'admins may remove photo files through the Storage API'
 );
 
 select * from finish();
