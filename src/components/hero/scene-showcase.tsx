@@ -1,26 +1,11 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { PageWidth } from "@/components/page-width";
 import { SpaceChip } from "@/components/ui/space-chip";
+import { useReducedMotion } from "@/lib/settings/use-reduced-motion";
 import { SceneCanvas } from "./scene-canvas";
 import type { StudyScene } from "./scenes";
-
-const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
-
-function subscribeReducedMotion(onChange: () => void) {
-  const query = matchMedia(REDUCED_MOTION);
-  query.addEventListener("change", onChange);
-  return () => query.removeEventListener("change", onChange);
-}
-
-function useReducedMotion() {
-  return useSyncExternalStore(
-    subscribeReducedMotion,
-    () => matchMedia(REDUCED_MOTION).matches,
-    () => false,
-  );
-}
 
 function PlayPauseIcon({ playing }: { playing: boolean }) {
   return (
