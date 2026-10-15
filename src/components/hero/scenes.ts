@@ -12,14 +12,15 @@ export type Stroke = {
   // (a round table) instead of a solid line.
   radius: number;
   // Walls block sound and light; furniture is only drawn.
-  kind: "wall" | "furniture";
+  kind: "wall" | "furniture" | "furniture-fade" | "furniture-highlight";
 };
 
+// A group of people talking, as a rounded box around their table. Rings
+// start at its edge.
 export type SoundSource = {
   at: Vec2;
-  // Seconds between rings. Each source gets its own so they never sync up.
-  period: number;
-  seed: number;
+  halfSize: Vec2;
+  rounding: number;
 };
 
 export type StudyScene = {
@@ -31,20 +32,18 @@ export type StudyScene = {
   strokes: Stroke[];
   sound: SoundSource[];
   pin: Vec2;
+  // Which side of the pin the chip sits on. Pick the side with the least
+  // going on, so the chip doesn't cover the effect.
+  chipSide: "below" | "right";
   chip: SpaceChipProps;
 };
 
-const EXTERIOR = 0.15;
-const INTERIOR = 0.09;
+const INTERIOR = 0.1;
 const FURNITURE = 0.045;
 const CHAIR = 0.2;
 
 function wall(ax: number, ay: number, bx: number, by: number, halfWidth = INTERIOR): Stroke {
   return { a: [ax, ay], b: [bx, by], halfWidth, radius: 0, kind: "wall" };
-}
-
-function column(x: number, y: number, radius = 0.28): Stroke {
-  return { a: [x, y], b: [x, y], halfWidth: radius, radius: 0, kind: "wall" };
 }
 
 function rect(cx: number, cy: number, width: number, height: number): Stroke[] {
@@ -88,63 +87,46 @@ function ringSeating(cx: number, cy: number, radius: number, count: number, star
   });
 }
 
-// An open commons on a library's main floor: group tables, talking allowed,
-// a wide opening onto the corridor and doors through to the next rooms.
+function faded(...strokes: Stroke[]): Stroke[] {
+  return strokes.map((stroke) => ({ ...stroke, kind: "furniture-fade" }));
+}
+
+function highlighted(...strokes: Stroke[]): Stroke[] {
+  return strokes.map((stroke) => ({ ...stroke, kind: "furniture-highlight" }));
+}
+
+// An open commons on a library's main floor. Two groups talk at round
+// tables in the lower half. Their sound reaches the quiet table in the top
+// left through a wide gap, while two simple dividers cast acoustic shadows.
 export const COMMONS: StudyScene = {
   id: "commons",
-  bounds: { x: -0.5, y: -0.5, width: 25, height: 15 },
-  margin: 10,
+  bounds: { x: -0.5, y: -0.5, width: 24, height: 16.5 },
+  margin: 9,
   strokes: [
-    // Exterior wall along the top, running past both neighbors.
-    wall(-16, 0, 40, 0, EXTERIOR),
-    // The commons: a door on the left, a wide opening onto the corridor,
-    // a door through to the reading room on the right.
-    wall(0, 0, 0, 8.4),
-    wall(0, 10.4, 0, 14),
-    wall(0, 14, 9.4, 14),
-    wall(14.6, 14, 24, 14),
-    wall(24, 0, 24, 3),
-    wall(24, 4.8, 24, 14),
-    // Neighboring rooms along the same corridor.
-    wall(-16, 14, -4.2, 14),
-    wall(-2.8, 14, 0, 14),
-    wall(-8, 0, -8, 14),
-    wall(24, 14, 28, 14),
-    wall(29.4, 14, 40, 14),
-    wall(32, 0, 32, 14),
-    // Rooms across the corridor.
-    wall(-16, 18.5, 3, 18.5),
-    wall(5, 18.5, 18, 18.5),
-    wall(20, 18.5, 40, 18.5),
-    wall(4, 18.5, 4, 30),
-    wall(22, 18.5, 22, 30),
-    column(8, 7),
-    column(16, 7),
+    // Only the dividers matter here; the surrounding room is deliberately
+    // left open instead of drawing a full floor plan around the tables.
+    wall(1.5, 18, 1.5, 8.15),
+    wall(13.5, -2, 13.5, 7.5),
+    wall(13.5, 7.5, 27, 7.5),
 
-    ...rect(4.6, 4, 3.4, 1.3),
-    ...benchSeating(4.6, 4, 3.4, 1.3, 3),
-    ...rect(13.2, 3.6, 3.4, 1.3),
-    ...benchSeating(13.2, 3.6, 3.4, 1.3, 3),
-    roundTable(8.6, 10.6, 1.0),
-    ...ringSeating(8.6, 10.6, 1.55, 5, -Math.PI / 2),
-    ...rect(19.6, 9.6, 2.2, 2.2),
-    ...ringSeating(19.6, 9.6, 1.65, 4, Math.PI / 4),
-    // A rolling whiteboard.
-    {
-      a: [22.3, 5.6],
-      b: [22.3, 8.4],
-      halfWidth: 0.07,
-      radius: 0,
-      kind: "furniture",
-    },
+    // Two quiet rectangular tables. The selected one stays crisp and uses a
+    // stronger ink layer; the peripheral one fades with the vignette.
+    ...faded(...rect(1.2, 3.7, 2.4, 1.6), ...benchSeating(1.2, 3.7, 2.4, 1.6, 2)),
+    ...highlighted(...rect(8.4, 3.7, 2.4, 1.6), ...benchSeating(8.4, 3.7, 2.4, 1.6, 2)),
+    // Three evenly spaced circular tables. The two inner ones emit sound;
+    // the faded one on the right is quiet.
+    roundTable(7.6, 12.6, 1.15),
+    ...ringSeating(7.6, 12.6, 1.75, 5, -Math.PI / 2),
+    roundTable(15.4, 12.6, 1.15),
+    ...ringSeating(15.4, 12.6, 1.75, 5, -Math.PI / 2),
+    ...faded(roundTable(23.2, 12.6, 1.15), ...ringSeating(23.2, 12.6, 1.75, 5, -Math.PI / 2)),
   ],
   sound: [
-    { at: [4.6, 4], period: 2.3, seed: 1.3 },
-    { at: [13.2, 3.6], period: 2.7, seed: 2.7 },
-    { at: [8.6, 10.6], period: 2.1, seed: 4.1 },
-    { at: [19.6, 9.6], period: 2.5, seed: 5.9 },
+    { at: [7.6, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
+    { at: [15.4, 12.6], halfSize: [1.2, 1.2], rounding: 1.2 },
   ],
-  pin: [14.2, 11.2],
+  pin: [8.4, 3.7],
+  chipSide: "right",
   chip: {
     eyebrow: "Example space",
     name: "Commons, level 1",
@@ -154,5 +136,6 @@ export const COMMONS: StudyScene = {
       { label: "Whiteboards" },
     ],
     footnote: "Based on 14 check-ins",
+    accentBorder: true,
   },
 };

@@ -1,7 +1,13 @@
 // GLSL for the hero scenes. Scene sizes are compiled in as #defines, so each
 // scene gets its own programs.
 
-export const SPEED = 1.15; // meters per second
+const TAU = Math.PI * 2;
+// Every source hums at this one wavelength, in meters, so the waves interfere.
+// About a quarter of the tables' spacing, so the pattern has a few broad
+// interference lines rather than dozens of fine ones.
+export const WAVELENGTH = 1.8;
+// Meters per second the crests travel outward.
+export const WAVE_SPEED = 0.8;
 
 const SEGMENTS = /* glsl */ `
 uniform vec4 uSegA[SEG_COUNT]; // endpoints a.xy, b.xy
@@ -55,57 +61,161 @@ void main() {
   vec2 p = uOffset + vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y) * uPx;
   float walls = 1e5;
   float furniture = 1e5;
+  float fadedFurniture = 1e5;
+  float highlightedFurniture = 1e5;
   for (int i = 0; i < SEG_COUNT; i++) {
     float d = strokeDist(i, p);
     if (i < WALL_COUNT) walls = min(walls, d);
-    else furniture = min(furniture, d);
+    else if (i < FADE_FURNITURE_START) furniture = min(furniture, d);
+    else if (i < HIGHLIGHT_FURNITURE_START) fadedFurniture = min(fadedFurniture, d);
+    else highlightedFurniture = min(highlightedFurniture, d);
   }
-  fragColor = vec4(coverage(walls), coverage(furniture), 0.0, 1.0);
+  fragColor = vec4(
+    coverage(walls),
+    coverage(furniture),
+    coverage(fadedFurniture),
+    coverage(highlightedFurniture)
+  );
 }
 `;
 
-// Scene space, drawn once per scene: how much of each source reaches a
-// point. Sound bends around corners, so the shadows are deliberately soft.
-export const VISIBILITY_FRAGMENT = /* glsl */ `#version 300 es
+// Scene space, drawn once per scene. Every source hums at the same
+// wavelength, so all of its paths to a point (direct, and reflected once off
+// each wall) sum into one complex amplitude: its length is the pressure
+// amplitude there, its angle the phase. Each pass bakes two sources, one per
+// RG and BA pair. Everything here is static, so frames only have to rotate
+// each source's amplitude by its current phase and add them up.
+export const FIELD_FRAGMENT = /* glsl */ `#version 300 es
 precision highp float;
 ${SEGMENTS}
+uniform vec4 uSourceBox[SOURCE_SLOTS]; // center.xy, half size
+uniform float uSourceRounding[SOURCE_SLOTS];
 uniform vec2 uWorldMin;
 uniform vec2 uWorldSize;
-uniform vec4 uSources[SOURCE_SLOTS];
 in vec2 vUv;
 out vec4 fragColor;
 
-float visibility(vec2 p, vec2 source) {
-  vec2 toSource = source - p;
-  float len = length(toSource);
-  if (len < 1e-3) return 1.0;
-  vec2 dir = toSource / len;
-  float lit = 1.0;
-  float t = 0.0;
-  for (int i = 0; i < 96; i++) {
-    float h = wallDist(p + dir * t);
-    if (h < 0.0) return 0.0;
-    float along = max(min(t, len - t), 0.15);
-    lit = min(lit, h / (0.32 * along));
-    t += clamp(h, 0.02, 0.6);
-    if (t >= len) break;
+const int STEP_COUNT = 128;
+const float MIN_HIT_DIST = 0.01;
+const float MAX_TRACE_DIST = 0.4;
+const float SHADOW_SOFTNESS = 0.3; // the lower, the sharper
+const float WAVENUMBER = ${(TAU / WAVELENGTH).toFixed(6)};
+// Share of the pressure a wall reflects. Library partitions are usually
+// treated with absorbing panels, which take about 90% of the intensity.
+const float REFLECTION = 0.3;
+// Meters around a wall's end over which its reflection fades in, standing in
+// for diffraction at the edge.
+const float EDGE = 0.6;
+
+float sourceDist(vec2 p, int i) {
+  float r = uSourceRounding[i];
+  vec2 q = abs(p - uSourceBox[i].xy) - uSourceBox[i].zw + r;
+  return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
+}
+
+vec2 towardSource(vec2 p, int i) {
+  vec2 e = vec2(0.01, 0.0);
+  return -normalize(vec2(
+    sourceDist(p + e.xy, i) - sourceDist(p - e.xy, i),
+    sourceDist(p + e.yx, i) - sourceDist(p - e.yx, i)
+  ));
+}
+
+float wallDistExcept(vec2 p, int skip) {
+  float d = 1e5;
+  for (int i = 0; i < WALL_COUNT; i++) {
+    if (i != skip) d = min(d, strokeDist(i, p));
   }
-  return smoothstep(0.0, 1.0, clamp(lit, 0.0, 1.0));
+  return d;
+}
+
+// Soft shadow, sphere tracing from p along dir for dist meters. A ray that
+// enters a wall counts as fully blocked: the walls are too thin for the trace
+// to go deep enough inside them on its own. The skipped wall is the one a
+// reflection bounces off, which the ray ends at by design.
+float trace(vec2 p, vec2 dir, float dist, int skip) {
+  float res = 1.0;
+  float t = MIN_HIT_DIST;
+  for (int s = 0; s < STEP_COUNT; s++) {
+    float h = wallDistExcept(p + dir * t, skip);
+    if (h < 0.0) return 0.0;
+    res = min(res, h / (SHADOW_SOFTNESS * t));
+    t += clamp(h, MIN_HIT_DIST, MAX_TRACE_DIST);
+    if (t > dist) break;
+  }
+  res = clamp(res, 0.0, 1.0);
+  return res * res * (3.0 - 2.0 * res);
+}
+
+float heard(vec2 p, int i, int skip) {
+  float dist = sourceDist(p, i);
+  if (dist <= 0.0) return 1.0;
+  return trace(p, towardSource(p, i), dist, skip);
+}
+
+// One path from source i: raw meters from its edge, heardBy how much gets
+// past the walls. Pressure falls off as 1 / r from the source's center
+// (intensity as 1 / r^2), normalized to 1 at its edge.
+vec2 path(int i, float raw, float heardBy, float gain) {
+  float r0 = max(uSourceBox[i].z, uSourceBox[i].w);
+  float travel = max(raw, 0.0);
+  float amplitude = gain * heardBy * r0 / (r0 + travel);
+  return amplitude * vec2(cos(WAVENUMBER * travel), sin(WAVENUMBER * travel));
+}
+
+vec2 amplitude(vec2 p, int i) {
+  if (i >= SOURCE_COUNT) return vec2(0.0);
+  vec2 z = path(i, sourceDist(p, i), heard(p, i, -1), 1.0);
+
+  // Image sources: mirroring p across a wall turns the bounced path into a
+  // straight one to the real source.
+  vec2 center = uSourceBox[i].xy;
+  for (int j = 0; j < WALL_COUNT; j++) {
+    if (uSegB[j].x > 0.0) continue;
+    vec2 a = uSegA[j].xy;
+    vec2 b = uSegA[j].zw;
+    float len = length(b - a);
+    vec2 along = (b - a) / len;
+    vec2 n = vec2(-along.y, along.x);
+    float face = uSegB[j].y;
+    float sideP = dot(p - a, n);
+    float sideS = dot(center - a, n);
+    if (sideP * sideS <= 0.0 || abs(sideP) < face) continue;
+
+    // Where the path from p to the image source crosses the wall.
+    vec2 image = center - 2.0 * sideS * n;
+    vec2 bounce = mix(p, image, sideP / (sideP + sideS));
+    float u = dot(bounce - a, along);
+    float onWall = smoothstep(-EDGE, EDGE, u) * smoothstep(-EDGE, EDGE, len - u);
+    if (onWall <= 0.0) continue;
+
+    vec2 atWall = bounce + n * sign(sideP) * (face + 0.05);
+    vec2 toWall = atWall - p;
+    float wallDistance = length(toWall);
+    float legs = heard(atWall, i, j);
+    if (wallDistance > 1e-3) legs *= trace(p, toWall / wallDistance, wallDistance, j);
+
+    z += path(i, sourceDist(p - 2.0 * sideP * n, i), onWall * legs, REFLECTION);
+  }
+  // Nothing is drawn over the table that is talking.
+  return z * smoothstep(0.0, 0.4, sourceDist(p, i));
 }
 
 void main() {
   vec2 p = uWorldMin + vUv * uWorldSize;
-  vec4 v = vec4(0.0);
-  for (int i = 0; i < SOURCE_COUNT; i++) v[i] = visibility(p, uSources[i].xy);
-  fragColor = v;
+  fragColor = vec4(amplitude(p, PAIR * 2), amplitude(p, PAIR * 2 + 1));
 }
 `;
 
-// Every frame: rings from each source, under the baked walls.
+// Every frame: the summed pressure wave. Rings are its crests, and their
+// brightness is the local intensity, so they fade out where the sources
+// interfere destructively and peak where they reinforce each other.
 export const COMPOSITE_FRAGMENT = /* glsl */ `#version 300 es
 precision highp float;
 uniform sampler2D uInk;
-uniform sampler2D uVisibility;
+uniform sampler2D uWave0; // sources 0 and 1
+uniform sampler2D uWave1; // sources 2 and 3
+uniform vec2 uSpin[SOURCE_SLOTS]; // each source's gain and phase, as a complex number
 uniform vec2 uRes;
 uniform vec2 uOffset;
 uniform float uPx;
@@ -113,51 +223,15 @@ uniform vec2 uWorldMin;
 uniform vec2 uWorldSize;
 uniform vec4 uBounds; // min.xy, max.xy
 uniform float uFade;
-uniform float uTime;
-uniform vec4 uSources[SOURCE_SLOTS]; // position, period, seed
 uniform vec3 uFg;
-uniform vec3 uAccent;
+uniform vec3 uSound;
 uniform vec4 uAlpha; // walls, furniture, floor grid, rings
 out vec4 fragColor;
 
-const float SPEED = ${SPEED.toFixed(3)};
-const float RING_WIDTH = 0.035;
-const float TAIL = 0.35;
-const float DECAY = 4.5;
+const float GAMMA = 2.2;
 
-float hash(float n) {
-  return fract(sin(n * 91.3458) * 47453.5453);
-}
-
-// Speech comes in bursts: some rings are skipped, the rest vary in strength.
-float burst(float k, float seed) {
-  float on = step(0.32, hash(k * 1.731 + seed * 13.17));
-  return on * mix(0.45, 1.0, hash(k * 0.917 + seed * 3.71));
-}
-
-float edge(float d, float halfWidth) {
-  return 1.0 - smoothstep(halfWidth, halfWidth + uPx * 1.5, d);
-}
-
-float rings(vec2 p, vec4 source) {
-  float r = length(p - source.xy);
-  float period = source.z;
-  float wavelength = period * SPEED;
-  float q = (uTime - r / SPEED) / period;
-  float k = floor(q);
-  float f = q - k;
-  float halfWidth = max(RING_WIDTH, uPx * 0.75);
-
-  // Just behind ring k: its line plus a fading tail. Just ahead of ring
-  // k + 1: a crisp leading edge.
-  float behind = f * wavelength;
-  float ahead = (1.0 - f) * wavelength;
-  float trail = max(edge(behind, halfWidth), 0.12 * exp(-behind / TAIL));
-  float lead = edge(ahead, halfWidth);
-  float wave = burst(k, source.w) * trail + burst(k + 1.0, source.w) * lead;
-
-  float falloff = exp(-r / DECAY) * smoothstep(0.25, 1.4, r);
-  return wave * falloff;
+vec2 cmul(vec2 a, vec2 b) {
+  return vec2(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
 }
 
 float boxDist(vec2 p, vec4 box) {
@@ -174,29 +248,51 @@ void over(inout vec4 dst, vec3 color, float alpha) {
 void main() {
   vec2 p = uOffset + vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y) * uPx;
   float outside = boxDist(p, uBounds);
-  float mask = 1.0 - smoothstep(0.0, uFade, outside);
+  float mask = (1.0 - smoothstep(0.0, uFade, outside)) * step(p.x, uBounds.z);
   if (mask <= 0.0) {
     fragColor = vec4(0.0);
     return;
   }
+  vec2 fromMin = p - uBounds.xy;
+  vec2 fromMax = uBounds.zw - p;
+  float vignette = min(
+    min(smoothstep(0.0, 5.0, fromMin.x), smoothstep(0.0, 5.0, fromMin.y)),
+    min(smoothstep(0.0, 5.0, fromMax.x), smoothstep(0.0, 5.0, fromMax.y))
+  );
 
-  vec4 ink = texture(uInk, gl_FragCoord.xy / uRes);
-  vec4 heard = texture(uVisibility, (p - uWorldMin) / uWorldSize);
+  vec2 uv = (p - uWorldMin) / uWorldSize;
+  vec4 wave = texture(uWave0, uv);
+  vec2 z = cmul(wave.xy, uSpin[0]) + cmul(wave.zw, uSpin[1]);
+  float loudest = length(wave.xy) * length(uSpin[0]) + length(wave.zw) * length(uSpin[1]);
+#if SOURCE_COUNT > 2
+  wave = texture(uWave1, uv);
+  z += cmul(wave.xy, uSpin[2]) + cmul(wave.zw, uSpin[3]);
+  loudest += length(wave.xy) * length(uSpin[2]) + length(wave.zw) * length(uSpin[3]);
+#endif
 
-  float sound = 0.0;
-  for (int i = 0; i < SOURCE_COUNT; i++) sound += rings(p, uSources[i]) * heard[i];
-  float ringAlpha = (1.0 - exp(-sound * 1.6)) * uAlpha.w * mask;
+  // Shaded like a ripple tank: the pressure Re(z), relative to the most it
+  // could reach here if every wave lined up. Where waves cancel it rests at
+  // a neutral half tone; where they reinforce it swings between bright
+  // crests and dark troughs. Brightness overall follows the loudest it gets.
+  float pressure = z.x / max(loudest, 1e-6);
+  float level = pow(min(loudest * loudest, 1.0), 1.0 / GAMMA);
+  float ringAlpha = (0.5 + 0.5 * pressure) * level * uAlpha.w * mask * vignette;
 
   // A faint one-meter dot grid on the floor of the room itself.
   vec2 cell = abs(fract(p) - 0.5);
-  float dot_ = edge(length(0.5 - cell), max(0.03, uPx * 0.6));
-  float grid = dot_ * uAlpha.z * (1.0 - smoothstep(-1.0, 0.0, outside));
+  float dotDist = length(0.5 - cell);
+  float dotRadius = max(0.03, uPx * 0.6);
+  float grid = (1.0 - smoothstep(dotRadius, dotRadius + uPx * 1.5, dotDist)) * uAlpha.z
+    * (1.0 - smoothstep(-1.0, 0.0, outside));
 
+  vec4 ink = texture(uInk, gl_FragCoord.xy / uRes);
   vec4 color = vec4(0.0);
   over(color, uFg, grid);
-  over(color, uAccent, ringAlpha);
+  over(color, uSound, ringAlpha);
+  over(color, uFg, ink.b * uAlpha.y * mask * vignette);
   over(color, uFg, ink.g * uAlpha.y * mask);
-  over(color, uFg, ink.r * uAlpha.x * mask);
+  over(color, uFg, ink.a * min(uAlpha.y * 2.5, 0.65) * mask);
+  over(color, uFg, ink.r * uAlpha.x * mask * vignette);
   fragColor = color;
 }
 `;

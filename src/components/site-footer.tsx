@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FOOTNOTES, HELP_TOPICS, ROUTES } from "@/lib/site";
 import { LogoMark } from "./logo";
+import { PageWidth } from "./page-width";
 
 const NOTICES = [
   "Soothe Spaces is a student project. It is not run or endorsed by the University of Michigan.",
@@ -14,7 +15,7 @@ const linkClassName =
 export function SiteFooter() {
   return (
     <footer className="border-t border-border text-sm">
-      <div className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-10 sm:grid-cols-2 md:grid-cols-[2fr_1fr_1fr]">
+      <PageWidth className="grid gap-8 py-10 sm:grid-cols-2 md:grid-cols-[2fr_1fr_1fr]">
         <section aria-labelledby="footer-notices" className="flex flex-col gap-3">
           <LogoMark className="h-8 w-auto self-start" />
           <h2 id="footer-notices" className="text-base">
@@ -64,10 +65,10 @@ export function SiteFooter() {
             </li>
           </ul>
         </nav>
-      </div>
+      </PageWidth>
 
       <div className="border-t border-border">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-muted-foreground">
+        <PageWidth className="flex flex-col gap-4 py-6 text-muted-foreground">
           <section aria-labelledby="footer-footnotes" className="flex flex-col gap-2">
             <h2 id="footer-footnotes" className="text-sm text-foreground">
               Footnotes
@@ -84,7 +85,7 @@ export function SiteFooter() {
             </ol>
           </section>
           <p>© {new Date().getFullYear()} Soothe Spaces</p>
-        </div>
+        </PageWidth>
       </div>
     </footer>
   );

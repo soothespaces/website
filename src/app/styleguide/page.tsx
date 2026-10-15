@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LogoMark, Wordmark } from "@/components/logo";
+import { PageWidth } from "@/components/page-width";
 import { ModeSwitcher } from "./mode-switcher";
 
 export const metadata: Metadata = {
@@ -25,12 +26,14 @@ const TYPE_SCALE = [
 
 export default function StyleGuidePage() {
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-10 px-4 py-10">
+    <PageWidth className="flex flex-col gap-10 py-10">
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-semibold">Style guide</h1>
         <p className="text-muted-foreground">
           Every color below is a semantic token. Switch modes to check that
-          components never need to know which one is on.
+          components never need to know which one is on. This page uses the
+          same column as the header: <code>--page-width</code> (64rem) and{" "}
+          <code>--page-gutter</code> (1rem).
         </p>
       </header>
 
@@ -117,7 +120,7 @@ export default function StyleGuidePage() {
             Back to modes
           </a>
         </div>
-        <label className="flex max-w-sm flex-col gap-1">
+        <label className="flex w-full flex-col gap-1 sm:w-80">
           Search spaces
           <input
             type="search"
@@ -125,6 +128,6 @@ export default function StyleGuidePage() {
           />
         </label>
       </section>
-    </div>
+    </PageWidth>
   );
 }

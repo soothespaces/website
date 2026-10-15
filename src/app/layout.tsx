@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import { ThemeProvider } from "next-themes";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { SettingsProvider } from "@/lib/settings/settings-provider";
+import { SETTINGS_BOOT_SCRIPT, THEME_STORAGE_KEY } from "@/lib/settings/model";
 import "./globals.css";
 
 // Inter 4 from rsms/inter, self-hosted: Google Fonts' copy drops the
@@ -35,19 +38,33 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: SETTINGS_BOOT_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col">
-        <a
-          href="#main"
-          className="sr-only rounded-md bg-primary font-medium text-primary-foreground focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2"
+        <ThemeProvider
+          attribute="data-theme"
+          enableSystem
+          defaultTheme="system"
+          storageKey={THEME_STORAGE_KEY}
+          disableTransitionOnChange
         >
-          Skip to main content
-        </a>
-        <SiteHeader />
-        <main id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
-          {children}
-        </main>
-        <SiteFooter />
+          <SettingsProvider>
+            <a
+              href="#main"
+              className="sr-only rounded-md bg-primary font-medium text-primary-foreground focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2"
+            >
+              Skip to main content
+            </a>
+            <SiteHeader />
+            <main id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
+              {children}
+            </main>
+            <SiteFooter />
+          </SettingsProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

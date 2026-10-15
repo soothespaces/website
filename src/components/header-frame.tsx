@@ -6,6 +6,7 @@ import { Collapsible } from "radix-ui";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { NAV_LINKS, ROUTES } from "@/lib/site";
 import { LogoMark, Wordmark } from "./logo";
+import { PageWidth } from "./page-width";
 
 function isCurrent(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -95,7 +96,7 @@ export function HeaderFrame({ account }: { account: ReactNode }) {
           }
         }}
       >
-        <div className="mx-auto flex min-h-16 w-full max-w-5xl items-center gap-2 px-4 py-2 sm:gap-6">
+        <PageWidth className="flex min-h-16 items-center gap-2 py-2 sm:gap-6">
           <Link
             href={ROUTES.home}
             className="flex min-w-0 items-center gap-2 rounded-sm text-foreground sm:gap-3"
@@ -123,16 +124,18 @@ export function HeaderFrame({ account }: { account: ReactNode }) {
               <span className="sr-only">Menu</span>
             </Collapsible.Trigger>
           </div>
-        </div>
+        </PageWidth>
 
         <Collapsible.Content className="absolute inset-x-0 top-full border-y border-border bg-background shadow-lg md:hidden">
-          <nav aria-label="Main" className="mx-auto w-full max-w-5xl px-4 py-2">
-            <NavLinks
-              pathname={pathname}
-              className="flex flex-col"
-              linkClassName="block px-3 py-3 text-base"
-            />
-          </nav>
+          <PageWidth className="py-2">
+            <nav aria-label="Main">
+              <NavLinks
+                pathname={pathname}
+                className="flex flex-col"
+                linkClassName="block px-3 py-3 text-base"
+              />
+            </nav>
+          </PageWidth>
         </Collapsible.Content>
       </header>
     </Collapsible.Root>

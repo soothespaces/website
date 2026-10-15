@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { PageWidth } from "./page-width";
 
 // Layout for text pages: help, legal and placeholder pages.
 export function ContentPage({
@@ -11,13 +12,13 @@ export function ContentPage({
   children?: ReactNode;
 }) {
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-12">
+    <PageWidth className="flex flex-col gap-8 py-12">
       <div className="flex flex-col gap-3">
         <h1 className="text-3xl sm:text-4xl">{title}</h1>
         {intro ? <p className="text-lg text-muted-foreground">{intro}</p> : null}
       </div>
       {children}
-    </div>
+    </PageWidth>
   );
 }
 

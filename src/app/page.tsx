@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import { FootnoteRef } from "@/components/footnote-ref";
-import { LandingHero } from "@/components/hero/landing-hero";
+import { PageWidth } from "@/components/page-width";
+import { SceneShowcase } from "@/components/hero/scene-showcase";
 import { COMMONS } from "@/components/hero/scenes";
 import { ROUTES } from "@/lib/site";
 
@@ -44,32 +46,66 @@ const buttonBase =
 export default function Home() {
   return (
     <>
-      <LandingHero scene={COMMONS}>
-        <h1 id="hero" className="text-4xl sm:text-5xl">
-          Find a study space that feels right.
-        </h1>
-        <p className="text-lg text-muted-foreground">
-          Search campus by noise, light, crowding and access, before you walk
-          over. Starting with U-M Library study spaces
-          <FootnoteRef id="library-spaces" />.
-        </p>
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Link
-            href={ROUTES.map}
-            className={`${buttonBase} bg-primary text-primary-foreground hover:bg-primary/90`}
-          >
-            Open the map
-          </Link>
-          <Link
-            href="#how-it-works"
-            className={`${buttonBase} border border-input bg-background hover:bg-accent`}
-          >
-            How it works
-          </Link>
-        </div>
-      </LandingHero>
+      <section aria-labelledby="hero">
+        <PageWidth className="grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-2 lg:gap-16 lg:py-20">
+          <div className="flex flex-col gap-6">
+            <h1 id="hero" className="text-4xl sm:text-5xl">
+              Find a study space that feels right.
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Search campus by noise, light, crowding and access, before you walk
+              over. Starting with U-M Library study spaces
+              <FootnoteRef id="library-spaces" />.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                href={ROUTES.map}
+                className={`${buttonBase} bg-primary text-primary-foreground hover:bg-primary/90`}
+              >
+                Open the map
+              </Link>
+              <Link
+                href="#how-it-works"
+                className={`${buttonBase} border border-input bg-background hover:bg-accent`}
+              >
+                How it works
+              </Link>
+            </div>
+          </div>
+          {/*
+            Replace this raster placeholder when the map UI is built. The final
+            hero demo should animate a simple Ann Arbor map: open Shapiro Library,
+            select a private study spot on floor 2, and show that it is booked
+            until 3 PM. Then surface a second chip for the quiet study area on
+            floor 3: not bookable, mostly single-person seating, quiet, decent
+            natural light, and its other useful sensory/access features.
+          */}
+          <div className="overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
+            <Image
+              src="/hero-map-placeholder.png"
+              alt="Placeholder for an animated Ann Arbor study-space map demo"
+              width={1200}
+              height={900}
+              priority
+              className="aspect-[4/3] size-full object-cover"
+            />
+          </div>
+        </PageWidth>
+      </section>
 
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-4 py-12 sm:py-16">
+      <SceneShowcase scene={COMMONS} labelledBy="sound-demo">
+        <p className="text-sm font-medium text-primary">See the difference</p>
+        <h2 id="sound-demo" className="text-3xl sm:text-4xl">
+          Choose a space by how it feels.
+        </h2>
+        <p className="text-lg text-muted-foreground">
+          Sound does not stop at a room label. See how conversation carries
+          through an open study area, softens behind walls, and reaches the
+          exact seat you are considering.
+        </p>
+      </SceneShowcase>
+
+      <PageWidth className="flex flex-col gap-16 py-12 sm:py-16">
         <section aria-labelledby="conditions" className="flex flex-col gap-6">
           <h2 id="conditions" className="text-2xl">
             Filter by how a space feels
@@ -115,7 +151,7 @@ export default function Home() {
           <h2 id="privacy" className="text-2xl">
             Anonymous by design
           </h2>
-          <p className="max-w-2xl text-muted-foreground">
+          <p className="text-muted-foreground">
             Check-ins describe the space, never the person. Nobody can see who
             checked in where; everyone sees the same totals.
           </p>
@@ -149,7 +185,7 @@ export default function Home() {
             </Link>
           </div>
         </section>
-      </div>
+      </PageWidth>
     </>
   );
 }

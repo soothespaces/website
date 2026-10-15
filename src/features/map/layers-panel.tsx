@@ -71,7 +71,10 @@ export function LayersPanel({
     <Collapsible.Root
       open={open}
       onOpenChange={setOpen}
-      className="absolute left-2.5 top-2.5 z-10 max-w-[calc(100%-5rem)] rounded-md bg-card text-card-foreground shadow-[0_0_0_1px_var(--input)]"
+      className="absolute left-2.5 top-2.5 z-10 rounded-md bg-card text-card-foreground shadow-[0_0_0_1px_var(--input)]"
+      // Keeps the panel clear of the zoom and locate buttons on the right.
+      // A map overlay, not a page column, so it isn't PageWidth.
+      style={{ maxWidth: "calc(100% - 5rem)" }}
     >
       <Collapsible.Trigger className="flex min-h-11 w-full items-center gap-2 rounded-md px-3 text-sm font-medium hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
         <LayersIcon />
@@ -96,7 +99,7 @@ export function LayersPanel({
             </label>
           ))}
           {error ? (
-            <p role="status" className="mt-1 max-w-56 text-xs text-muted-foreground">
+            <p role="status" className="mt-1 w-0 min-w-full text-xs text-muted-foreground">
               {error} Entrances and study spaces aren&rsquo;t shown.
             </p>
           ) : null}
