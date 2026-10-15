@@ -10,8 +10,10 @@ Full rationale: [design-system doc](https://claude.ai/code/artifact/eea24662-bb9
   `bg-card`, `bg-muted`, `text-muted-foreground`, `bg-primary`,
   `text-primary-foreground`, `bg-destructive`, `border-border`, `border-input`,
   `ring-ring`. No raw palette classes (`bg-zinc-100`) and no `dark:` variants.
-- Names follow shadcn/ui. `primary` is our one accent color. `accent` is shadcn's
-  subtle hover surface, not the brand color.
+- Token names follow the shadcn vocabulary so the words stay familiar.
+  `primary` is our one accent color. `accent` is the subtle hover surface,
+  not the brand color. That naming is not a dependency on the shadcn kit
+  ([ADR 0010](../decisions/0010-buttons-and-icons.md)).
 - `sound` is a decorative color for the sound-wave visualization only. It is
   never used for text or controls, so it has no contrast requirement.
 - `border-border` is for decorative dividers only. A border that identifies a
@@ -22,7 +24,10 @@ Full rationale: [design-system doc](https://claude.ai/code/artifact/eea24662-bb9
 - Interactive components (radio groups, dialogs, menus, popovers) are built on
   [Radix primitives](https://www.radix-ui.com/primitives) from the `radix-ui`
   package ([ADR 0009](../decisions/0009-radix-primitives.md)). Style Radix state
-  with `data-[state=...]` variants.
+  with `data-[state=...]` variants. Buttons are not a Radix primitive: use
+  [`Button`](../../src/components/ui/button.tsx). Icons come from
+  [`@/components/ui/icons`](../../src/components/ui/icons.tsx)
+  ([ADR 0010](../decisions/0010-buttons-and-icons.md)).
 - Don't remove the global focus ring. If a component needs a different one, it
   must still be 2px and at least 3:1 against its surroundings.
 - Page content goes in `PageWidth`. Do not set a page `max-w-*`.
