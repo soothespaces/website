@@ -4,7 +4,8 @@ Date: 2026-09-28
 
 ## Status
 
-Accepted
+Accepted. Amended by [0011](0011-own-check-in-history.md): signed-in users can see
+their own check-in counts and last-visit dates.
 
 ## Context
 

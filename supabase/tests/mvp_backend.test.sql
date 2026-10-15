@@ -159,8 +159,8 @@ select is(
       )
     order by 1
   ),
-  array['check_in_overview', 'check_in_summary', 'submit_check_in'],
-  'authenticated can execute only the aggregates and submit_check_in'
+  array['check_in_overview', 'check_in_summary', 'my_check_in_history', 'submit_check_in'],
+  'authenticated can execute only the aggregates, submit_check_in and my_check_in_history'
 );
 
 select is(

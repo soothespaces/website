@@ -240,6 +240,49 @@ export type Database = {
         };
         Relationships: [];
       };
+      favorites: {
+        Row: {
+          building_slug: string | null;
+          created_at: string;
+          id: number;
+          position: number;
+          space_id: string | null;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          building_slug?: string | null;
+          created_at?: string;
+          id?: never;
+          position?: number;
+          space_id?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          building_slug?: string | null;
+          created_at?: string;
+          id?: never;
+          position?: number;
+          space_id?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "favorites_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: false;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+          {
+            foreignKeyName: "favorites_space_id_fkey";
+            columns: ["space_id"];
+            isOneToOne: false;
+            referencedRelation: "spaces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       floor_plans: {
         Row: {
           building_slug: string;
@@ -682,6 +725,15 @@ export type Database = {
         Returns: Json;
       };
       hook_before_user_created: { Args: { event: Json }; Returns: Json };
+      my_check_in_history: {
+        Args: never;
+        Returns: {
+          check_in_count: number;
+          last_visited_on: string;
+          target_id: string;
+          target_kind: string;
+        }[];
+      };
       submit_check_in: {
         Args: {
           busyness?: Database["public"]["Enums"]["busyness_level"];

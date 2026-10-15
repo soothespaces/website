@@ -269,6 +269,22 @@ the guest's localStorage value:
 Rows are created on first save (upsert from the client), not by a trigger on
 `auth.users`, so a bug here can never block sign-in.
 
+### "Your spots" and "Your rotation" (added 2026-10-15)
+
+[ADR 0011](../decisions/0011-own-check-in-history.md) amends ADR 0007 so a signed-in
+user can see their own check-in history. Migration
+`20261015120000_own_history_and_favorites.sql` adds:
+
+- `public.my_check_in_history()`, executable by `authenticated` only. It takes no
+  arguments and returns one row per listed space or room the caller has checked in to:
+  `target_kind` (`'space'` or `'room'`), `target_id`, `check_in_count` and
+  `last_visited_on` (the Ann Arbor calendar day), most recent first. No raw rows,
+  `user_id`, exact times or answers. Call it with `supabase.rpc("my_check_in_history")`.
+- `public.favorites`: `user_id` (defaults to `auth.uid()`), exactly one of `space_id` or
+  `building_slug`, and `position` for "My order" (lower first). Each space or building
+  can be saved once per user. Owner-only RLS for select, insert, update and delete,
+  like `user_settings`; `anon` has no access.
+
 ### Opening hours and Google places (added 2026-10-09)
 
 Migration `20261009140000_hours_and_google.sql`.
@@ -762,10 +778,12 @@ supabase/migrations/
   20261009130000_photo_placement.sql       WP3      photo kind, floor, position, heading
   20261009140000_hours_and_google.sql      WP3      opening_hours, google_places, popular times
   20261009150000_building_entrances.sql    WP3      exterior doors from the FO campus map
+  20261015120000_own_history_and_favorites.sql  WP2/WP4  my_check_in_history(), favorites
 supabase/tests/
   mvp_backend.test.sql                     shared   pgTAP, run by `supabase test db`
   bookable_items.test.sql, photo_placement.test.sql, hours_and_google.test.sql,
-  building_entrances.test.sql              per-migration checks
+  building_entrances.test.sql,
+  own_history_and_favorites.test.sql       per-migration checks
 ```
 
 After each merge, run `npm run db:types` so `src/types/supabase.ts` matches.
@@ -780,6 +798,8 @@ The migrations workflow runs `npx supabase test db`. The suite covers:
   email is rejected. A umich JWT succeeds once, then hits the rate limit.
 - `check_in_summary()` output has no `user_id` and only 15-minute timestamps.
 - A user can read and write their own `user_settings` row and can't see anyone else's.
+- `my_check_in_history()` returns only the caller's own listed targets, and `anon`
+  can't execute it. A user can save, reorder and delete only their own `favorites`.
 - The hook returns an error for `a@gmail.com` and `a@umich.edu.evil.com`, and `{}` for
   `a@umich.edu`.
 
