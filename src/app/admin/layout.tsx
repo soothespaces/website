@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 // Supabase). src/proxy.ts checks first; this is the check next to the data.
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   const access = await getAdminAccess();
-  if (access === "signed-out") redirect(loginHref("/admin/floors"));
+  if (access === "signed-out") redirect(loginHref("/admin"));
   if (access === "not-admin") return <NotAdmin />;
   return children;
 }
