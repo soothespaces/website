@@ -78,3 +78,30 @@
     }
   }
 }
+
+/*
+ * Reduced motion. data-motion="reduce" is the in-app choice. With no
+ * attribute, the device setting applies (same rule as the other modes).
+ * A tiny duration, rather than 0s, still fires animationend.
+ */
+html[data-motion="reduce"],
+html[data-motion="reduce"] *,
+html[data-motion="reduce"] *::before,
+html[data-motion="reduce"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="reduce"]),
+  html:not([data-motion="reduce"]) *,
+  html:not([data-motion="reduce"]) *::before,
+  html:not([data-motion="reduce"]) *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
