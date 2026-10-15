@@ -2,22 +2,12 @@
 
 import { useRef, useState, type ReactNode } from "react";
 import { PageWidth } from "@/components/page-width";
+import { Button } from "@/components/ui/button";
+import { PauseIcon, PlayIcon } from "@/components/ui/icons";
 import { SpaceChip } from "@/components/ui/space-chip";
 import { useReducedMotion } from "@/lib/settings/use-reduced-motion";
 import { SceneCanvas } from "./scene-canvas";
 import type { StudyScene } from "./scenes";
-
-function PlayPauseIcon({ playing }: { playing: boolean }) {
-  return (
-    <svg viewBox="0 0 16 16" className="size-3.5" fill="currentColor" aria-hidden="true" focusable="false">
-      {playing ? (
-        <path d="M4.5 3h2.25v10H4.5zM9.25 3h2.25v10H9.25z" />
-      ) : (
-        <path d="M5 3.2v9.6a.5.5 0 0 0 .77.42l7.4-4.8a.5.5 0 0 0 0-.84l-7.4-4.8A.5.5 0 0 0 5 3.2z" />
-      )}
-    </svg>
-  );
-}
 
 // A study spot drawn as a top-down floor plan, with its chip pinned to it.
 // `children` is the copy beside it; `labelledBy` is the id of its heading.
@@ -80,15 +70,17 @@ export function SceneShowcase({
             </div>
           )}
           {reducedMotion ? null : (
-            <button
+            <Button
               type="button"
-              onClick={() => setPlaying((p) => !p)}
-              aria-pressed={!playing}
-              className="absolute right-0 bottom-0 inline-flex size-9 items-center justify-center rounded-full border border-input bg-card/80 text-muted-foreground hover:text-foreground"
+              variant="outline"
+              size="icon-sm"
+              shape="circle"
+              onClick={() => setPlaying((value) => !value)}
+              aria-label={playing ? "Pause animation" : "Play animation"}
+              className="absolute right-0 bottom-0 bg-card/80 text-muted-foreground hover:text-foreground"
             >
-              <PlayPauseIcon playing={playing} />
-              <span className="sr-only">Pause animation</span>
-            </button>
+              {playing ? <PauseIcon size="sm" /> : <PlayIcon size="sm" />}
+            </Button>
           )}
         </figure>
       </PageWidth>

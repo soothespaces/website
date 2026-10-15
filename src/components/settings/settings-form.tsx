@@ -2,12 +2,10 @@
 
 import Link from "next/link";
 import { loginHref } from "@/lib/auth/paths";
+import { Button } from "@/components/ui/button";
 import { useSettings, type SettingsPersistence } from "@/lib/settings/settings-provider";
 import { ROUTES } from "@/lib/site";
 import { ChoiceGroup } from "./choice-group";
-
-const primaryButton =
-  "inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 font-medium text-primary-foreground hover:bg-primary/90";
 
 export function SettingsForm() {
   const { settings, ready, signedIn, persistence, update } = useSettings();
@@ -129,9 +127,9 @@ function StorageNotice({
             : "These preferences are saved on this device. "}
           Sign in with your @umich.edu account to save them to your account.
         </p>
-        <Link href={loginHref(ROUTES.accountPreferences)} className={primaryButton}>
-          Sign in
-        </Link>
+        <Button asChild>
+          <Link href={loginHref(ROUTES.accountPreferences)}>Sign in</Link>
+        </Button>
       </div>
     );
   }

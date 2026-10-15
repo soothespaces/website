@@ -3,13 +3,16 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { DropdownMenu } from "radix-ui";
+import { useRef } from "react";
 import { loginHref } from "@/lib/auth/paths";
 import { useSession } from "@/lib/auth/use-session";
 import { ROUTES } from "@/lib/site";
+import { Button } from "@/components/ui/button";
 
 // Header control: "Sign in" for guests, an account menu once signed in.
 export function UserMenu() {
   const { user, loading } = useSession();
+  const signOutForm = useRef<HTMLFormElement>(null);
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -20,12 +23,9 @@ export function UserMenu() {
     if (pathname === "/login") return null;
     const query = searchParams.toString();
     return (
-      <Link
-        href={loginHref(query ? `${pathname}?${query}` : pathname)}
-        className="rounded-md border border-input px-3 py-1.5 hover:bg-accent"
-      >
-        Sign in
-      </Link>
+      <Button asChild variant="outline" size="sm">
+        <Link href={loginHref(query ? `${pathname}?${query}` : pathname)}>Sign in</Link>
+      </Button>
     );
   }
 
@@ -62,18 +62,18 @@ export function UserMenu() {
               Account preferences
             </Link>
           </DropdownMenu.Item>
-          <form action="/auth/signout" method="post">
-            <DropdownMenu.Item asChild>
-              <button
-                type="submit"
-                className="w-full rounded-sm px-3 py-2 text-left outline-none data-[highlighted]:bg-accent"
-              >
-                Sign out
-              </button>
-            </DropdownMenu.Item>
-          </form>
+          <DropdownMenu.Item
+            onSelect={() => signOutForm.current?.requestSubmit()}
+            className="w-full cursor-default rounded-sm px-3 py-2 text-left outline-none data-[highlighted]:bg-accent"
+          >
+            Sign out
+          </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
+      {/* Lives outside the menu: selecting an item closes the menu and
+          unmounts its contents before a submit button's click could post,
+          so a form inside the menu never submits. */}
+      <form ref={signOutForm} action="/auth/signout" method="post" hidden />
     </DropdownMenu.Root>
   );
 }

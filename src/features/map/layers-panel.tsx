@@ -2,6 +2,7 @@
 
 import { Collapsible } from "radix-ui";
 import { useState } from "react";
+import { LayersIcon } from "@/components/ui/icons";
 
 export type LayerToggles = {
   campus: boolean;
@@ -36,24 +37,6 @@ function Swatch({ kind }: { kind: (typeof OPTIONS)[number]["swatch"] }) {
   }
 }
 
-function LayersIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="size-5"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path d="M12 3l9 5-9 5-9-5 9-5z" />
-      <path d="M3 13l9 5 9-5" />
-    </svg>
-  );
-}
-
 // Toggles for the map's layers, with a key for each. Open by default on wide
 // screens; on phones it starts as a button so it doesn't cover the map.
 export function LayersPanel({
@@ -77,7 +60,7 @@ export function LayersPanel({
       style={{ maxWidth: "calc(100% - 5rem)" }}
     >
       <Collapsible.Trigger className="flex min-h-11 w-full items-center gap-2 rounded-md px-3 text-sm font-medium hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
-        <LayersIcon />
+        <LayersIcon className="size-5" />
         Layers
       </Collapsible.Trigger>
       <Collapsible.Content>

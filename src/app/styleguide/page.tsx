@@ -1,6 +1,39 @@
+import type { ComponentType } from "react";
 import type { Metadata } from "next";
 import { LogoMark, Wordmark } from "@/components/logo";
 import { PageWidth } from "@/components/page-width";
+import { Button } from "@/components/ui/button";
+import {
+  AccessibilityIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  CloseIcon,
+  EnterIcon,
+  ExternalLinkIcon,
+  FilterIcon,
+  GoogleIcon,
+  InfoIcon,
+  LightIcon,
+  MenuIcon,
+  MoonIcon,
+  PauseIcon,
+  PersonIcon,
+  PinIcon,
+  PlayIcon,
+  PlusIcon,
+  SearchIcon,
+  SettingsIcon,
+  SoundLoudIcon,
+  SoundModerateIcon,
+  SoundOffIcon,
+  SoundQuietIcon,
+  TrashIcon,
+  WarningIcon,
+  type IconProps,
+} from "@/components/ui/icons";
 import { ModeSwitcher } from "./mode-switcher";
 
 export const metadata: Metadata = {
@@ -14,6 +47,37 @@ const SWATCHES = [
   { name: "muted", bg: "bg-muted", fg: "text-muted-foreground" },
   { name: "primary", bg: "bg-primary", fg: "text-primary-foreground" },
   { name: "destructive", bg: "bg-destructive", fg: "text-destructive-foreground" },
+];
+
+const ICONS: [string, ComponentType<IconProps>][] = [
+  ["Menu", MenuIcon],
+  ["Close", CloseIcon],
+  ["Search", SearchIcon],
+  ["Filter", FilterIcon],
+  ["Check", CheckIcon],
+  ["Plus", PlusIcon],
+  ["Trash", TrashIcon],
+  ["ChevronDown", ChevronDownIcon],
+  ["ChevronUp", ChevronUpIcon],
+  ["ChevronLeft", ChevronLeftIcon],
+  ["ChevronRight", ChevronRightIcon],
+  ["SoundLoud", SoundLoudIcon],
+  ["SoundModerate", SoundModerateIcon],
+  ["SoundQuiet", SoundQuietIcon],
+  ["SoundOff", SoundOffIcon],
+  ["Light", LightIcon],
+  ["Moon", MoonIcon],
+  ["Play", PlayIcon],
+  ["Pause", PauseIcon],
+  ["Settings", SettingsIcon],
+  ["Person", PersonIcon],
+  ["Pin", PinIcon],
+  ["Info", InfoIcon],
+  ["Warning", WarningIcon],
+  ["Enter", EnterIcon],
+  ["ExternalLink", ExternalLinkIcon],
+  ["Accessibility", AccessibilityIcon],
+  ["Google", GoogleIcon],
 ];
 
 const TYPE_SCALE = [
@@ -97,25 +161,24 @@ export default function StyleGuidePage() {
         <p className="text-muted-foreground">
           Press Tab to move through these and check the focus ring.
         </p>
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
-          >
+        <div className="flex flex-wrap items-center gap-3">
+          <Button>
+            <CheckIcon />
             Check in
-          </button>
-          <button
-            type="button"
-            className="rounded-md border border-input px-4 py-2 hover:bg-accent"
-          >
-            Show list
-          </button>
-          <button
-            type="button"
-            className="rounded-md bg-destructive px-4 py-2 text-destructive-foreground"
-          >
+          </Button>
+          <Button variant="outline">Show list</Button>
+          <Button variant="ghost">Dismiss</Button>
+          <Button variant="destructive">
+            <TrashIcon />
             Delete check-in
-          </button>
+          </Button>
+          <Button variant="outline" size="sm">
+            Sign in
+          </Button>
+          <Button variant="outline" size="icon" aria-label="Search">
+            <SearchIcon />
+          </Button>
+          <Button disabled>Unavailable</Button>
           <a href="#modes" className="self-center text-primary underline">
             Back to modes
           </a>
@@ -127,6 +190,27 @@ export default function StyleGuidePage() {
             className="rounded-md border border-input bg-background px-3 py-2"
           />
         </label>
+      </section>
+
+      <section aria-labelledby="icons" className="flex flex-col gap-3">
+        <h2 id="icons" className="text-xl font-medium">
+          Icons
+        </h2>
+        <p className="text-muted-foreground">
+          Import these from <code>@/components/ui/icons</code>. Sizes are sm,
+          md, and lg.
+        </p>
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {ICONS.map(([name, Icon]) => (
+            <li
+              key={name}
+              className="flex items-center gap-2 rounded-md border border-border px-3 py-2"
+            >
+              <Icon />
+              <span className="text-sm">{name}</span>
+            </li>
+          ))}
+        </ul>
       </section>
     </PageWidth>
   );

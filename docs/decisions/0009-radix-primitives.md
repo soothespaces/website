@@ -4,7 +4,9 @@ Date: 2026-10-08
 
 ## Status
 
-Accepted
+Accepted. Copying in shadcn/ui components is superseded by
+[0010 — One button and one icon set](0010-buttons-and-icons.md). Radix
+primitives stay the behavior layer.
 
 ## Context
 
