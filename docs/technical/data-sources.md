@@ -189,7 +189,7 @@ more — confirmed live by direct fetch (all HTTP 200, no auth):
 | `academic-calendar.json` | — | Term dates. |
 | `blue-lights.geojson` | ~14KB | Campus emergency call-box locations (safety, not accessibility). |
 | `michigan-boundary.geojson`, `michigan-mask.geojson` | — | Campus boundary geometry, for map styling. |
-| `course-index.json`, `room-schedules.json` | — | Course/room scheduling data (registrar). |
+| `course-index.json`, `room-schedules.json` | — | Course/room scheduling data (registrar). `room-schedules.json` is snapshotted and seeded as `public.classroom_meetings` since 2026-10-15; `rooms.json` is snapshotted but not seeded yet. |
 | `gtfs/*.json`, `theride/*.json` | — | Bus transit (routes, stops, shapes, schedules) — two GTFS feeds (campus bus + TheRide). |
 | `stop-amenities.json`, `stop-photos.json` | — | Transit stop detail. |
 

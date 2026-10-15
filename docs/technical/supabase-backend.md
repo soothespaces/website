@@ -326,6 +326,23 @@ Migration `20261009140000_hours_and_google.sql`.
 
 All three are public read with no client writes, like `buildings`.
 
+### Classroom schedules (added 2026-10-15)
+
+`public.classroom_meetings` holds the current term's class meetings per classroom from
+mguide's `room-schedules.json` (built from the Registrar's schedule; snapshot in
+`scripts/seed/raw/mguide-room-schedules.json`). One row per meeting: the Registrar's
+`room_code` (e.g. `EQ-B804`), `building_code`, `room_number`, `building_slug`, course,
+section, title, cross-listings, `weekdays` (0 = Sunday), `starts`/`ends` and the
+meeting's first and last day. Building codes match `buildings.acronym`, except the ones
+mapped in `overrides.json` → `classroomBuildings`. The seed replaces mguide's rows
+wholesale each term. Instructor names in the source are not stored.
+
+`public.classroom_availability(as_of timestamptz default now())`, executable by `anon`
+and `authenticated`, returns one row per classroom as of that moment in Ann Arbor time:
+`in_class`, `current_course` and `busy_until` while a class meets, otherwise
+`free_until` (the next class today, or null if none is left). An empty classroom isn't
+necessarily open or bookable, so the UI should say "no class scheduled", not "open".
+
 ### Building entrances (added 2026-10-09)
 
 Migration `20261009150000_building_entrances.sql`. **`public.building_entrances`** has
@@ -779,10 +796,11 @@ supabase/migrations/
   20261009140000_hours_and_google.sql      WP3      opening_hours, google_places, popular times
   20261009150000_building_entrances.sql    WP3      exterior doors from the FO campus map
   20261015120000_own_history_and_favorites.sql  WP2/WP4  my_check_in_history(), favorites
+  20261015170000_classroom_meetings.sql    WP3      class meetings, classroom_availability()
 supabase/tests/
   mvp_backend.test.sql                     shared   pgTAP, run by `supabase test db`
   bookable_items.test.sql, photo_placement.test.sql, hours_and_google.test.sql,
-  building_entrances.test.sql,
+  building_entrances.test.sql, classroom_meetings.test.sql,
   own_history_and_favorites.test.sql       per-migration checks
 ```
 

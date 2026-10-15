@@ -240,6 +240,69 @@ export type Database = {
         };
         Relationships: [];
       };
+      classroom_meetings: {
+        Row: {
+          building_code: string;
+          building_slug: string | null;
+          course: string;
+          cross_listed: string[];
+          ends: string;
+          first_day: string;
+          id: number;
+          last_day: string;
+          room_code: string;
+          room_number: string;
+          section: string;
+          source: string;
+          starts: string;
+          title: string | null;
+          weekdays: number[];
+        };
+        ComputedFields: never;
+        Insert: {
+          building_code: string;
+          building_slug?: string | null;
+          course: string;
+          cross_listed?: string[];
+          ends: string;
+          first_day: string;
+          id?: never;
+          last_day: string;
+          room_code: string;
+          room_number: string;
+          section: string;
+          source?: string;
+          starts: string;
+          title?: string | null;
+          weekdays: number[];
+        };
+        Update: {
+          building_code?: string;
+          building_slug?: string | null;
+          course?: string;
+          cross_listed?: string[];
+          ends?: string;
+          first_day?: string;
+          id?: never;
+          last_day?: string;
+          room_code?: string;
+          room_number?: string;
+          section?: string;
+          source?: string;
+          starts?: string;
+          title?: string | null;
+          weekdays?: number[];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "classroom_meetings_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: false;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+        ];
+      };
       favorites: {
         Row: {
           building_slug: string | null;
@@ -723,6 +786,18 @@ export type Database = {
       check_in_summary: {
         Args: { since?: string; target_id: string; target_kind: string };
         Returns: Json;
+      };
+      classroom_availability: {
+        Args: { as_of?: string };
+        Returns: {
+          building_slug: string;
+          busy_until: string;
+          current_course: string;
+          free_until: string;
+          in_class: boolean;
+          room_code: string;
+          room_number: string;
+        }[];
       };
       hook_before_user_created: { Args: { event: Json }; Returns: Json };
       my_check_in_history: {

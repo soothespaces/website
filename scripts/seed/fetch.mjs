@@ -47,7 +47,12 @@ const SOURCES = [
   {
     file: "mguide-room-schedules.json",
     url: "https://mguide.app/data/room-schedules.json",
-    note: "Class meetings per classroom for the current term, keyed BUILDINGCODE-ROOM (mguide.app). Not used by build.mjs yet",
+    note: "Class meetings per classroom for the current term, keyed BUILDINGCODE-ROOM (mguide.app, from the Registrar)",
+  },
+  {
+    file: "mguide-rooms.json",
+    url: "https://mguide.app/data/rooms.json",
+    note: "Registrar classroom data per building acronym: floor, type, capacity and equipment list per room (mguide.app). Not used by build.mjs yet",
   },
   {
     file: "umich-buildings.json",

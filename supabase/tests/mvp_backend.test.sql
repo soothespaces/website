@@ -144,8 +144,8 @@ select is(
       )
     order by 1
   ),
-  array['check_in_overview', 'check_in_summary'],
-  'anon can execute only the public aggregate functions'
+  array['check_in_overview', 'check_in_summary', 'classroom_availability'],
+  'anon can execute only the public read functions'
 );
 select is(
   array(
@@ -159,8 +159,14 @@ select is(
       )
     order by 1
   ),
-  array['check_in_overview', 'check_in_summary', 'my_check_in_history', 'submit_check_in'],
-  'authenticated can execute only the aggregates, submit_check_in and my_check_in_history'
+  array[
+    'check_in_overview',
+    'check_in_summary',
+    'classroom_availability',
+    'my_check_in_history',
+    'submit_check_in'
+  ],
+  'authenticated can execute only the read functions, submit_check_in and my_check_in_history'
 );
 
 select is(
