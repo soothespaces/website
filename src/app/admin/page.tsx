@@ -13,6 +13,11 @@ const SECTIONS = [
     title: "Floor plans",
     description: "Check how each MPrint sheet sits on its building and fix its alignment.",
   },
+  {
+    href: "/admin/photos",
+    title: "Photos",
+    description: "Upload photos and tag them to a building, floor, room or spot on the floor plan.",
+  },
 ];
 
 export default function AdminPage() {
