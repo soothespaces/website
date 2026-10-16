@@ -163,6 +163,24 @@ create index on public.spaces using gin (features);
   Library North" and "Hatcher Library South" → one Hatcher building.
 - Filters in supabase-js: `.eq('noise_level', 'quiet').contains('features', ['natural_light'])`.
 
+**Hand edits (added 2026-10-16, migration `20261016180000_space_editor.sql`).** Admins
+edit spaces in `/admin/spaces`:
+
+- `light_level` (`public.light_level`) is the space's typical brightness.
+- `edited_fields text[]` lists the columns a signed-in user changed. The
+  `spaces_track_edits` trigger fills it whenever `auth.uid()` is set, so `seed.sql`
+  and the secret key never add to it. `build.mjs` writes each seeded column as
+  `case when 'col' = any(spaces.edited_fields) then spaces.col else excluded.col end`,
+  so a re-seed keeps hand edits. Removing a name from the list (the editor's "Let
+  the source update it") hands that column back to the seed.
+- Admins can add spaces with `source = 'manual'` (the editor gives them a `manual-`
+  slug) and delete only those. Spaces from the sources are hidden with `is_listed`.
+- `public.space_locations` says where a space is: `floor` plus either a
+  `room_number` from the vector floor plan's GeoJSON or an `area` (a GeoJSON
+  `Polygon` drawn on the plan). The building is the space's. The editor also sets
+  `spaces.lat`/`lng` to the middle of them, which puts the space on the map. Public
+  read; admins insert and delete. `created_by` is stamped from the JWT.
+
 ### `public.floor_plans` and `public.room_zones` (WP5)
 
 Columns follow what `scripts/mprint/label_rooms.py export` writes (`size`, `sha256`,
@@ -366,7 +384,9 @@ than `auth.uid()` so Postgres evaluates it once per query instead of once per ro
 
 | Object | `anon` | `authenticated` | Writes |
 |---|---|---|---|
-| `buildings`, `spaces`, `floor_plans`, `room_zones` | select | select | Seed and import scripts only (secret key or DB URL, which bypass RLS) |
+| `buildings`, `floor_plans`, `room_zones` | select | select | Seed and import scripts only (secret key or DB URL, which bypass RLS) |
+| `spaces` | select listed | select listed (admins: all) | Seed; admins update any, add and delete `manual` ones |
+| `space_locations` | select | select | Admins insert and delete |
 | `user_settings` | none | select/insert/update/delete own row | Owner |
 | `private.check_ins` | none | none | Only through `submit_check_in()` |
 | `submit_check_in()` | no execute | execute | |
@@ -817,11 +837,13 @@ supabase/migrations/
   20261016022053_classrooms.sql            WP3      MClassrooms reference tables (applied by hand first)
   20261016170000_own_history_and_favorites.sql  WP2/WP4  my_check_in_history(), favorites
   20261016170100_classroom_meetings.sql    WP3      class meetings, classroom_availability()
+  20261016180000_space_editor.sql          admin    hand edits to spaces, space_locations
 supabase/tests/
   mvp_backend.test.sql                     shared   pgTAP, run by `supabase test db`
   bookable_items.test.sql, photo_placement.test.sql, hours_and_google.test.sql,
   building_entrances.test.sql, classroom_meetings.test.sql,
-  own_history_and_favorites.test.sql       per-migration checks
+  own_history_and_favorites.test.sql, admin_photos.test.sql,
+  space_editor.test.sql                    per-migration checks
 ```
 
 After each merge, run `npm run db:types` so `src/types/supabase.ts` matches.
