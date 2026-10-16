@@ -1,0 +1,6 @@
+/* The phone search screen slides in from the left, where it swipes away to. */
+@keyframes map-screen-in {
+  from {
+    transform: translateX(-100%);
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "search_metadata": {
+    "id": "6ac9563bd649a948c88ba049",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/ri9dHKzlgiqDSzO8xBSoST2El32Mbt9KskvB-of9_G8/6ac9563bd649a948c88ba049.json",
+    "markdown_endpoint": "https://serpapi.com/searches/ri9dHKzlgiqDSzO8xBSoST2El32Mbt9KskvB-of9_G8/6ac9563bd649a948c88ba049.md",
+    "created_at": "2026-10-09 21:01:47 UTC",
+    "processed_at": "2026-10-09 21:01:47 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/Taubman+Health+Sciences+Library%2C+1135+Catherine+St%2C+Ann+Arbor%2C+MI/@42.2836,-83.73449,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/ri9dHKzlgiqDSzO8xBSoST2El32Mbt9KskvB-of9_G8/6ac9563bd649a948c88ba049.html",
+    "prettify_html_file": "https://serpapi.com/searches/ri9dHKzlgiqDSzO8xBSoST2El32Mbt9KskvB-of9_G8/6ac9563bd649a948c88ba049.prettify",
+    "total_time_taken": 0.38
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "Taubman Health Sciences Library, 1135 Catherine St, Ann Arbor, MI",
+    "ll": "@42.2836,-83.73449,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Showing results for type: \"place\" instead of type: \"search\"",
+    "query_displayed": "Taubman Health Sciences Library, 1135 Catherine St, Ann Arbor, MI"
+  },
+  "place_results": {
+    "title": "A. Alfred Taubman Health Sciences Library",
+    "place_id": "ChIJcwqXvWmuPIgRkADfWl5dXDE",
+    "data_id": "0x883cae69bd970a73:0x315c5d5e5adf0090",
+    "data_cid": "3556820465548722320",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae69bd970a73%3A0x315c5d5e5adf0090&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae69bd970a73%3A0x315c5d5e5adf0090&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2834398,
+      "longitude": -83.7342558
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJcwqXvWmuPIgRkADfWl5dXDE",
+    "provider_id": "/g/1tggp9g7",
+    "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmPYSVizdAwToKeCVtrvhlO1KtJifuJP7VQwR7yvyIV9quZxdetcao2jq8xYZXNYfuvy0k1EzCJeAgYfgAPILkGLoDgo-YRiBUOLcnr3PVo89t8ZoHAFieGDfYqRn_0a4egT3YmdtQ=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/BxmivXicHcTRboIwFADQL0KKLBFN9lBxOpFMRG0sL4aUUpjQK_QC4h_6Cfsbk52H8_cqEO9mYdtV4U4UgKpkZ2QrQKPUOBFQ26pNjbGEsanf36s64kdWPjM6nGAnfYZtX1R7Z4dBmXdBNGOHIZ6N_bhl86ZLHplEkcL0t_EePLn88LzrR3Jzvp5-IKniuaLRNrxtQlgpsHhcLs_7UOjWjRh4c_QS-KbrUm5WOW9ifSXph1Qnl9cZHj4HhxBiFf8LS78BLLdHzg",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 1
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 3
+      },
+      {
+        "stars": 4,
+        "amount": 5
+      },
+      {
+        "stars": 5,
+        "amount": 20
+      }
+    ],
+    "rating": 4.5,
+    "reviews": 29,
+    "type": [
+      "University library",
+      "Library"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      }
+    ],
+    "address": "1135 Catherine St, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "website": "http://www.lib.umich.edu/taubman-health-sciences-library",
+    "phone": "(734) 764-1210",
+    "open_state": "Closed · Opens 9 AM Mon",
+    "plus_code": "77M8+97 Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "9 AM–5 PM"
+      },
+      {
+        "saturday": "Closed"
+      },
+      {
+        "sunday": "Closed"
+      },
+      {
+        "monday": "9 AM–5 PM"
+      },
+      {
+        "tuesday": "9 AM–5 PM"
+      },
+      {
+        "wednesday": "9 AM–5 PM"
+      },
+      {
+        "thursday": "9 AM–5 PM"
+      }
+    ],
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"Books can be requested and sent to the desk (or other libraries on campus).\""
+        },
+        {
+          "snippet": "\"The “heated” rooftop pool was lukewarm at best.\""
+        }
+      ],
+      "topics": [
+        {
+          "keyword": "study spaces",
+          "mentions": 2,
+          "id": "KcEKP7J4_-g"
+        },
+        {
+          "keyword": "coffee",
+          "mentions": 2,
+          "id": "Dv_I4_PcKW0"
+        },
+        {
+          "keyword": "building",
+          "mentions": 3,
+          "id": "XAaIQH_JS-s"
+        },
+        {
+          "keyword": "study",
+          "mentions": 5,
+          "id": "APNsKXBa9es"
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "Fantastic study spaces with write on walls and tables and many study rooms, computers, and comfortable study spots. Open 24/7, but need special access card after hours. Decent cafe.",
+          "date": "7 years ago",
+          "date_iso8601": "2018-12-10T03:51:49+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Fantastic study spaces, computers, and larger meeting rooms. Definitely one of the more attractive buildings on campus when it comes to interior design.",
+          "date": "6 years ago",
+          "date_iso8601": "2019-11-09T19:38:37+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "Gorgeous, modern library with lots of study spaces.   Ideal for those in the sciences.  Books can be requested and sent to the desk  (or other libraries on campus).  There are nearby parking garages.",
+          "date": "8 years ago",
+          "date_iso8601": "2017-12-08T19:35:33+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "I would give it the 5 stars but it closes so early, also it closes on the weekends.",
+          "date": "Edited 4 years ago",
+          "date_iso8601": "2021-11-28T03:00:19+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Quiet place to study and small Cafe inside to help with late night study sessions!",
+          "date": "5 years ago",
+          "date_iso8601": "2020-10-21T01:46:49+00:00"
+        }
+      ]
+    }
+  }
+}

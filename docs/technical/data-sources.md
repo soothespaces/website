@@ -564,6 +564,36 @@ it defensively. One real Shapiro lookup should confirm the shape before the scri
 written. Tables: `public.google_places` and `public.building_popular_times`
 ([Supabase Backend Plan](supabase-backend.md#opening-hours-and-google-places)).
 
+### Snapshot script (2026-10-09)
+
+`scripts/serpapi/fetch.mjs` looks up the 27 buildings in `scripts/serpapi/targets.json`
+(the 19 with listed spaces, plus the unions, Mason/Angell Hall, North Campus engineering
+and a few classroom buildings). It runs on GitHub (**SerpApi snapshot** workflow, secret
+`SERPAPI_API_KEY`) because cloud sessions can't reach serpapi.com, and only when
+`scripts/serpapi/plan.json` changes. That file caps what a run may spend. The script reads
+the free Account API first and never goes past the plan cap, the searches left this
+month or the searches left this hour. It skips any building already saved and never
+retries, so no search is paid for twice.
+
+A building costs one search when Google opens the place directly, or two when Google lists
+candidates and the nearest one within 150 m is fetched by `place_id`. Everything lands in
+`scripts/serpapi/raw/`: each full response (with reviewer names, profile links and photos
+removed, and the key redacted), the resolved place per building, unresolved buildings
+with their candidates, and a ledger of every search. SerpApi keeps each search for 31
+days, so an unedited response can still be fetched for free by its id.
+
+`scripts/seed/build.mjs` turns each saved place into a `public.google_places` row, adds
+Google's hours to `opening_hours` for buildings the Library doesn't cover (valid for 120
+days from the fetch, since Google gives no end date), and fills `building_popular_times`
+when a place has `popular_times`.
+
+First full run (2026-10-09, 30 of 250 searches): all 27 buildings matched, within 50 m of
+our coordinates. Only **Hatcher, Mason Hall and the Earl V. Moore Building** came back with
+popular times. Shapiro has them on google.com/maps but not through SerpApi, whether looked
+up by search, `place_id` or `data` with coordinates; the raw Google HTML SerpApi archived
+has no busyness data either, so more searches won't fix it. 20 places have hours, all
+have accessibility attributes.
+
 ## 12. U-M Library CMS: hours, rooms and study-space pages (found 2026-10-09)
 
 lib.umich.edu is built from a Drupal CMS whose JSON:API is public at
@@ -611,6 +641,8 @@ and the basemap and curb ramps into `public/campus-map/*.geojson`;
 `scripts/campus-map/style.mjs` turns the renderers into MapLibre layers in
 `public/campus-map/style.json`. The container can't reach `gisapi.fo.umich.edu`, so the
 **Campus map snapshot** workflow runs the fetch on a GitHub runner.
+The map draws the basemap, curb ramps and accessible doors (see
+[Architecture § Campus map](architecture.md#campus-map)).
 
 ## Gaps relative to what the app needs
 

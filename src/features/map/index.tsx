@@ -1,22 +1,18 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { MapProvider, useMap } from "react-map-gl/maplibre";
 import { CAMPUS_MAP_ID } from "./config";
 
-// MapLibre needs the browser (WebGL, window), so the map only renders on
-// the client.
-export const CampusMap = dynamic(() => import("./campus-map"), {
-  ssr: false,
-  loading: () => (
-    <div
-      role="status"
-      className="absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground"
-    >
-      Loading map…
-    </div>
-  ),
-});
+export { CampusMap } from "./lazy-campus-map";
+
+// The whole map page: dock or phone search, the map and the selection panel.
+export { MapLayout } from "./map-layout";
+
+// What the map shows (campus detail, entrances, buildings, study spaces,
+// floor plans and the layers panel). Render it as <CampusMap>'s child,
+// inside <MapStateProvider>.
+export { MapExplorer } from "./map-explorer";
+export { MapStateProvider, useMapState } from "./map-state";
 
 // Wrap the map and anything that needs its instance (panels, overlays).
 export const CampusMapProvider = MapProvider;

@@ -1,5 +1,6 @@
 import {
   AccessibilityIcon as AccessibilityGlyph,
+  ArrowLeftIcon as BackGlyph,
   CheckIcon as CheckGlyph,
   ChevronDownIcon as ChevronDownGlyph,
   ChevronLeftIcon as ChevronLeftGlyph,
@@ -70,6 +71,7 @@ function icon(name: string, Glyph: Glyph) {
 }
 
 export const AccessibilityIcon = icon("AccessibilityIcon", AccessibilityGlyph);
+export const BackIcon = icon("BackIcon", BackGlyph);
 export const CheckIcon = icon("CheckIcon", CheckGlyph);
 export const ChevronDownIcon = icon("ChevronDownIcon", ChevronDownGlyph);
 export const ChevronLeftIcon = icon("ChevronLeftIcon", ChevronLeftGlyph);

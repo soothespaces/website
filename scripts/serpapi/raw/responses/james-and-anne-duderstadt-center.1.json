@@ -1,0 +1,237 @@
+{
+  "search_metadata": {
+    "id": "6ac956330676dcc929d39c23",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/IPFYY17_3_XLnI-_Hon_hcMbjEubelk7wbEgTE371Uk/6ac956330676dcc929d39c23.json",
+    "markdown_endpoint": "https://serpapi.com/searches/IPFYY17_3_XLnI-_Hon_hcMbjEubelk7wbEgTE371Uk/6ac956330676dcc929d39c23.md",
+    "created_at": "2026-10-09 21:01:39 UTC",
+    "processed_at": "2026-10-09 21:01:39 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/Duderstadt+Center%2C+2281+Bonisteel+Blvd%2C+Ann+Arbor%2C+MI/@42.29111,-83.71589,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/IPFYY17_3_XLnI-_Hon_hcMbjEubelk7wbEgTE371Uk/6ac956330676dcc929d39c23.html",
+    "prettify_html_file": "https://serpapi.com/searches/IPFYY17_3_XLnI-_Hon_hcMbjEubelk7wbEgTE371Uk/6ac956330676dcc929d39c23.prettify",
+    "total_time_taken": 1.73
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "Duderstadt Center, 2281 Bonisteel Blvd, Ann Arbor, MI",
+    "ll": "@42.29111,-83.71589,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Showing results for type: \"place\" instead of type: \"search\"",
+    "query_displayed": "Duderstadt Center, 2281 Bonisteel Blvd, Ann Arbor, MI"
+  },
+  "place_results": {
+    "title": "Duderstadt Center",
+    "place_id": "ChIJ7QiaGYauPIgRmctzbO8dGIA",
+    "data_id": "0x883cae86199a08ed:0x80181def6c73cb99",
+    "data_cid": "9230160350449748889",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae86199a08ed%3A0x80181def6c73cb99&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae86199a08ed%3A0x80181def6c73cb99&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2911633,
+      "longitude": -83.7157179
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJ7QiaGYauPIgRmctzbO8dGIA",
+    "provider_id": "/g/1hm367kpf",
+    "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RVMXT44rWo4qdK2qSisPa_UERLR3eFMyP5urFoK3ApIAVREtIMbk1ruBwX6ZUNuZRzc5b0m6I__eVDR8BAuyeKlJudEEc6GBLFlJbcsXYBHTe4aMRJSmx2ojplPBVA1uw4hO7P=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/O7JR03icHcRdDoIgAADgE5maaD9bD7C01CxHZeaLS2JaoZjAzC7YGbpNW9_D9_1UUrZiruusskYl5yWjStCO8EbSRo4Ir_WyFRoRmtDh9nQbZjiJ0gMA3YmD5zUcP_c3EV_yo4s32KJeNMS26jweWrD1YYJd6UfFw-wU6lMnO25Vht_ELoza8fOcJks8RVANNGSBuroucVZo47GgICI9o_WBgkuEg339GvN7y2KUQFP1oNpN4kVvGoahVf-J1vwASTJEQw",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 2
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 3
+      },
+      {
+        "stars": 4,
+        "amount": 8
+      },
+      {
+        "stars": 5,
+        "amount": 46
+      }
+    ],
+    "rating": 4.6,
+    "reviews": 59,
+    "type": [
+      "Student union"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      }
+    ],
+    "address": "2281 Bonisteel Blvd, Ann Arbor, MI 48109",
+    "country": "United States",
+    "website": "http://www.dc.umich.edu/",
+    "phone": "(734) 936-3191",
+    "open_state": "Open 24 hours",
+    "plus_code": "77RM+FP Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "Open 24 hours"
+      },
+      {
+        "saturday": "Open 24 hours"
+      },
+      {
+        "sunday": "Open 24 hours"
+      },
+      {
+        "monday": "Open 24 hours"
+      },
+      {
+        "tuesday": "Open 24 hours"
+      },
+      {
+        "wednesday": "Open 24 hours"
+      },
+      {
+        "thursday": "Open 24 hours"
+      }
+    ],
+    "serpapi_posts_link": "https://serpapi.com/search.json?data_id=0x883cae86199a08ed%3A0x80181def6c73cb99&engine=google_maps_posts",
+    "posts": [
+      {
+        "post_link": "https://search.google.com/local/posts?q=Duderstadt+Center&ludocid=9230160350449748889&lpsid=CIHM0ogKELHa_-CNvrbtpgE&source=sh/x/loc/post&lsig=AB86z5VzX6xOFoWrPrLBmSWy1XwJ",
+        "description": "Memorial Day Hours: \nWe will close at 5:00pm on Friday, May 22nd and remain closed until 8:00am on Tuesday, May 26th",
+        "date": "May 18, 2026"
+      }
+    ],
+    "at_this_place": {
+      "type": [
+        {
+          "title": "Other",
+          "places": 1
+        }
+      ],
+      "places": [
+        {
+          "position": 1,
+          "title": "Duderstadt Center Loading and Deliveries Dock",
+          "data_id": "0x883caf36e9eef441:0x19d1b623dba09c43",
+          "data_cid": "1860468386205572163",
+          "reviews_link": "https://serpapi.com/search.json?data_id=0x883caf36e9eef441%3A0x19d1b623dba09c43&engine=google_maps_reviews&hl=en",
+          "photos_link": "https://serpapi.com/search.json?data_id=0x883caf36e9eef441%3A0x19d1b623dba09c43&engine=google_maps_photos&hl=en",
+          "gps_coordinates": {
+            "latitude": 42.291075,
+            "longitude": -83.7150329
+          },
+          "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x883caf36e9eef441%3A0x19d1b623dba09c43%218m2%213d42.291075%214d-83.7150329&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+          "rating": 4.7,
+          "reviews": 3,
+          "type": "Educational institution",
+          "type_id": "educational_institution",
+          "address": "Ann Arbor, MI 48109"
+        }
+      ]
+    },
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"Nice environment for late night studying.\""
+        },
+        {
+          "snippet": "\"Need more outdoor seating and tables.\""
+        }
+      ],
+      "topics": [
+        {
+          "keyword": "quiet study space",
+          "mentions": 2,
+          "id": "LnEqDphY_eA"
+        },
+        {
+          "keyword": "library",
+          "mentions": 4,
+          "id": "eANKBf2mweI"
+        },
+        {
+          "keyword": "campus",
+          "mentions": 4,
+          "id": "SlFoPNJduaY"
+        },
+        {
+          "keyword": "collaboration",
+          "mentions": 2,
+          "id": "BPL9kDgNkTs"
+        },
+        {
+          "keyword": "study spot",
+          "mentions": 2,
+          "id": "KcEKP7J4_-g"
+        },
+        {
+          "keyword": "floor",
+          "mentions": 3,
+          "id": "QJj7SeKtbc8"
+        },
+        {
+          "keyword": "north",
+          "mentions": 2,
+          "id": "QA6C7QoGTX8"
+        },
+        {
+          "keyword": "exam",
+          "mentions": 2,
+          "id": "JxB4a8FYEYw"
+        },
+        {
+          "keyword": "reading",
+          "mentions": 2,
+          "id": "eAMqZjBkg6s"
+        },
+        {
+          "keyword": "study",
+          "mentions": 3,
+          "id": "APNsKXBa9es"
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 1,
+          "description": "As a grad student from the University of South Florida, I am appalled at how such a prestigious university, after 200 years, cannot figure out a study system in their libraries. To begin with, there should be multiple 24hr libraries, not just one. Secondly, there should be entire floors dedicated to desk space for studying, not just sparse areas amongst other offices and instruction rooms. Thirdly, there should be designated “individual study” and “group study” spaces. I find it impossible to study without headphones because there is incessant chit chat and noise from those around me. The entire student body finds it acceptable to talk and laugh about nonsense in what is supposed to be a study space. And the University’s criminal solution is 8 cramped study rooms that you must reserve in advance. 8 study rooms for the entire student population on north campus. That has to be a sick joke, but it’s not. The University of South Florida had a genius system where (in their massive 6 story 24hr library) each floor got progressively quieter as you went up. Not by any mechanical invention, but by principle. If you wanted to goof off and be loud you went to the first floor. If you wanted to graduate on time and lock in you went to the top floor; and everything filled in on floors between. It was so perfect that you could hear a needle drop on carpet on the top floor. At the prestigious University of Michigan you can’t even do that in the study rooms because the jam packed room of 6 people chit chatting about nonsense in the room next to you will prevent such a thing. And to get any work done in the main rooms you need state-of-the-art noise cancelling headphones because otherwise you will suffer under the weight of students with majors in coloring book science chit chatting and laughing about their days or international students on phone calls or frat bros talking about where they’re going out tonight all while you try to get work done in what should be silence (it is a library, after all).",
+          "date": "8 months ago",
+          "date_iso8601": "2026-01-28T21:55:12+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "I’ll miss this place forever. I love the journal reading area in second floor also the long desk in quiet study area!",
+          "date": "2 months ago",
+          "date_iso8601": "2026-08-06T21:56:47+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "A very very very good place to look at books and study for class. I especially enjoyed reading the books as well & the library was very quiet & clean. I can see why it is so popular. But, I have one complaint because the vending machines by the elevators did not have Among Us themed options which made me feel like an impostor. Otherwise this libary is even better than The Shapiro Library and is probably the best on campus.",
+          "date": "2 years ago",
+          "date_iso8601": "2023-11-11T23:46:34+00:00"
+        },
+        {
+          "rating": 3,
+          "description": "Edit: They have it absolutely freezing in the winter. It felt like I was outside.\n\nA good library with lots of space and it's open 24/7. It could use more individual or small group tables especially on the second floor, because the tables get taken up pretty quickly. At the same time, most of the tables are a little too close to each other, as college kids like to wander and be nosey and loud. They've completely abandoned having cleaning and sanitizing items aside from hand sanitizer. The custodians can be pretty weird. They also lock off the gender neutral bathroom.",
+          "date": "Edited 2 years ago",
+          "date_iso8601": "2023-11-21T04:41:12+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Amazing place to study, a 24/7 library with tons of computers and monitors to use. Very easy to find a spot and collaborate with others - lots of resources like 3d printers and studios for use as well.",
+          "date": "4 years ago",
+          "date_iso8601": "2022-09-27T22:17:28+00:00"
+        }
+      ]
+    }
+  }
+}

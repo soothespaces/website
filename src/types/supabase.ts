@@ -240,6 +240,37 @@ export type Database = {
         };
         Relationships: [];
       };
+      floor_alignments: {
+        Row: {
+          aligned_at: string;
+          aligned_by: string;
+          corners: Json;
+          height: number;
+          sha256: string;
+          sheet: string;
+          width: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          aligned_at?: string;
+          aligned_by: string;
+          corners: Json;
+          height: number;
+          sha256: string;
+          sheet: string;
+          width: number;
+        };
+        Update: {
+          aligned_at?: string;
+          aligned_by?: string;
+          corners?: Json;
+          height?: number;
+          sha256?: string;
+          sheet?: string;
+          width?: number;
+        };
+        Relationships: [];
+      };
       floor_plans: {
         Row: {
           building_slug: string;
@@ -437,6 +468,7 @@ export type Database = {
         Row: {
           alt: string;
           building_slug: string | null;
+          created_at: string;
           credit: string;
           floor: number | null;
           heading: number | null;
@@ -448,9 +480,12 @@ export type Database = {
           license: string;
           lng: number | null;
           path_prefix: string;
+          room_number: string | null;
           sort_order: number;
           source_url: string | null;
           space_id: string | null;
+          updated_at: string;
+          uploaded_by: string | null;
           width: number;
           widths: number[];
         };
@@ -458,6 +493,7 @@ export type Database = {
         Insert: {
           alt: string;
           building_slug?: string | null;
+          created_at?: string;
           credit: string;
           floor?: number | null;
           heading?: number | null;
@@ -469,15 +505,19 @@ export type Database = {
           license: string;
           lng?: number | null;
           path_prefix: string;
+          room_number?: string | null;
           sort_order?: number;
           source_url?: string | null;
           space_id?: string | null;
+          updated_at?: string;
+          uploaded_by?: string | null;
           width: number;
           widths: number[];
         };
         Update: {
           alt?: string;
           building_slug?: string | null;
+          created_at?: string;
           credit?: string;
           floor?: number | null;
           heading?: number | null;
@@ -489,9 +529,12 @@ export type Database = {
           license?: string;
           lng?: number | null;
           path_prefix?: string;
+          room_number?: string | null;
           sort_order?: number;
           source_url?: string | null;
           space_id?: string | null;
+          updated_at?: string;
+          uploaded_by?: string | null;
           width?: number;
           widths?: number[];
         };
@@ -682,6 +725,7 @@ export type Database = {
         Returns: Json;
       };
       hook_before_user_created: { Args: { event: Json }; Returns: Json };
+      is_admin: { Args: never; Returns: boolean };
       submit_check_in: {
         Args: {
           busyness?: Database["public"]["Enums"]["busyness_level"];

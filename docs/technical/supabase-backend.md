@@ -284,7 +284,9 @@ Migration `20261009140000_hours_and_google.sql`.
   day; `00:00`–`24:00` is all day. `access` is `public` or `mcard` for card-only hours.
   The seed loads the Library CMS hours for every Library space and for the buildings
   that are wholly libraries (Shapiro, Hatcher, Taubman HSL), dropping periods that ended
-  before the snapshot. Non-library buildings get hours from Google later (`source = 'google'`).
+  before the snapshot. Other buildings with a saved Google place get Google's regular week
+  (`source = 'google'`, label "Regular hours (Google Maps)"), valid for 120 days from the
+  fetch since Google gives no end date.
   Example lookup:
 
   ```sql
@@ -665,6 +667,23 @@ create index on public.photos (space_id, sort_order) where space_id is not null;
 `alt` is required: for this app, a photo without alt text is a bug. The Library's
 `fass-data` ships `imageAlt` for its 34 spaces. Every other photo needs alt text
 written as it's added.
+
+**Admin uploads (added 2026-10-13, migration `20261013150000_admin_photo_uploads.sql`).**
+Admins can also upload and tag photos at `/admin/photos`, without the script or the
+secret key:
+
+- The browser shrinks the photo (canvas, which drops EXIF GPS) to at most 2400 px
+  (4096 for panoramas) and sends it to a Server Action. The action makes the same WebP
+  widths as the script with `sharp` and uploads them as the signed-in admin. Storage
+  RLS on `storage.objects` lets only `is_admin()` write to the `photos` bucket.
+- Tags: `building_slug` is always set. A room adds `floor` + `room_number` (the label in
+  the floor plan's GeoJSON, like `bookable_items.room_number`). A spot adds `lat`/`lng`
+  (and optional `heading`), clicked on the vector plan, plus the room it falls in.
+- `uploaded_by` (the admin's email, stamped by a trigger), `created_at` and `updated_at`.
+  `import.mjs --prune` only touches rows with no `uploaded_by`, so it never deletes
+  admin uploads.
+- For a building's gallery: `where building_slug = $1 and is_listed`, then group or
+  filter by `floor` / `room_number`; nearest-to-a-room lookups use `lat`/`lng`.
 
 **Rendering:** use `next/image` with a custom `loader` that returns the nearest
 generated width (`${base}/${path_prefix}-${w}.webp`), so Vercel never transforms

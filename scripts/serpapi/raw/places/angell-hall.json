@@ -1,0 +1,252 @@
+{
+  "slug": "angell-hall",
+  "query": "Angell Hall, 435 S State St, Ann Arbor, MI",
+  "fetched_at": "2026-10-09T21:02:31.192Z",
+  "search_ids": [
+    "6ac95665ce7719c73d7e4ecf"
+  ],
+  "resolved_by": "search opened the place",
+  "distance_from_ours_m": 26,
+  "place": {
+    "title": "Angell Hall",
+    "place_id": "ChIJ0TMVSEeuPIgRSg2wlaNSt_Y",
+    "data_id": "0x883cae47481533d1:0xf6b752a395b00d4a",
+    "data_cid": "17777768916612812106",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae47481533d1%3A0xf6b752a395b00d4a&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae47481533d1%3A0xf6b752a395b00d4a&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2766233,
+      "longitude": -83.7397101
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJ0TMVSEeuPIgRSg2wlaNSt_Y",
+    "provider_id": "/g/1hm2z5_h_",
+    "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn7E45IEca80fd5mRf8vmwJ5Aori_wS7K-GiDY9hkWPl9eNumLivXW_Fsn2OvtnL9IiixwOIRP6-qoC-_vOhgZsYbVke3uVW2cXVAN48AiPDkC7cm8n8aGQkAbmV1qpiL85gj2X=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/820rL3icHcRdDoIgAADgE5FmmdjWA7M_y6VZU-vFFRGQAhao3bAzdJu2vofv-2HGNHpqWTUbDahStCatJi-spCHSDLASFm00wBpoC63T5JhLbzF2wwW-QPt-c0V6h53oNy5SL172B28LVnx-8lmVJ7VPdq2IeFfk5VJLJ-6MjPyQ83cfh2kyAU8VgLKLGT3r0zWryKjNcgcXGdqNIeLJvAo8LKCEl9W-QleRDZ8Nj6BLH04x64e2bQP2HwP5A0SCRE4",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 1
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 5
+      },
+      {
+        "stars": 4,
+        "amount": 16
+      },
+      {
+        "stars": 5,
+        "amount": 27
+      }
+    ],
+    "rating": 4.4,
+    "reviews": 49,
+    "type": [
+      "Academic department",
+      "Auditorium"
+    ],
+    "type_ids": [
+      "university_department",
+      "auditorium"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      }
+    ],
+    "address": "435 S State St, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "website": "http://umich.edu/",
+    "plus_code": "77G6+J4 Ann Arbor, Michigan",
+    "images": [
+      {
+        "title": "All",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TaF_DsBfNv8gErKPuqiH9_puDwJVjtUziXbqtex_VReHDgaPZDnqugXOggdlUILLqRs06IPGKieBw9DXeWTbMBbaDY2A3k4OLl0dsdAX1-cpc8dU3WW8p0T9Wh9eqweAtg8th0=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/m4Vo6XicHcTRboIwFADQL6rUsSzUZA-QbtOJSgxY3AuBcneLIrS2jOkP-g3-jYnn4dxvyjltZ57XKn-CfY8tDBbOsu8cdG4i-5OH2hJpifXCtWguLC0_C26j3_VfgB_nZTKYZs4KPfDxe3dw2bXJK-Pgv9htYc6xTH54ZwbMN4h1my3i2GwtfVskX8sGopHxHERaraKq5PuX0D--buKW1rYO8ymRWgZ15gsRaJoyoRiYEUKHgVP0fZxSSol6Lkn3AAGaRYM"
+      },
+      {
+        "title": "Street View & 360°",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TuFrQ6iNDyZ6A5GjnRfchk6iuZ8MOaj3xe3cKltRoeWXEWMpW9FiW5ztRVTKUEf3bIsAp3BPXppIvKsy048qBkBKR-kucsBuait4SUlClI9-Jt0z-6_ID6SfGgRPneUOC4pZlWwQ=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/kkj0PnicHcTbDoIgAADQLyJpGMu2HrTbzHWjjOZLK4ZKElBAZX_YJ_Q3bZ2H8_3Uzhk7CAJZo06ldSW5t_zOtHJcuQ7T16AyFjALbBAvqWijnZ_eN1gsx22B497sokjJ6gYLX_QXq9MFvThimXREc3qY0IWh0VTQ3tuR_S7LJyU6pzY2KFkfjEkfmW1h2L8lTZIR0HhmE38SLtzmciTTCMwdfAN8TMd4W84qslY8X41CU0j63AyfXQghqP8zoH4YNkVp"
+      }
+    ],
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"Fish bowl centre is a must visit location.\""
+        },
+        {
+          "snippet": "\"Sometimes the HVAC is screwy and it gets way too hot in classrooms.\""
+        },
+        {
+          "snippet": "\"There are many staff and faculty offices in this building.\""
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 4,
+          "description": "This building is a staple of UofM's campus. There are many staff and faculty offices in this building. You can also find the Newnan academic advising center here which is the site for all college of literature science and the arts advising (the biggest college at UM) so you can imagine that this building sees many members of the University community.",
+          "date": "8 years ago",
+          "date_iso8601": "2018-05-28T22:44:53+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "The architecture here is great! The auditoriums are nice and updated. Sometimes the HVAC is screwy and it gets way too hot in classrooms.",
+          "date": "7 years ago",
+          "date_iso8601": "2018-10-18T19:22:31+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Picturesque exterior. Ideal for photoshoots. Several lecture halls inside. Fish bowl centre is a must visit location.",
+          "date": "7 years ago",
+          "date_iso8601": "2019-03-20T08:40:33+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "I loved every class I had in Angell, and still occasionally sneak into the fishbowl now that I'm an alumni. 10/10",
+          "date": "7 years ago",
+          "date_iso8601": "2018-11-06T15:06:07+00:00"
+        },
+        {
+          "rating": 3,
+          "description": "Building is nice in the outside, not so great on the inside - do better 😕",
+          "date": "2 years ago",
+          "date_iso8601": "2024-01-14T03:30:49+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Fantastic architecture. Be careful on the steps - they can get icy!",
+          "date": "7 years ago",
+          "date_iso8601": "2019-01-12T20:34:41+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "Old but still nice place to have lectures",
+          "date": "2 years ago",
+          "date_iso8601": "2024-05-22T22:53:58+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "This building is a staple of UofM's campus. There are many staff and faculty offices in this building.",
+          "date": "8 years ago",
+          "date_iso8601": "2018-06-10T01:25:37+00:00"
+        }
+      ]
+    },
+    "people_also_search_for": [
+      {
+        "search_term": "People also search for",
+        "local_results": [
+          {
+            "position": 1,
+            "title": "Mason Hall",
+            "data_id": "0x0:0x405ee0a4a0715a01",
+            "data_cid": "4638391663909231105",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x405ee0a4a0715a01&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x405ee0a4a0715a01&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.27708760000001,
+              "longitude": -83.73941239999999
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x405ee0a4a0715a01%218m2%213d42.27708760000001%214d-83.73941239999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.2,
+            "reviews": 30,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmOvlgf8DvfIzzZuzTm_jmp26uOTbSUU_X2Ncx2mgZNf1gWX8bs7RreafayPrfFRFg-dGtmjQHYrEq6YSijNe6Z4MKc2kRK9DbX55NQvEReeXBuQoEHedhi7hjxulTh7bzT9WhB=w156-h156-n-k-no",
+            "type": [
+              "Academic department"
+            ]
+          },
+          {
+            "position": 2,
+            "title": "Haven Hall",
+            "data_id": "0x0:0x1fcdb2cb0540594c",
+            "data_cid": "2291684370437658956",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x1fcdb2cb0540594c&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x1fcdb2cb0540594c&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.276339,
+              "longitude": -83.739384
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x1fcdb2cb0540594c%218m2%213d42.276339%214d-83.739384&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 2.8,
+            "reviews": 6,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmOD38yR5LjtoPsw3_jwZKSAmr3w2gnBBVMHHzTE6huLKxI3QTQHrxs8WVzXXfCbE6tY2WRNYvVOvLmtbT1brfrIPeIoh85XwRux35fvimHuzHxV70xWdMtaUNDlLmVJmyGEQI=w156-h156-n-k-no",
+            "type": [
+              "Academic department",
+              "Public university"
+            ]
+          },
+          {
+            "position": 3,
+            "title": "UMich Department of English Language and Literature",
+            "data_id": "0x0:0xfb980ce28c391bc0",
+            "data_cid": "18129254467134626752",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xfb980ce28c391bc0&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xfb980ce28c391bc0&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2766233,
+              "longitude": -83.73971010000001
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xfb980ce28c391bc0%218m2%213d42.2766233%214d-83.73971010000001&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 1,
+            "reviews": 1,
+            "thumbnail": "https://www.google.com/maps/vt/data=r0lVvRylH3jtQ9d9Ljkt9PdMHXfmgeOt97S-eXaolfgF0DPubV4GR2vw8ujaGTw9O-LuVy5O9LIHQG5YyEJoVGP-ZivB9ki5KVUPs4PMtMvJ_hfP6FeM377ZC3AUNGNcmwQRPBfrg2YtQsac0JkRctr5x_6RJPB9",
+            "type": [
+              "Academic department"
+            ]
+          },
+          {
+            "position": 4,
+            "title": "Alumni Hall",
+            "data_id": "0x0:0xd3be70f50ed0514d",
+            "data_cid": "15257756785395650893",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xd3be70f50ed0514d&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xd3be70f50ed0514d&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2754056,
+              "longitude": -83.740128
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xd3be70f50ed0514d%218m2%213d42.2754056%214d-83.740128&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 1,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnZ2iQsWexAqX64rmsfmO7fyUFHnhDRCkS49KvQRbLFG5zoIeX15pWIoC29iaSc6DGjhozF3eyL9eE1emRyw1hOm-bItkUsOkyKAHvoJ70xYdoRk-vlJIknTr0J3K0kEnYzr2Bc=w156-h156-n-k-no",
+            "type": [
+              "Art museum"
+            ]
+          },
+          {
+            "position": 5,
+            "title": "Michigan League",
+            "data_id": "0x0:0x2163c675f6ac28e9",
+            "data_cid": "2405984835897927913",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x2163c675f6ac28e9&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x2163c675f6ac28e9&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2790324,
+              "longitude": -83.7374911
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x2163c675f6ac28e9%218m2%213d42.2790324%214d-83.7374911&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.5,
+            "reviews": 286,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlf4HXpfUvUl75KQv12HWx2dfL6MREE8sZkt7vEL8H90r6uYF2WwLm5M8brdvNrVPSAIRWIQq6qg6ipI0zrsiDvYRGaDNa4NqcFlLoQrGsNXOPvD8tV6ONR0awryp2NP_7fJWhX=w156-h156-n-k-no",
+            "type": [
+              "Student union",
+              "Convention center"
+            ]
+          }
+        ]
+      }
+    ],
+    "web_results_link": "https://www.google.com/search?q=local+guide+program&ibp=gwp;0,26,Oh8KHSIZQW5nZWxsIEhhbGwgQW5uIEFyYm9yLCBNSSgC&pcl=lp",
+    "serpapi_web_results_link": "https://serpapi.com/search.json?device=desktop&engine=google&google_domain=google.com&ibp=gwp%3B0%2C26%2COh8KHSIZQW5nZWxsIEhhbGwgQW5uIEFyYm9yLCBNSSgC&q=local+guide+program"
+  }
+}
