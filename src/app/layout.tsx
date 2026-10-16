@@ -3,6 +3,8 @@ import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 import { SiteFooter } from "@/components/site-footer";
+import { Toaster } from "@/components/ui/toast";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { SiteHeader } from "@/components/site-header";
 import { SettingsProvider } from "@/lib/settings/settings-provider";
 import { SETTINGS_BOOT_SCRIPT, THEME_STORAGE_KEY } from "@/lib/settings/model";
@@ -52,17 +54,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           disableTransitionOnChange
         >
           <SettingsProvider>
-            <a
-              href="#main"
-              className="sr-only rounded-md bg-primary font-medium text-primary-foreground focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2"
-            >
-              Skip to main content
-            </a>
-            <SiteHeader />
-            <main id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
-              {children}
-            </main>
-            <SiteFooter />
+            <TooltipProvider delayDuration={400}>
+              <Toaster>
+                <a
+                  href="#main"
+                  className="sr-only rounded-md bg-primary font-medium text-primary-foreground focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2"
+                >
+                  Skip to main content
+                </a>
+                <SiteHeader />
+                <main id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
+                  {children}
+                </main>
+                <SiteFooter />
+              </Toaster>
+            </TooltipProvider>
           </SettingsProvider>
         </ThemeProvider>
       </body>
