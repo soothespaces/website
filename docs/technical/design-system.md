@@ -32,6 +32,43 @@ Full rationale: [design-system doc](https://claude.ai/code/artifact/eea24662-bb9
   must still be 2px and at least 3:1 against its surroundings.
 - Page content goes in `PageWidth`. Do not set a page `max-w-*`.
 
+## Components
+
+Each lives in [`src/components/ui`](../../src/components/ui) and has a live
+example in the "Components" section of `/styleguide`. Reach for these before
+writing a new one.
+
+| Need | Use | Built on |
+| --- | --- | --- |
+| Modal with a form or detail | `Dialog`, `DialogContent`, `DialogTitle` (`dialog.tsx`) | Radix Dialog |
+| "Are you sure?" before deleting | `ConfirmDialog` (`dialog.tsx`) | Radix AlertDialog |
+| Panel from the bottom (phone) or right | `Sheet`, `SheetContent side=...` (`sheet.tsx`) | Radix Dialog |
+| Small anchored panel (filters, "what's this") | `Popover` (`popover.tsx`) | Radix Popover |
+| Label for an icon-only control | `Tooltip` (`tooltip.tsx`) | Radix Tooltip |
+| "Saved", "Check-in removed" | `useToast().toast(...)` (`toast.tsx`) | Radix Toast |
+| Text fields | `Label`, `Input`, `Textarea`, `FieldHint` (`field.tsx`) | Radix Label |
+| Pick one of many | `Select` (`select.tsx`) | Radix Select |
+| On/off | `Checkbox`, `Switch` (`checkbox.tsx`) | Radix Checkbox, Switch |
+| Map/List views, collapsible sections | `Tabs`, `Accordion` (`tabs.tsx`) | Radix Tabs, Accordion |
+| Loading, nothing found, divider | `Skeleton`, `EmptyState`, `Separator` (`feedback.tsx`) | plain (Separator is Radix) |
+
+Usage rules:
+
+- Every dialog and sheet needs a title. Hide it with Radix `VisuallyHidden`
+  only when the design has no visible heading.
+- Use `ConfirmDialog` for anything that can't be undone. Focus starts on
+  Cancel and clicking outside doesn't dismiss it.
+- A tooltip only repeats what the control's `aria-label` says. Never put
+  information there that isn't available another way, since touch users can't
+  hover.
+- Tie hints and errors to their field with `aria-describedby` and set
+  `aria-invalid` on the field when `FieldHint` shows an error.
+- Wrap a group of `Skeleton`s in `role="status"` with sr-only "Loading" text;
+  skeletons themselves are hidden from screen readers.
+- `Toaster` and `TooltipProvider` are mounted once in the root layout.
+- Overlay motion (`animate-fade-*`, `animate-pop-*`, `animate-sheet-*`) is
+  defined in `globals.css` and drops to nothing under reduced motion.
+
 ## Page width
 
 There is one column. `--page-width` is 64rem and `--page-gutter` is 1rem

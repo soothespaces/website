@@ -34,6 +34,7 @@ import {
   WarningIcon,
   type IconProps,
 } from "@/components/ui/icons";
+import { ComponentGallery } from "./component-gallery";
 import { ModeSwitcher } from "./mode-switcher";
 
 export const metadata: Metadata = {
@@ -132,13 +133,13 @@ export default function StyleGuidePage() {
         <p className="text-sm text-muted-foreground">
           The only serif on the site. The mark at 16, 32 and 64 pixels.
         </p>
-        <div className="flex items-end gap-6">
+        <div className="flex flex-wrap items-end gap-6">
           <LogoMark className="h-4 w-auto" />
           <LogoMark className="h-8 w-auto" />
           <LogoMark className="h-16 w-auto" />
-          <div className="flex items-center gap-3">
-            <LogoMark className="h-9 w-auto" />
-            <Wordmark className="h-7.5 w-auto" />
+          <div className="flex min-w-0 items-center gap-3">
+            <LogoMark className="h-9 w-auto shrink-0" />
+            <Wordmark className="h-7.5 w-auto max-w-full min-w-0" />
           </div>
         </div>
       </section>
@@ -200,7 +201,7 @@ export default function StyleGuidePage() {
           Import these from <code>@/components/ui/icons</code>. Sizes are sm,
           md, and lg.
         </p>
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-3">
           {ICONS.map(([name, Icon]) => (
             <li
               key={name}
@@ -211,6 +212,17 @@ export default function StyleGuidePage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section aria-labelledby="components" className="flex flex-col gap-3">
+        <h2 id="components" className="text-xl font-medium">
+          Components
+        </h2>
+        <p className="text-muted-foreground">
+          Built on Radix primitives in <code>src/components/ui</code>. Try each
+          one with the keyboard.
+        </p>
+        <ComponentGallery />
       </section>
     </PageWidth>
   );

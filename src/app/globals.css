@@ -34,6 +34,65 @@
 }
 
 /*
+ * Enter and exit motion for Radix overlays (data-[state=open|closed]).
+ * Short and small on purpose; the reduced-motion rules below cut them to
+ * nothing, and Radix still unmounts because animationend fires.
+ */
+@theme {
+  --animate-fade-in: fade-in 150ms ease-out;
+  --animate-fade-out: fade-out 100ms ease-in;
+  --animate-pop-in: pop-in 150ms ease-out;
+  --animate-pop-out: pop-out 100ms ease-in;
+  --animate-sheet-up: sheet-up 200ms ease-out;
+  --animate-sheet-down: sheet-down 150ms ease-in;
+  --animate-sheet-in-right: sheet-in-right 200ms ease-out;
+  --animate-sheet-out-right: sheet-out-right 150ms ease-in;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+  @keyframes pop-out {
+    to {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+  @keyframes sheet-up {
+    from {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes sheet-down {
+    to {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes sheet-in-right {
+    from {
+      transform: translateX(100%);
+    }
+  }
+  @keyframes sheet-out-right {
+    to {
+      transform: translateX(100%);
+    }
+  }
+}
+
+/*
  * The page column. Unlayered on purpose: Tailwind utilities live in
  * @layer utilities, and unlayered CSS wins, so max-w-* or px-* on the same
  * element cannot pull a page off --page-width / --page-gutter.
@@ -55,6 +114,11 @@
     background: var(--background);
     color: var(--foreground);
     line-height: 1.5;
+  }
+
+  /* Long paths and identifiers wrap instead of widening the page (1.4.10). */
+  code {
+    overflow-wrap: anywhere;
   }
 
   /* Headings: semibold and slightly tight, as in the approved type preview. */
