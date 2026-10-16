@@ -713,11 +713,51 @@ export type Database = {
           },
         ];
       };
+      space_locations: {
+        Row: {
+          area: Json | null;
+          created_at: string;
+          created_by: string | null;
+          floor: number;
+          id: string;
+          room_number: string | null;
+          space_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          area?: Json | null;
+          created_at?: string;
+          created_by?: string | null;
+          floor: number;
+          id?: string;
+          room_number?: string | null;
+          space_id: string;
+        };
+        Update: {
+          area?: Json | null;
+          created_at?: string;
+          created_by?: string | null;
+          floor?: number;
+          id?: string;
+          room_number?: string | null;
+          space_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "space_locations_space_id_fkey";
+            columns: ["space_id"];
+            isOneToOne: false;
+            referencedRelation: "spaces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       spaces: {
         Row: {
           building_slug: string;
           capacity: number | null;
           description: string | null;
+          edited_fields: string[];
           features: Database["public"]["Enums"]["space_feature"][];
           floor: number | null;
           floor_label: string | null;
@@ -726,6 +766,7 @@ export type Database = {
           image_url: string | null;
           is_listed: boolean;
           lat: number | null;
+          light_level: Database["public"]["Enums"]["light_level"] | null;
           lng: number | null;
           name: string;
           noise_level: Database["public"]["Enums"]["noise_level"] | null;
@@ -741,6 +782,7 @@ export type Database = {
           building_slug: string;
           capacity?: number | null;
           description?: string | null;
+          edited_fields?: string[];
           features?: Database["public"]["Enums"]["space_feature"][];
           floor?: number | null;
           floor_label?: string | null;
@@ -749,6 +791,7 @@ export type Database = {
           image_url?: string | null;
           is_listed?: boolean;
           lat?: number | null;
+          light_level?: Database["public"]["Enums"]["light_level"] | null;
           lng?: number | null;
           name: string;
           noise_level?: Database["public"]["Enums"]["noise_level"] | null;
@@ -763,6 +806,7 @@ export type Database = {
           building_slug?: string;
           capacity?: number | null;
           description?: string | null;
+          edited_fields?: string[];
           features?: Database["public"]["Enums"]["space_feature"][];
           floor?: number | null;
           floor_label?: string | null;
@@ -771,6 +815,7 @@ export type Database = {
           image_url?: string | null;
           is_listed?: boolean;
           lat?: number | null;
+          light_level?: Database["public"]["Enums"]["light_level"] | null;
           lng?: number | null;
           name?: string;
           noise_level?: Database["public"]["Enums"]["noise_level"] | null;

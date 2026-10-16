@@ -832,7 +832,9 @@ const classroomSql = [
 
 const bookableValues = (item) => BOOKABLE_COLUMNS.map((c) => sql(item[c])).join(", ");
 
-const upsert = (table, columns, rows, values, key) =>
+// With `keepEdited`, columns an admin changed in /admin/spaces (listed in the
+// row's edited_fields) keep their value; everything else takes the snapshot's.
+const upsert = (table, columns, rows, values, key, { keepEdited = false } = {}) =>
   [
     `insert into public.${table} (${columns.join(", ")})`,
     "values",
@@ -840,7 +842,11 @@ const upsert = (table, columns, rows, values, key) =>
     `on conflict (${key}) do update set`,
     columns
       .filter((c) => !key.split(", ").includes(c))
-      .map((c) => `  ${c} = excluded.${c}`)
+      .map((c) =>
+        keepEdited
+          ? `  ${c} = case when '${c}' = any(${table}.edited_fields) then ${table}.${c} else excluded.${c} end`
+          : `  ${c} = excluded.${c}`,
+      )
       .join(",\n") + ";",
   ].join("\n");
 
@@ -866,7 +872,7 @@ await writeFile(
     "",
     upsert("buildings", BUILDING_COLUMNS, buildings, buildingValues, "slug"),
     "",
-    upsert("spaces", SPACE_COLUMNS, spaces, spaceValues, "slug"),
+    upsert("spaces", SPACE_COLUMNS, spaces, spaceValues, "slug", { keepEdited: true }),
     "",
     hoursSql,
     "",
