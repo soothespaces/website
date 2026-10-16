@@ -172,6 +172,12 @@ key needed to construct MPrint URLs for *some* buildings — but:
   a count, but hasn't been cross-checked against how many MPrint images actually
   exist per building) — needs the same probing approach as tag discovery.
 
+**Printer list (added 2026-10-16).** MPrint also lists every printer it manages: queue
+name, building record number, floor, room, color, tabloid, copier, card reader, price
+and the printer's pixel position on the floor-plan sheet. The API needs a U-M login, so
+Tanner exported it by hand; a trimmed copy is `scripts/seed/mprint-printers.json` and
+it seeds `public.printers` ([Supabase Backend Plan § Printers](supabase-backend.md#printers-added-2026-10-16)).
+
 ## 6. Additional mguide.app static data (confirmed live, not yet pulled in)
 
 Beyond the 4 files in the original upload, `https://mguide.app/data/` serves a lot
@@ -747,3 +753,16 @@ The map draws the basemap, curb ramps and accessible doors (see
     entries (e.g. Greene Lounge =
     room 1808, confirmed by OCR position + photo) remain necessary for rooms
     `rooms.json` doesn't cover at all, not just a fallback for extraction failures.
+
+## MClassrooms (added 2026-10-16)
+
+[mclassrooms.umich.edu](https://mclassrooms.umich.edu/rooms) (LSA Technology Services)
+lists 394 general-purpose classrooms in 43 buildings with seats, about 43 room
+characteristics (boards, outlets, windows, seating, AV), office contacts, notes,
+photos, 360° panoramas, floor maps and layout PDFs. The site is behind U-M login and has
+no JSON API, so it was exported by hand from a logged-in browser on 2026-10-15 into
+`scripts/seed/mclassrooms.json`; the photo, panorama and PDF links open without a
+login. It seeds `public.classrooms` and `public.classroom_characteristics`
+([Supabase Backend Plan § MClassrooms](supabase-backend.md#mclassrooms-classrooms-added-2026-10-16)).
+It complements mguide's `rooms.json` (§ 6), which covers 771 rooms but has no outlets,
+windows or photos.
