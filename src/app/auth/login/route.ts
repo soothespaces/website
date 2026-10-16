@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { canonicalProductionHost } from "@/lib/canonical-host";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { sanitizeNextPath, type LoginError } from "@/lib/auth/paths";
@@ -18,10 +19,15 @@ export async function POST(request: Request) {
 
   if (!getSupabaseEnv()) return fail("not_configured");
 
-  // Return to the deployment the user started on (localhost, a preview URL or
-  // production), not a fixed production URL. Supabase only honours it if it
-  // matches Authentication -> URL Configuration -> Redirect URLs.
-  const callback = new URL("/auth/callback", origin);
+  // Return to the deployment the user started on (localhost or a preview
+  // URL). In production always return to the one production domain, never
+  // a team or branch alias. Supabase only honours it if it matches
+  // Authentication -> URL Configuration -> Redirect URLs.
+  const canonical = canonicalProductionHost();
+  const callback = new URL(
+    "/auth/callback",
+    canonical ? `https://${canonical}` : origin,
+  );
   if (next !== "/") callback.searchParams.set("next", next);
 
   const supabase = await createClient();
