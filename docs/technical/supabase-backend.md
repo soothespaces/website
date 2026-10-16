@@ -273,7 +273,7 @@ Rows are created on first save (upsert from the client), not by a trigger on
 
 [ADR 0011](../decisions/0011-own-check-in-history.md) amends ADR 0007 so a signed-in
 user can see their own check-in history. Migration
-`20261015120000_own_history_and_favorites.sql` adds:
+`20261016170000_own_history_and_favorites.sql` adds:
 
 - `public.my_check_in_history()`, executable by `authenticated` only. It takes no
   arguments and returns one row per listed space or room the caller has checked in to:
@@ -812,8 +812,11 @@ supabase/migrations/
   20261009130000_photo_placement.sql       WP3      photo kind, floor, position, heading
   20261009140000_hours_and_google.sql      WP3      opening_hours, google_places, popular times
   20261009150000_building_entrances.sql    WP3      exterior doors from the FO campus map
-  20261015120000_own_history_and_favorites.sql  WP2/WP4  my_check_in_history(), favorites
-  20261015170000_classroom_meetings.sql    WP3      class meetings, classroom_availability()
+  20261013120000_admins_and_floor_alignments.sql  admin  private.admins, is_admin(), floor_alignments
+  20261013150000_admin_photo_uploads.sql   admin    photo room/spot tags, admin uploads
+  20261016022053_classrooms.sql            WP3      MClassrooms reference tables (applied by hand first)
+  20261016170000_own_history_and_favorites.sql  WP2/WP4  my_check_in_history(), favorites
+  20261016170100_classroom_meetings.sql    WP3      class meetings, classroom_availability()
 supabase/tests/
   mvp_backend.test.sql                     shared   pgTAP, run by `supabase test db`
   bookable_items.test.sql, photo_placement.test.sql, hours_and_google.test.sql,

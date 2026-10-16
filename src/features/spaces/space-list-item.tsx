@@ -1,6 +1,7 @@
 import { SpaceTags } from "@/components/ui/space-tags";
 import { spaceLocation, spaceTags } from "./labels";
 import type { SpaceSummary } from "./types";
+import { Button } from "@/components/ui/button";
 
 export type SpaceListDensity = "compact" | "comfortable";
 
@@ -24,11 +25,11 @@ export function SpaceListItem({
   const compact = density === "compact";
   const location = spaceLocation(space, { building: showBuilding });
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
       onClick={() => onSelect(space)}
       aria-current={selected ? "true" : undefined}
-      className={`flex w-full flex-col gap-1.5 rounded-lg px-3 text-left hover:bg-accent aria-[current]:bg-primary/10 ${
+      className={`flex min-h-0 w-full flex-col items-stretch justify-start gap-1.5 rounded-lg px-3 text-left font-normal aria-[current]:bg-primary/10 ${
         compact ? "py-2.5" : "py-3"
       }`}
     >
@@ -40,6 +41,6 @@ export function SpaceListItem({
         <span className="line-clamp-2 text-sm text-muted-foreground">{space.summary}</span>
       ) : null}
       <SpaceTags tags={spaceTags(space, compact ? 2 : 4)} />
-    </button>
+    </Button>
   );
 }

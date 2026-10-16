@@ -6,6 +6,7 @@ import { WIDE_QUERY } from "./map-layout-config";
 import { useMapState } from "./map-state";
 import { SelectionPanel } from "./panel/selection-panel";
 import { useSwipeToDismiss } from "./use-swipe-to-dismiss";
+import { Button } from "@/components/ui/button";
 
 // Phones: what's selected, in a sheet over the bottom of the map so the
 // place stays in view. The handle (or a swipe up) expands it to the full
@@ -36,16 +37,16 @@ export function MapSheet() {
         expanded ? "top-2.5" : "max-h-[45%]"
       }`}
     >
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         onClick={() => setExpanded((e) => !e)}
         aria-expanded={expanded}
         aria-label={expanded ? "Show more map" : "Show more details"}
-        className="flex h-6 w-full shrink-0 items-center justify-center rounded-t-2xl"
+        className="flex h-6 min-h-0 w-full rounded-none rounded-t-2xl px-0 hover:bg-transparent"
         data-no-swipe=""
       >
         <span aria-hidden="true" className="h-1 w-10 rounded-full bg-muted-foreground/50" />
-      </button>
+      </Button>
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-3">
         <SelectionPanel selection={selection} density="compact" />
       </div>

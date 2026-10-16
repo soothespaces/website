@@ -124,15 +124,13 @@ function SpotPin({ heading }: { heading: number | null }) {
   return (
     <span className="relative block size-6 cursor-grab" title="Drag to move the spot">
       {heading != null ? (
-        <svg
-          viewBox="0 0 48 48"
-          className="absolute -inset-3 size-12 text-primary"
-          style={{ transform: `rotate(${heading}deg)` }}
-          aria-hidden
-        >
-          {/* A wedge pointing up (north) before rotation: the way the camera faced. */}
-          <path d="M24 24 L14 2 A24 24 0 0 1 34 2 Z" fill="currentColor" opacity="0.45" />
-        </svg>
+        // A wedge pointing up (north) before rotation: the way the camera faced.
+        <span aria-hidden className="absolute inset-0" style={{ transform: `rotate(${heading}deg)` }}>
+          <span
+            className="absolute bottom-1/2 left-1/2 h-6 w-5 -translate-x-1/2 bg-primary/45"
+            style={{ clipPath: "polygon(50% 100%, 0 0, 100% 0)" }}
+          />
+        </span>
       ) : null}
       <span className="absolute inset-0 rounded-full border-2 border-white bg-primary shadow" />
     </span>

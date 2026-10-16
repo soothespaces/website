@@ -2,6 +2,7 @@
 
 import { useId, type Ref } from "react";
 import { CloseIcon, SearchIcon } from "@/components/ui/icons";
+import { Button } from "@/components/ui/button";
 
 export const SPACE_SEARCH_PLACEHOLDER = "Search study spaces, buildings…";
 
@@ -44,14 +45,16 @@ export function SpaceSearchField({
         className="h-11 w-full rounded-full border border-input bg-background pr-11 pl-9 text-sm placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden"
       />
       {value ? (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
+          shape="circle"
           onClick={() => onChange("")}
           aria-label="Clear search"
-          className="absolute top-1/2 right-0 flex size-11 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:text-foreground"
+          className="absolute top-1/2 right-0 -translate-y-1/2 text-muted-foreground hover:bg-transparent hover:text-foreground"
         >
           <CloseIcon className="size-4" />
-        </button>
+        </Button>
       ) : null}
     </div>
   );

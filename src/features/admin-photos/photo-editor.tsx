@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useId, useMemo, useState, useTransition, type ReactNode } from "react";
+import { Button } from "@/components/ui/button";
 import { deletePhoto, updatePhoto, uploadPhoto } from "./actions";
 import type { BuildingOption } from "./data";
 import { DEFAULT_CREDIT, DEFAULT_LICENSE, photoUrl, type AdminPhoto, type PhotoKind, type PhotoTags } from "./photo";
@@ -274,15 +275,15 @@ export function PhotoEditor({
           <fieldset className="flex flex-wrap gap-2">
             <legend className="mb-2 font-medium">Floor</legend>
             {plans.map((f) => (
-              <button
+              <Button
                 key={f.floor}
-                type="button"
+                variant="outline"
                 aria-pressed={tags.floor === f.floor}
                 onClick={() => chooseFloor(f.floor)}
-                className="flex h-11 min-w-11 items-center justify-center rounded-md border border-input px-3 text-sm font-medium hover:bg-accent aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground"
+                className="min-w-11 px-3 text-sm aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground"
               >
                 {f.floor}
-              </button>
+              </Button>
             ))}
           </fieldset>
         ) : null}
@@ -364,13 +365,13 @@ export function PhotoEditor({
       </Section>
 
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" disabled={pending} className="rounded-md bg-primary px-5 py-2.5 font-medium text-primary-foreground disabled:opacity-50">
+        <Button type="submit" disabled={pending}>
           {pending ? (photo ? "Saving…" : "Uploading…") : photo ? "Save changes" : "Upload photo"}
-        </button>
+        </Button>
         {photo ? (
-          <button type="button" onClick={remove} disabled={pending} className="rounded-md border border-input px-5 py-2.5 text-destructive hover:bg-accent disabled:opacity-50">
+          <Button variant="outline" onClick={remove} disabled={pending} className="text-destructive">
             Delete photo
-          </button>
+          </Button>
         ) : null}
         {error ? (
           <p role="alert" className="text-destructive">

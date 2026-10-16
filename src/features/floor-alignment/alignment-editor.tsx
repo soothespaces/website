@@ -21,6 +21,7 @@ import {
   type Placement,
 } from "./geometry";
 import type { SavedAlignment } from "./saved";
+import { Button } from "@/components/ui/button";
 
 type Saved = SavedAlignment & { onMap: boolean };
 
@@ -270,34 +271,24 @@ export default function AlignmentEditor({
         </div>
 
         <div className="flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={save}
-            disabled={!changed || saving}
-            className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground disabled:opacity-50"
-          >
+          <Button onClick={save} disabled={!changed || saving}>
             {saving ? "Saving…" : "Save alignment"}
-          </button>
+          </Button>
           {saveError && (
             <p role="alert" className="text-destructive">
               {saveError}
             </p>
           )}
           <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setPlacement(baseline)}
-              disabled={!changed}
-              className="flex-1 rounded-md border border-input px-4 py-2 hover:bg-accent disabled:opacity-50"
-            >
+            <Button variant="outline" onClick={() => setPlacement(baseline)} disabled={!changed} className="flex-1">
               Reset
-            </button>
-            <button type="button" onClick={download} className="flex-1 rounded-md border border-input px-4 py-2 hover:bg-accent">
+            </Button>
+            <Button variant="outline" onClick={download} className="flex-1">
               Download
-            </button>
-            <button type="button" onClick={copy} className="flex-1 rounded-md border border-input px-4 py-2 hover:bg-accent">
+            </Button>
+            <Button variant="outline" onClick={copy} className="flex-1">
               {copied ? "Copied" : "Copy"}
-            </button>
+            </Button>
           </div>
           <p role="status" className="text-muted-foreground">
             {saved && !saved.onMap

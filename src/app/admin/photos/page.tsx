@@ -4,6 +4,7 @@ import { ContentPage } from "@/components/content-page";
 import { getBuildingOptions, getPhotos, PAGE_SIZE } from "@/features/admin-photos/data";
 import { describeTags, photoUrl } from "@/features/admin-photos/photo";
 import { requireSupabaseEnv } from "@/lib/supabase/env";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Photos",
@@ -60,13 +61,13 @@ export default async function PhotosAdminPage({ searchParams }: PageProps<"/admi
             <input type="checkbox" name="uploaded" value="1" defaultChecked={uploaded} className="size-4 accent-primary" />
             Uploaded here only
           </label>
-          <button type="submit" className="h-11 rounded-md border border-input px-4 hover:bg-accent">
+          <Button type="submit" variant="outline">
             Filter
-          </button>
+          </Button>
         </form>
-        <Link href="/admin/photos/new" className="rounded-md bg-primary px-4 py-2.5 font-medium text-primary-foreground">
-          Upload a photo
-        </Link>
+        <Button asChild>
+          <Link href="/admin/photos/new">Upload a photo</Link>
+        </Button>
       </div>
 
       {photos.length ? (

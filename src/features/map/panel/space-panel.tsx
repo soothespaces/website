@@ -4,6 +4,7 @@ import { ChevronRightIcon } from "@/components/ui/icons";
 import { SpaceDetails } from "@/features/spaces";
 import { useMapState } from "../map-state";
 import { FloorSwitcher } from "./floor-switcher";
+import { Button } from "@/components/ui/button";
 
 // One study space, with a way to its building and its building's floors.
 export function SpacePanel({ slug }: { slug: string }) {
@@ -19,8 +20,8 @@ export function SpacePanel({ slug }: { slug: string }) {
       <SpaceDetails space={space} />
       {floors?.length ? <FloorSwitcher floors={floors} floor={floor} onChange={setFloor} /> : null}
       {building ? (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           onClick={() =>
             select({
               kind: "building",
@@ -29,14 +30,14 @@ export function SpacePanel({ slug }: { slug: string }) {
               name: building.name,
             })
           }
-          className="-mx-3 flex min-h-11 items-center justify-between rounded-lg px-3 text-left text-sm hover:bg-accent"
+          className="-mx-3 justify-between rounded-lg px-3 text-left text-sm font-normal"
         >
           <span>
             <span className="text-muted-foreground">In </span>
             <span className="font-medium">{building.name}</span>
           </span>
           <ChevronRightIcon className="size-4 text-muted-foreground" />
-        </button>
+        </Button>
       ) : null}
     </div>
   );
