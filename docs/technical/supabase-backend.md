@@ -269,6 +269,22 @@ the guest's localStorage value:
 Rows are created on first save (upsert from the client), not by a trigger on
 `auth.users`, so a bug here can never block sign-in.
 
+### "Your spots" and "Your rotation" (added 2026-10-15)
+
+[ADR 0011](../decisions/0011-own-check-in-history.md) amends ADR 0007 so a signed-in
+user can see their own check-in history. Migration
+`20261016170000_own_history_and_favorites.sql` adds:
+
+- `public.my_check_in_history()`, executable by `authenticated` only. It takes no
+  arguments and returns one row per listed space or room the caller has checked in to:
+  `target_kind` (`'space'` or `'room'`), `target_id`, `check_in_count` and
+  `last_visited_on` (the Ann Arbor calendar day), most recent first. No raw rows,
+  `user_id`, exact times or answers. Call it with `supabase.rpc("my_check_in_history")`.
+- `public.favorites`: `user_id` (defaults to `auth.uid()`), exactly one of `space_id` or
+  `building_slug`, and `position` for "My order" (lower first). Each space or building
+  can be saved once per user. Owner-only RLS for select, insert, update and delete,
+  like `user_settings`; `anon` has no access.
+
 ### Opening hours and Google places (added 2026-10-09)
 
 Migration `20261009140000_hours_and_google.sql`.
@@ -284,7 +300,9 @@ Migration `20261009140000_hours_and_google.sql`.
   day; `00:00`–`24:00` is all day. `access` is `public` or `mcard` for card-only hours.
   The seed loads the Library CMS hours for every Library space and for the buildings
   that are wholly libraries (Shapiro, Hatcher, Taubman HSL), dropping periods that ended
-  before the snapshot. Non-library buildings get hours from Google later (`source = 'google'`).
+  before the snapshot. Other buildings with a saved Google place get Google's regular week
+  (`source = 'google'`, label "Regular hours (Google Maps)"), valid for 120 days from the
+  fetch since Google gives no end date.
   Example lookup:
 
   ```sql
@@ -307,6 +325,23 @@ Migration `20261009140000_hours_and_google.sql`.
   weekday and hour. Hours Google doesn't report have no row.
 
 All three are public read with no client writes, like `buildings`.
+
+### Classroom schedules (added 2026-10-15)
+
+`public.classroom_meetings` holds the current term's class meetings per classroom from
+mguide's `room-schedules.json` (built from the Registrar's schedule; snapshot in
+`scripts/seed/raw/mguide-room-schedules.json`). One row per meeting: the Registrar's
+`room_code` (e.g. `EQ-B804`), `building_code`, `room_number`, `building_slug`, course,
+section, title, cross-listings, `weekdays` (0 = Sunday), `starts`/`ends` and the
+meeting's first and last day. Building codes match `buildings.acronym`, except the ones
+mapped in `overrides.json` → `classroomBuildings`. The seed replaces mguide's rows
+wholesale each term. Instructor names in the source are not stored.
+
+`public.classroom_availability(as_of timestamptz default now())`, executable by `anon`
+and `authenticated`, returns one row per classroom as of that moment in Ann Arbor time:
+`in_class`, `current_course` and `busy_until` while a class meets, otherwise
+`free_until` (the next class today, or null if none is left). An empty classroom isn't
+necessarily open or bookable, so the UI should say "no class scheduled", not "open".
 
 ### Building entrances (added 2026-10-09)
 
@@ -666,6 +701,23 @@ create index on public.photos (space_id, sort_order) where space_id is not null;
 `fass-data` ships `imageAlt` for its 34 spaces. Every other photo needs alt text
 written as it's added.
 
+**Admin uploads (added 2026-10-13, migration `20261013150000_admin_photo_uploads.sql`).**
+Admins can also upload and tag photos at `/admin/photos`, without the script or the
+secret key:
+
+- The browser shrinks the photo (canvas, which drops EXIF GPS) to at most 2400 px
+  (4096 for panoramas) and sends it to a Server Action. The action makes the same WebP
+  widths as the script with `sharp` and uploads them as the signed-in admin. Storage
+  RLS on `storage.objects` lets only `is_admin()` write to the `photos` bucket.
+- Tags: `building_slug` is always set. A room adds `floor` + `room_number` (the label in
+  the floor plan's GeoJSON, like `bookable_items.room_number`). A spot adds `lat`/`lng`
+  (and optional `heading`), clicked on the vector plan, plus the room it falls in.
+- `uploaded_by` (the admin's email, stamped by a trigger), `created_at` and `updated_at`.
+  `import.mjs --prune` only touches rows with no `uploaded_by`, so it never deletes
+  admin uploads.
+- For a building's gallery: `where building_slug = $1 and is_listed`, then group or
+  filter by `floor` / `room_number`; nearest-to-a-room lookups use `lat`/`lng`.
+
 **Rendering:** use `next/image` with a custom `loader` that returns the nearest
 generated width (`${base}/${path_prefix}-${w}.webp`), so Vercel never transforms
 anything. Use `sizes` that match the panel layout, `width`/`height` from the row so
@@ -760,10 +812,16 @@ supabase/migrations/
   20261009130000_photo_placement.sql       WP3      photo kind, floor, position, heading
   20261009140000_hours_and_google.sql      WP3      opening_hours, google_places, popular times
   20261009150000_building_entrances.sql    WP3      exterior doors from the FO campus map
+  20261013120000_admins_and_floor_alignments.sql  admin  private.admins, is_admin(), floor_alignments
+  20261013150000_admin_photo_uploads.sql   admin    photo room/spot tags, admin uploads
+  20261016022053_classrooms.sql            WP3      MClassrooms reference tables (applied by hand first)
+  20261016170000_own_history_and_favorites.sql  WP2/WP4  my_check_in_history(), favorites
+  20261016170100_classroom_meetings.sql    WP3      class meetings, classroom_availability()
 supabase/tests/
   mvp_backend.test.sql                     shared   pgTAP, run by `supabase test db`
   bookable_items.test.sql, photo_placement.test.sql, hours_and_google.test.sql,
-  building_entrances.test.sql              per-migration checks
+  building_entrances.test.sql, classroom_meetings.test.sql,
+  own_history_and_favorites.test.sql       per-migration checks
 ```
 
 After each merge, run `npm run db:types` so `src/types/supabase.ts` matches.
@@ -778,6 +836,8 @@ The migrations workflow runs `npx supabase test db`. The suite covers:
   email is rejected. A umich JWT succeeds once, then hits the rate limit.
 - `check_in_summary()` output has no `user_id` and only 15-minute timestamps.
 - A user can read and write their own `user_settings` row and can't see anyone else's.
+- `my_check_in_history()` returns only the caller's own listed targets, and `anon`
+  can't execute it. A user can save, reorder and delete only their own `favorites`.
 - The hook returns an error for `a@gmail.com` and `a@umich.edu.evil.com`, and `{}` for
   `a@umich.edu`.
 

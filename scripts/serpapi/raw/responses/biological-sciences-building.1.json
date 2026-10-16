@@ -1,0 +1,264 @@
+{
+  "search_metadata": {
+    "id": "6ac9566e41ffc87a3e74aea7",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/MU0VTcjiZNxrwBtPVh_33DDgHiGCUotiVALj2Xo6qpk/6ac9566e41ffc87a3e74aea7.json",
+    "markdown_endpoint": "https://serpapi.com/searches/MU0VTcjiZNxrwBtPVh_33DDgHiGCUotiVALj2Xo6qpk/6ac9566e41ffc87a3e74aea7.md",
+    "created_at": "2026-10-09 21:02:38 UTC",
+    "processed_at": "2026-10-09 21:02:38 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/Biological+Sciences+Building%2C+1105+N+University+Ave%2C+Ann+Arbor%2C+MI/@42.27892,-83.7345,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/MU0VTcjiZNxrwBtPVh_33DDgHiGCUotiVALj2Xo6qpk/6ac9566e41ffc87a3e74aea7.html",
+    "prettify_html_file": "https://serpapi.com/searches/MU0VTcjiZNxrwBtPVh_33DDgHiGCUotiVALj2Xo6qpk/6ac9566e41ffc87a3e74aea7.prettify",
+    "total_time_taken": 0.83
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "Biological Sciences Building, 1105 N University Ave, Ann Arbor, MI",
+    "ll": "@42.27892,-83.7345,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Showing results for type: \"place\" instead of type: \"search\"",
+    "query_displayed": "Biological Sciences Building, 1105 N University Ave, Ann Arbor, MI"
+  },
+  "place_results": {
+    "title": "Biological Sciences Building",
+    "place_id": "ChIJ74WNxUOuPIgR7XWr11tMmk8",
+    "data_id": "0x883cae43c58d85ef:0x4f9a4c5bd7ab75ed",
+    "data_cid": "5735981032753821165",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae43c58d85ef%3A0x4f9a4c5bd7ab75ed&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae43c58d85ef%3A0x4f9a4c5bd7ab75ed&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2788651,
+      "longitude": -83.7345223
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJ74WNxUOuPIgR7XWr11tMmk8",
+    "provider_id": "/g/11dxbsrd61",
+    "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmOGPRSyIJX8JD1zcKLdBfJKnTrBZ_5KRIJziMz8c1siBsGEOkIASQ5JO5qkGiJ8l8HBjqC3on6I-SBCjRPwcBSAbEJ7tvQjlM8L3lK00-1ABV3Dz-Doc9Vw45cwCnSuURva-KMB=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/3_vdsHicHcpLjoIwGADgE5VHkJmOiQsKBmklKHWIcWP0H-RVW6UVMlzQM3gbJ7P5Vt_rWRtz03PbFrVnVUpVonzosgclTSmNBepqV_1JawTaDsLhJq5ZvMn5b0L3mEbuBGz9Qy6UyV1PDkef5QmdmnTC4OqG6HiZdUnAtz7N_HsXNxQLvCLtPfSU_EgQJ2Gbb0YgPDgv6acZtq1I8doTzHGQG5DCiyYUKfgqxpkPYyj54zsfToilZDG6zl-q_wUk3wS3Qrw",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 0
+      },
+      {
+        "stars": 2,
+        "amount": 0
+      },
+      {
+        "stars": 3,
+        "amount": 1
+      },
+      {
+        "stars": 4,
+        "amount": 2
+      },
+      {
+        "stars": 5,
+        "amount": 4
+      }
+    ],
+    "rating": 4.4,
+    "reviews": 7,
+    "unclaimed_listing": true,
+    "type": [
+      "Academic department"
+    ],
+    "type_ids": [
+      "university_department"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot",
+          "Wheelchair accessible restroom"
+        ]
+      }
+    ],
+    "address": "1105 N University Ave, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "website": "https://lsa.umich.edu/ummnh/about/biological-sciences-building.html",
+    "open_state": "Closes soon · 6 PM · Opens 7 AM Mon",
+    "plus_code": "77H8+G5 Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "7 AM–6 PM"
+      },
+      {
+        "saturday": "Closed"
+      },
+      {
+        "sunday": "Closed"
+      },
+      {
+        "monday": "7 AM–6 PM"
+      },
+      {
+        "tuesday": "7 AM–6 PM"
+      },
+      {
+        "wednesday": "7 AM–6 PM"
+      },
+      {
+        "thursday": "7 AM–6 PM"
+      }
+    ],
+    "images": [
+      {
+        "title": "All",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9S97MlxeLUDV30jvUr84zvT2igd_OxiI1QLE42IHKuZhLvzHRcx1bIXeuIOAk8P2SFrWdqMZd-jSk-QzLZjoILfE5iM2OuT5a4j72QSRc74RUMA_DtJCsNcJxndBCOGEJURoOOp=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/cjkypXicHcRdEoFAAADgE61qZcKMhyRsNqsSphfDtvqRNu2WdEFncBszvofv-0mlrMRUUYp0OEg4TwrWCFZTXkpWygHlDyWpBKACCMXcHrP3JJgYbtExHC4OQzVvw3qs9-0eZkl8Jl2GNA_bOkTrTROluO3XPu20KzqxBhHzPt7BYFkf46cbxSAP7sDrcZRzhG_2KHMhafaji54b0At8auh-6JrnhXQssaVOV8Zzi6xsJ_Q5IdXspamqCtL_FJQ_I2NDnw"
+      }
+    ],
+    "user_reviews": {
+      "most_relevant": [
+        {
+          "rating": 4,
+          "description": "Good people (especially on the EEB floors) the only thing missing a staircase up to the second floor…. You don’t even have elevator music to make the elevator worth the ride up to work…..",
+          "date": "a year ago",
+          "date_iso8601": "2025-05-13T21:57:18+00:00"
+        },
+        {
+          "rating": 3,
+          "description": "very pretty but it’s very sad that they won’t let me go to the nice sunny spots upstairs because im “not authorized”",
+          "date": "2 years ago",
+          "date_iso8601": "2024-01-04T22:23:33+00:00"
+        },
+        {
+          "rating": 5,
+          "date": "4 months ago",
+          "date_iso8601": "2026-05-18T14:46:43+00:00"
+        },
+        {
+          "rating": 5,
+          "date": "7 months ago",
+          "date_iso8601": "2026-03-02T20:58:49+00:00"
+        },
+        {
+          "rating": 5,
+          "date": "a year ago",
+          "date_iso8601": "2025-07-27T15:43:02+00:00"
+        },
+        {
+          "rating": 4,
+          "date": "3 years ago",
+          "date_iso8601": "2023-06-21T11:01:36+00:00"
+        },
+        {
+          "rating": 5,
+          "date": "8 years ago",
+          "date_iso8601": "2018-09-04T01:10:22+00:00"
+        }
+      ]
+    },
+    "people_also_search_for": [
+      {
+        "search_term": "People also search for",
+        "local_results": [
+          {
+            "position": 1,
+            "title": "Biomedical Research Store",
+            "data_id": "0x0:0x348270040d79266d",
+            "data_cid": "3783709799652861549",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x348270040d79266d&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x348270040d79266d&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2820885,
+              "longitude": -83.7349048
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x348270040d79266d%218m2%213d42.2820885%214d-83.7349048&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.8,
+            "reviews": 4,
+            "thumbnail": "https://www.google.com/maps/vt/data=BxFzLl5M0VHlwXfGwJqi25u3JlnV7EeDSAIgEhtXOR98gEbrBPXFHKCuXJR36PSJKj2OE2A9EliV74eDxCzjspRU1FrhIuGRwbfU-mEFv_3RJDpjafUUYMWyI289WkqePIWh4x_45pO5fSsFzyp4P-EFaC0JB3J_",
+            "type": [
+              "Laboratory equipment supplier"
+            ]
+          },
+          {
+            "position": 2,
+            "title": "Undergraduate Science Building",
+            "data_id": "0x0:0x338b8172fa9a134f",
+            "data_cid": "3714204648527762255",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x338b8172fa9a134f&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x338b8172fa9a134f&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2799495,
+              "longitude": -83.7352549
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x338b8172fa9a134f%218m2%213d42.2799495%214d-83.7352549&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.2,
+            "reviews": 5,
+            "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmPIwoPl4Ych5BnfIOQ9ZRvFGlI24FO62cB-i5D0019pCqbZhyhG_PjSs6mWbMvrjeTg5fAdzsVuYrQokvTY7qp23fUbXwcLYSNENf9BqaYcvZMB5xU5RLaDe1dJJCSIYAl02LPe=w156-h156-n-k-no",
+            "type": [
+              "Educational institution"
+            ]
+          },
+          {
+            "position": 3,
+            "title": "UMich Jakob Lab",
+            "data_id": "0x0:0x778ee9217da95d40",
+            "data_cid": "8615079467257781568",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x778ee9217da95d40&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x778ee9217da95d40&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2788651,
+              "longitude": -83.7345223
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x778ee9217da95d40%218m2%213d42.2788651%214d-83.7345223&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 0,
+            "reviews": 0,
+            "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLfIuwLHLw2hY0TNwf_bPIzns9GyraM5iWaTaifP9qpsSQv8pprocf4GC6bmSBAGgqe6oTRj7meLbi36Wb5AxI5e2kLI5R_9uLvs5e8x2twhkmxzTZNDdCza1XoBYrdIRf1Ug6lCqS9EXJY=w156-h156-n-k-no",
+            "type": [
+              "Laboratory"
+            ]
+          },
+          {
+            "position": 4,
+            "title": "Department of Computational Medicine and Bioinformatics",
+            "data_id": "0x0:0x4aeb4b26588a3d7d",
+            "data_cid": "5398491206399966589",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x4aeb4b26588a3d7d&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x4aeb4b26588a3d7d&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2839264,
+              "longitude": -83.7322658
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x4aeb4b26588a3d7d%218m2%213d42.2839264%214d-83.7322658&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 1,
+            "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmNT-sbW2rU2B4uoExd6-rORc43iB25d1V5mIa531HvFEEq2z7q0K_eJEBsIKuX7YrbUiBgzCgpYfY9lgGbyPUjGvIJEood-oAAh5MNoimxI595UO6LlsLtte19EWXNqtD_Xt1naMdwOZcRf=w156-h156-n-k-no",
+            "type": [
+              "Academic department"
+            ]
+          },
+          {
+            "position": 5,
+            "title": "Life Sciences Institute",
+            "data_id": "0x0:0x18840e60344cd244",
+            "data_cid": "1766552760193176132",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x18840e60344cd244&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x18840e60344cd244&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.279693699999996,
+              "longitude": -83.7341091
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x18840e60344cd244%218m2%213d42.279693699999996%214d-83.7341091&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 6,
+            "thumbnail": "https://lh3.googleusercontent.com/grass-cs/ACvplmMQiF71OIpUMC4QN9oYq2bV_knJ1KrQJBAdLovdd1XY6YhjzNUhFqgMKU7KdxLRDhewL4eX7hv7rvb8GcCwCfpryOSVLGXODGTUOARuAO-ZUDwiUqE8bp0Vehb5ZiE1icKXOHM=w156-h156-n-k-no",
+            "type": [
+              "Research institute"
+            ]
+          }
+        ]
+      }
+    ],
+    "web_results_link": "https://www.google.com/search?q=local+guide+program&ibp=gwp;0,26,OjAKLiIqQmlvbG9naWNhbCBTY2llbmNlcyBCdWlsZGluZyBBbm4gQXJib3IsIE1JKAI&pcl=lp",
+    "serpapi_web_results_link": "https://serpapi.com/search.json?device=desktop&engine=google&google_domain=google.com&ibp=gwp%3B0%2C26%2COjAKLiIqQmlvbG9naWNhbCBTY2llbmNlcyBCdWlsZGluZyBBbm4gQXJib3IsIE1JKAI&q=local+guide+program"
+  }
+}

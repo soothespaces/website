@@ -1,5 +1,6 @@
 import {
   AccessibilityIcon as AccessibilityGlyph,
+  ArrowLeftIcon as BackGlyph,
   CheckIcon as CheckGlyph,
   ChevronDownIcon as ChevronDownGlyph,
   ChevronLeftIcon as ChevronLeftGlyph,
@@ -13,6 +14,7 @@ import {
   GearIcon as SettingsGlyph,
   HamburgerMenuIcon as MenuGlyph,
   InfoCircledIcon as InfoGlyph,
+  LayersIcon as LayersGlyph,
   MagnifyingGlassIcon as SearchGlyph,
   MixerHorizontalIcon as FilterGlyph,
   MoonIcon as MoonGlyph,
@@ -70,6 +72,7 @@ function icon(name: string, Glyph: Glyph) {
 }
 
 export const AccessibilityIcon = icon("AccessibilityIcon", AccessibilityGlyph);
+export const BackIcon = icon("BackIcon", BackGlyph);
 export const CheckIcon = icon("CheckIcon", CheckGlyph);
 export const ChevronDownIcon = icon("ChevronDownIcon", ChevronDownGlyph);
 export const ChevronLeftIcon = icon("ChevronLeftIcon", ChevronLeftGlyph);
@@ -80,6 +83,7 @@ export const EnterIcon = icon("EnterIcon", EnterGlyph);
 export const ExternalLinkIcon = icon("ExternalLinkIcon", ExternalLinkGlyph);
 export const FilterIcon = icon("FilterIcon", FilterGlyph);
 export const InfoIcon = icon("InfoIcon", InfoGlyph);
+export const LayersIcon = icon("LayersIcon", LayersGlyph);
 export const LightIcon = icon("LightIcon", LightGlyph);
 export const MenuIcon = icon("MenuIcon", MenuGlyph);
 export const MoonIcon = icon("MoonIcon", MoonGlyph);

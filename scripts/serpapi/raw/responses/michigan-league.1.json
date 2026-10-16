@@ -1,0 +1,313 @@
+{
+  "search_metadata": {
+    "id": "6ac9566010ceed25c0732bb6",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/cZ887SbIuhb7S0q6ffHID4deJdS81R14Wr5RbYJfwCc/6ac9566010ceed25c0732bb6.json",
+    "markdown_endpoint": "https://serpapi.com/searches/cZ887SbIuhb7S0q6ffHID4deJdS81R14Wr5RbYJfwCc/6ac9566010ceed25c0732bb6.md",
+    "created_at": "2026-10-09 21:02:24 UTC",
+    "processed_at": "2026-10-09 21:02:24 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/Michigan+League%2C+911+N+University+Ave%2C+Ann+Arbor%2C+MI/@42.27927,-83.73749,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/cZ887SbIuhb7S0q6ffHID4deJdS81R14Wr5RbYJfwCc/6ac9566010ceed25c0732bb6.html",
+    "prettify_html_file": "https://serpapi.com/searches/cZ887SbIuhb7S0q6ffHID4deJdS81R14Wr5RbYJfwCc/6ac9566010ceed25c0732bb6.prettify",
+    "total_time_taken": 0.6
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "Michigan League, 911 N University Ave, Ann Arbor, MI",
+    "ll": "@42.27927,-83.73749,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Showing results for type: \"place\" instead of type: \"search\"",
+    "query_displayed": "Michigan League, 911 N University Ave, Ann Arbor, MI"
+  },
+  "place_results": {
+    "title": "Michigan League",
+    "place_id": "ChIJz7krEUGuPIgR6Sis9nXGYyE",
+    "data_id": "0x883cae41112bb9cf:0x2163c675f6ac28e9",
+    "data_cid": "2405984835897927913",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae41112bb9cf%3A0x2163c675f6ac28e9&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae41112bb9cf%3A0x2163c675f6ac28e9&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2790324,
+      "longitude": -83.7374911
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJz7krEUGuPIgR6Sis9nXGYyE",
+    "provider_id": "/g/1td48nb1",
+    "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9Sph7axmnpEn5Od6-OLrOW7f6g8b4QShbf_Ibd4J8VbIDIGq8ik5-zZGM_54BIseQ6wEesYP25zjNKruSH0OSp0pja9L8NANdp8pstddZYDqNWJalQs4EoqveUageCkekYtJSv_=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/69s1vXicHcTdboIwGADQJ6p0DrCa7MJN4mCuSJqNwA0BWlsF28JXf1_QZ_BtluxcnOdDOWdh4Xm9ep1IY2QvTiDG1mgntJu05uhJC6gFBN6S5vvbnFk1q69HbSMdpDxE6WZM89kulKTxM6aaXRU33E_IbxOv4vVA9l2A7uX6uwr89xhEFl4iAcV2GtwP9Gs8sU-cMovtoZ5vCF1SbokFx3lZrAaaJ3WfgR-Z4Sx-aik-OtEVLmHn6u3ygjFG6v8W6T9Dn0T8",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 5
+      },
+      {
+        "stars": 2,
+        "amount": 1
+      },
+      {
+        "stars": 3,
+        "amount": 19
+      },
+      {
+        "stars": 4,
+        "amount": 71
+      },
+      {
+        "stars": 5,
+        "amount": 190
+      }
+    ],
+    "rating": 4.5,
+    "reviews": 286,
+    "type": [
+      "Student union",
+      "Convention center"
+    ],
+    "type_ids": [
+      "student_union",
+      "convention_center"
+    ],
+    "description": "Understated rooms & a suite in a relaxed university campus inn offering breakfast & parking.",
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      },
+      {
+        "parking": [
+          "Paid parking garage",
+          "Paid street parking"
+        ]
+      }
+    ],
+    "address": "911 N University Ave, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "website": "https://uunions.umich.edu/league",
+    "phone": "(734) 936-0869",
+    "open_state": "Open · Closes 12 AM",
+    "plus_code": "77H7+J2 Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "7 AM–12 AM"
+      },
+      {
+        "saturday": "7 AM–12 AM"
+      },
+      {
+        "sunday": "8 AM–10 PM"
+      },
+      {
+        "monday": "7 AM–10 PM"
+      },
+      {
+        "tuesday": "7 AM–10 PM"
+      },
+      {
+        "wednesday": "7 AM–10 PM"
+      },
+      {
+        "thursday": "7 AM–10 PM"
+      }
+    ],
+    "images": [
+      {
+        "title": "All",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9Sph7axmnpEn5Od6-OLrOW7f6g8b4QShbf_Ibd4J8VbIDIGq8ik5-zZGM_54BIseQ6wEesYP25zjNKruSH0OSp0pja9L8NANdp8pstddZYDqNWJalQs4EoqveUageCkekYtJSv_=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/69s1vXicHcTdboIwGADQJ6p0DrCa7MJN4mCuSJqNwA0BWlsF28JXf1_QZ_BtluxcnOdDOWdh4Xm9ep1IY2QvTiDG1mgntJu05uhJC6gFBN6S5vvbnFk1q69HbSMdpDxE6WZM89kulKTxM6aaXRU33E_IbxOv4vVA9l2A7uX6uwr89xhEFl4iAcV2GtwP9Gs8sU-cMovtoZ5vCF1SbokFx3lZrAaaJ3WfgR-Z4Sx-aik-OtEVLmHn6u3ygjFG6v8W6T9Dn0T8"
+      },
+      {
+        "title": "By owner",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RJpqf5RQUBJlDr6B_GaF-9zp-JoW5FJoCpPdKjbGGzKGb55fFqZp9knC_3IAlnfXpTgcFNRPEIEvEJdMAC-QDjUxlzsVMImUW_-tPDL8996Hgu8xKqO3hpx0gCOTKgEBFOdxvW=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/wO_K-3icHcRdDoIgAADgE5E2Z4u2HvzDxEpzma0XV6hYEWBQmRfsDN2mre_h-35araWaGQZrrREVgrL6oeo7EVzXXI-IuBlUKkAUUIazLs5vmGHZNXa2yV3M_PvELcMjAnCQAIvCRlh4Mq3iyykMhzg82XaDuoOEV-6VVuQw3uzllhK0ztIgCp4BrlaOBzb-Je_ZoHar6JYXJdCpv5xCOFnQx7SPu8RqZW9SL9nGNHBRUvXPYv4am6YJ2v8E8B8Ze0Pd"
+      },
+      {
+        "title": "Videos",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9R5bxokEw_x7eLEoQhqXRpi9vP0aoIlJ-zV-DIheFRO4OVsje32ql4vxe3v0FutLD1Jj8cR-gZ0FnTBp8wfTf8Ejihx9kt3gPGpOZ0cty-FxGk3jKcSKGYU29C08aOGiYDt8CZhfXs71QCD=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/xpReVHicHcRJDoIwAADAF1WK1VhMPChbXCKCOxejTWlZpNUWqH7Ss78xcQ7z_XCtpRpbVsVRjwnBKtoo-iSi1rTWPSLuFpMKEAWUNV0f85eTDG9GlH53MSO68kXMH6dE5k67gVcxrxbgfQDenNMgiQbRQRUU9R_VoDUUtTBo9MqzFwUmCWApDOrdTOIu22XYL3JunFIjtglllEKiXyAwYYmKJdkuw_O-77gQX6MwP3sauynPTmpkx6436WwIIeD_Cah_xI1Gxg"
+      },
+      {
+        "title": "Street View & 360°",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QujEgy-coYcYu1Di2HbFBuadaP4-bXwN3q5AQebApefqcLKDxYz7Mg6ItiqYm46nWCGZH7xSzfjLDJ8En4Grryi8staPqmRF6ADggzNAcrm9yecG7vG30Mkh4pcjf89ckLwD6WVw=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/KyaJTHicHcRbcoIwFADQFQVQKA9n-pEaBSsyWmeK9A-uITwTIKEIO-wS3E1nPB_n-Vco1cmNrjeFqTEhWENHSQcQXFGuNBCtzjqJQCKp4yguZ-8yVjs2IxAJJOOKlOsg23-M6T09Wyi7TZHZv-ELzXBH8x7CI3kki3Ni9kGVfdJaNo-3_k_gPK5LXoXk091xyx-GuXSlSs99-7W3MWFsiTAMrTdT8J1f3zROdWF1UOWuB3U4ETv-nt6nlWEYqHgNiP8DOchGEA"
+      }
+    ],
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"The League now has Starbucks and Au Bon Pain for meal/coffee options\""
+        },
+        {
+          "snippet": "\"Horrible parking and staff and patrons were not very helpful.\""
+        },
+        {
+          "snippet": "\"Friday prayer and nice food\""
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "The Michigan League, along with UMich Conference and Event Services, is an outstanding choice for hosting events. We’ve worked with them on multiple occasions, and every time the staff has been professional, super helpful, and easy to work with. The spaces are elegant and versatile, making them perfect for weddings, receptions, and student events alike. Highly recommend for your next special event.",
+          "date": "a year ago",
+          "date_iso8601": "2025-08-13T21:39:49+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "The Indonesian Cultural Festival was awesome and free!",
+          "date": "6 months ago",
+          "date_iso8601": "2026-04-04T01:03:05+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Beautiful building. If your a student there are plenty of places to site, relax and study.",
+          "date": "3 months ago",
+          "date_iso8601": "2026-06-19T11:49:04+00:00"
+        },
+        {
+          "rating": 3,
+          "description": "Disappointed with service of facility. I needed a simple room for 1 hour zoom video meeting and they wanted to charge me $36 for 3 hours. The were not accommodating, just wanted to charge me and make money.\n\nFacility and restrooms were clean and spacious. Enjoyed the quiet student center in the basement before my training. I couldn't hold my meeting in the student center because I would have been disruptive to others. Respect is important to me, obviously not so much to the staff.",
+          "date": "10 months ago",
+          "date_iso8601": "2025-11-29T14:31:02+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "A welcome respite from the hot summer and cold winter days. Cafe opens till 7pm so you can get breakfast, lunch and dinner there.  The League building has other students/visitors functions.  Nice fountain in front - a good landmark to meet up with friends and a nice cut-thru from Washington Street to N University.  The greens in front is a great place to catch some rays, if you want to.",
+          "date": "a year ago",
+          "date_iso8601": "2025-08-11T21:05:57+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "One of the most beautiful places in Ann Arbor. Try the ballroom dancing",
+          "date": "11 months ago",
+          "date_iso8601": "2025-10-28T11:21:26+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "The air conditioner is great!",
+          "date": "2 months ago",
+          "date_iso8601": "2026-07-16T20:09:00+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "Beautiful old building, a lot like Hogwarts! Art is hung on several floors in the halls, there's a food court, plenty of bathrooms and drinking fountains with water bottle fillers, and a secluded garden with an intriguing old unicorn statue. It takes awhile to notice, but look closely and you'll find the unicorn's rider.",
+          "date": "7 years ago",
+          "date_iso8601": "2019-02-07T19:48:47+00:00"
+        }
+      ]
+    },
+    "people_also_search_for": [
+      {
+        "search_term": "People also search for",
+        "local_results": [
+          {
+            "position": 1,
+            "title": "Michigan League Ballroom",
+            "data_id": "0x0:0x3b7356bcbc55f39",
+            "data_cid": "267741439948316473",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x3b7356bcbc55f39&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x3b7356bcbc55f39&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.279035799999996,
+              "longitude": -83.7373897
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x3b7356bcbc55f39%218m2%213d42.279035799999996%214d-83.7373897&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 5,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9Tw9HSFrb0saxaXUTl2jL6qzKHPPmLFgJflvVIXNCu5jan9ikjsNV-n-mvgxhzsprTsMWidMoKoCVZ-lHBAurmcsELwewdLmXQTLS0x_1HcTxjz_8uuZ0mSJpL743wkXDM-KH2D=w156-h156-n-k-no",
+            "type": [
+              "Event venue"
+            ]
+          },
+          {
+            "position": 2,
+            "title": "Haven Hall",
+            "data_id": "0x0:0x1fcdb2cb0540594c",
+            "data_cid": "2291684370437658956",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x1fcdb2cb0540594c&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x1fcdb2cb0540594c&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.276339,
+              "longitude": -83.739384
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x1fcdb2cb0540594c%218m2%213d42.276339%214d-83.739384&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 2.8,
+            "reviews": 6,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TO77cWMns0BCLw3xPBzAhTQ6ugiCi6vK8Naw23WVV4yL_qB6fVrFZPkfNvrFTcnFXn0R3mukAigWBxnA7OTSKqYxyzccCOvMoKvicp0liwGONmInAsQRhm4NXkEsHDe5BOYxU=w156-h156-n-k-no",
+            "type": [
+              "Academic department",
+              "Public university"
+            ]
+          },
+          {
+            "position": 3,
+            "title": "Ann Arbor Regent Event Space",
+            "data_id": "0x0:0x296866d8974ad73",
+            "data_cid": "186484239598136691",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x296866d8974ad73&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x296866d8974ad73&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2504734,
+              "longitude": -83.679779
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x296866d8974ad73%218m2%213d42.2504734%214d-83.679779&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.5,
+            "reviews": 55,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9R8a_J7fufYROsf4BV17CjXutXNPoGOUWAjurRXsR4OXvm97V7LWgdlagGGsZ02903_Jur5PECyiW3OH_0gcpsNpNIhkluc7JnQxfI5hsoOthjs1doX60OjizYlsO0l9qaH4Pv1NA=w156-h156-n-k-no",
+            "type": [
+              "Conference center",
+              "Event venue",
+              "Wedding venue"
+            ]
+          },
+          {
+            "position": 4,
+            "title": "The Amygdala",
+            "data_id": "0x0:0xc7b158330a643a37",
+            "data_cid": "14389379260666362423",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xc7b158330a643a37&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xc7b158330a643a37&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2834753,
+              "longitude": -83.7418575
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xc7b158330a643a37%218m2%213d42.2834753%214d-83.7418575&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 3,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9Rw9ukg7_FM6qLa2bNwqkjSsNqSvOUt2sadslqq5POA44CIWasVBm1DMW1EAPadVC16AQsa7cI5FJslA1ewlbA1XyJ9tD6Y5xEmVvQx41xvepporetNpH3yRVG0pD4ae2c7xGl8AA=w156-h156-n-k-no",
+            "type": [
+              "Event venue"
+            ]
+          },
+          {
+            "position": 5,
+            "title": "Angell Hall",
+            "data_id": "0x0:0xf6b752a395b00d4a",
+            "data_cid": "17777768916612812106",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xf6b752a395b00d4a&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xf6b752a395b00d4a&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2766233,
+              "longitude": -83.73971010000001
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xf6b752a395b00d4a%218m2%213d42.2766233%214d-83.73971010000001&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.4,
+            "reviews": 49,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TaF_DsBfNv8gErKPuqiH9_puDwJVjtUziXbqtex_VReHDgaPZDnqugXOggdlUILLqRs06IPGKieBw9DXeWTbMBbaDY2A3k4OLl0dsdAX1-cpc8dU3WW8p0T9Wh9eqweAtg8th0=w156-h156-n-k-no",
+            "type": [
+              "Academic department",
+              "Auditorium"
+            ]
+          }
+        ]
+      }
+    ],
+    "web_results_link": "https://www.google.com/search?q=local+guide+program&ibp=gwp;0,26,OiMKISIdTWljaGlnYW4gTGVhZ3VlIEFubiBBcmJvciwgTUkoAg&pcl=lp",
+    "serpapi_web_results_link": "https://serpapi.com/search.json?device=desktop&engine=google&google_domain=google.com&ibp=gwp%3B0%2C26%2COiMKISIdTWljaGlnYW4gTGVhZ3VlIEFubiBBcmJvciwgTUkoAg&q=local+guide+program"
+  }
+}

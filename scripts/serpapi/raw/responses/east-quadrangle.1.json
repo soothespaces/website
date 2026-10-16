@@ -1,0 +1,363 @@
+{
+  "search_metadata": {
+    "id": "6ac95658cbcccf2bad7c97d4",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/zZgcdyMHvad22KFiHA78H8FlRPuO-i5sjm1IFYhR6Os/6ac95658cbcccf2bad7c97d4.json",
+    "markdown_endpoint": "https://serpapi.com/searches/zZgcdyMHvad22KFiHA78H8FlRPuO-i5sjm1IFYhR6Os/6ac95658cbcccf2bad7c97d4.md",
+    "created_at": "2026-10-09 21:02:16 UTC",
+    "processed_at": "2026-10-09 21:02:16 UTC",
+    "google_maps_url": "https://www.google.com/maps/search/East+Quad%2C+701+E+University+Ave%2C+Ann+Arbor%2C+MI/@42.27274,-83.73519,17z/data=!3m1!4b1!4m2!2m1!6e5?hl=en&gl=us",
+    "raw_html_file": "https://serpapi.com/searches/zZgcdyMHvad22KFiHA78H8FlRPuO-i5sjm1IFYhR6Os/6ac95658cbcccf2bad7c97d4.html",
+    "prettify_html_file": "https://serpapi.com/searches/zZgcdyMHvad22KFiHA78H8FlRPuO-i5sjm1IFYhR6Os/6ac95658cbcccf2bad7c97d4.prettify",
+    "total_time_taken": 0.51
+  },
+  "search_parameters": {
+    "engine": "google_maps",
+    "type": "search",
+    "q": "East Quad, 701 E University Ave, Ann Arbor, MI",
+    "ll": "@42.27274,-83.73519,17z",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "search_information": {
+    "local_results_state": "Showing results for type: \"place\" instead of type: \"search\"",
+    "query_displayed": "East Quad, 701 E University Ave, Ann Arbor, MI"
+  },
+  "place_results": {
+    "title": "East Quadrangle",
+    "place_id": "ChIJS7C540WuPIgRcBQu0UDhRWk",
+    "data_id": "0x883cae45e3b9b04b:0x6945e140d12e1470",
+    "data_cid": "7585716815879083120",
+    "reviews_link": "https://serpapi.com/search.json?data_id=0x883cae45e3b9b04b%3A0x6945e140d12e1470&engine=google_maps_reviews&hl=en",
+    "photos_link": "https://serpapi.com/search.json?data_id=0x883cae45e3b9b04b%3A0x6945e140d12e1470&engine=google_maps_photos&hl=en",
+    "gps_coordinates": {
+      "latitude": 42.2727345,
+      "longitude": -83.73549009999999
+    },
+    "place_id_search": "https://serpapi.com/search.json?engine=google_maps&google_domain=google.com&hl=en&place_id=ChIJS7C540WuPIgRcBQu0UDhRWk",
+    "provider_id": "/g/11clvq82w8",
+    "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TwUZyDJCovjoalBTwrt6d3KuZukMwybCvX9PWWDAru0omGI5VZd7YYQDqsKVDSc3A3NtjGwKSEhUeJkN57Ug2nkb-eGlH9wEtA_UaNaE_rkoKBMDRcXf9dymgh94HJGDGEW9E=w1000-h1000-c-n",
+    "serpapi_thumbnail": "https://serpapi.com/images/url/AypAeHicHcRJDoIwAADAF1VQXFITD2CbKkTixiIXg6W2ylKkxYYP-gd_Y-Ic5vsRWrdqaVmVcEZcSl6xXrGOykazRo-orC3eKkAVUJYbJo8Bnk2UDchfy_dT5pV3Np2eF07QZ325M8Nt_U7hPkmQ2_W2rMl2FmfF4nI5oJcKYnSijuuE-klMcMIiYn4ZzhYRnzTlDTBSbaDB2r1GeZjja1fKwNuhI03vsBhqLuB04xNEcALxyoxt2wbiPwXND5Q7RKs",
+    "rating_summary": [
+      {
+        "stars": 1,
+        "amount": 3
+      },
+      {
+        "stars": 2,
+        "amount": 2
+      },
+      {
+        "stars": 3,
+        "amount": 8
+      },
+      {
+        "stars": 4,
+        "amount": 30
+      },
+      {
+        "stars": 5,
+        "amount": 120
+      }
+    ],
+    "rating": 4.6,
+    "reviews": 163,
+    "unclaimed_listing": true,
+    "type": [
+      "Student dormitory"
+    ],
+    "type_ids": [
+      "student_dormitory"
+    ],
+    "extensions": [
+      {
+        "accessibility": [
+          "Wheelchair accessible entrance",
+          "Wheelchair accessible parking lot"
+        ]
+      }
+    ],
+    "address": "701 E University Ave, Ann Arbor, MI 48109",
+    "country": "United States",
+    "located_in": "University of Michigan",
+    "website": "http://www.housing.umich.edu/undergrad/east-quadrangle",
+    "phone": "(734) 764-0100",
+    "open_state": "Open · Closes 9:30 PM",
+    "plus_code": "77F7+3R Ann Arbor, Michigan",
+    "hours": [
+      {
+        "friday": "9 AM–9:30 PM"
+      },
+      {
+        "saturday": "12–9:30 PM"
+      },
+      {
+        "sunday": "12–9:30 PM"
+      },
+      {
+        "monday": "9 AM–9:30 PM"
+      },
+      {
+        "tuesday": "9 AM–9:30 PM"
+      },
+      {
+        "wednesday": "9 AM–9:30 PM"
+      },
+      {
+        "thursday": "9 AM–9:30 PM"
+      }
+    ],
+    "images": [
+      {
+        "title": "All",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TwUZyDJCovjoalBTwrt6d3KuZukMwybCvX9PWWDAru0omGI5VZd7YYQDqsKVDSc3A3NtjGwKSEhUeJkN57Ug2nkb-eGlH9wEtA_UaNaE_rkoKBMDRcXf9dymgh94HJGDGEW9E=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/AypAeHicHcRJDoIwAADAF1VQXFITD2CbKkTixiIXg6W2ylKkxYYP-gd_Y-Ic5vsRWrdqaVmVcEZcSl6xXrGOykazRo-orC3eKkAVUJYbJo8Bnk2UDchfy_dT5pV3Np2eF07QZ325M8Nt_U7hPkmQ2_W2rMl2FmfF4nI5oJcKYnSijuuE-klMcMIiYn4ZzhYRnzTlDTBSbaDB2r1GeZjja1fKwNuhI03vsBhqLuB04xNEcALxyoxt2wbiPwXND5Q7RKs"
+      },
+      {
+        "title": "Exterior",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QauyZTn1xLlDcFM7w6AXIYdYIX2DYVnyW9KWXdGOSNxdKNnVPF49wfOAv1HQcJWaPpdcd5u1hG5lXE0pJQ6_zk45ocGq9f6FHYclQEHgy0GpUHqVZNlKIjExKAsGPO36v_8gUetsQESsmg=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/i-7ecHicHcTdboIwGADQJ0KKCsqSXZAIBZlAo_LjjTFfsczVttoisJfc9d5myc7F-f3pjFH6zbZ5t5gxKRlve90-QQrTCjMDebeZ0hZoS9tBVn1OPrn00-kgnPGDbyDarQYvqJOGNkk93zSlmCo_rWqK83020jQTZREt_eGaBy8nJrCtLoWiQN3e6bDL6xCpLfHO319LVwJ--FcvihvgJIzZhLA6xo_ylPE0uYVjGmhc5AvvdV6zY2s0Cff6zt4HByFkdf-DJf4AkHZHMw"
+      },
+      {
+        "title": "Amenities",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9Rl64MiyJ9-G9isRo12KNY7XcSDEE2vWQM8Xdhb6Yb0qKgDKRW816LyRopARMx01DVecHJDSy6Dx18t6WdS1M4O455uwWdoySZlzhe-ykocWF1P8WJYccCYzKUzGRbqyl-dkX3m=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/zgn3znicHcTbboIwGADgJ6q0ih2Y7IKsHgLDQ4kWdslPQ4mVoq2H8oJ7hr3NEr-L7-9XOTfYRRBoNZu0xrRa3q28gemd7N0EzCVoB4vAIhskW9H5mGsa5p1PY7SOO8sNmWbb6qOEgi2X04c45FHZqJpWNb5mLcu4iAj99twMCc9fmLCThE3KCk_Zi0SOiqYgebgL5_P7UzTGFz96VBL5swGxIvtIpBXAVzVmx3HN66vXqDmXs8vnk2CMkXoPqP8HpbBDSw"
+      },
+      {
+        "title": "Food & drink",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RrW4TJmtKkIhscNtP6R0xlrUsxTdA0wrG4CWta498LquOxCD2s6Enk_YsPuNLMvKSM2sD-0KmfPxa1diEXfiaRWtX1EQtCLOZFRd-OtjOdEyHwEGOAdajcB9xH7LVts6czl_SF=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/gFLe1nicHcRbcoIwFADQFUWCZVCc6QfFiMojFG2x_WGYBAF5We6lRDfYNXQ3zng-zv9fiXiFlaY15cus6PuiyUfIB9F3mHc4E32rFVcgAghodphUNyseEuO4b9GrdyWIECMzpqoZPkAdpU2nwTWcBDPDWvo_I1fOeg4m6-r0C6Ix9INf7xDMYU2o154jlemyYqdzlcUJnnT2jo7PvzexJBwvXLLbdmIut2V2EW-W2i78TwRT3Jv0sHmddEopKZ8L0j0Ao7dFKg"
+      },
+      {
+        "title": "From visitors",
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9Qm_QdyrOnlFpGPMdyJhRdixIO8BmQwPtRoxCrBD552VCsdB5X1B8xSkZCjzM-kdujK9KBfmKLPeEeuutQH_usyzpEwCLpxnobTT_VXwBGQMzRwWynWFM2kl8N_VnB_Q1JKITV7=w1000-h1000-c-n",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/wzdwfnicHcRLjoIwAADQE5WPhoiTzGLKKKOIUoaAcdNEWkGBtqFtSrmgZ_A2Jr7Fez1bpYT8ct2-XToN501PtaRjzZmiTDk1H9xGSFBLIN2fY3W3azRgROx4Yv1WxFlK7L7NyX3anUI4IJOpnE_RCH-DYFFGksDg7MNw-u8u0WNOQUf0I1kn8DYkh4xuqNYK_WEt7Sw2JjqIifFrUeDybGCM0jk3lWXVNl10fXjEJYMY-ftkV5Srb-N7ngfazzVgbxJSRlA"
+      },
+      {
+        "title": "Street View & 360°",
+        "thumbnail": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=PnmW62Mj9Ozy2agoocCDag&cb_client=maps_sv.tactile.gps&w=224&h=298&yaw=108.44442&pitch=0&thumbfov=100",
+        "serpapi_thumbnail": "https://serpapi.com/images/url/XDtvJXicHY1LCsIwFABvk51JDUVaIbjQrejOZXmNMXmSH-aZWo_jrbyNxdkOw3w_jiiXrRCFHsZQRTNlfBlfVhm4Tcl6AxkL1ymIuhbknmGMgH6XISa8qnMMl4083vvTe5awBHp_AMv0OGiPJpIKkMtQKifQhN5wmwublJQtc0r2HZthUuum4-2CZBlJO9Ww_-eW6qKaH_7AOkk"
+      }
+    ],
+    "user_reviews": {
+      "summary": [
+        {
+          "snippet": "\"Great food and good rooms and bathrooms\""
+        },
+        {
+          "snippet": "\"Wish the dining hall had constant service, though.\""
+        },
+        {
+          "snippet": "\"Staff and hall director are amazing people.\""
+        }
+      ],
+      "topics": [
+        {
+          "keyword": "ping pong table",
+          "mentions": 2,
+          "id": "CABYYfr3esU"
+        },
+        {
+          "keyword": "dining hall",
+          "mentions": 9,
+          "id": "BMFrFbqw86Y"
+        },
+        {
+          "keyword": "theatre",
+          "mentions": 4,
+          "id": "PeGMveiKds4"
+        },
+        {
+          "keyword": "helpful staff",
+          "mentions": 3,
+          "id": "E-kFNTfsgKA"
+        },
+        {
+          "keyword": "nostalgia",
+          "mentions": 2,
+          "id": "IrODCRxGUO8"
+        },
+        {
+          "keyword": "cleanliness",
+          "mentions": 6,
+          "id": "WtXhzhVYpO4"
+        },
+        {
+          "keyword": "dorms",
+          "mentions": 3,
+          "id": "BlsunMJBt-w"
+        },
+        {
+          "keyword": "food",
+          "mentions": 2,
+          "id": "BFzIY7owYWU"
+        },
+        {
+          "keyword": "organization",
+          "mentions": 2,
+          "id": "BxLtobgBwCo"
+        },
+        {
+          "keyword": "housing",
+          "mentions": 4,
+          "id": "gBjJhBbU0eQ"
+        }
+      ],
+      "most_relevant": [
+        {
+          "rating": 5,
+          "description": "Parking is a little bit difficult, but with patience,  you can get a Parking spot.\n\nThe dorm itself is clean.",
+          "date": "5 months ago",
+          "date_iso8601": "2026-05-02T01:43:35+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Move-in day for the second kid to attend the Awesome University of Michigan Happy day but a bit sad as well  luckily another kid still attending for their Master's",
+          "date": "a year ago",
+          "date_iso8601": "2025-06-23T18:14:46+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "Cool amenities and chill places to study. The classrooms are nice.",
+          "date": "7 months ago",
+          "date_iso8601": "2026-03-08T01:24:07+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "I was in the RC, so lived here my freshman year in 2019. It’s a great location on campus and one of the nicer (recently updated) dorms. The dining hall always has plenty of options and is a favorite among vegetarians and vegans. The blue cafe has good food and drinks. I liked to study in the Green Lounge. If you’re interested in the humanities, either as a concentration or as a hobby (ie you like writing, movies, etc), I’d recommend checking out the Residential College.",
+          "date": "3 years ago",
+          "date_iso8601": "2023-03-03T03:08:41+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "And dropped off my nephew for college his first day it was move-in day but they were well organized had more than enough help for any questions that I had loved it go to through Michigan University all the time for the wife because she goes to Michigan University hospital Just like the hospital all the students were super helpful that were out there and they answered any questions we had helped my nephew get registered go blue",
+          "date": "3 years ago",
+          "date_iso8601": "2023-07-06T19:19:06+00:00"
+        },
+        {
+          "rating": 2,
+          "description": "The rooms are very nice, and many of the staff and custodians are very nice and kind (especially the ones who work a lot on the 4th floor, they're awesome!). It's a clean building, with a lot of spaces and a cafe in addition to the dining hall.\n\nIf you are a vegan like me, the options in the dining hall aren't great. Sometimes it feels like they don't even try, because the \"meals\" that they offer will just be a small bowl of unseasoned tofu in rice or noodles with some green peppers . Sometimes they have better options, such as sushi. However, I would say go to South Quad because it seems that they have better options.\n\nI was very disappointed with the vegan options, as I was told by the tour guides before I started going to U of M that they have the best. But they really just have some of the most pathetic options I've ever seen. The school plasters posters everywhere about how obsessed they are with sustainability, but it seems like they are ignoring the most sustainable way of living that has even been pushed by the UN -  veganism.",
+          "date": "7 years ago",
+          "date_iso8601": "2019-02-02T20:00:50+00:00"
+        },
+        {
+          "rating": 4,
+          "description": "Love East Quad. Was a great place for housing. Units have AC in each room and there is a wide selection of study spaces and resources in the building.\n\nWish the dining hall had constant service, though.",
+          "date": "8 years ago",
+          "date_iso8601": "2018-09-29T23:38:48+00:00"
+        },
+        {
+          "rating": 5,
+          "description": "Very notable dwelling.\nGG Allin performed here.\nTed Kaczynski resided here as well.\nWhat's not to like?",
+          "date": "a year ago",
+          "date_iso8601": "2025-05-21T15:34:35+00:00"
+        }
+      ]
+    },
+    "people_also_search_for": [
+      {
+        "search_term": "People also search for",
+        "local_results": [
+          {
+            "position": 1,
+            "title": "West Quadrangle",
+            "data_id": "0x0:0xba7373a88551e850",
+            "data_cid": "13435209281004759120",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xba7373a88551e850&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xba7373a88551e850&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2748013,
+              "longitude": -83.7428968
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xba7373a88551e850%218m2%213d42.2748013%214d-83.7428968&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.7,
+            "reviews": 47,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9T-zOUTAnwDqSOwLAxuV3kEXqZm_jvnL1wP7qbDEcIdT7PQwnY-XvsmmUZyTIJcqEfUToa3t_zmg_hEPEJDoqpdhTLcCiIMFmwNeaG14LyJdH1KzNcYeK0ggDAh9jADgEkLU5_d=w156-h156-n-k-no",
+            "type": [
+              "Student housing center"
+            ]
+          },
+          {
+            "position": 2,
+            "title": "North Quadrangle Residential and Academic Complex",
+            "data_id": "0x0:0xefd29040373a695a",
+            "data_cid": "17281033325652896090",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xefd29040373a695a&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xefd29040373a695a&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.2804947,
+              "longitude": -83.7401702
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xefd29040373a695a%218m2%213d42.2804947%214d-83.7401702&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 4.5,
+            "reviews": 186,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RKj4prktI04nu_Av90yabI7AP--R_6l7p-0QlVlnH2HUMvSwZAyQyi7gQ02F6bhXSA0HG-woag--R5n6v_Zna8Bomq79Fs9a7SkSuMcvWeBGvdEeFWyshqTBjWL20gfvQZgx4FSg=w156-h156-n-k-no",
+            "type": [
+              "Student dormitory"
+            ]
+          },
+          {
+            "position": 3,
+            "title": "University Places - Student Housing Ann Arbor",
+            "data_id": "0x0:0xb1d97137ceb80000",
+            "data_cid": "12815398699164762112",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0xb1d97137ceb80000&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0xb1d97137ceb80000&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.276696699999995,
+              "longitude": -83.74507849999999
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0xb1d97137ceb80000%218m2%213d42.276696699999995%214d-83.74507849999999&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 0,
+            "reviews": 0,
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QzfEISewjDbUXDIjVYVOMas3VT1110AiZPtuddhSHYrzklfCJ38KZQq7OMFngNo6cqOS71VHxfIMmKM41qshPY4eRC9v-37HqA7gLUFmJf_ZTtCz-LPTcunKeKtHeX3CXc1O0h=w156-h156-n-k-no",
+            "type": [
+              "Student housing center"
+            ]
+          },
+          {
+            "position": 4,
+            "title": "East Hall",
+            "data_id": "0x0:0x34e3b8ff5cb504b2",
+            "data_cid": "3811093116597109938",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x34e3b8ff5cb504b2&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x34e3b8ff5cb504b2&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.275777,
+              "longitude": -83.7352277
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x34e3b8ff5cb504b2%218m2%213d42.275777%214d-83.7352277&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 5,
+            "reviews": 5,
+            "thumbnail": "https://www.google.com/maps/vt/data=oAqsNG2EeV54Q4jfx9z7qRqjRQhfmB5c31_3geSODai07oCU8KRljbtCzeweBncHwcMFal1cQIfF7g8WamwZgkv1OJ0zLpXjOF2pOAbeZJmWQDFcpPZ3XZaWbF5Z4peDUBUoDvm74803sHZQCK_DF19DXoZaYoJC",
+            "type": [
+              "Education center"
+            ]
+          },
+          {
+            "position": 5,
+            "title": "Walton Residence Hall",
+            "data_id": "0x0:0x6443e78a7ad304d5",
+            "data_cid": "7224872809184560341",
+            "reviews_link": "https://serpapi.com/search.json?data_id=0x0%3A0x6443e78a7ad304d5&engine=google_maps_reviews&hl=en",
+            "photos_link": "https://serpapi.com/search.json?data_id=0x0%3A0x6443e78a7ad304d5&engine=google_maps_photos&hl=en",
+            "gps_coordinates": {
+              "latitude": 42.252063899999996,
+              "longitude": -83.6221183
+            },
+            "place_id_search": "https://serpapi.com/search.json?data=%214m5%213m4%211s0x0%3A0x6443e78a7ad304d5%218m2%213d42.252063899999996%214d-83.6221183&engine=google_maps&gl=us&google_domain=google.com&hl=en&type=place",
+            "rating": 3.5,
+            "reviews": 11,
+            "thumbnail": "https://www.google.com/maps/vt/data=KUc3S4sld03eVDeN7AGeCoekEHjYV0iXXSgxkZh1wdMgtQJ8pQCqIDrww_YF77c8_4cXR66ohhO0RM__KFGvYXGFQ7_uo572oIAY77-UvOCQpuexJSAav1-NOBjs-DwiIMDDL3t8REhorqP78zH3TBlP8mIKjO4z",
+            "type": [
+              "Student dormitory"
+            ]
+          }
+        ]
+      }
+    ],
+    "web_results_link": "https://www.google.com/search?q=local+guide+program&ibp=gwp;0,26,OiMKISIdRWFzdCBRdWFkcmFuZ2xlIEFubiBBcmJvciwgTUkoAg&pcl=lp",
+    "serpapi_web_results_link": "https://serpapi.com/search.json?device=desktop&engine=google&google_domain=google.com&ibp=gwp%3B0%2C26%2COiMKISIdRWFzdCBRdWFkcmFuZ2xlIEFubiBBcmJvciwgTUkoAg&q=local+guide+program"
+  }
+}

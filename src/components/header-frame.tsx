@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Collapsible } from "radix-ui";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useIsAdmin } from "@/lib/auth/use-is-admin";
 import { NAV_LINKS, ROUTES } from "@/lib/site";
 import { Button } from "./ui/button";
 import { CloseIcon, MenuIcon } from "./ui/icons";
@@ -14,18 +15,23 @@ function isCurrent(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+const ADMIN_LINK = { href: "/admin", label: "Admin" };
+
 function NavLinks({
   pathname,
   className,
   linkClassName,
+  admin,
 }: {
   pathname: string;
   className: string;
   linkClassName: string;
+  admin: boolean;
 }) {
+  const links: readonly { href: string; label: string }[] = admin ? [...NAV_LINKS, ADMIN_LINK] : NAV_LINKS;
   return (
     <ul className={className}>
-      {NAV_LINKS.map((link) => (
+      {links.map((link) => (
         <li key={link.href}>
           <Link
             href={link.href}
@@ -44,6 +50,7 @@ function NavLinks({
 // header can wrap it in its own Suspense boundary.
 export function HeaderFrame({ account }: { account: ReactNode }) {
   const pathname = usePathname();
+  const admin = useIsAdmin();
   const headerRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   // Tracking the page the menu was opened on closes it after any navigation.
@@ -90,6 +97,7 @@ export function HeaderFrame({ account }: { account: ReactNode }) {
           <nav aria-label="Main" className="hidden md:block">
             <NavLinks
               pathname={pathname}
+              admin={admin}
               className="flex items-center gap-1"
               linkClassName="block px-3 py-2"
             />
@@ -116,6 +124,7 @@ export function HeaderFrame({ account }: { account: ReactNode }) {
             <nav aria-label="Main">
               <NavLinks
                 pathname={pathname}
+                admin={admin}
                 className="flex flex-col"
                 linkClassName="block px-3 py-3 text-base"
               />

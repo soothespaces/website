@@ -48,6 +48,7 @@ why photos are pre-resized instead of transformed on request.
 node scripts/photos/import.mjs --dry-run   # validate and resize only
 npm run photos:import                      # upload and upsert
 npm run photos:import -- --prune           # also delete photos removed from photos.json
+                                           # (never photos uploaded at /admin/photos)
 ```
 
 It needs `NEXT_PUBLIC_SUPABASE_URL` (from `npm run env:pull`) and

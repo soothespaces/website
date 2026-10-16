@@ -144,7 +144,9 @@ for (const [n, entry] of entries.entries()) {
 }
 
 if (!dryRun) {
-  const { data, error } = await supabase.from("photos").select("id, path_prefix, widths");
+  // Photos uploaded from /admin/photos (uploaded_by set) aren't in
+  // photos.json, so they are never pruned.
+  const { data, error } = await supabase.from("photos").select("id, path_prefix, widths").is("uploaded_by", null);
   if (error) throw error;
   const stale = data.filter((row) => !keep.has(row.path_prefix));
   for (const row of stale) {
