@@ -240,6 +240,143 @@ export type Database = {
         };
         Relationships: [];
       };
+      classroom_meetings: {
+        Row: {
+          building_code: string;
+          building_slug: string | null;
+          course: string;
+          cross_listed: string[];
+          ends: string;
+          first_day: string;
+          id: number;
+          last_day: string;
+          room_code: string;
+          room_number: string;
+          section: string;
+          source: string;
+          starts: string;
+          title: string | null;
+          weekdays: number[];
+        };
+        ComputedFields: never;
+        Insert: {
+          building_code: string;
+          building_slug?: string | null;
+          course: string;
+          cross_listed?: string[];
+          ends: string;
+          first_day: string;
+          id?: never;
+          last_day: string;
+          room_code: string;
+          room_number: string;
+          section: string;
+          source?: string;
+          starts: string;
+          title?: string | null;
+          weekdays: number[];
+        };
+        Update: {
+          building_code?: string;
+          building_slug?: string | null;
+          course?: string;
+          cross_listed?: string[];
+          ends?: string;
+          first_day?: string;
+          id?: never;
+          last_day?: string;
+          room_code?: string;
+          room_number?: string;
+          section?: string;
+          source?: string;
+          starts?: string;
+          title?: string | null;
+          weekdays?: number[];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "classroom_meetings_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: false;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+        ];
+      };
+      favorites: {
+        Row: {
+          building_slug: string | null;
+          created_at: string;
+          id: number;
+          position: number;
+          space_id: string | null;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          building_slug?: string | null;
+          created_at?: string;
+          id?: never;
+          position?: number;
+          space_id?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          building_slug?: string | null;
+          created_at?: string;
+          id?: never;
+          position?: number;
+          space_id?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "favorites_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: false;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+          {
+            foreignKeyName: "favorites_space_id_fkey";
+            columns: ["space_id"];
+            isOneToOne: false;
+            referencedRelation: "spaces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      floor_alignments: {
+        Row: {
+          aligned_at: string;
+          aligned_by: string;
+          corners: Json;
+          height: number;
+          sha256: string;
+          sheet: string;
+          width: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          aligned_at?: string;
+          aligned_by: string;
+          corners: Json;
+          height: number;
+          sha256: string;
+          sheet: string;
+          width: number;
+        };
+        Update: {
+          aligned_at?: string;
+          aligned_by?: string;
+          corners?: Json;
+          height?: number;
+          sha256?: string;
+          sheet?: string;
+          width?: number;
+        };
+        Relationships: [];
+      };
       floor_plans: {
         Row: {
           building_slug: string;
@@ -437,6 +574,7 @@ export type Database = {
         Row: {
           alt: string;
           building_slug: string | null;
+          created_at: string;
           credit: string;
           floor: number | null;
           heading: number | null;
@@ -448,9 +586,12 @@ export type Database = {
           license: string;
           lng: number | null;
           path_prefix: string;
+          room_number: string | null;
           sort_order: number;
           source_url: string | null;
           space_id: string | null;
+          updated_at: string;
+          uploaded_by: string | null;
           width: number;
           widths: number[];
         };
@@ -458,6 +599,7 @@ export type Database = {
         Insert: {
           alt: string;
           building_slug?: string | null;
+          created_at?: string;
           credit: string;
           floor?: number | null;
           heading?: number | null;
@@ -469,15 +611,19 @@ export type Database = {
           license: string;
           lng?: number | null;
           path_prefix: string;
+          room_number?: string | null;
           sort_order?: number;
           source_url?: string | null;
           space_id?: string | null;
+          updated_at?: string;
+          uploaded_by?: string | null;
           width: number;
           widths: number[];
         };
         Update: {
           alt?: string;
           building_slug?: string | null;
+          created_at?: string;
           credit?: string;
           floor?: number | null;
           heading?: number | null;
@@ -489,9 +635,12 @@ export type Database = {
           license?: string;
           lng?: number | null;
           path_prefix?: string;
+          room_number?: string | null;
           sort_order?: number;
           source_url?: string | null;
           space_id?: string | null;
+          updated_at?: string;
+          uploaded_by?: string | null;
           width?: number;
           widths?: number[];
         };
@@ -681,7 +830,29 @@ export type Database = {
         Args: { since?: string; target_id: string; target_kind: string };
         Returns: Json;
       };
+      classroom_availability: {
+        Args: { as_of?: string };
+        Returns: {
+          building_slug: string;
+          busy_until: string;
+          current_course: string;
+          free_until: string;
+          in_class: boolean;
+          room_code: string;
+          room_number: string;
+        }[];
+      };
       hook_before_user_created: { Args: { event: Json }; Returns: Json };
+      is_admin: { Args: never; Returns: boolean };
+      my_check_in_history: {
+        Args: never;
+        Returns: {
+          check_in_count: number;
+          last_visited_on: string;
+          target_id: string;
+          target_kind: string;
+        }[];
+      };
       submit_check_in: {
         Args: {
           busyness?: Database["public"]["Enums"]["busyness_level"];

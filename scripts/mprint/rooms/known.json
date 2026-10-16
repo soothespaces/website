@@ -1,0 +1,7 @@
+{
+ "_about": "Room facts people know that none of the scraped sources carry. Keyed by building slug, then printed room number. read_rooms.py context folds these in with LibCal and the Library CMS.",
+ "harold-t-and-vivian-b-shapiro-library": {
+  "3045": "Clark Commons Collaborative Spaces (Tanner, 2026-10-09)",
+  "3100": "Shapiro Reading Room (Library study-space page)"
+ }
+}

@@ -1,1 +1,216 @@
-[]
+[
+  {
+    "source_url": "https://www.lib.umich.edu/_astro/duderstadt-interview-room_edited_Z1iJLXu.webp",
+    "space_slug": "duderstadt-center-interview-rooms",
+    "floor": 2,
+    "alt": "Empty Duderstadt Center interview room on floor 2: a small white table with an open laptop, two rolling office chairs, a wall-mounted whiteboard, and an outlet on the chair rail. The room looks unused.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://www.lib.umich.edu/_astro/hatcher%20212a-2_edited_ZoG9jI.webp",
+    "space_slug": "hatcher-north-212a",
+    "floor": 2,
+    "alt": "Empty glass study room 212A on Hatcher North floor 2: a table, five rolling chairs, and a wall-mounted screen. The glass walls stop short of the ceiling, with the Hatcher South entrance and computers visible behind the room.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://www.lib.umich.edu/_astro/daily-bookable-carrel_Z1wJ6mb.webp",
+    "space_slug": "hatcher-south-bookable-daily-carrels",
+    "floor": 3,
+    "alt": "Open daily carrel on Hatcher South floor 3: a white desk by a window onto trees, one rolling chair, and a bookable-carrel sign on the door frame. There is no door, so the desk is open to the hall.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://www.lib.umich.edu/_astro/bookable%20carrels%20exterior_Z16nQ8z.webp",
+    "space_slug": "hatcher-south-bookable-weekly-carrels",
+    "alt": "Hall of Hatcher South weekly carrels: a row of wooden doors with narrow windows, walls that stop below the ceiling, and a carpeted corridor. The carrels close with a door but are not soundproof.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://www.lib.umich.edu/_astro/ssd%20carrel_edited_ZbWgKG.webp",
+    "space_slug": "hatcher-south-designated-ssd-carrels",
+    "alt": "SSD carrel with the door ajar: a wooden chair at a white desk under a window onto campus, and a door sign that reads Reserved, Office of SSD. The carrel is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://www.lib.umich.edu/_astro/international-studies-rr1_edited_Z1EuDtf.webp",
+    "space_slug": "international-studies-reading-room",
+    "floor": 1,
+    "alt": "Empty International Studies Reading Room on Hatcher North floor 1: high ceilings, west-facing windows, movable tables with rolling chairs, and two armchairs with ottomans. The room looks quiet and unused.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://www.lib.umich.edu/_astro/Shapiro%20-%20Student%20Parent%20Caregiver%20Study%20Room-2_edited_Z1nDXW9.webp",
+    "space_slug": "student-parent-and-caregiver-study-room",
+    "floor": 0,
+    "alt": "Empty student parent and caregiver room in the Shapiro basement: a jungle mural, two high-back chairs, a child-size desk and chair, a rolling bookshelf, and a table with a shared display, under fluorescent lights.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Law_library_at_University_of_Michigan.jpg",
+    "space_slug": "law-library-reading-room",
+    "sort_order": 0,
+    "alt": "Empty Law Library reading room, looking down the hall: rows of long oak tables with brass desk lamps and wooden chairs, book alcoves along both walls, and daylight from tall stained-glass windows under a painted ceiling.",
+    "credit": "Cadop, Wikimedia Commons, CC0",
+    "license": "CC0"
+  },
+  {
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/6/68/UMichiganLawLibraryInterior.jpg",
+    "space_slug": "law-library-reading-room",
+    "sort_order": 1,
+    "alt": "Law Library reading room toward the stained-glass window: oak tables with desk lamps and chairs in the foreground, carved bookcases along the walls, and chandeliers overhead. No one is seated.",
+    "credit": "Kashkin, Wikimedia Commons, Public domain",
+    "license": "Public domain"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_06_27_11_49_50.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 1,
+    "alt": "Shapiro floor 1 individual soundproof booth BOOTH1 (LibCal 206333): a tall wood-grain booth with a glass door, a reservation sign, and outlets at the base. The booth is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_08_20_13_42_01.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 2,
+    "alt": "Shapiro study room 2122 (LibCal 27511), seen through the window: a light wood table and a few chairs in a cinder-block room. Recycling and landfill bins sit outside the door. The room is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_08_20_13_42_44.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 2,
+    "alt": "Shapiro study room 2124 (LibCal 27513), through the door window: a whiteboard, a maroon office chair, a wooden chair, and the edge of a table. The room is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://libapps.s3.amazonaws.com/accounts/210767/images/IMG_4651.JPG",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 2,
+    "alt": "Shapiro group study room 2126 (LibCal 27512), through the door: a long white table, rolling chairs, a wall display, and a bright window. The room is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_08_20_13_43_52.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 2,
+    "alt": "Shapiro study room 2130 (LibCal 27510), through the glass: one maroon chair, the corner of a table, and a whiteboard. The door is open and the room is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_08_20_13_44_20.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 2,
+    "alt": "Shapiro study room 2132 (LibCal 22737), through the door window: a small table, blue and wood chairs, and a whiteboard. The room is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_08_20_13_45_07.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 2,
+    "alt": "Shapiro study room 2134 (LibCal 27515), through the open door: a table, a white rolling chair, and a window onto campus. A backpack is on a chair. No one is in the room.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_08_20_13_45_47.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 2,
+    "alt": "Shapiro study room 2136 (LibCal 27516), through the window: a wood table, a couple of chairs, and a whiteboard. Bins sit outside the glass. The room is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_08_20_13_46_12.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 2,
+    "alt": "Shapiro study room 2138 (LibCal 27517), through the window: a table with a closed laptop, several chairs, and a whiteboard. The room is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_08_20_13_47_20.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 2,
+    "alt": "Shapiro study room 2140 (LibCal 22738), through the door window: a table, mesh chairs, and a whiteboard with writing on it. The room is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_08_20_13_46_46.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 2,
+    "alt": "Shapiro study room 2142 (LibCal 22733), through the door: a curved white table, several chairs, and windows onto trees. A display is mounted for connecting a laptop. The room is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://libapps.s3.amazonaws.com/accounts/210767/images/IMG_4659.JPG",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 2,
+    "alt": "Shapiro study room 2144 (LibCal 27518), through the window: a table with a wall display. The door is closed and the room is empty. Bins sit outside.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_08_20_13_48_02.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 3,
+    "alt": "Shapiro study room 3042 (LibCal 160500): a glass-walled room with a long table, rolling chairs, and a wall-mounted display. The room is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_08_20_13_48_26.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 3,
+    "alt": "Shapiro study room 3046 (LibCal 160501): a glass room with a round table, rolling chairs, a wall display, and a window onto trees. The room is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_06_27_11_57_05.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 3,
+    "alt": "Shapiro floor 3 individual soundproof booth BOOTH2 (LibCal 206334): a tall wood-grain booth with a glass door and a reservation sign, in an open area near a whiteboard. The booth is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_06_27_11_58_23.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 3,
+    "alt": "Shapiro floor 3 individual soundproof booth BOOTH3 (LibCal 206335): a tall booth with a glass door, a stool inside, and an outlet beside it. The booth is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d68g328n4ug0e.cloudfront.net/misc/4233/eq/item/2025_06_27_12_00_16.jpg",
+    "building_slug": "harold-t-and-vivian-b-shapiro-library",
+    "floor": 3,
+    "alt": "Shapiro floor 3 accessible soundproof booth BOOTH4 (LibCal 206336): a wider glass booth with double doors, a wheelchair symbol, a small table, and a chair. The booth is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  },
+  {
+    "source_url": "https://d2jv02qf7xgjwx.cloudfront.net/accounts/210767/images/Hatcher_212A.jpg",
+    "building_slug": "harlan-h-hatcher-graduate-library",
+    "floor": 2,
+    "alt": "Hatcher North room 212A (LibCal 196956): a glass cube with a table, five rolling chairs with green seats, and a wall screen. The walls do not reach the ceiling. The room is empty.",
+    "credit": "University of Michigan Library",
+    "license": "UM, used with credit"
+  }
+]

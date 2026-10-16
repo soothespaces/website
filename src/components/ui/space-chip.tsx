@@ -1,11 +1,6 @@
-import { LightIcon, SoundLoudIcon } from "@/components/ui/icons";
+import { SpaceTags, type SpaceTag } from "./space-tags";
 
-export type SpaceChipTag = {
-  label: string;
-  // The condition this space is known for. Uses the accent color.
-  emphasis?: boolean;
-  icon?: "sound" | "light";
-};
+export type SpaceChipTag = SpaceTag;
 
 export type SpaceChipProps = {
   name: string;
@@ -15,11 +10,6 @@ export type SpaceChipProps = {
   accentBorder?: boolean;
   className?: string;
 };
-
-const TAG_ICONS = {
-  sound: SoundLoudIcon,
-  light: LightIcon,
-} as const;
 
 // The summary card for one study space, as it appears next to a map pin.
 export function SpaceChip({
@@ -42,24 +32,7 @@ export function SpaceChip({
         ) : null}
         <span className="text-sm font-semibold tracking-tight">{name}</span>
       </div>
-      <ul className="flex flex-wrap gap-1.5">
-        {tags.map((tag) => {
-          const TagIcon = tag.icon ? TAG_ICONS[tag.icon] : null;
-          return (
-            <li
-              key={tag.label}
-              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs ${
-                tag.emphasis
-                  ? "border-primary/40 bg-primary/10 font-medium text-primary"
-                  : "border-border text-muted-foreground"
-              }`}
-            >
-              {TagIcon ? <TagIcon size="sm" /> : null}
-              {tag.label}
-            </li>
-          );
-        })}
-      </ul>
+      <SpaceTags tags={tags} />
       {footnote ? (
         <span className="text-xs text-muted-foreground">{footnote}</span>
       ) : null}

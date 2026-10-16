@@ -45,6 +45,16 @@ const SOURCES = [
     note: "Building footprints (mguide.app)",
   },
   {
+    file: "mguide-room-schedules.json",
+    url: "https://mguide.app/data/room-schedules.json",
+    note: "Class meetings per classroom for the current term, keyed BUILDINGCODE-ROOM (mguide.app, from the Registrar)",
+  },
+  {
+    file: "mguide-rooms.json",
+    url: "https://mguide.app/data/rooms.json",
+    note: "Registrar classroom data per building acronym: floor, type, capacity and equipment list per room (mguide.app). Not used by build.mjs yet",
+  },
+  {
     file: "umich-buildings.json",
     url: "https://apibuilder.studentlife.umich.edu/api/1/type/building?limit=-1&visible[eq][]=1",
     note: "Official U-M building records (studentlife apibuilder)",
