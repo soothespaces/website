@@ -1,8 +1,9 @@
 # Seed data
 
-Builds `supabase/seed.sql` (buildings, study spaces with descriptions, LibCal bookable rooms and seats, Library opening hours, building entrances, class meetings and printers) from committed snapshots of
+Builds `supabase/seed.sql` (buildings, study spaces with descriptions, LibCal bookable rooms and seats, Library opening hours, building entrances, class meetings, MClassrooms classrooms and printers) from committed snapshots of
 public sources. Printers come from `mprint-printers.json`, a trimmed copy of MPrint's
-printer list exported by hand (MPrint's API needs a U-M login). Entrances come from `scripts/campus-map/raw/` (see
+printer list exported by hand (MPrint's API needs a U-M login). MClassrooms rooms come
+from `mclassrooms.json`, exported by hand from the logged-in mclassrooms.umich.edu. Entrances come from `scripts/campus-map/raw/` (see
 [scripts/campus-map](../campus-map/README.md)). See [Supabase Backend Plan § Seed data](../../docs/technical/supabase-backend.md#seed-data)
 for the design.
 
@@ -28,5 +29,5 @@ that branch. Then run `npm run seed:build` and commit `supabase/seed.sql`.
 - **Production:** the GitHub integration deploys migrations but not the seed. Load it
   once after a refresh is merged (`psql "$SUPABASE_DB_URL" -f supabase/seed.sql`). It's
   idempotent: every row is an upsert on its key (`slug`, or `(instance, libcal_item_id)`
-  for bookable items), except the Library's `opening_hours` rows, the campus map's `building_entrances`, mguide's `classroom_meetings` and MPrint's `printers`,
+  for bookable items), except the Library's `opening_hours` rows, the campus map's `building_entrances`, mguide's `classroom_meetings`, the MClassrooms tables and MPrint's `printers`,
   which are deleted and reinserted so rows the source dropped go away too.

@@ -343,6 +343,28 @@ and `authenticated`, returns one row per classroom as of that moment in Ann Arbo
 `free_until` (the next class today, or null if none is left). An empty classroom isn't
 necessarily open or bookable, so the UI should say "no class scheduled", not "open".
 
+### MClassrooms classrooms (added 2026-10-16)
+
+Migration `20261016022053_classrooms.sql` was applied to production by hand first and
+then committed with the same SQL. **`public.classroom_characteristics`** is
+MClassrooms' filter vocabulary (43 values such as `Whtbrd`, `PowerStud`, `Windows`)
+with its description and a proposed `space_feature`: `exact` (whiteboards, student
+power outlets, computer labs) or `candidate` (windows to `natural_light`, team boards,
+team technology). **`public.classrooms`** has the 394 general-purpose classrooms LSA
+Technology Services lists at mclassrooms.umich.edu, keyed by `mclassrooms_id`: the
+Registrar room code, building (matched by official id, record number, abbreviation or
+by hand, recorded in `building_match`), seats, `characteristics`, `features` (exact
+mappings only), office scheduling and support contacts, notes, and links to the room's
+page, schedule, floor map, layout PDF, 360° panorama and photos. Classrooms are
+reference data for candidate study spaces, not spaces themselves.
+
+The rows come from `scripts/seed/mclassrooms.json`, which Tanner exported from the
+logged-in site on 2026-10-15 (no personal emails; one contact that named a person was
+dropped). The photo and PDF links on it are public. Tanner chose on 2026-10-16 to
+publish it like the other sources: public read, committed to the repo. The seed
+replaces both tables wholesale. The empty staging table the import left on production,
+`private.mclassrooms_import`, is dropped by `20261016175000_drop_mclassrooms_import.sql`.
+
 ### Printers (added 2026-10-16)
 
 Migration `20261016180000_printers.sql`. **`public.printers`** has one row per public
@@ -845,7 +867,7 @@ supabase/tests/
   mvp_backend.test.sql                     shared   pgTAP, run by `supabase test db`
   bookable_items.test.sql, photo_placement.test.sql, hours_and_google.test.sql,
   building_entrances.test.sql, classroom_meetings.test.sql,
-  own_history_and_favorites.test.sql, printers.test.sql
+  own_history_and_favorites.test.sql, printers.test.sql, classrooms.test.sql
                                            per-migration checks
 ```
 

@@ -94,8 +94,8 @@
     "OBSRV": "observatory-hall",
     "PHARM": "new-college-of-pharmacy-building",
     "SKB": "school-of-kinesiology-building",
-    "SPH1": "henry-frieze-vaughan-school-of-public-health-building",
-    "SPH1A": "henry-frieze-vaughan-school-of-public-health-building",
+    "SPH1": "henry-frieze-vaughan-public-health-building",
+    "SPH1A": "henry-frieze-vaughan-public-health-building",
     "STEARNS": "frederick-stearns-building",
     "THSL": "alfred-a-taubman-health-sciences-library",
     "TMC": "trotter-multicultural-center-1",
@@ -106,11 +106,15 @@
     "1000152": "angell-hall",
     "1000185": "harlan-h-hatcher-graduate-library",
     "1000191": "michigan-league",
-    "1000204": "henry-frieze-vaughan-school-of-public-health-building",
+    "1000204": "henry-frieze-vaughan-public-health-building",
     "1000424": "gorguze-family-laboratory",
     "1005188": "stephen-m-ross-school-of-business-building",
     "1005347": "school-of-nursing-building-2",
     "1005614": "wolverine-village",
     "1005615": "wolverine-village"
+  },
+  "_officialIds": "official_id set by hand after matching. 1000152 is U-M's record for \"Angell Hall and Tisch Hall\" (435 State St); mguide gives it to both, so neither would keep it.",
+  "officialIds": {
+    "angell-hall": "1000152"
   }
 }

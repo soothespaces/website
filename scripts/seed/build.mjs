@@ -16,6 +16,8 @@
 //   location pages, with room number and floor parsed from the title.
 // - Building entrances: every exterior door on the U-M Facilities campus map
 //   (scripts/campus-map/raw/), linked to a building by record number.
+// - Classrooms: MClassrooms' general-purpose classrooms (mclassrooms.json,
+//   exported by hand), each already matched to a building.
 // - Printers: MPrint's public printers (mprint-printers.json, exported by
 //   hand), linked to a building by record number.
 // - Google places: the Google Maps place saved for each building by
@@ -63,9 +65,11 @@ const clean = (value) => {
   return text === "" ? null : text;
 };
 
+// U-M building record numbers are seven digits; the apibuilder data uses "0"
+// for none and "1" for Angell Hall.
 const officialId = (value) => {
   const id = clean(value);
-  return id && id !== "0" ? id : null;
+  return id && /^\d{7}$/.test(id) ? id : null;
 };
 
 const number = (value) => {
@@ -180,6 +184,13 @@ for (const b of buildings) {
 }
 for (const b of buildings) {
   if (b.official_id && idCounts.get(b.official_id) > 1) b.official_id = null;
+}
+for (const [slug, id] of Object.entries(overrides.officialIds)) {
+  const b = buildings.find((x) => x.slug === slug) ?? fail(`Unknown building ${slug} in officialIds`);
+  if (id !== null && buildings.some((x) => x.official_id === id && x.slug !== slug)) {
+    fail(`officialIds gives ${id} to ${slug}, but another building has it`);
+  }
+  b.official_id = id;
 }
 
 const buildingSlugs = new Set(buildings.map((b) => b.slug));
@@ -710,6 +721,69 @@ const linkedClassroomRooms = new Set(
   classroomMeetings.filter((m) => m.building_slug).map((m) => m.room_code),
 ).size;
 
+// ---------------------------------------------------------------- MClassrooms
+
+// LSA Technology Services' MClassrooms (mclassrooms.umich.edu), exported from
+// the logged-in site into mclassrooms.json: general-purpose classrooms with
+// seats, characteristics, office contacts, photos and panoramas. Each room
+// already carries its building_slug and how it was matched. A room's features
+// are the exact space_feature mappings of its characteristics.
+const mclassrooms = await readJson("mclassrooms.json");
+const characteristicRows = mclassrooms.vocabulary.characteristics
+  .map((c) => ({
+    value: c.value,
+    category: clean(c.category),
+    label: clean(c.label),
+    page_label: clean(c.page_label),
+    description: clean(c.description),
+    glossary_anchor: clean(c.glossary_anchor),
+    space_feature: c.space_feature ?? null,
+    feature_match: c.feature_match ?? null,
+  }))
+  .sort((a, b) => a.value.localeCompare(b.value));
+const exactFeature = new Map(
+  characteristicRows.filter((c) => c.feature_match === "exact").map((c) => [c.value, c.space_feature]),
+);
+const knownCharacteristics = new Set(characteristicRows.map((c) => c.value));
+const classrooms = mclassrooms.rooms
+  .map((r) => {
+    if (r.building_slug && !buildingSlugs.has(r.building_slug)) {
+      fail(`Unknown building ${r.building_slug} on classroom ${r.room_code}`);
+    }
+    const values = r.characteristics.map((c) =>
+      knownCharacteristics.has(c.value) ? c.value : fail(`Unknown characteristic ${c.value} on ${r.room_code}`),
+    );
+    return {
+      mclassrooms_id: r.mclassrooms_id,
+      room_code: r.room_code,
+      building_slug: r.building_slug ?? null,
+      building_match: r.building_match ?? null,
+      building_official_id: r.building_official_id,
+      building_name: clean(r.building_name),
+      building_code: clean(r.building_code),
+      room_number: clean(r.room_number),
+      floor_label: clean(r.floor),
+      address: clean(r.address),
+      school_or_college: clean(r.school_or_college),
+      seats: number(r.seats),
+      characteristics: [...new Set(values)].sort(),
+      features: [...new Set(values.map((v) => exactFeature.get(v)).filter(Boolean))].sort(),
+      scheduling_contact: r.scheduling_contact ?? null,
+      support_contact: r.support_contact ?? null,
+      notes: clean(r.notes),
+      notes_updated_on: r.notes_updated_on ?? null,
+      page_url: r.page_url,
+      schedule_url: r.schedule_url ?? null,
+      floor_map_url: r.floor_map_url ?? null,
+      layout_pdf_url: r.layout_pdf_url ?? null,
+      panorama_url: r.panorama_url ?? null,
+      photos: r.photos ?? [],
+      fetched_on: mclassrooms.fetched_at,
+    };
+  })
+  .sort((a, b) => a.mclassrooms_id - b.mclassrooms_id);
+const linkedClassrooms = classrooms.filter((c) => c.building_slug).length;
+
 // ---------------------------------------------------------------- printers
 
 // MPrint's printer list, exported by hand (scripts/seed/mprint-printers.json).
@@ -879,6 +953,38 @@ const classroomSql = [
   classroomMeetings.map((r) => `  (${CLASSROOM_COLUMNS.map((c) => classroomValue(r, c)).join(", ")})`).join(",\n") + ";",
 ].join("\n");
 
+const CHARACTERISTIC_COLUMNS = [
+  "value", "category", "label", "page_label", "description", "glossary_anchor",
+  "space_feature", "feature_match",
+];
+const CLASSROOM_ROOM_COLUMNS = [
+  "mclassrooms_id", "room_code", "building_slug", "building_match", "building_official_id",
+  "building_name", "building_code", "room_number", "floor_label", "address",
+  "school_or_college", "seats", "characteristics", "features", "scheduling_contact",
+  "support_contact", "notes", "notes_updated_on", "page_url", "schedule_url",
+  "floor_map_url", "layout_pdf_url", "panorama_url", "photos", "fetched_on",
+];
+const classroomRoomValue = (row, c) => {
+  if (c === "characteristics") return textArray(row.characteristics);
+  if (c === "features") return features(row.features);
+  if (["scheduling_contact", "support_contact", "photos"].includes(c)) return jsonb(row[c]);
+  return sql(row[c]);
+};
+// MClassrooms rows are replaced wholesale on each export; nothing references
+// them.
+const mclassroomsSql = [
+  "delete from public.classrooms where mclassrooms_id is not null;",
+  "delete from public.classroom_characteristics where value is not null;",
+  `insert into public.classroom_characteristics (${CHARACTERISTIC_COLUMNS.join(", ")})`,
+  "values",
+  characteristicRows
+    .map((r) => `  (${CHARACTERISTIC_COLUMNS.map((c) => (c === "space_feature" && r[c] ? `${sql(r[c])}::public.space_feature` : sql(r[c]))).join(", ")})`)
+    .join(",\n") + ";",
+  `insert into public.classrooms (${CLASSROOM_ROOM_COLUMNS.join(", ")})`,
+  "values",
+  classrooms.map((r) => `  (${CLASSROOM_ROOM_COLUMNS.map((c) => classroomRoomValue(r, c)).join(", ")})`).join(",\n") + ";",
+].join("\n");
+
 const PRINTER_COLUMNS = [
   "mprint_name", "display_name", "building_record_number", "building_name",
   "building_slug", "floor_label", "floor", "room_number", "color", "tabloid",
@@ -919,6 +1025,7 @@ const header = `-- Generated by scripts/seed/build.mjs from scripts/seed/raw/ an
 -- ${entrances.length} building entrances (${linkedEntrances} linked to a building).
 -- ${googleRows.length} Google places (scripts/serpapi/raw/places/), ${googleHours.length} Google opening-hours rows, ${popularTimes.length} popular-times rows.
 -- ${classroomMeetings.length} class meetings in ${classroomRooms} classrooms (${linkedClassroomRooms} linked to a building, ${skippedMeetings} zero-length meetings skipped).
+-- ${classrooms.length} MClassrooms classrooms (${linkedClassrooms} linked to a building), ${characteristicRows.length} room characteristics.
 -- ${printers.length} MPrint printers (${linkedPrinters} linked to a building).
 -- Idempotent: safe to run again against a database that already has the rows.
 `;
@@ -949,6 +1056,8 @@ await writeFile(
     "",
     classroomSql,
     "",
+    mclassroomsSql,
+    "",
     printersSql,
     "",
     "commit;",
@@ -962,5 +1071,6 @@ console.log(
     `${entrances.length} entrances (${linkedEntrances} linked), ${googleRows.length} Google places ` +
     `(${googleHours.length} hours rows, ${popularTimes.length} popular-times rows), ` +
     `${classroomMeetings.length} class meetings in ${classroomRooms} classrooms (${linkedClassroomRooms} linked), ` +
+    `${classrooms.length} MClassrooms classrooms (${linkedClassrooms} linked), ` +
     `${printers.length} printers (${linkedPrinters} linked)`,
 );

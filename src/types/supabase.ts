@@ -240,6 +240,40 @@ export type Database = {
         };
         Relationships: [];
       };
+      classroom_characteristics: {
+        Row: {
+          category: string;
+          description: string | null;
+          feature_match: string | null;
+          glossary_anchor: string | null;
+          label: string;
+          page_label: string | null;
+          space_feature: Database["public"]["Enums"]["space_feature"] | null;
+          value: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          category: string;
+          description?: string | null;
+          feature_match?: string | null;
+          glossary_anchor?: string | null;
+          label: string;
+          page_label?: string | null;
+          space_feature?: Database["public"]["Enums"]["space_feature"] | null;
+          value: string;
+        };
+        Update: {
+          category?: string;
+          description?: string | null;
+          feature_match?: string | null;
+          glossary_anchor?: string | null;
+          label?: string;
+          page_label?: string | null;
+          space_feature?: Database["public"]["Enums"]["space_feature"] | null;
+          value?: string;
+        };
+        Relationships: [];
+      };
       classroom_meetings: {
         Row: {
           building_code: string;
@@ -296,6 +330,102 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "classroom_meetings_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: false;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+        ];
+      };
+      classrooms: {
+        Row: {
+          address: string | null;
+          building_code: string | null;
+          building_match: string | null;
+          building_name: string;
+          building_official_id: string;
+          building_slug: string | null;
+          characteristics: string[];
+          features: Database["public"]["Enums"]["space_feature"][];
+          fetched_on: string;
+          floor_label: string | null;
+          floor_map_url: string | null;
+          layout_pdf_url: string | null;
+          mclassrooms_id: number;
+          notes: string | null;
+          notes_updated_on: string | null;
+          page_url: string;
+          panorama_url: string | null;
+          photos: Json;
+          room_code: string;
+          room_number: string | null;
+          schedule_url: string | null;
+          scheduling_contact: Json | null;
+          school_or_college: string | null;
+          seats: number | null;
+          support_contact: Json | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          address?: string | null;
+          building_code?: string | null;
+          building_match?: string | null;
+          building_name: string;
+          building_official_id: string;
+          building_slug?: string | null;
+          characteristics?: string[];
+          features?: Database["public"]["Enums"]["space_feature"][];
+          fetched_on: string;
+          floor_label?: string | null;
+          floor_map_url?: string | null;
+          layout_pdf_url?: string | null;
+          mclassrooms_id: number;
+          notes?: string | null;
+          notes_updated_on?: string | null;
+          page_url: string;
+          panorama_url?: string | null;
+          photos?: Json;
+          room_code: string;
+          room_number?: string | null;
+          schedule_url?: string | null;
+          scheduling_contact?: Json | null;
+          school_or_college?: string | null;
+          seats?: number | null;
+          support_contact?: Json | null;
+          updated_at?: string;
+        };
+        Update: {
+          address?: string | null;
+          building_code?: string | null;
+          building_match?: string | null;
+          building_name?: string;
+          building_official_id?: string;
+          building_slug?: string | null;
+          characteristics?: string[];
+          features?: Database["public"]["Enums"]["space_feature"][];
+          fetched_on?: string;
+          floor_label?: string | null;
+          floor_map_url?: string | null;
+          layout_pdf_url?: string | null;
+          mclassrooms_id?: number;
+          notes?: string | null;
+          notes_updated_on?: string | null;
+          page_url?: string;
+          panorama_url?: string | null;
+          photos?: Json;
+          room_code?: string;
+          room_number?: string | null;
+          schedule_url?: string | null;
+          scheduling_contact?: Json | null;
+          school_or_college?: string | null;
+          seats?: number | null;
+          support_contact?: Json | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "classrooms_building_slug_fkey";
             columns: ["building_slug"];
             isOneToOne: false;
             referencedRelation: "buildings";
