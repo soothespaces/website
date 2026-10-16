@@ -616,9 +616,97 @@ for (const saved of googlePlaces) {
     }
   }
 }
+// Hand-copied curves fill in buildings SerpApi returned none for.
+const manualPopularTimes = await readJson("manual-popular-times.json");
+for (const [slug, entry] of Object.entries(manualPopularTimes)) {
+  if (slug.startsWith("_")) continue;
+  if (!buildingSlugs.has(slug)) fail(`Manual popular times for unknown building ${slug}`);
+  if (popularTimes.some((row) => row.building_slug === slug)) continue;
+  for (const [weekday, hours] of Object.entries(entry.weekdays)) {
+    for (const [hour, busyness] of hours) {
+      popularTimes.push({ building_slug: slug, weekday: Number(weekday), hour, busyness, fetched_at: entry.fetched_at });
+    }
+  }
+}
 for (const row of googleHours) {
   if (row.opens !== null && row.opens === row.closes) fail(`Empty interval ${JSON.stringify(row)}`);
 }
+
+// ---------------------------------------------------------------- classrooms
+
+// mguide's room-schedules.json: the Registrar's class meetings per room for
+// the current term, keyed "BUILDINGCODE-ROOM". Codes match buildings.acronym
+// except the ones in overrides.classroomBuildings.
+const roomSchedules = await readJson("raw/mguide-room-schedules.json");
+const buildingsByAcronym = new Map();
+for (const b of buildings) {
+  if (!b.acronym) continue;
+  const key = b.acronym.toUpperCase();
+  buildingsByAcronym.set(key, buildingsByAcronym.has(key) ? null : b.slug);
+}
+for (const slug of Object.values(overrides.classroomBuildings)) {
+  if (slug !== null && !buildingSlugs.has(slug)) fail(`Unknown classroom building ${slug}`);
+}
+const classroomBuilding = (code, room) => {
+  for (const key of [`${code}-${room[0]}`, code]) {
+    if (key in overrides.classroomBuildings) return overrides.classroomBuildings[key];
+  }
+  return buildingsByAcronym.get(code.toUpperCase()) ?? null;
+};
+const WEEKDAY = { SU: 0, M: 1, T: 2, W: 3, TH: 4, F: 5, S: 6 };
+const classDays = (days) => {
+  const tokens = days.match(/TH|SU|M|T|W|F|S/g) ?? [];
+  if (tokens.join("") !== days) fail(`Unknown class days ${days}`);
+  return [...new Set(tokens.map((t) => WEEKDAY[t]))].sort((a, b) => a - b);
+};
+const classClock = (text) => {
+  const match = text.match(/^(\d{1,2}):(\d{2}) (AM|PM)$/) ?? fail(`Unknown class time ${text}`);
+  const hour = (Number(match[1]) % 12) + (match[3] === "PM" ? 12 : 0);
+  return `${String(hour).padStart(2, "0")}:${match[2]}`;
+};
+const classroomMeetings = [];
+let skippedMeetings = 0;
+for (const [roomCode, meetings] of Object.entries(roomSchedules)) {
+  const dash = roomCode.indexOf("-");
+  if (dash < 1) fail(`Unexpected room code ${roomCode}`);
+  const buildingCode = roomCode.slice(0, dash);
+  const roomNumber = roomCode.slice(dash + 1);
+  const buildingSlug = classroomBuilding(buildingCode, roomNumber);
+  for (const m of meetings) {
+    // A few placeholder sections start and end at the same minute; skip them.
+    if (classClock(m.end) <= classClock(m.start)) {
+      skippedMeetings += 1;
+      continue;
+    }
+    classroomMeetings.push({
+      room_code: roomCode,
+      building_code: buildingCode,
+      room_number: roomNumber,
+      building_slug: buildingSlug,
+      course: clean(m.course),
+      section: clean(m.section),
+      title: clean(m.title),
+      cross_listed: (m.crossListed ?? []).map(clean).filter(Boolean),
+      weekdays: classDays(m.days),
+      starts: classClock(m.start),
+      ends: classClock(m.end),
+      first_day: m.startDate,
+      last_day: m.endDate,
+    });
+  }
+}
+classroomMeetings.sort(
+  (a, b) =>
+    a.room_code.localeCompare(b.room_code) ||
+    a.weekdays[0] - b.weekdays[0] ||
+    a.starts.localeCompare(b.starts) ||
+    a.course.localeCompare(b.course) ||
+    a.section.localeCompare(b.section),
+);
+const classroomRooms = new Set(classroomMeetings.map((m) => m.room_code)).size;
+const linkedClassroomRooms = new Set(
+  classroomMeetings.filter((m) => m.building_slug).map((m) => m.room_code),
+).size;
 
 // ---------------------------------------------------------------- SQL
 
@@ -723,6 +811,25 @@ const googleSql = [
     : []),
 ].join("\n");
 
+// Class meetings change every term, so mguide's rows are replaced wholesale.
+const CLASSROOM_COLUMNS = [
+  "room_code", "building_code", "room_number", "building_slug", "course", "section",
+  "title", "cross_listed", "weekdays", "starts", "ends", "first_day", "last_day",
+];
+const textArray = (list) =>
+  `${sql(`{${list.map((t) => `"${t.replace(/["\\]/g, "\\$&")}"`).join(",")}}`)}::text[]`;
+const classroomValue = (row, c) => {
+  if (c === "cross_listed") return textArray(row.cross_listed);
+  if (c === "weekdays") return `'{${row.weekdays.join(",")}}'::smallint[]`;
+  return sql(row[c]);
+};
+const classroomSql = [
+  "delete from public.classroom_meetings where source = 'mguide';",
+  `insert into public.classroom_meetings (${CLASSROOM_COLUMNS.join(", ")})`,
+  "values",
+  classroomMeetings.map((r) => `  (${CLASSROOM_COLUMNS.map((c) => classroomValue(r, c)).join(", ")})`).join(",\n") + ";",
+].join("\n");
+
 const bookableValues = (item) => BOOKABLE_COLUMNS.map((c) => sql(item[c])).join(", ");
 
 const upsert = (table, columns, rows, values, key) =>
@@ -747,6 +854,7 @@ const header = `-- Generated by scripts/seed/build.mjs from scripts/seed/raw/ an
 -- ${bookableItems.length} LibCal bookable items (${listedBookable} listed), ${openingHours.length} Library opening-hours rows,
 -- ${entrances.length} building entrances (${linkedEntrances} linked to a building).
 -- ${googleRows.length} Google places (scripts/serpapi/raw/places/), ${googleHours.length} Google opening-hours rows, ${popularTimes.length} popular-times rows.
+-- ${classroomMeetings.length} class meetings in ${classroomRooms} classrooms (${linkedClassroomRooms} linked to a building, ${skippedMeetings} zero-length meetings skipped).
 -- Idempotent: safe to run again against a database that already has the rows.
 `;
 
@@ -774,6 +882,8 @@ await writeFile(
     "",
     googleSql,
     "",
+    classroomSql,
+    "",
     "commit;",
     "",
   ].join("\n"),
@@ -783,5 +893,6 @@ console.log(
   `Wrote ${OUT}: ${buildings.length} buildings, ${spaces.length} spaces (${listedCount} listed), ` +
     `${bookableItems.length} bookable items (${listedBookable} listed), ${openingHours.length} opening-hours rows, ` +
     `${entrances.length} entrances (${linkedEntrances} linked), ${googleRows.length} Google places ` +
-    `(${googleHours.length} hours rows, ${popularTimes.length} popular-times rows)`,
+    `(${googleHours.length} hours rows, ${popularTimes.length} popular-times rows), ` +
+    `${classroomMeetings.length} class meetings in ${classroomRooms} classrooms (${linkedClassroomRooms} linked)`,
 );

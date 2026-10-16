@@ -1,6 +1,7 @@
 "use client";
 
 import { Marker } from "react-map-gl/maplibre";
+import { Button } from "@/components/ui/button";
 import type { SpaceSpot } from "../use-map-data";
 
 // A pin for each spot with listed study spaces, showing how many there are
@@ -20,8 +21,10 @@ export function SpacePins({
     const count = spot.spaces.length;
     return (
       <Marker key={spot.key} longitude={spot.lng} latitude={spot.lat} anchor="center">
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
+          shape="circle"
           aria-label={count > 1 ? `${spot.name}: ${count} study spaces` : `${spot.spaces[0].name}, ${spot.name}`}
           aria-pressed={selected}
           onClick={(event) => {
@@ -29,7 +32,7 @@ export function SpacePins({
             event.stopPropagation();
             onSelect(spot);
           }}
-          className="group flex size-11 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-ring"
+          className="group hover:bg-transparent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-ring"
         >
           <span
             aria-hidden="true"
@@ -39,7 +42,7 @@ export function SpacePins({
           >
             {count > 1 ? count : null}
           </span>
-        </button>
+        </Button>
       </Marker>
     );
   });

@@ -189,7 +189,7 @@ more — confirmed live by direct fetch (all HTTP 200, no auth):
 | `academic-calendar.json` | — | Term dates. |
 | `blue-lights.geojson` | ~14KB | Campus emergency call-box locations (safety, not accessibility). |
 | `michigan-boundary.geojson`, `michigan-mask.geojson` | — | Campus boundary geometry, for map styling. |
-| `course-index.json`, `room-schedules.json` | — | Course/room scheduling data (registrar). |
+| `course-index.json`, `room-schedules.json` | — | Course/room scheduling data (registrar). `room-schedules.json` is snapshotted and seeded as `public.classroom_meetings` since 2026-10-15; `rooms.json` is snapshotted but not seeded yet. |
 | `gtfs/*.json`, `theride/*.json` | — | Bus transit (routes, stops, shapes, schedules) — two GTFS feeds (campus bus + TheRide). |
 | `stop-amenities.json`, `stop-photos.json` | — | Transit stop detail. |
 
@@ -591,7 +591,8 @@ First full run (2026-10-09, 30 of 250 searches): all 27 buildings matched, withi
 our coordinates. Only **Hatcher, Mason Hall and the Earl V. Moore Building** came back with
 popular times. Shapiro has them on google.com/maps but not through SerpApi, whether looked
 up by search, `place_id` or `data` with coordinates; the raw Google HTML SerpApi archived
-has no busyness data either, so more searches won't fix it. 20 places have hours, all
+has no busyness data either, so more searches won't fix it. Tanner copied Shapiro's curve from Google Maps by hand on 2026-10-13; it lives in
+`scripts/seed/manual-popular-times.json`, which the seed uses for buildings SerpApi has no curve for. 20 places have hours, all
 have accessibility attributes.
 
 ## 12. U-M Library CMS: hours, rooms and study-space pages (found 2026-10-09)
