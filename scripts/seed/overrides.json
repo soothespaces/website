@@ -100,5 +100,17 @@
     "THSL": "alfred-a-taubman-health-sciences-library",
     "TMC": "trotter-multicultural-center-1",
     "WEISER": "weiser-hall"
+  },
+  "_printerBuildings": "MPrint building record numbers that match no building's official_id or buildingRecordNumber, or match the wrong one, mapped to our slug. 1000152 is Tisch Hall's record number, but MPrint files Angell Hall's printers (m-ah-*) under it.",
+  "printerBuildings": {
+    "1000152": "angell-hall",
+    "1000185": "harlan-h-hatcher-graduate-library",
+    "1000191": "michigan-league",
+    "1000204": "henry-frieze-vaughan-school-of-public-health-building",
+    "1000424": "gorguze-family-laboratory",
+    "1005188": "stephen-m-ross-school-of-business-building",
+    "1005347": "school-of-nursing-building-2",
+    "1005614": "wolverine-village",
+    "1005615": "wolverine-village"
   }
 }

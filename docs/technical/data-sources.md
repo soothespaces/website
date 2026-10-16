@@ -172,6 +172,12 @@ key needed to construct MPrint URLs for *some* buildings — but:
   a count, but hasn't been cross-checked against how many MPrint images actually
   exist per building) — needs the same probing approach as tag discovery.
 
+**Printer list (added 2026-10-16).** MPrint also lists every printer it manages: queue
+name, building record number, floor, room, color, tabloid, copier, card reader, price
+and the printer's pixel position on the floor-plan sheet. The API needs a U-M login, so
+Tanner exported it by hand; a trimmed copy is `scripts/seed/mprint-printers.json` and
+it seeds `public.printers` ([Supabase Backend Plan § Printers](supabase-backend.md#printers-added-2026-10-16)).
+
 ## 6. Additional mguide.app static data (confirmed live, not yet pulled in)
 
 Beyond the 4 files in the original upload, `https://mguide.app/data/` serves a lot

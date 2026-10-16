@@ -661,6 +661,93 @@ export type Database = {
           },
         ];
       };
+      printers: {
+        Row: {
+          building_name: string | null;
+          building_record_number: string | null;
+          building_slug: string | null;
+          card_reader: boolean;
+          color: boolean;
+          copier: boolean;
+          display_name: string;
+          floor: number | null;
+          floor_label: string | null;
+          floor_map: string | null;
+          floor_map_x: number | null;
+          floor_map_y: number | null;
+          id: number;
+          mprint_name: string;
+          notes: string | null;
+          poster: boolean;
+          price: number | null;
+          price_unit: string | null;
+          room_number: string | null;
+          source: string;
+          staple: boolean;
+          tabloid: boolean;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          building_name?: string | null;
+          building_record_number?: string | null;
+          building_slug?: string | null;
+          card_reader?: boolean;
+          color?: boolean;
+          copier?: boolean;
+          display_name: string;
+          floor?: number | null;
+          floor_label?: string | null;
+          floor_map?: string | null;
+          floor_map_x?: number | null;
+          floor_map_y?: number | null;
+          id?: never;
+          mprint_name: string;
+          notes?: string | null;
+          poster?: boolean;
+          price?: number | null;
+          price_unit?: string | null;
+          room_number?: string | null;
+          source?: string;
+          staple?: boolean;
+          tabloid?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          building_name?: string | null;
+          building_record_number?: string | null;
+          building_slug?: string | null;
+          card_reader?: boolean;
+          color?: boolean;
+          copier?: boolean;
+          display_name?: string;
+          floor?: number | null;
+          floor_label?: string | null;
+          floor_map?: string | null;
+          floor_map_x?: number | null;
+          floor_map_y?: number | null;
+          id?: never;
+          mprint_name?: string;
+          notes?: string | null;
+          poster?: boolean;
+          price?: number | null;
+          price_unit?: string | null;
+          room_number?: string | null;
+          source?: string;
+          staple?: boolean;
+          tabloid?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "printers_building_slug_fkey";
+            columns: ["building_slug"];
+            isOneToOne: false;
+            referencedRelation: "buildings";
+            referencedColumns: ["slug"];
+          },
+        ];
+      };
       room_zones: {
         Row: {
           bbox: number[];
