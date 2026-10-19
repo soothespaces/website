@@ -4,6 +4,7 @@ import {
   backRoute,
   panelHref,
   parsePanelRoute,
+  planPush,
   pushRoute,
   reconcileStack,
   resetRoute,
@@ -35,8 +36,8 @@ test("panel routes round-trip through the URL and keep unrelated params", () => 
     assert.equal(params.get("people"), "2-3", panelHref("/map", route, new URLSearchParams()));
     const parsed = parsePanelRoute(params);
     assert.equal(samePanelRoute(parsed, route), true, JSON.stringify(route));
-    if (route.kind === "building" && route.name) {
-      assert.equal("name" in parsed, false);
+    if (route.kind === "building" && route.name && parsed.kind === "building") {
+      assert.equal(parsed.name, route.slug ? undefined : route.name);
     }
   }
 });
@@ -87,6 +88,17 @@ test("push then back returns to the building, and a map reset does not", () => {
   assert.deepEqual(reconcileStack(opened, { kind: "space", id: "reading-room" }), [
     { kind: "space", id: "reading-room" },
   ]);
+});
+
+test("pushing a screen already in the stack pops back to it", () => {
+  const building: PanelRoute = { kind: "building", slug: "shapiro", name: "Shapiro Library" };
+  const space: PanelRoute = { kind: "space", id: "reading-room" };
+  const stack = [building, space];
+  assert.deepEqual(pushRoute(stack, building), [building]);
+  assert.deepEqual(planPush(stack, building, 1), { type: "back", steps: 1, stack: [building] });
+  assert.deepEqual(planPush(stack, building, 0), { type: "replace", stack: [building] });
+  assert.deepEqual(planPush(stack, { kind: "hours", slug: "shapiro" }, 1).type, "push");
+  assert.equal(planPush(stack, space, 1).type, "none");
 });
 
 test("filling in a building's record number does not make it a new route", () => {

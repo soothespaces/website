@@ -8,12 +8,11 @@ import {
   normalizePanelStack,
   panelHref,
   parsePanelRoute,
-  pushRoute,
+  planPush,
   reconcileStack,
   resetRoute,
   samePanelRoute,
   samePanelStack,
-  stackForRoute,
   type PanelRoute,
 } from "@/features/side-view/panel-route";
 
@@ -30,15 +29,20 @@ function historyRecord(): Record<string, unknown> {
 }
 
 function historyIndex(state: Record<string, unknown>) {
-  return typeof state[INDEX_KEY] === "number" && state[INDEX_KEY] >= 0 ? state[INDEX_KEY] : 0;
+  const value = state[INDEX_KEY];
+  return typeof value === "number" && value >= 0 ? value : 0;
 }
 
 function writeHistory(mode: "push" | "replace", stack: PanelRoute[]) {
   const state = historyRecord();
+  const index = historyIndex(state);
+  // A fresh object, not a copy of history.state. Next 16.4's patched
+  // pushState skips the router update when the state already has its `__NA`
+  // flag, which would leave useSearchParams on the previous query. Next
+  // copies `__NA` and its tree onto this object itself, and keeps these keys.
   const next = {
-    ...state,
     [STACK_KEY]: stack,
-    [INDEX_KEY]: mode === "push" ? historyIndex(state) + 1 : historyIndex(state),
+    [INDEX_KEY]: mode === "push" ? index + 1 : index,
   };
   const top = stack.at(-1) ?? HOME_ROUTE;
   const href = panelHref(window.location.pathname, top, new URLSearchParams(window.location.search));
@@ -62,23 +66,24 @@ function stackMatching(params: URLSearchParams, stored: unknown, fallback: Panel
   return reconcileStack(fallback, route);
 }
 
-// The panel stack, mirrored to the query string with history.pushState so
-// the browser's Back button pops it. Next patches pushState and updates
-// useSearchParams; see the App Router linking guide.
+// The panel stack. The shell renders without reading the query string; 
+// `PanelQuerySync` (under a small Suspense boundary) adopts the URL and
+// keeps `useSearchParams` current. `pushState` is what the App Router
+// linking guide uses for query updates.
 export function usePanelStack() {
-  const searchParams = useSearchParams();
-  const urlKey = searchParams.toString();
-  const [stack, setStack] = useState<PanelRoute[]>(() => stackForRoute(parsePanelRoute(searchParams)));
-  const [seenUrl, setSeenUrl] = useState(urlKey);
+  const [stack, setStack] = useState<PanelRoute[]>([HOME_ROUTE]);
   const stackRef = useRef(stack);
 
-  // The query changed outside this hook's own push (browser Back, or another
-  // feature editing the URL). Adopt that route before paint.
-  if (urlKey !== seenUrl) {
-    const next = stackMatching(searchParams, historyStack(), stack);
-    setSeenUrl(urlKey);
-    if (!samePanelStack(next, stack)) setStack(next);
-  }
+  const adoptUrl = useCallback((params: URLSearchParams) => {
+    const next = stackMatching(params, historyStack(), stackRef.current);
+    if (!samePanelStack(next, stackRef.current)) {
+      stackRef.current = next;
+      setStack(next);
+    }
+    const top = stackRef.current.at(-1) ?? HOME_ROUTE;
+    if (!samePanelRoute(parsePanelRoute(params), top)) return;
+    writeHistory("replace", stackRef.current);
+  }, []);
 
   const apply = useCallback((next: PanelRoute[], mode: "push" | "replace") => {
     stackRef.current = next;
@@ -88,9 +93,13 @@ export function usePanelStack() {
 
   const push = useCallback(
     (route: PanelRoute) => {
-      const next = pushRoute(stackRef.current, route);
-      if (next === stackRef.current) return false;
-      apply(next, "push");
+      const plan = planPush(stackRef.current, route, historyIndex(historyRecord()));
+      if (plan.type === "none") return false;
+      if (plan.type === "back") {
+        window.history.go(-plan.steps);
+        return true;
+      }
+      apply(plan.stack, plan.type);
       return true;
     },
     [apply],
@@ -109,15 +118,6 @@ export function usePanelStack() {
     apply(backRoute(current), "replace");
   }, [apply]);
 
-  // Attach the seeded stack to the entry a shared link landed on. Parents
-  // such as Building under Hours are not their own history entries yet.
-  useLayoutEffect(() => {
-    const state = historyRecord();
-    const stored = normalizePanelStack(state[STACK_KEY]);
-    if (stored && samePanelStack(stored, stackRef.current)) return;
-    writeHistory("replace", stackRef.current);
-  }, []);
-
   useEffect(() => {
     const onPop = (event: PopStateEvent) => {
       const state = event.state && typeof event.state === "object" ? (event.state as Record<string, unknown>) : {};
@@ -129,10 +129,6 @@ export function usePanelStack() {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  useEffect(() => {
-    stackRef.current = stack;
-  }, [stack]);
-
   return {
     stack,
     route: stack.at(-1) ?? HOME_ROUTE,
@@ -140,5 +136,21 @@ export function usePanelStack() {
     push,
     back,
     reset,
+    adoptUrl,
   };
+}
+
+// Reads the query string. Rendered under Suspense so the dock and the map
+// stay in the prerendered page.
+export function PanelQuerySync({ onParams }: { onParams: (params: URLSearchParams) => void }) {
+  const searchParams = useSearchParams();
+  const urlKey = searchParams.toString();
+  const onParamsRef = useRef(onParams);
+
+  useLayoutEffect(() => {
+    onParamsRef.current = onParams;
+    onParamsRef.current(searchParams);
+  }, [urlKey, onParams, searchParams]);
+
+  return null;
 }

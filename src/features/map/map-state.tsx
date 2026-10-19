@@ -1,12 +1,12 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Suspense, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { type SpaceSearch, useSpaceSearch } from "@/features/spaces";
 import { HOME_ROUTE, stackForRoute, type PanelRoute } from "@/features/side-view/panel-route";
 import type { LayerToggles } from "./layers-panel";
 import { type FloorPlan, useFloorIndex } from "./use-floor-index";
 import { type Entrance, type MapData, useMapData } from "./use-map-data";
-import { usePanelStack } from "./use-panel-stack";
+import { PanelQuerySync, usePanelStack } from "./use-panel-stack";
 
 export type { PanelRoute };
 
@@ -164,7 +164,6 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
     spaces: true,
   });
   const [floorChoice, setFloorChoice] = useState<{ building: string; floor: number | null } | null>(null);
-  const [landed] = useState(() => panel.route);
   const [userMoved, setUserMoved] = useState(false);
 
   const { stack, route } = panel;
@@ -172,11 +171,11 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
   // A shared link should open on its building once the map can aim there.
   // Later navigation sets `camera` itself and this stays unused.
   const initialFly = useMemo<CameraRequest | null>(() => {
-    if (userMoved || landed.kind === "home") return null;
-    const place = mapSelectionFor(stackForRoute(landed), data);
+    if (userMoved || route.kind === "home") return null;
+    const place = mapSelectionFor(stackForRoute(route), data);
     if (!place || !canFly(place, data)) return null;
     return { key: 1, selection: place };
-  }, [userMoved, landed, data]);
+  }, [userMoved, route, data]);
 
   useEffect(() => {
     panelRef.current = panel;
@@ -302,7 +301,16 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
     ],
   );
 
-  return <MapStateContext value={value}>{children}</MapStateContext>;
+  return (
+    <MapStateContext value={value}>
+      {/* Only this child reads the query string, so the dock and the map
+          stay in the prerendered HTML. */}
+      <Suspense fallback={null}>
+        <PanelQuerySync onParams={panel.adoptUrl} />
+      </Suspense>
+      {children}
+    </MapStateContext>
+  );
 }
 
 export function useMapState() {

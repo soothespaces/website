@@ -47,8 +47,8 @@ function PanelFrame({
   canGoBack: boolean;
   density: SpaceListDensity;
   frameClassName: string;
-  // The dock has a fixed height, so the frame fills it. The phone sheet
-  // sizes to its content instead.
+  // The dock, and the phone sheet once it is expanded, have a fixed height
+  // and the frame fills it. A collapsed sheet sizes to its content.
   bounded: boolean;
   scrolls: Map<string, number>;
   onBack: () => void;

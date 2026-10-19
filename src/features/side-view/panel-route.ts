@@ -18,7 +18,7 @@ export const HOME_ROUTE: PanelRoute = { kind: "home" };
 
 // Query keys this stack owns. Anything else (a future `people` param, for
 // example) is left in place when the panel changes.
-const PANEL_PARAMS = ["panel", "b", "rec", "floor", "room", "space", "id"] as const;
+const PANEL_PARAMS = ["panel", "b", "rec", "name", "floor", "room", "space", "id"] as const;
 
 const PANEL_KINDS = [
   "home",
@@ -146,6 +146,9 @@ export function serializePanelRoute(route: PanelRoute, current: URLSearchParams)
       params.set("panel", "building");
       if (route.slug) params.set("b", route.slug);
       if (route.recordNumber) params.set("rec", route.recordNumber);
+      // A listed building's name comes from our data. An FO-only building
+      // has nothing else to show after a reload, so the name rides along.
+      if (!route.slug && route.name) params.set("name", route.name);
       break;
     case "hours":
     case "spaces":
@@ -192,8 +195,14 @@ export function parsePanelRoute(params: URLSearchParams): PanelRoute {
       return HOME_ROUTE;
     case "building": {
       const recordNumber = slugOf(params.get("rec"));
+      const name = slugOf(params.get("name"));
       if (!slug && !recordNumber) return HOME_ROUTE;
-      return { kind: "building", slug, ...(recordNumber ? { recordNumber } : {}) };
+      return {
+        kind: "building",
+        slug,
+        ...(recordNumber ? { recordNumber } : {}),
+        ...(!slug && name ? { name } : {}),
+      };
     }
     case "hours":
     case "spaces":
@@ -252,8 +261,29 @@ export function stackForRoute(route: PanelRoute): PanelRoute[] {
 export function pushRoute(stack: PanelRoute[], route: PanelRoute): PanelRoute[] {
   const base = stack.length > 0 ? stack : [HOME_ROUTE];
   if (route.kind === "home") return [HOME_ROUTE];
-  if (samePanelRoute(base.at(-1), route)) return stack;
+  // Opening a place already in the stack pops back to it. Pushing it again
+  // would mount a second frame with the same key.
+  const existing = base.findLastIndex((entry) => samePanelRoute(entry, route));
+  if (existing === base.length - 1) return stack;
+  if (existing >= 0) return base.slice(0, existing + 1);
   return [...base, route];
+}
+
+// How a push should move history. `historyDepth` is how many panel pushes
+// sit above the page this visit landed on.
+export function planPush(
+  stack: PanelRoute[],
+  route: PanelRoute,
+  historyDepth: number,
+): { type: "none" } | { type: "push" | "replace"; stack: PanelRoute[] } | { type: "back"; steps: number; stack: PanelRoute[] } {
+  const next = pushRoute(stack, route);
+  if (next === stack) return { type: "none" };
+  if (next.length < stack.length) {
+    const steps = stack.length - next.length;
+    if (historyDepth >= steps) return { type: "back", steps, stack: next };
+    return { type: "replace", stack: next };
+  }
+  return { type: "push", stack: next };
 }
 
 export function backRoute(stack: PanelRoute[]): PanelRoute[] {
