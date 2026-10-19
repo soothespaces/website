@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "node --experimental-strip-types --import ./scripts/register-test.mjs --test src/lib/settings/model.test.ts src/lib/geo.test.ts src/lib/data/*.test.ts",
     "env:pull": "npx vercel env pull .env.local --environment=production",
     "db:types": "supabase gen types typescript --project-id doinwugtdzxxrmvcmemm --schema public > src/types/supabase.ts",
     "campus-map:fetch": "node scripts/campus-map/fetch.mjs",

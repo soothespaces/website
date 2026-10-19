@@ -1,0 +1,40 @@
+{
+  "slots": [
+    {
+      "start": "2026-10-21 19:30:00",
+      "end": "2026-10-21 20:00:00",
+      "itemId": 27511,
+      "checksum": "do-not-keep"
+    },
+    {
+      "start": "2026-10-21 20:00:00",
+      "end": "2026-10-21 20:30:00",
+      "itemId": 27511,
+      "checksum": "do-not-keep",
+      "className": "s-lc-eq-checkout"
+    },
+    {
+      "start": "2026-10-21 20:30:00",
+      "end": "2026-10-21 21:00:00",
+      "itemId": 27511,
+      "checksum": "do-not-keep",
+      "className": "s-lc-eq-checkout"
+    },
+    {
+      "start": "2026-10-21 21:00:00",
+      "end": "2026-10-21 21:30:00",
+      "itemId": 27511,
+      "checksum": "do-not-keep"
+    },
+    {
+      "start": "2026-10-21 20:00:00",
+      "end": "2026-10-21 20:30:00",
+      "itemId": 22733,
+      "checksum": "do-not-keep",
+      "className": "s-lc-eq-r-padding"
+    }
+  ],
+  "bookings": [],
+  "isPreCreatedBooking": false,
+  "windowEnd": false
+}
