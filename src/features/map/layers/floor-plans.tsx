@@ -5,6 +5,7 @@ import { Layer, Source, useMap } from "react-map-gl/maplibre";
 import { SLOTS } from "../slots";
 import type { FloorPlan } from "../use-floor-index";
 import type { MapColors } from "../use-map-colors";
+import { FloorStaffLayer } from "./floor-staff";
 
 // Selecting a building zooms the map to it, at least this far in. Floor
 // plans show from here on.
@@ -70,6 +71,7 @@ export function FloorPlanLayers({ plan, colors }: { plan: FloorPlan | null; colo
         paint={{ "fill-color": colors.card, "fill-opacity": 0.92 }}
         beforeId={SLOTS.floorPlans}
       />
+      <FloorStaffLayer colors={colors} minzoom={FLOOR_PLAN_MIN_ZOOM - 1} />
       <Layer
         id={`${id}-room-lines`}
         type="line"
