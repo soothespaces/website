@@ -71,7 +71,12 @@ export function FloorPlanLayers({ plan, colors }: { plan: FloorPlan | null; colo
         paint={{ "fill-color": colors.card, "fill-opacity": 0.92 }}
         beforeId={SLOTS.floorPlans}
       />
-      <FloorStaffLayer colors={colors} minzoom={FLOOR_PLAN_MIN_ZOOM - 1} />
+      <FloorStaffLayer
+        colors={colors}
+        minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
+        building={plan.building}
+        floor={plan.floor}
+      />
       <Layer
         id={`${id}-room-lines`}
         type="line"

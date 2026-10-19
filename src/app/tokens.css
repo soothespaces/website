@@ -77,7 +77,7 @@
   --input: #8a8a8a;
   --ring: #8cc7a1;
   --sound: #8fb4d6;
-  --floor-staff: #6a6a6a;
+  --floor-staff: #5c5c5c;
   --logo-gap: var(--background);
 }
 
@@ -104,7 +104,7 @@
     --input: #8a8a8a;
     --ring: #8cc7a1;
     --sound: #8fb4d6;
-    --floor-staff: #6a6a6a;
+    --floor-staff: #5c5c5c;
   --logo-gap: var(--background);
   }
 }
@@ -185,7 +185,7 @@
   --input: #ffffff;
   --ring: #ffffff;
   --sound: #b8d8f2;
-  --floor-staff: #bdbdbd;
+  --floor-staff: #5c5c5c;
   --logo-gap: var(--background);
 }
 
@@ -211,7 +211,7 @@
     --input: #ffffff;
     --ring: #ffffff;
     --sound: #b8d8f2;
-    --floor-staff: #bdbdbd;
+    --floor-staff: #5c5c5c;
     --logo-gap: var(--background);
   }
 }
@@ -238,7 +238,7 @@
     --input: #ffffff;
     --ring: #ffffff;
     --sound: #b8d8f2;
-    --floor-staff: #bdbdbd;
+    --floor-staff: #5c5c5c;
     --logo-gap: var(--background);
   }
 }
@@ -265,7 +265,7 @@
     --input: #ffffff;
     --ring: #ffffff;
     --sound: #b8d8f2;
-    --floor-staff: #bdbdbd;
+    --floor-staff: #5c5c5c;
     --logo-gap: var(--background);
   }
 }

@@ -1,7 +1,17 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { isStaffRoom, SHAPIRO_FLOOR_2_STAFF_ROOMS, STAFF_ROOM_FILTER } from "./floor-staff-rooms.ts";
+import {
+  isStaffRoom,
+  SHAPIRO_FLOOR_2_STAFF_FILTER,
+  SHAPIRO_FLOOR_2_STAFF_ROOMS,
+  SHAPIRO_STAFF_BUILDING,
+  SHAPIRO_STAFF_FLOOR,
+  STAFF_ROOM_FILTER,
+  staffRoomFilter,
+} from "./floor-staff-rooms.ts";
+
+const SHAPIRO_FLOOR_2 = { building: SHAPIRO_STAFF_BUILDING, floor: SHAPIRO_STAFF_FLOOR };
 
 const STUDY_ROOMS = [
   "2000",
@@ -34,16 +44,25 @@ test("Shapiro floor 2 staff rooms are grey and study rooms are not", () => {
   ) as { features: { properties: Record<string, unknown> }[] };
   const staff = plan.features.flatMap((feature) => {
     const number = feature.properties.roomNumber;
-    return isStaffRoom(feature.properties) && typeof number === "string" ? [number] : [];
+    return isStaffRoom(feature.properties, SHAPIRO_FLOOR_2) && typeof number === "string" ? [number] : [];
   });
   assert.deepEqual(staff.sort(), [...SHAPIRO_FLOOR_2_STAFF_ROOMS].sort());
   for (const number of STUDY_ROOMS) {
-    assert.equal(isStaffRoom({ layer: "room", roomNumber: number }), false, number);
+    assert.equal(isStaffRoom({ layer: "room", roomNumber: number }, SHAPIRO_FLOOR_2), false, number);
   }
-  assert.equal(isStaffRoom({ layer: "room", roomNumber: "2030M" }), false);
-  assert.equal(isStaffRoom({ layer: "room", roomNumber: "2036W" }), false);
-  assert.equal(isStaffRoom({ layer: "room", roomNumber: "2C01" }), false);
-  assert.equal(isStaffRoom({ layer: "room", roomNumber: "2S01" }), false);
+  for (const number of ["2030M", "2036W", "2036", "2005", "2007P", "2170", "2170B", "2C01", "2S01"]) {
+    assert.equal(isStaffRoom({ layer: "room", roomNumber: number }, SHAPIRO_FLOOR_2), false, number);
+  }
+});
+
+test("Shapiro room numbers do not grey other floors", () => {
+  const room = { layer: "room", roomNumber: "2024" };
+  assert.equal(isStaffRoom(room, SHAPIRO_FLOOR_2), true);
+  assert.equal(isStaffRoom(room, { building: SHAPIRO_STAFF_BUILDING, floor: 3 }), false);
+  assert.equal(isStaffRoom(room, { building: "james-and-anne-duderstadt-center", floor: 2 }), false);
+  assert.equal(isStaffRoom(room), false);
+  assert.equal(staffRoomFilter("james-and-anne-duderstadt-center", 2), STAFF_ROOM_FILTER);
+  assert.equal(staffRoomFilter(SHAPIRO_STAFF_BUILDING, 2), SHAPIRO_FLOOR_2_STAFF_FILTER);
 });
 
 test("use and roomName words mark staff, office, storage and mechanical", () => {
@@ -58,8 +77,12 @@ test("use and roomName words mark staff, office, storage and mechanical", () => 
 });
 
 test("the map filter lists the same rooms and uses", () => {
-  const json = JSON.stringify(STAFF_ROOM_FILTER);
-  for (const number of SHAPIRO_FLOOR_2_STAFF_ROOMS) assert.match(json, new RegExp(`"${number}"`));
-  for (const use of ["staff", "office", "storage", "mechanical"]) assert.match(json, new RegExp(`"${use}"`));
-  assert.match(json, /"layer"/);
+  const shapiro = JSON.stringify(SHAPIRO_FLOOR_2_STAFF_FILTER);
+  const other = JSON.stringify(STAFF_ROOM_FILTER);
+  for (const number of SHAPIRO_FLOOR_2_STAFF_ROOMS) assert.match(shapiro, new RegExp(`"${number}"`));
+  for (const number of SHAPIRO_FLOOR_2_STAFF_ROOMS) assert.doesNotMatch(other, new RegExp(`"${number}"`));
+  for (const use of ["staff", "office", "storage", "mechanical"]) {
+    assert.match(shapiro, new RegExp(`"${use}"`));
+    assert.match(other, new RegExp(`"${use}"`));
+  }
 });
