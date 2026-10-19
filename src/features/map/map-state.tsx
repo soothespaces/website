@@ -13,7 +13,13 @@ import {
 } from "react";
 import { useSearchParams } from "next/navigation";
 import { type SpaceSearch, useSpaceSearch } from "@/features/spaces";
-import { hrefWithGroupSize, parseGroupSize, PEOPLE_PARAM, type GroupSize } from "./group-size";
+import {
+  historyStateWithoutNextKeys,
+  hrefWithGroupSize,
+  parseGroupSize,
+  PEOPLE_PARAM,
+  type GroupSize,
+} from "./group-size";
 import type { LayerToggles } from "./layers-panel";
 import { type FloorPlan, useFloorIndex } from "./use-floor-index";
 import { type Entrance, type MapData, useMapData } from "./use-map-data";
@@ -52,8 +58,8 @@ type MapState = {
   // The floor shown for the selected building, or null for none.
   floor: number | null;
   setFloor: (floor: number | null) => void;
-  // "How many people?" null means not chosen; ranking treats that as solo.
-  // Mirrored to ?people= (just-me, 2-3, 4+) so a shared link keeps it.
+  // "How many people?" null means not chosen. Ranking scores a group size
+  // only when one is set. Mirrored to ?people= (just-me, 2-3, 4+).
   groupSize: GroupSize | null;
   setGroupSize: (groupSize: GroupSize | null) => void;
 };
@@ -63,12 +69,22 @@ const MapStateContext = createContext<MapState | null>(null);
 // Tells useSyncExternalStore that ?people= changed. replaceState does not
 // fire popstate, and a Next navigation does not go through setGroupSize.
 const GROUP_SIZE_URL_EVENT = "soothe-group-size";
+const MAP_PATH = "/map";
+
+// The choice in effect for this visit. Browser Back onto a map entry with
+// no ?people= keeps it, because group size is not its own history step.
+// An entry that already carries ?people= wins.
+let retainedGroupSize: GroupSize | null = null;
 
 function subscribeToGroupSizeUrl(onChange: () => void) {
-  window.addEventListener("popstate", onChange);
+  const onPop = () => {
+    adoptGroupSizeFromUrl();
+    onChange();
+  };
+  window.addEventListener("popstate", onPop);
   window.addEventListener(GROUP_SIZE_URL_EVENT, onChange);
   return () => {
-    window.removeEventListener("popstate", onChange);
+    window.removeEventListener("popstate", onPop);
     window.removeEventListener(GROUP_SIZE_URL_EVENT, onChange);
   };
 }
@@ -83,6 +99,29 @@ function serverGroupSize(): GroupSize | null {
 
 function notifyGroupSizeUrl() {
   window.dispatchEvent(new Event(GROUP_SIZE_URL_EVENT));
+}
+
+function writeGroupSizeToUrl(next: GroupSize | null) {
+  const href = hrefWithGroupSize(window.location, next);
+  const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (href === current) return;
+  window.history.replaceState(historyStateWithoutNextKeys(window.history.state), "", href);
+}
+
+// Keep ?people= across Back on the map. Leave other pages alone.
+function adoptGroupSizeFromUrl() {
+  if (window.location.pathname !== MAP_PATH) return;
+  const fromUrl = parseGroupSize(new URLSearchParams(window.location.search).get(PEOPLE_PARAM));
+  if (fromUrl != null) {
+    retainedGroupSize = fromUrl;
+    return;
+  }
+  if (retainedGroupSize == null) return;
+  try {
+    writeGroupSizeToUrl(retainedGroupSize);
+  } catch {
+    // The choice stays in memory for this visit when the URL can't be written.
+  }
 }
 
 const sameSelection = (a: MapSelection | undefined, b: MapSelection) =>
@@ -142,18 +181,17 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
   );
 
   // replaceState updates the address bar before this returns, so a second
-  // choice in the same turn sees the first. Null data lets Next copy its
-  // history state and refresh useSearchParams.
+  // choice in the same turn sees the first. App history keys (the panel
+  // stack) are passed through; Next's own keys are left for its patch to copy.
   const setGroupSize = useCallback((next: GroupSize | null) => {
     if (typeof window === "undefined") return;
-    const href = hrefWithGroupSize(window.location, next);
-    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-    if (href !== current) {
-      try {
-        window.history.replaceState(null, "", href);
-      } catch {
-        return;
-      }
+    const previous = retainedGroupSize;
+    retainedGroupSize = next;
+    try {
+      writeGroupSizeToUrl(next);
+    } catch {
+      retainedGroupSize = previous;
+      return;
     }
     notifyGroupSizeUrl();
   }, []);
@@ -223,6 +261,7 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
 function GroupSizeFromUrl() {
   const searchParams = useSearchParams();
   useEffect(() => {
+    adoptGroupSizeFromUrl();
     notifyGroupSizeUrl();
   }, [searchParams]);
   return null;

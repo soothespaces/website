@@ -1,23 +1,25 @@
-// Home's "How many people?" chips.
-// solo is "Just me", small is "2–3", large is "4+".
-// null means not chosen; ranking treats that as solo.
-export type GroupSize = "solo" | "small" | "large";
+import type { GroupSize } from "@/lib/ranking";
 
+export type { GroupSize };
+
+// Home's "How many people?" chips, stored as the ranking GroupSize.
+// null means not chosen. The query strings stay the chip labels:
+// just-me, 2-3, and 4+ (percent-encoded as people=4%2B).
 export const PEOPLE_PARAM = "people";
 
-const PEOPLE_BY_GROUP_SIZE = {
-  solo: "just-me",
-  small: "2-3",
-  large: "4+",
-} as const;
+const PEOPLE_BY_GROUP_SIZE: Record<GroupSize, string> = {
+  just_me: "just-me",
+  "2_3": "2-3",
+  "4_plus": "4+",
+};
 
-// `4+` is percent-encoded in the query (`people=4%2B`). A hand-copied
-// `?people=4+` is decoded as "4 " because "+" means space.
+// `4+` is percent-encoded in the query. A hand-copied `?people=4+` is
+// decoded as "4 " because "+" means space.
 const GROUP_SIZE_BY_PEOPLE: Record<string, GroupSize> = {
-  "just-me": "solo",
-  "2-3": "small",
-  "4+": "large",
-  "4 ": "large",
+  "just-me": "just_me",
+  "2-3": "2_3",
+  "4+": "4_plus",
+  "4 ": "4_plus",
 };
 
 export function serializeGroupSize(groupSize: GroupSize | null): string | null {
@@ -45,4 +47,17 @@ export function hrefWithGroupSize(
 ): string {
   const search = searchWithGroupSize(location.search, groupSize);
   return `${location.pathname}${search ? `?${search}` : ""}${location.hash}`;
+}
+
+// Next's replaceState keeps only its own keys when the data argument is null,
+// which drops app keys such as the panel stack. Hand those keys back and omit
+// Next's, so its patch copies them on again and still refreshes useSearchParams.
+export function historyStateWithoutNextKeys(state: unknown): Record<string, unknown> {
+  if (!state || typeof state !== "object") return {};
+  const rest: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(state as Record<string, unknown>)) {
+    if (key === "__NA" || key === "__PRIVATE_NEXTJS_INTERNALS_TREE") continue;
+    rest[key] = value;
+  }
+  return rest;
 }
