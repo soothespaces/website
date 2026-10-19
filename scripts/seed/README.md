@@ -36,3 +36,6 @@ that branch. Then run `npm run seed:build` and commit `supabase/seed.sql`.
   idempotent: every row is an upsert on its key (`slug`, or `(instance, libcal_item_id)`
   for bookable items), except the Library's `opening_hours` rows, the campus map's `building_entrances`, mguide's `classroom_meetings`, the MClassrooms tables and MPrint's `printers`,
   which are deleted and reinserted so rows the source dropped go away too.
+- **Hand edits survive:** a space column an admin changed in `/admin/spaces` is listed in
+  that space's `edited_fields`, and the upsert keeps its value instead of the snapshot's.
+  Spaces added there (`manual-` slugs) aren't in the snapshots, so the seed never touches them.

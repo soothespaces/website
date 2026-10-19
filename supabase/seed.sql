@@ -726,21 +726,21 @@ Extended hours are available for medical students and graduate students from den
   ('weiser-hall-commons', 'weiser-hall', 'Weiser Hall — Commons Study Area', null, null, 1, '1st Floor', 'conversational'::public.noise_level, '{outlets,whiteboards}'::public.space_feature[], 45, null, null, 'mguide'::public.space_source, null, null, true),
   ('dana-building-atrium', 'samuel-trask-dana-building', 'Dana Building — Atrium Study Space', null, null, 1, '1st Floor', 'conversational'::public.noise_level, '{outlets}'::public.space_feature[], 30, null, null, 'mguide'::public.space_source, null, null, true)
 on conflict (slug) do update set
-  building_slug = excluded.building_slug,
-  name = excluded.name,
-  summary = excluded.summary,
-  description = excluded.description,
-  floor = excluded.floor,
-  floor_label = excluded.floor_label,
-  noise_level = excluded.noise_level,
-  features = excluded.features,
-  capacity = excluded.capacity,
-  image_url = excluded.image_url,
-  image_alt = excluded.image_alt,
-  source = excluded.source,
-  source_url = excluded.source_url,
-  waitz_id = excluded.waitz_id,
-  is_listed = excluded.is_listed;
+  building_slug = case when 'building_slug' = any(spaces.edited_fields) then spaces.building_slug else excluded.building_slug end,
+  name = case when 'name' = any(spaces.edited_fields) then spaces.name else excluded.name end,
+  summary = case when 'summary' = any(spaces.edited_fields) then spaces.summary else excluded.summary end,
+  description = case when 'description' = any(spaces.edited_fields) then spaces.description else excluded.description end,
+  floor = case when 'floor' = any(spaces.edited_fields) then spaces.floor else excluded.floor end,
+  floor_label = case when 'floor_label' = any(spaces.edited_fields) then spaces.floor_label else excluded.floor_label end,
+  noise_level = case when 'noise_level' = any(spaces.edited_fields) then spaces.noise_level else excluded.noise_level end,
+  features = case when 'features' = any(spaces.edited_fields) then spaces.features else excluded.features end,
+  capacity = case when 'capacity' = any(spaces.edited_fields) then spaces.capacity else excluded.capacity end,
+  image_url = case when 'image_url' = any(spaces.edited_fields) then spaces.image_url else excluded.image_url end,
+  image_alt = case when 'image_alt' = any(spaces.edited_fields) then spaces.image_alt else excluded.image_alt end,
+  source = case when 'source' = any(spaces.edited_fields) then spaces.source else excluded.source end,
+  source_url = case when 'source_url' = any(spaces.edited_fields) then spaces.source_url else excluded.source_url end,
+  waitz_id = case when 'waitz_id' = any(spaces.edited_fields) then spaces.waitz_id else excluded.waitz_id end,
+  is_listed = case when 'is_listed' = any(spaces.edited_fields) then spaces.is_listed else excluded.is_listed end;
 
 -- @section opening_hours
 delete from public.opening_hours where source = 'um_library';

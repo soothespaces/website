@@ -14,6 +14,11 @@ const SECTIONS = [
     description: "Check how each MPrint sheet sits on its building and fix its alignment.",
   },
   {
+    href: "/admin/spaces",
+    title: "Spaces",
+    description: "Set each study space's amenities, brightness and where it is on the floor plan, or add a new one.",
+  },
+  {
     href: "/admin/photos",
     title: "Photos",
     description: "Upload photos and tag them to a building, floor, room or spot on the floor plan.",
