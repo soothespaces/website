@@ -1,10 +1,24 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import {
+  Suspense,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
+import { useSearchParams } from "next/navigation";
 import { type SpaceSearch, useSpaceSearch } from "@/features/spaces";
+import { hrefWithGroupSize, parseGroupSize, PEOPLE_PARAM, type GroupSize } from "./group-size";
 import type { LayerToggles } from "./layers-panel";
 import { type FloorPlan, useFloorIndex } from "./use-floor-index";
 import { type Entrance, type MapData, useMapData } from "./use-map-data";
+
+export type { GroupSize } from "./group-size";
 
 // What the side panel shows. A building can be one of ours (slug), one only
 // FO knows about (recordNumber), or both.
@@ -38,9 +52,38 @@ type MapState = {
   // The floor shown for the selected building, or null for none.
   floor: number | null;
   setFloor: (floor: number | null) => void;
+  // "How many people?" null means not chosen; ranking treats that as solo.
+  // Mirrored to ?people= (just-me, 2-3, 4+) so a shared link keeps it.
+  groupSize: GroupSize | null;
+  setGroupSize: (groupSize: GroupSize | null) => void;
 };
 
 const MapStateContext = createContext<MapState | null>(null);
+
+// Tells useSyncExternalStore that ?people= changed. replaceState does not
+// fire popstate, and a Next navigation does not go through setGroupSize.
+const GROUP_SIZE_URL_EVENT = "soothe-group-size";
+
+function subscribeToGroupSizeUrl(onChange: () => void) {
+  window.addEventListener("popstate", onChange);
+  window.addEventListener(GROUP_SIZE_URL_EVENT, onChange);
+  return () => {
+    window.removeEventListener("popstate", onChange);
+    window.removeEventListener(GROUP_SIZE_URL_EVENT, onChange);
+  };
+}
+
+function groupSizeFromLocation(): GroupSize | null {
+  return parseGroupSize(new URLSearchParams(window.location.search).get(PEOPLE_PARAM));
+}
+
+function serverGroupSize(): GroupSize | null {
+  return null;
+}
+
+function notifyGroupSizeUrl() {
+  window.dispatchEvent(new Event(GROUP_SIZE_URL_EVENT));
+}
 
 const sameSelection = (a: MapSelection | undefined, b: MapSelection) =>
   a?.kind === b.kind &&
@@ -65,6 +108,8 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
     spaces: true,
   });
   const [floorChoice, setFloorChoice] = useState<{ building: string; floor: number | null } | null>(null);
+  // The URL is the stored value, so a reload keeps the choice.
+  const groupSize = useSyncExternalStore(subscribeToGroupSizeUrl, groupSizeFromLocation, serverGroupSize);
 
   const selection = history.at(-1) ?? null;
 
@@ -96,6 +141,23 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
     [buildingSlug],
   );
 
+  // replaceState updates the address bar before this returns, so a second
+  // choice in the same turn sees the first. Null data lets Next copy its
+  // history state and refresh useSearchParams.
+  const setGroupSize = useCallback((next: GroupSize | null) => {
+    if (typeof window === "undefined") return;
+    const href = hrefWithGroupSize(window.location, next);
+    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (href !== current) {
+      try {
+        window.history.replaceState(null, "", href);
+      } catch {
+        return;
+      }
+    }
+    notifyGroupSizeUrl();
+  }, []);
+
   const setQuery = search.setQuery;
   const value = useMemo<MapState>(
     () => ({
@@ -121,11 +183,49 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
       floorPlans,
       floor: floors?.some((f) => f.floor === floor) ? floor : null,
       setFloor,
+      groupSize,
+      setGroupSize,
     }),
-    [data, search, setQuery, selection, history.length, select, back, clear, camera, entrance, layers, floorPlans, floors, floor, setFloor],
+    [
+      data,
+      search,
+      setQuery,
+      selection,
+      history.length,
+      select,
+      back,
+      clear,
+      camera,
+      entrance,
+      layers,
+      floorPlans,
+      floors,
+      floor,
+      setFloor,
+      groupSize,
+      setGroupSize,
+    ],
   );
 
-  return <MapStateContext value={value}>{children}</MapStateContext>;
+  return (
+    <MapStateContext value={value}>
+      {/* useSearchParams suspends during prerender; the map itself stays up. */}
+      <Suspense fallback={null}>
+        <GroupSizeFromUrl />
+      </Suspense>
+      {children}
+    </MapStateContext>
+  );
+}
+
+// Next can change the query without a popstate. Poke the store so groupSize
+// follows useSearchParams when something else edits the URL.
+function GroupSizeFromUrl() {
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    notifyGroupSizeUrl();
+  }, [searchParams]);
+  return null;
 }
 
 export function useMapState() {
