@@ -1,0 +1,110 @@
+# Loads committed data into the production Supabase project, one part at a
+# time, when someone runs it from the Actions tab. Migrations deploy on merge
+# through the Supabase GitHub integration; data doesn't, so each load here is a
+# deliberate, manual step.
+#
+# Seed parts come from supabase/seed.sql via scripts/seed/section.mjs and run
+# in one transaction. "photos" runs scripts/photos/import.mjs.
+#
+# Needs repository secrets:
+#   SUPABASE_DB_URL      Postgres connection string for seed parts. Use the
+#                        Session pooler string (Supabase dashboard > Connect),
+#                        since GitHub runners have no IPv6.
+#   SUPABASE_SECRET_KEY  For photos (Project Settings > API keys).
+# and SUPABASE_URL as a secret or variable, for photos.
+name: Load production data
+
+on:
+  workflow_dispatch:
+    inputs:
+      part:
+        description: What to load
+        required: true
+        type: choice
+        options:
+          - classroom_meetings
+          - mclassrooms
+          - printers
+          - photos
+          - buildings
+          - spaces
+          - opening_hours
+          - bookable_items
+          - building_entrances
+          - google
+          - all
+
+concurrency:
+  group: load-production
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    if: inputs.part != 'photos'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check supabase/seed.sql matches scripts/seed
+        run: |
+          node scripts/seed/build.mjs
+          git diff --exit-code supabase/seed.sql
+
+      - name: Load ${{ inputs.part }}
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+          PART: ${{ inputs.part }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Add the SUPABASE_DB_URL repository secret first."
+            exit 1
+          fi
+          node scripts/seed/section.mjs "$PART" > part.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q -f part.sql
+
+      - name: Row counts
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          psql "$DATABASE_URL" -A -F ' | ' -c "
+            select 'buildings', count(*) from public.buildings
+            union all select 'spaces', count(*) from public.spaces
+            union all select 'opening_hours', count(*) from public.opening_hours
+            union all select 'bookable_items', count(*) from public.bookable_items
+            union all select 'building_entrances', count(*) from public.building_entrances
+            union all select 'google_places', count(*) from public.google_places
+            union all select 'classroom_meetings', count(*) from public.classroom_meetings
+            union all select 'classrooms', count(*) from public.classrooms
+            union all select 'classroom_characteristics', count(*) from public.classroom_characteristics
+            union all select 'printers', count(*) from public.printers
+            union all select 'photos', count(*) from public.photos" | tee -a "$GITHUB_STEP_SUMMARY"
+
+  photos:
+    if: inputs.part == 'photos'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Import photos
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: |
+          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$SUPABASE_SECRET_KEY" ]; then
+            echo "::error::Add the SUPABASE_SECRET_KEY secret and SUPABASE_URL (secret or variable) first."
+            exit 1
+          fi
+          npm run photos:import

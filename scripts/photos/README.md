@@ -51,7 +51,9 @@ npm run photos:import -- --prune           # also delete photos removed from pho
                                            # (never photos uploaded at /admin/photos)
 ```
 
-It needs `NEXT_PUBLIC_SUPABASE_URL` (from `npm run env:pull`) and
+To import into production without a local key, run the **Load production data**
+workflow with `photos` (it needs the `SUPABASE_SECRET_KEY` secret and `SUPABASE_URL` as
+a secret or variable). Locally, it needs `NEXT_PUBLIC_SUPABASE_URL` (from `npm run env:pull`) and
 `SUPABASE_SECRET_KEY` (Supabase dashboard → Project Settings → API keys; it bypasses
 RLS, so keep it in `.env.local` only). Files are named by a hash of the original, so
 re-running is safe and a replaced image gets a fresh URL.
