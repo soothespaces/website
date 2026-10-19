@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { SpaceSummary } from "../../features/spaces/types.ts";
-import { DEFAULT_SETTINGS } from "../settings/model.ts";
+import { DEFAULT_SETTINGS, parseSettings } from "../settings/model.ts";
 import type { Database } from "../../types/supabase.ts";
 import {
   formatMatchesLine,
@@ -318,34 +318,37 @@ describe("catalog spaces and F3.1 preferences", () => {
     );
   });
 
-  it("reads study preferences from settings extras until settings.study exists", () => {
-    assert.deepEqual(
-      studyPreferencesFromSettings(DEFAULT_SETTINGS, {
-        study: {
-          noise: "low_noise",
-          brightness: "moderate",
-          daylight: "lots",
-          setting: "enclosed",
-          niceToHave: ["printer", "accessible", "monitors_or_computers"],
-          when: ["late_night", "mornings"],
-        },
-      }),
-      {
-        noise: ["low_noise"],
-        setting: "enclosed",
+  it("reads study preferences from settings.study", () => {
+    const parsed = parseSettings({
+      study: {
+        noise: "low_noise",
         brightness: "moderate",
-        daylight: "bright_daylight",
-        niceToHave: ["near_printer", "accessible", "external_monitors"],
-        whenYouStudy: ["late_night", "morning"],
+        daylight: "lots",
+        setting: "enclosed",
+        niceToHave: ["printer", "accessible", "monitors_or_computers"],
+        when: ["late_night", "mornings"],
       },
+    });
+    assert.deepEqual(studyPreferencesFromSettings(parsed.settings, parsed.extras), {
+      noise: ["low_noise"],
+      setting: "enclosed",
+      brightness: "moderate",
+      daylight: "bright_daylight",
+      niceToHave: ["near_printer", "accessible", "external_monitors"],
+      whenYouStudy: ["late_night", "morning"],
+    });
+
+    const chosen = parseSettings({ study: { noise: "conversational" } });
+    assert.deepEqual(
+      studyPreferencesFromSettings(chosen.settings, { study: { noise: "quiet" } }),
+      { noise: ["conversational"] },
     );
 
+    const beforeStudy: Record<string, unknown> = { ...DEFAULT_SETTINGS };
+    delete beforeStudy.study;
     assert.deepEqual(
-      studyPreferencesFromSettings(
-        { ...DEFAULT_SETTINGS, study: { noise: "conversational" } },
-        { study: { noise: "quiet" } },
-      ),
-      { noise: ["conversational"] },
+      studyPreferencesFromSettings(beforeStudy, { study: { noise: "quiet" } }),
+      { noise: ["quiet"] },
     );
 
     assert.deepEqual(toStudyPreferences({ noise: "nope", brightness: "blinding" }), {});
