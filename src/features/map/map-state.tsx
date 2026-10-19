@@ -1,13 +1,18 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { type SpaceSearch, useSpaceSearch } from "@/features/spaces";
+import { HOME_ROUTE, stackForRoute, type PanelRoute } from "@/features/side-view/panel-route";
 import type { LayerToggles } from "./layers-panel";
 import { type FloorPlan, useFloorIndex } from "./use-floor-index";
 import { type Entrance, type MapData, useMapData } from "./use-map-data";
+import { usePanelStack } from "./use-panel-stack";
 
-// What the side panel shows. A building can be one of ours (slug), one only
-// FO knows about (recordNumber), or both.
+export type { PanelRoute };
+
+// What the map's camera and outline follow. A building can be one of ours
+// (slug), one only FO knows about (recordNumber), or both. The panel itself
+// shows `route`, which may be a screen inside that building.
 export type MapSelection =
   | { kind: "building"; slug: string | null; recordNumber: string | null; name: string }
   | { kind: "space"; slug: string };
@@ -19,13 +24,19 @@ export type CameraRequest = { key: number; selection: MapSelection };
 type MapState = {
   data: MapData;
   search: SpaceSearch;
-  // The panel's history: the last entry is shown, Back pops it.
+  // The panel stack. The last entry is on screen; Home is the search results.
+  stack: PanelRoute[];
+  route: PanelRoute;
+  // The place the camera and the floor plan follow, or null on Home.
   selection: MapSelection | null;
   canGoBack: boolean;
-  // `replace` starts a new history (a click on the map); otherwise the
-  // selection is pushed, so Back returns to what was shown before.
-  select: (selection: MapSelection, options?: { replace?: boolean; moveCamera?: boolean }) => void;
+  push: (route: PanelRoute) => void;
   back: () => void;
+  // Selecting a building on the map starts a new stack.
+  reset: (route: PanelRoute) => void;
+  // Older callers. `replace` resets; otherwise the place is pushed. From Home
+  // a selection resets, so search results don't grow a Back stack.
+  select: (selection: MapSelection, options?: { replace?: boolean; moveCamera?: boolean }) => void;
   clear: () => void;
   camera: CameraRequest | null;
   // The door whose popup is open. Separate from the panel: it's a detail on
@@ -42,20 +53,108 @@ type MapState = {
 
 const MapStateContext = createContext<MapState | null>(null);
 
-const sameSelection = (a: MapSelection | undefined, b: MapSelection) =>
-  a?.kind === b.kind &&
-  (a.kind === "space"
-    ? a.slug === (b as typeof a).slug
-    : a.slug === (b as typeof a).slug && a.recordNumber === (b as typeof a).recordNumber);
+function routeFromSelection(selection: MapSelection): PanelRoute {
+  if (selection.kind === "space") return { kind: "space", id: selection.slug };
+  return {
+    kind: "building",
+    slug: selection.slug,
+    recordNumber: selection.recordNumber,
+    name: selection.name,
+  };
+}
 
-// The map page's shared state: data, search, selection, layers and floors.
-// The map, the dock and the phone screens all read it, so none of them owns
-// another.
+function placeOf(route: PanelRoute): MapSelection | null {
+  if (route.kind === "space") return { kind: "space", slug: route.id };
+  if (route.kind === "building") {
+    return {
+      kind: "building",
+      slug: route.slug,
+      recordNumber: route.recordNumber ?? null,
+      name: route.name ?? "",
+    };
+  }
+  return null;
+}
+
+// The building a stack is about, including Hours and the other screens that
+// belong to one. Preferences and Your spots keep whatever place is under them.
+function mapSelectionFor(stack: PanelRoute[], data: MapData): MapSelection | null {
+  for (let index = stack.length - 1; index >= 0; index--) {
+    const route = stack[index];
+    if (route.kind === "space") return { kind: "space", slug: route.id };
+    if (route.kind === "building") {
+      const known = route.slug ? data.buildingsBySlug.get(route.slug) : undefined;
+      return {
+        kind: "building",
+        slug: route.slug,
+        recordNumber: route.recordNumber ?? known?.recordNumber ?? null,
+        name: route.name || known?.name || "Building",
+      };
+    }
+    if (
+      route.kind === "hours" ||
+      route.kind === "spaces" ||
+      route.kind === "rooms" ||
+      route.kind === "rooms-map" ||
+      route.kind === "photos"
+    ) {
+      const known = data.buildingsBySlug.get(route.slug);
+      return {
+        kind: "building",
+        slug: route.slug,
+        recordNumber: known?.recordNumber ?? null,
+        name: known?.name ?? route.slug,
+      };
+    }
+  }
+  return null;
+}
+
+function buildingSlugFor(stack: PanelRoute[], data: MapData): string | null {
+  for (let index = stack.length - 1; index >= 0; index--) {
+    const route = stack[index];
+    if (route.kind === "building") return route.slug;
+    if (
+      route.kind === "hours" ||
+      route.kind === "spaces" ||
+      route.kind === "rooms" ||
+      route.kind === "rooms-map" ||
+      route.kind === "photos"
+    ) {
+      return route.slug;
+    }
+    if (route.kind === "space") {
+      return data.spaces.find((space) => space.slug === route.id)?.building?.slug ?? null;
+    }
+  }
+  return null;
+}
+
+// True once there's enough loaded to aim the camera. Firing earlier spends
+// the request and the map never moves.
+function canFly(selection: MapSelection, data: MapData) {
+  if (selection.kind === "space") {
+    if (!data.loaded) return false;
+    const space = data.spaces.find((item) => item.slug === selection.slug);
+    if (!space) return true;
+    return (space.lng ?? space.building?.lng) != null && (space.lat ?? space.building?.lat) != null;
+  }
+  if (selection.recordNumber) return true;
+  if (!selection.slug || !data.loaded) return false;
+  const building = data.buildingsBySlug.get(selection.slug);
+  if (!building) return true;
+  return building.recordNumber != null || (building.lat != null && building.lng != null);
+}
+
+// The map page's shared state: data, search, the panel stack, layers and
+// floors. The map, the dock and the phone screens all read it, so none of
+// them owns another.
 export function MapStateProvider({ children }: { children: ReactNode }) {
   const data = useMapData();
   const search = useSpaceSearch(data.spaces);
   const floorPlans = useFloorIndex();
-  const [history, setHistory] = useState<MapSelection[]>([]);
+  const panel = usePanelStack();
+  const panelRef = useRef(panel);
   const [camera, setCamera] = useState<CameraRequest | null>(null);
   const [entrance, setEntrance] = useState<Entrance | null>(null);
   const [layers, setLayers] = useState<LayerToggles>({
@@ -65,32 +164,79 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
     spaces: true,
   });
   const [floorChoice, setFloorChoice] = useState<{ building: string; floor: number | null } | null>(null);
+  const [landed] = useState(() => panel.route);
+  const [userMoved, setUserMoved] = useState(false);
 
-  const selection = history.at(-1) ?? null;
+  const { stack, route } = panel;
+  const selection = useMemo(() => mapSelectionFor(stack, data), [stack, data]);
+  // A shared link should open on its building once the map can aim there.
+  // Later navigation sets `camera` itself and this stays unused.
+  const initialFly = useMemo<CameraRequest | null>(() => {
+    if (userMoved || landed.kind === "home") return null;
+    const place = mapSelectionFor(stackForRoute(landed), data);
+    if (!place || !canFly(place, data)) return null;
+    return { key: 1, selection: place };
+  }, [userMoved, landed, data]);
 
-  const select = useCallback<MapState["select"]>((next, { replace = false, moveCamera = true } = {}) => {
-    setEntrance(null);
-    setHistory((current) => {
-      if (sameSelection(current.at(-1), next)) return current;
-      return replace ? [next] : [...current, next];
-    });
-    if (moveCamera) setCamera((current) => ({ key: (current?.key ?? 0) + 1, selection: next }));
+  useEffect(() => {
+    panelRef.current = panel;
+  }, [panel]);
+
+  const rememberFloor = useCallback((leaving: PanelRoute) => {
+    if (leaving.kind === "rooms-map") setFloorChoice({ building: leaving.slug, floor: leaving.floor });
   }, []);
-  const back = useCallback(() => setHistory((current) => current.slice(0, -1)), []);
-  const clear = useCallback(() => setHistory([]), []);
 
-  // The selected building's slug, also when a space in it is selected, so
-  // its floor plan stays up while reading about one of its spaces.
-  const buildingSlug =
-    selection?.kind === "building"
-      ? selection.slug
-      : selection?.kind === "space"
-        ? (data.spaces.find((s) => s.slug === selection.slug)?.building?.slug ?? null)
-        : null;
+  const follow = useCallback((next: PanelRoute) => {
+    const place = placeOf(next);
+    if (!place) return;
+    setUserMoved(true);
+    setCamera((current) => ({ key: (current?.key ?? 0) + 1, selection: place }));
+  }, []);
+
+  // `moveCamera` is false for Close and for search, which leave the map where
+  // it is. A place screen recenters, including a second tap on the same one.
+  const commit = useCallback(
+    (next: PanelRoute, mode: "push" | "reset", moveCamera: boolean) => {
+      rememberFloor(panelRef.current.route);
+      setUserMoved(true);
+      setEntrance(null);
+      if (mode === "reset") panelRef.current.reset(next);
+      else panelRef.current.push(next);
+      if (moveCamera) follow(next);
+    },
+    [follow, rememberFloor],
+  );
+  const push = useCallback((next: PanelRoute) => commit(next, "push", true), [commit]);
+  const reset = useCallback((next: PanelRoute) => commit(next, "reset", true), [commit]);
+  const back = useCallback(() => {
+    rememberFloor(panelRef.current.route);
+    panelRef.current.back();
+  }, [rememberFloor]);
+  const clear = useCallback(() => commit(HOME_ROUTE, "reset", false), [commit]);
+
+  // Browser Back doesn't go through `back`. Keep the floor it was showing.
+  useEffect(() => {
+    const onPop = () => rememberFloor(panelRef.current.route);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [rememberFloor]);
+  const select = useCallback<MapState["select"]>(
+    (next, { replace = false, moveCamera = true } = {}) => {
+      const panelRoute = routeFromSelection(next);
+      const mode = replace || panelRef.current.route.kind === "home" ? "reset" : "push";
+      commit(panelRoute, mode, moveCamera);
+    },
+    [commit],
+  );
+
+  const buildingSlug = buildingSlugFor(stack, data);
   const floors = buildingSlug ? floorPlans.get(buildingSlug) : undefined;
-  // The floor someone picked for this building, else its lowest.
-  const floor =
-    floorChoice && floorChoice.building === buildingSlug ? floorChoice.floor : (floors?.[0]?.floor ?? null);
+  const chosenFloor =
+    route.kind === "rooms-map"
+      ? route.floor
+      : floorChoice && floorChoice.building === buildingSlug
+        ? floorChoice.floor
+        : (floors?.[0]?.floor ?? null);
   const setFloor = useCallback(
     (next: number | null) => buildingSlug && setFloorChoice({ building: buildingSlug, floor: next }),
     [buildingSlug],
@@ -105,24 +251,55 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
         // Typing a search goes back to the results.
         setQuery: (query: string) => {
           setQuery(query);
-          setHistory([]);
+          if (panelRef.current.route.kind !== "home") {
+            rememberFloor(panelRef.current.route);
+            setUserMoved(true);
+            setEntrance(null);
+            panelRef.current.reset(HOME_ROUTE);
+          }
         },
       },
+      stack,
+      route,
       selection,
-      canGoBack: history.length > 1,
-      select,
+      canGoBack: panel.canGoBack,
+      push,
       back,
+      reset,
+      select,
       clear,
-      camera,
+      camera: camera ?? initialFly,
       entrance,
       setEntrance,
       layers,
       setLayers,
       floorPlans,
-      floor: floors?.some((f) => f.floor === floor) ? floor : null,
+      floor: floors?.some((plan) => plan.floor === chosenFloor) ? chosenFloor : null,
       setFloor,
     }),
-    [data, search, setQuery, selection, history.length, select, back, clear, camera, entrance, layers, floorPlans, floors, floor, setFloor],
+    [
+      data,
+      search,
+      setQuery,
+      stack,
+      route,
+      selection,
+      panel.canGoBack,
+      push,
+      back,
+      reset,
+      select,
+      clear,
+      camera,
+      initialFly,
+      rememberFloor,
+      entrance,
+      layers,
+      floorPlans,
+      floors,
+      chosenFloor,
+      setFloor,
+    ],
   );
 
   return <MapStateContext value={value}>{children}</MapStateContext>;
@@ -139,7 +316,7 @@ export function useSelectedBuilding() {
   const { selection, data } = useMapState();
   if (selection?.kind === "building") return selection;
   if (selection?.kind === "space") {
-    const building = data.spaces.find((s) => s.slug === selection.slug)?.building;
+    const building = data.spaces.find((space) => space.slug === selection.slug)?.building;
     if (!building) return null;
     const ours = data.buildingsBySlug.get(building.slug);
     return { kind: "building", slug: building.slug, recordNumber: ours?.recordNumber ?? null, name: building.name } as const;

@@ -13,11 +13,11 @@ import { Button } from "@/components/ui/button";
 // height; a swipe down collapses it, then closes it.
 export function MapSheet() {
   const wide = useMediaQuery(WIDE_QUERY);
-  const { selection, clear } = useMapState();
+  const { route, clear } = useMapState();
   const [expanded, setExpanded] = useState(false);
   const { drag, handlers } = useSwipeToDismiss({
     directions: expanded ? ["down"] : ["down", "up"],
-    enabled: !!selection,
+    enabled: route.kind !== "home",
     onSwipe: (direction) => {
       if (direction === "up") setExpanded(true);
       else if (expanded) setExpanded(false);
@@ -25,7 +25,7 @@ export function MapSheet() {
     },
   });
 
-  if (wide || !selection) return null;
+  if (wide || route.kind === "home") return null;
 
   const offset = drag?.direction === "down" ? drag.offset : drag?.direction === "up" ? -drag.offset : 0;
   return (
@@ -47,9 +47,7 @@ export function MapSheet() {
       >
         <span aria-hidden="true" className="h-1 w-10 rounded-full bg-muted-foreground/50" />
       </Button>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-3">
-        <SelectionPanel selection={selection} density="compact" />
-      </div>
+      <SelectionPanel density="compact" frameClassName="px-2 pb-3" bounded={false} />
     </section>
   );
 }
