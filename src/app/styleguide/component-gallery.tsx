@@ -22,6 +22,7 @@ import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from 
 import { Accordion, AccordionItem, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/toast";
 import { Tooltip } from "@/components/ui/tooltip";
+import { SideViewGallery } from "./side-view";
 
 const FLOORS = [
   { value: "1", label: "1st floor" },
@@ -180,6 +181,10 @@ export function ComponentGallery() {
         </div>
         <Separator />
       </Example>
+
+      <div id="side-view">
+        <SideViewGallery />
+      </div>
     </div>
   );
 }
