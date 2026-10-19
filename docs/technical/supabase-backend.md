@@ -163,7 +163,7 @@ create index on public.spaces using gin (features);
   Library North" and "Hatcher Library South" → one Hatcher building.
 - Filters in supabase-js: `.eq('noise_level', 'quiet').contains('features', ['natural_light'])`.
 
-**Hand edits (added 2026-10-16, migration `20261016180000_space_editor.sql`).** Admins
+**Hand edits (added 2026-10-16, migration `20261019030000_space_editor.sql`).** Admins
 edit spaces in `/admin/spaces`:
 
 - `light_level` (`public.light_level`) is the space's typical brightness.
@@ -360,6 +360,50 @@ and `authenticated`, returns one row per classroom as of that moment in Ann Arbo
 `in_class`, `current_course` and `busy_until` while a class meets, otherwise
 `free_until` (the next class today, or null if none is left). An empty classroom isn't
 necessarily open or bookable, so the UI should say "no class scheduled", not "open".
+
+### MClassrooms classrooms (added 2026-10-16)
+
+Migration `20261016022053_classrooms.sql` was applied to production by hand first and
+then committed with the same SQL. **`public.classroom_characteristics`** is
+MClassrooms' filter vocabulary (43 values such as `Whtbrd`, `PowerStud`, `Windows`)
+with its description and a proposed `space_feature`: `exact` (whiteboards, student
+power outlets, computer labs) or `candidate` (windows to `natural_light`, team boards,
+team technology). **`public.classrooms`** has the 394 general-purpose classrooms LSA
+Technology Services lists at mclassrooms.umich.edu, keyed by `mclassrooms_id`: the
+Registrar room code, building (matched by official id, record number, abbreviation or
+by hand, recorded in `building_match`), seats, `characteristics`, `features` (exact
+mappings only), office scheduling and support contacts, notes, and links to the room's
+page, schedule, floor map, layout PDF, 360° panorama and photos. Classrooms are
+reference data for candidate study spaces, not spaces themselves.
+
+The rows come from `scripts/seed/mclassrooms.json`, which Tanner exported from the
+logged-in site on 2026-10-15 (no personal emails; one contact that named a person was
+dropped). The photo and PDF links on it are public. Tanner chose on 2026-10-16 to
+publish it like the other sources: public read, committed to the repo. The seed
+replaces both tables wholesale. The empty staging table the import left on production,
+`private.mclassrooms_import`, is dropped by `20261016175000_drop_mclassrooms_import.sql`.
+
+### Printers (added 2026-10-16)
+
+Migration `20261016180000_printers.sql`. **`public.printers`** has one row per public
+printer from MPrint's printer list, which Tanner exported by hand on 2026-10-16
+(`scripts/seed/mprint-printers.json`, trimmed to the fields the seed reads: no account,
+serial numbers, drivers or live status). Each row has MPrint's queue name
+(`mprint_name`, the key), `display_name`, building record number and name,
+`building_slug`, `floor_label` as MPrint writes it (`Floor 2`, `Ground`, `Basement`),
+`floor` parsed from it, `room_number`, `color`, `tabloid`, `copier` (also copies and
+scans), `poster`, `staple`, `card_reader`, `price` with `price_unit` (`page` or
+`foot`) and MPrint's `notes`. `floor_map` and `floor_map_x`/`floor_map_y` give the
+printer's spot on MPrint's floor-plan sheet, the same sheets `scripts/mprint/` aligns
+to building footprints, so a printer can be placed on an aligned floor.
+
+The seed keeps enabled, public printers and drops MPrint's "Virtual Floor" Follow Me
+queues: 237 printers, all linked to a building. Disabled entries are members of a pooled
+queue, and the pool is listed instead. Record numbers match `buildings.official_id` or
+`extra->>'buildingRecordNumber'`, except the ones in `overrides.json` →
+`printerBuildings`. The seed replaces every `source = 'mprint'` row on each run and
+leaves `manual` rows alone. Public read, no client writes. Live status (offline, out of
+paper) isn't stored: it needs MPrint's API, which is behind U-M login.
 
 ### Building entrances (added 2026-10-09)
 
@@ -837,13 +881,16 @@ supabase/migrations/
   20261016022053_classrooms.sql            WP3      MClassrooms reference tables (applied by hand first)
   20261016170000_own_history_and_favorites.sql  WP2/WP4  my_check_in_history(), favorites
   20261016170100_classroom_meetings.sql    WP3      class meetings, classroom_availability()
-  20261016180000_space_editor.sql          admin    hand edits to spaces, space_locations
+  20261016175000_drop_mclassrooms_import.sql  WP3   drop the import's staging table
+  20261016180000_printers.sql              WP3      public printers from MPrint
+  20261019030000_space_editor.sql          admin    hand edits to spaces, space_locations
 supabase/tests/
   mvp_backend.test.sql                     shared   pgTAP, run by `supabase test db`
   bookable_items.test.sql, photo_placement.test.sql, hours_and_google.test.sql,
   building_entrances.test.sql, classroom_meetings.test.sql,
-  own_history_and_favorites.test.sql, admin_photos.test.sql,
-  space_editor.test.sql                    per-migration checks
+  own_history_and_favorites.test.sql, printers.test.sql, classrooms.test.sql,
+  admin_photos.test.sql, space_editor.test.sql
+                                           per-migration checks
 ```
 
 After each merge, run `npm run db:types` so `src/types/supabase.ts` matches.
