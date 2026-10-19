@@ -60,6 +60,31 @@ export function withoutFavorite(favorites: readonly Favorite[], target: Favorite
  * Rewrites `position` to 0..n-1 in `ids` order. Ids the list doesn't have are
  * skipped. Favorites left out of `ids` keep their relative order after those.
  */
+/**
+ * Writes positions one at a time. If a later write fails, the ones that
+ * succeeded are put back, so the table is not left half reordered.
+ */
+export async function writeFavoritePositions(
+  favorites: readonly Favorite[],
+  previous: readonly Favorite[],
+  update: (id: number, position: number) => Promise<void>,
+): Promise<void> {
+  const applied: Favorite[] = [];
+  try {
+    for (const favorite of favorites) {
+      if (favorite.id < 0) continue;
+      await update(favorite.id, favorite.position);
+      applied.push(favorite);
+    }
+  } catch (error) {
+    for (const favorite of applied) {
+      const prior = previous.find((row) => row.id === favorite.id);
+      if (prior) await update(favorite.id, prior.position);
+    }
+    throw error;
+  }
+}
+
 export function reorderFavorites(favorites: readonly Favorite[], ids: readonly number[]): Favorite[] {
   const byId = new Map(favorites.map((favorite) => [favorite.id, favorite]));
   const listed = ids.flatMap((id) => {
@@ -97,6 +122,9 @@ let snapshot: Snapshot = EMPTY;
 const listeners = new Set<() => void>();
 // Bumped on every local change so a load that started earlier can't overwrite it.
 let generation = 0;
+let requestedUser: string | null | undefined;
+let loadPromise: Promise<void> | null = null;
+const inflightAdds = new Map<number, { cancelled: boolean }>();
 
 function emit(next: Snapshot) {
   snapshot = next;
@@ -135,6 +163,37 @@ function insertRow(target: FavoriteTarget, position: number): {
   return { space_id: null, building_slug: target.buildingSlug, position };
 }
 
+// One read per signed-in user, shared by every heart that mounts the hook.
+function ensureFavorites(userId: string | null) {
+  if (!userId || !getSupabaseEnv()) {
+    if (requestedUser === userId && snapshot.loaded && snapshot.userId === userId) return;
+    generation += 1;
+    requestedUser = userId;
+    loadPromise = null;
+    emit({ userId, favorites: EMPTY_FAVORITES, loaded: true });
+    return;
+  }
+  if (requestedUser === userId && (snapshot.userId === userId && snapshot.loaded || loadPromise)) return;
+  requestedUser = userId;
+  const loadGeneration = generation;
+  const supabase = createClient();
+  loadPromise = readAll<FavoriteRecord>((from, to) =>
+    supabase.from("favorites").select(FAVORITE_SELECT).order("position").order("id").range(from, to),
+  )
+    .then((rows) => {
+      if (loadGeneration !== generation || requestedUser !== userId) return;
+      emit({ userId, favorites: rows.map(toFavorite), loaded: true });
+    })
+    .catch((error: unknown) => {
+      console.error("Favorites failed to load", error);
+      if (loadGeneration !== generation || requestedUser !== userId) return;
+      emit({ userId, favorites: EMPTY_FAVORITES, loaded: true });
+    })
+    .finally(() => {
+      if (requestedUser === userId) loadPromise = null;
+    });
+}
+
 /**
  * One module-level list, so a heart on the building panel and Your spots
  * stay in sync. Signed out: an empty list, and add reports needs-sign-in.
@@ -147,25 +206,7 @@ export function useFavorites(): FavoritesApi {
 
   useEffect(() => {
     if (loading) return;
-    if (!userId || !getSupabaseEnv()) {
-      generation += 1;
-      emit({ userId, favorites: [], loaded: true });
-      return;
-    }
-    const loadGeneration = generation;
-    const supabase = createClient();
-    readAll<FavoriteRecord>((from, to) =>
-      supabase.from("favorites").select(FAVORITE_SELECT).order("position").order("id").range(from, to),
-    )
-      .then((rows) => {
-        if (loadGeneration !== generation) return;
-        emit({ userId, favorites: rows.map(toFavorite), loaded: true });
-      })
-      .catch((error: unknown) => {
-        console.error("Favorites failed to load", error);
-        if (loadGeneration !== generation) return;
-        emit({ userId, favorites: [], loaded: true });
-      });
+    ensureFavorites(userId);
   }, [loading, userId]);
 
   const fail = useCallback(
@@ -186,12 +227,21 @@ export function useFavorites(): FavoritesApi {
         favorite: { id: tempId, spaceId: target.kind === "space" ? target.spaceId : null, buildingSlug: target.kind === "building" ? target.buildingSlug : null, createdAt: new Date().toISOString() },
       });
       const position = next.find((favorite) => favorite.id === tempId)?.position ?? nextPosition(snapshot.favorites);
+      const inflight = { cancelled: false };
+      inflightAdds.set(tempId, inflight);
       generation += 1;
       emit({ userId, favorites: next, loaded: true });
       try {
         const supabase = createClient();
         const { data, error } = await supabase.from("favorites").insert(insertRow(target, position)).select(FAVORITE_SELECT).single();
         if (error) throw error;
+        inflightAdds.delete(tempId);
+        if (inflight.cancelled) {
+          const { error: deleteError } = await supabase.from("favorites").delete().eq("id", data.id);
+          if (deleteError) throw deleteError;
+          emit({ ...snapshot, favorites: snapshot.favorites.filter((favorite) => favorite.id !== tempId && favorite.id !== data.id) });
+          return { ok: true };
+        }
         emit({
           ...snapshot,
           favorites: snapshot.favorites.map((favorite) => (favorite.id === tempId ? toFavorite(data) : favorite)),
@@ -199,7 +249,8 @@ export function useFavorites(): FavoritesApi {
         return { ok: true };
       } catch (error) {
         console.error("Favorite add failed", error);
-        emit({ ...snapshot, favorites: snapshot.favorites.filter((favorite) => favorite.id !== tempId) });
+        inflightAdds.delete(tempId);
+        if (!inflight.cancelled) emit({ ...snapshot, favorites: snapshot.favorites.filter((favorite) => favorite.id !== tempId) });
         return fail("Couldn't save that spot");
       }
     },
@@ -211,6 +262,13 @@ export function useFavorites(): FavoritesApi {
       if (!userId) return { ok: false, error: "needs-sign-in" };
       const current = snapshot.favorites.find((favorite) => sameTarget(favorite, target));
       if (!current) return { ok: true };
+      const inflight = inflightAdds.get(current.id);
+      if (inflight) {
+        inflight.cancelled = true;
+        generation += 1;
+        emit({ userId, favorites: withoutFavorite(snapshot.favorites, target), loaded: true });
+        return { ok: true };
+      }
       const { next } = optimisticFavorites(snapshot.favorites, { type: "remove", target });
       generation += 1;
       emit({ userId, favorites: next, loaded: true });
@@ -239,11 +297,10 @@ export function useFavorites(): FavoritesApi {
       emit({ userId, favorites: next, loaded: true });
       try {
         const supabase = createClient();
-        const results = await Promise.all(
-          next.map((favorite) => supabase.from("favorites").update({ position: favorite.position }).eq("id", favorite.id)),
-        );
-        const failed = results.find((result) => result.error);
-        if (failed?.error) throw failed.error;
+        await writeFavoritePositions(next, previous, async (id, position) => {
+          const { error } = await supabase.from("favorites").update({ position }).eq("id", id);
+          if (error) throw error;
+        });
         return { ok: true };
       } catch (error) {
         console.error("Favorite reorder failed", error);

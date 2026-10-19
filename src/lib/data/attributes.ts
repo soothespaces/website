@@ -18,6 +18,8 @@ export const SOURCE_LABELS = {
   confirmedMguide: "MGuide · confirmed in check-ins",
   floorPlan: "From the floor plan",
   edited: "Edited",
+  added: "Added here",
+  confirmedAdded: "Added here · confirmed in check-ins",
 } as const;
 
 export type AttributeSource = "admin" | "check_ins" | "listing" | "floor_plan";
@@ -105,6 +107,7 @@ function consensus<T extends string>(counts: Partial<Record<T, number>> | undefi
 function listingLabels(source: SpaceSource): { label: string; confirmed: string } | null {
   if (source === "um_library") return { label: SOURCE_LABELS.library, confirmed: SOURCE_LABELS.confirmedLibrary };
   if (source === "mguide") return { label: SOURCE_LABELS.mguide, confirmed: SOURCE_LABELS.confirmedMguide };
+  if (source === "manual") return { label: SOURCE_LABELS.added, confirmed: SOURCE_LABELS.confirmedAdded };
   return null;
 }
 
@@ -137,12 +140,16 @@ function shortSource(resolved: ResolvedValue, source: SpaceSource): string {
   if (resolved.source === "admin") return "edited";
   if (resolved.source === "floor_plan") return "the floor plan";
   if (source === "mguide") return "MGuide";
+  if (source === "manual") return "Added here";
   return "U-M Library";
 }
 
 function lightingLabel(brightness: ResolvedValue | null, daylight: ResolvedValue | null, source: SpaceSource): string | null {
   if (brightness && daylight) {
-    return `Daylight: ${shortSource(daylight, source)} · Brightness: ${shortSource(brightness, source)}`;
+    const day = shortSource(daylight, source);
+    const bright = shortSource(brightness, source);
+    if (day !== bright) return `Daylight: ${day} · Brightness: ${bright}`;
+    return daylight.sourceLabel;
   }
   return brightness?.sourceLabel ?? daylight?.sourceLabel ?? null;
 }
@@ -159,10 +166,9 @@ function seatsLabel(count: number): string {
 export function resolveAttributes(space: AttributeSpace, checkInSummary: CheckInSummary | null): ResolvedAttributes {
   const listing = listingLabels(space.source);
   const handEdited = new Set(space.editedFields);
-  const manual = space.source === "manual";
 
   const noise = resolveChoice({
-    edited: handEdited.has("noise_level") || (manual && space.noiseLevel != null && !handEdited.has("noise_level")),
+    edited: handEdited.has("noise_level"),
     adminValue: space.noiseLevel,
     checkIn: consensus(checkInSummary?.noise),
     listingValue: space.noiseLevel,
@@ -171,7 +177,7 @@ export function resolveAttributes(space: AttributeSpace, checkInSummary: CheckIn
   });
 
   const brightness = resolveChoice({
-    edited: handEdited.has("light_level") || (manual && space.lightLevel != null && !handEdited.has("light_level")),
+    edited: handEdited.has("light_level"),
     adminValue: space.lightLevel,
     checkIn: consensus(checkInSummary?.light),
     listingValue: space.lightLevel,
@@ -179,7 +185,7 @@ export function resolveAttributes(space: AttributeSpace, checkInSummary: CheckIn
     format: (value) => LIGHT_LABELS[value],
   });
 
-  const featuresEdited = handEdited.has("features") || (manual && space.features.length > 0 && !handEdited.has("features"));
+  const featuresEdited = handEdited.has("features");
   const featureSet = new Set(space.features);
   const features = {} as Record<SpaceFeature, ResolvedValue | null>;
   for (const feature of FEATURE_KEYS) {
@@ -213,7 +219,7 @@ export function resolveAttributes(space: AttributeSpace, checkInSummary: CheckIn
     };
   }
 
-  const seatingEdited = handEdited.has("capacity") || (manual && space.capacity != null && !handEdited.has("capacity"));
+  const seatingEdited = handEdited.has("capacity");
   const seating: ResolvedValue | null = seatingEdited
     ? space.capacity == null
       ? null

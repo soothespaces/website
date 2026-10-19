@@ -1,7 +1,8 @@
+import { createClient } from "@supabase/supabase-js";
 import { detroitParts } from "@/lib/detroit";
 import { isLibcalInstance, isUnavailable, loadBookedSlots, type LibcalLocation } from "@/lib/data/libcal";
-import { getSupabaseEnv } from "@/lib/supabase/env";
-import { createClient } from "@/lib/supabase/server";
+import { getSupabaseEnv, requireSupabaseEnv } from "@/lib/supabase/env";
+import type { Database } from "@/types/supabase";
 
 const UNAVAILABLE = { status: "unavailable" } as const;
 
@@ -17,7 +18,12 @@ export async function GET(request: Request) {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(buildingSlug) || !getSupabaseEnv()) return unavailable();
 
   try {
-    const supabase = await createClient();
+    // A cookieless client, so the response can be cached at the CDN. The
+    // in-process map only helps one serverless instance.
+    const { url, publishableKey } = requireSupabaseEnv();
+    const supabase = createClient<Database>(url, publishableKey, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    });
     const { data, error } = await supabase
       .from("bookable_items")
       .select("instance, lid, kind, libcal_item_id")
@@ -37,7 +43,7 @@ export async function GET(request: Request) {
 
     const result = await loadBookedSlots([...locations.values()], detroitParts(new Date()).date);
     if (isUnavailable(result)) return unavailable();
-    return Response.json(result, { headers: { "Cache-Control": "public, max-age=300" } });
+    return Response.json(result, { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60" } });
   } catch (error) {
     console.error("Room availability failed", error);
     return unavailable();

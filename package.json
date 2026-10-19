@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --import ./scripts/register-test.mjs --test src/lib/settings/model.test.ts src/lib/geo.test.ts src/lib/data/*.test.ts",
+    "test": "tsx --test src/lib/ranking/ranking.test.ts src/lib/location/location.test.ts src/lib/settings/model.test.ts src/lib/geo.test.ts src/lib/data/*.test.ts",
     "env:pull": "npx vercel env pull .env.local --environment=production",
     "db:types": "supabase gen types typescript --project-id doinwugtdzxxrmvcmemm --schema public > src/types/supabase.ts",
     "campus-map:fetch": "node scripts/campus-map/fetch.mjs",
@@ -40,6 +40,7 @@
     "eslint-config-next": "16.4.0",
     "supabase": "^2.120.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

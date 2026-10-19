@@ -66,11 +66,11 @@ const cases: { name: string; space: AttributeSpace; summary: CheckInSummary | nu
     label: SOURCE_LABELS.confirmedLibrary,
   },
   {
-    name: "a manual space is not treated as a library listing",
+    name: "a manual listing loses to check-ins and is not an admin edit",
     space: space({ source: "manual", noiseLevel: "quiet", editedFields: [] }),
-    summary: null,
-    noise: "Quiet",
-    label: SOURCE_LABELS.edited,
+    summary: summary({ noise: { loud: 5 } }),
+    noise: "Loud",
+    label: SOURCE_LABELS.checkIns,
   },
 ];
 
@@ -95,6 +95,8 @@ test("lighting can name a different source for daylight and brightness", () => {
   assert.equal(resolved.daylight?.value, "Natural light");
   assert.equal(resolved.daylight?.sourceLabel, SOURCE_LABELS.library);
   assert.equal(resolved.lightingLabel, "Daylight: U-M Library · Brightness: check-ins");
+  const sameSource = resolveAttributes(space({ lightLevel: "dim", features: ["natural_light"] }), null);
+  assert.equal(sameSource.lightingLabel, SOURCE_LABELS.library);
   assert.equal(resolved.outlets?.value, "Outlets");
   assert.equal(resolved.outlets?.sourceLabel, SOURCE_LABELS.confirmedLibrary);
   assert.equal(resolved.features.computers, null);

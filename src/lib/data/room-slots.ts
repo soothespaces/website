@@ -72,11 +72,24 @@ function slotsFor(bookings: readonly SlotBooking[], start: number): SlotState[] 
   });
 }
 
+/** Join half-hour cells that touch, so 8:00–8:30 and 8:30–9:00 are one booking until 9. */
+export function mergeBookings(bookings: readonly SlotBooking[]): SlotBooking[] {
+  const sorted = [...bookings].sort((a, b) => a.start - b.start || a.end - b.end);
+  const merged: SlotBooking[] = [];
+  for (const booking of sorted) {
+    const last = merged.at(-1);
+    if (last && booking.start <= last.end) last.end = Math.max(last.end, booking.end);
+    else merged.push({ start: booking.start, end: booking.end });
+  }
+  return merged;
+}
+
 /** Status at `at` (minutes from midnight). Never says "available". */
 export function statusAt(bookings: readonly SlotBooking[], at: number): string {
-  const covering = bookings.find((booking) => booking.start <= at && booking.end > at);
+  const merged = mergeBookings(bookings);
+  const covering = merged.find((booking) => booking.start <= at && booking.end > at);
   if (covering) return `Booked until ${formatClock(covering.end)}`;
-  const upcoming = bookings.filter((booking) => booking.start > at && booking.start < 1440).sort((a, b) => a.start - b.start)[0];
+  const upcoming = merged.find((booking) => booking.start > at && booking.start < 1440);
   if (upcoming) return `Free until ${formatClock(upcoming.start)}`;
   return "Free for the rest of the day";
 }
@@ -157,7 +170,7 @@ export function buildRoomSlots(input: {
       if (room.roomNumber) bookableByRoom.set(room.roomNumber, { ...slot, bookings: [] });
       continue;
     }
-    const bookings = libcalBookings(bookedByItem.get(room.libcalItemId) ?? [], parts.date);
+    const bookings = mergeBookings(libcalBookings(bookedByItem.get(room.libcalItemId) ?? [], parts.date));
     const slot: RoomSlot & { bookings: SlotBooking[] } = {
       id,
       name: room.name,
@@ -168,7 +181,7 @@ export function buildRoomSlots(input: {
       bookingUrl: room.bookingUrl,
       bookings,
       slots: slotsFor(bookings, start),
-      status: statusAt(bookings, start),
+      status: statusAt(bookings, parts.minutes),
     };
     rooms.push(slot);
     if (room.roomNumber) bookableByRoom.set(room.roomNumber, slot);
@@ -179,10 +192,10 @@ export function buildRoomSlots(input: {
     const existing = bookableByRoom.get(room.roomNumber);
     if (existing) {
       if (existing.slots == null) continue;
-      const merged = [...existing.bookings, ...bookings];
+      const merged = mergeBookings([...existing.bookings, ...bookings]);
       existing.bookings = merged;
       existing.slots = slotsFor(merged, start);
-      existing.status = statusAt(merged, start);
+      existing.status = statusAt(merged, parts.minutes);
       if (existing.floor == null) existing.floor = room.floor;
       if (existing.capacity == null) existing.capacity = room.capacity;
       continue;
@@ -195,7 +208,7 @@ export function buildRoomSlots(input: {
       capacity: room.capacity,
       kind: "classroom",
       slots: slotsFor(bookings, start),
-      status: statusAt(bookings, start),
+      status: statusAt(bookings, parts.minutes),
     });
   }
 

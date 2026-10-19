@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { daysBetween, detroitParts, formatClock, WEEKDAY_NAMES, WEEKDAY_SHORT, weekdayOfDate } from "@/lib/detroit";
+import { addDays, daysBetween, detroitParts, formatClock, WEEKDAY_NAMES, WEEKDAY_SHORT, weekdayOfDate } from "@/lib/detroit";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import { readAll } from "./read-all";
@@ -15,17 +15,19 @@ export type HourInterval = {
   access: HourAccess;
 };
 
-export type DayHours = {
+export type DatedHours = {
+  date: string;
   weekday: number;
   intervals: HourInterval[];
 };
 
 export type OpeningHours = {
-  /** The Detroit date these rows were chosen for, YYYY-MM-DD. */
+  /** The Detroit date these rows were anchored on, YYYY-MM-DD. */
   date: string;
   /** Weekday of `date` (0 = Sunday). */
   weekday: number;
-  days: DayHours[];
+  /** Yesterday through eight days ahead. Each date uses the period that covers it. */
+  byDate: DatedHours[];
 };
 
 export type OpeningHourRow = {
@@ -41,6 +43,8 @@ export type OpeningHourRow = {
 
 export type WeekRow = {
   weekday: number;
+  /** The calendar date this row describes, in the coming week. */
+  date: string;
   day: (typeof WEEKDAY_NAMES)[number];
   /** "8 AM – 2 AM", "Open 24 hours", or "Closed". */
   hours: string;
@@ -84,85 +88,127 @@ function toInterval(row: OpeningHourRow): HourInterval | null {
   return { opens, closes: end, access };
 }
 
-/**
- * Rows valid on `date`. For each weekday, the narrowest period that lists it
- * wins; a tie goes to the later valid_from. A space's rows replace the
- * building's for that weekday.
- */
-export function resolveOpeningHours(rows: readonly OpeningHourRow[], date: string): OpeningHours | null {
-  const covering = rows.filter((row) => row.validFrom <= date && date <= row.validUntil);
-  if (!covering.length) return null;
+/** Intervals for one calendar date. A space's rows replace the building's. The narrowest covering period wins; a tie goes to the later valid_from. */
+export function intervalsOn(rows: readonly OpeningHourRow[], date: string): HourInterval[] {
+  const weekday = weekdayOfDate(date);
+  const covering = rows.filter((row) => row.weekday === weekday && row.validFrom <= date && date <= row.validUntil);
+  const space = covering.filter((row) => row.spaceId);
+  const building = covering.filter((row) => !row.spaceId);
+  const pool = space.length ? space : building;
+  if (!pool.length) return [];
 
-  const days: DayHours[] = [0, 1, 2, 3, 4, 5, 6].map((weekday) => {
-    const space = covering.filter((row) => row.spaceId && row.weekday === weekday);
-    const building = covering.filter((row) => !row.spaceId && row.weekday === weekday);
-    const pool = space.length ? space : building;
-    if (!pool.length) return { weekday, intervals: [] };
-
-    const minSpan = Math.min(...pool.map((row) => daysBetween(row.validFrom, row.validUntil)));
-    const narrow = pool.filter((row) => daysBetween(row.validFrom, row.validUntil) === minSpan);
-    const latest = narrow.map((row) => row.validFrom).sort().at(-1)!;
-    const chosen = narrow.filter((row) => row.validFrom === latest);
-    const intervals = chosen
-      .map(toInterval)
-      .filter((interval): interval is HourInterval => interval != null)
-      .sort((a, b) => a.opens - b.opens);
-    return { weekday, intervals };
-  });
-
-  return { date, weekday: weekdayOfDate(date), days };
+  const minSpan = Math.min(...pool.map((row) => daysBetween(row.validFrom, row.validUntil)));
+  const narrow = pool.filter((row) => daysBetween(row.validFrom, row.validUntil) === minSpan);
+  const latest = narrow.map((row) => row.validFrom).sort().at(-1)!;
+  return narrow
+    .filter((row) => row.validFrom === latest)
+    .map(toInterval)
+    .filter((interval): interval is HourInterval => interval != null)
+    .sort((a, b) => a.opens - b.opens);
 }
 
-function dayIntervals(hours: OpeningHours, weekday: number): HourInterval[] {
-  return hours.days[weekday]?.intervals ?? [];
+/**
+ * Yesterday through eight days ahead, each resolved against its own date.
+ * A holiday that starts on Wednesday does not inherit Tuesday's period.
+ */
+export function resolveOpeningHours(rows: readonly OpeningHourRow[], date: string): OpeningHours | null {
+  const byDate: DatedHours[] = [];
+  for (let offset = -1; offset <= 8; offset++) {
+    const day = addDays(date, offset);
+    byDate.push({ date: day, weekday: weekdayOfDate(day), intervals: intervalsOn(rows, day) });
+  }
+  const anyRow = byDate.some((day) => rows.some((row) => row.validFrom <= day.date && day.date <= row.validUntil));
+  if (!anyRow) return null;
+  return { date, weekday: weekdayOfDate(date), byDate };
 }
 
 type Span = { start: number; end: number };
 
-/** Spans in absolute minutes from `originWeekday` at midnight, across `count` days. */
-function absoluteSpans(hours: OpeningHours, originWeekday: number, count: number): Span[] {
+/** Spans in minutes from the first stored date's midnight. An overnight close extends into the next date. */
+function absoluteSpans(hours: OpeningHours): Span[] {
   const spans: Span[] = [];
-  for (let offset = 0; offset < count; offset++) {
-    const weekday = (originWeekday + offset) % 7;
-    const base = offset * 1440;
-    for (const interval of dayIntervals(hours, weekday)) {
-      spans.push({ start: base + interval.opens, end: base + interval.closes });
-    }
-  }
+  hours.byDate.forEach((day, index) => {
+    const base = index * 1440;
+    for (const interval of day.intervals) spans.push({ start: base + interval.opens, end: base + interval.closes });
+  });
   return spans.sort((a, b) => a.start - b.start);
 }
 
-function isOpenAllDay(hours: OpeningHours, weekday: number): boolean {
-  const intervals = dayIntervals(hours, weekday);
+function isOpenAllDay(intervals: readonly HourInterval[]): boolean {
   return intervals.length === 1 && intervals[0]!.opens === 0 && intervals[0]!.closes === 1440;
 }
 
-function placeNow(hours: OpeningHours, now: Date): { weekday: number; minutes: number; absolute: number; spans: Span[] } {
+function placeNow(hours: OpeningHours, now: Date): { minutes: number; absolute: number; spans: Span[]; today: DatedHours; horizon: number } | null {
   const parts = detroitParts(now);
-  // Start yesterday so an interval that began last evening still covers this morning.
-  const origin = (parts.weekday + 6) % 7;
-  const spans = absoluteSpans(hours, origin, 10);
-  return { weekday: parts.weekday, minutes: parts.minutes, absolute: 1440 + parts.minutes, spans };
+  const today = hours.byDate.find((day) => day.date === parts.date);
+  if (!today) return null;
+  const index = hours.byDate.indexOf(today);
+  return {
+    minutes: parts.minutes,
+    absolute: index * 1440 + parts.minutes,
+    spans: absoluteSpans(hours),
+    today,
+    horizon: hours.byDate.length * 1440,
+  };
 }
 
-function openSpan(placed: ReturnType<typeof placeNow>): Span | null {
+function openSpan(placed: NonNullable<ReturnType<typeof placeNow>>): Span | null {
   return placed.spans.find((span) => placed.absolute >= span.start && placed.absolute < span.end) ?? null;
+}
+
+/** Walk forward across intervals that touch, so 10 PM–midnight plus the next day's open is one stretch. */
+function continuousEnd(placed: NonNullable<ReturnType<typeof placeNow>>, current: Span): number | null {
+  let end = current.end;
+  for (;;) {
+    const touch = placed.spans.find((span) => span.start <= end && span.end > end);
+    if (!touch) break;
+    end = touch.end;
+    if (end >= placed.horizon) return null;
+  }
+  return end;
+}
+
+function describeClose(end: number, originDate: string): { weekday: number; minute: number } {
+  // A close exactly at midnight belongs to the day that is ending, not the next morning.
+  if (end % 1440 === 0) {
+    const date = addDays(originDate, end / 1440 - 1);
+    return { weekday: weekdayOfDate(date), minute: 1440 };
+  }
+  const date = addDays(originDate, Math.floor(end / 1440));
+  return { weekday: weekdayOfDate(date), minute: end % 1440 };
+}
+
+function closeClock(minute: number): string {
+  return minute === 1440 ? "midnight" : formatClock(minute);
 }
 
 export function isOpenNow(hours: OpeningHours | null, now: Date): boolean {
   if (!hours) return false;
-  return openSpan(placeNow(hours, now)) != null;
+  const placed = placeNow(hours, now);
+  if (!placed) return false;
+  return openSpan(placed) != null;
 }
 
 export function openStatus(hours: OpeningHours | null, now: Date): string | null {
   if (!hours) return null;
   const placed = placeNow(hours, now);
+  if (!placed) return null;
   const current = openSpan(placed);
   if (current) {
-    if (isOpenAllDay(hours, placed.weekday) && placed.absolute >= 1440 && placed.absolute < 2880) return "Open 24 hours";
-    return `Open until ${formatClock(current.end)}`;
+    if (isOpenAllDay(placed.today.intervals)) return "Open 24 hours";
+    const end = continuousEnd(placed, current);
+    if (end == null) return "Open 24 hours";
+    const todayIndex = hours.byDate.indexOf(placed.today);
+    const endOfToday = (todayIndex + 1) * 1440;
+    // A close overnight, through 6 AM, is still "Open until 2 AM" rather than the next day's name.
+    if (end <= endOfToday + 6 * 60) {
+      if (end === endOfToday) return "Open until midnight";
+      return `Open until ${formatClock(end)}`;
+    }
+    const close = describeClose(end, hours.byDate[0]!.date);
+    return `Open until ${WEEKDAY_SHORT[close.weekday]} ${closeClock(close.minute)}`;
   }
-  const later = dayIntervals(hours, placed.weekday).find((interval) => interval.opens > placed.minutes);
+  const later = placed.today.intervals.find((interval) => interval.opens > placed.minutes);
   if (later) return `Opens at ${formatClock(later.opens)}`;
   return "Closed today";
 }
@@ -170,37 +216,35 @@ export function openStatus(hours: OpeningHours | null, now: Date): string | null
 /**
  * When the building is open, the end of this continuous open stretch.
  * "Closes Fri 6 PM" for a 24-hour building that finally closes Friday.
+ * A close at midnight is "Closes Fri midnight", not "Closes Sat 12 AM".
  * Null when it is closed now, or open every day we can see.
  */
 export function nextClose(hours: OpeningHours | null, now: Date): string | null {
   if (!hours) return null;
   const placed = placeNow(hours, now);
+  if (!placed) return null;
   const current = openSpan(placed);
   if (!current) return null;
-  const horizon = 9 * 1440;
-  let end = current.end;
-  for (;;) {
-    const touch = placed.spans.find((span) => span.start <= end && span.end > end);
-    if (!touch) break;
-    end = touch.end;
-    if (end >= horizon) return null;
-  }
-  const origin = (placed.weekday + 6) % 7;
-  const dayIndex = Math.floor((end - 1) / 1440);
-  const closeWeekday = (origin + dayIndex) % 7;
-  return `Closes ${WEEKDAY_SHORT[closeWeekday]} ${formatClock(end)}`;
+  const end = continuousEnd(placed, current);
+  if (end == null) return null;
+  const close = describeClose(end, hours.byDate[0]!.date);
+  return `Closes ${WEEKDAY_SHORT[close.weekday]} ${closeClock(close.minute)}`;
 }
 
+function hoursLabel(intervals: readonly HourInterval[]): string {
+  if (isOpenAllDay(intervals)) return "Open 24 hours";
+  if (!intervals.length) return "Closed";
+  return intervals.map((interval) => `${formatClock(interval.opens)} – ${formatClock(interval.closes)}`).join(", ");
+}
+
+/** Sunday through Saturday, each row the date of that weekday in the coming week (today through six days ahead). */
 export function weekRows(hours: OpeningHours | null): WeekRow[] {
   if (!hours) return [];
   return WEEKDAY_NAMES.map((day, weekday) => {
-    const intervals = dayIntervals(hours, weekday);
-    let label = "Closed";
-    if (isOpenAllDay(hours, weekday)) label = "Open 24 hours";
-    else if (intervals.length) {
-      label = intervals.map((interval) => `${formatClock(interval.opens)} – ${formatClock(interval.closes)}`).join(", ");
-    }
-    return { weekday, day, hours: label, today: weekday === hours.weekday };
+    const delta = (weekday - hours.weekday + 7) % 7;
+    const date = addDays(hours.date, delta);
+    const intervals = hours.byDate.find((entry) => entry.date === date)?.intervals ?? [];
+    return { weekday, date, day, hours: hoursLabel(intervals), today: delta === 0 };
   });
 }
 

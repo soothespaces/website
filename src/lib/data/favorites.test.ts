@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { nextPosition, optimisticFavorites, reorderFavorites, type Favorite } from "./favorites.ts";
+import { nextPosition, optimisticFavorites, reorderFavorites, writeFavoritePositions, type Favorite } from "./favorites.ts";
 
 function spot(id: number, position: number, spaceId: string | null = `space-${id}`, buildingSlug: string | null = null): Favorite {
   return { id, position, spaceId, buildingSlug, createdAt: "2026-10-01T00:00:00Z" };
@@ -38,4 +38,18 @@ test("add appends at max + 1 and rollback restores the previous list", () => {
   );
   assert.deepEqual(removed.previous, next);
   assert.deepEqual(optimisticFavorites(favorites, { type: "reorder", ids: [2, 1] }).previous, favorites);
+});
+
+test("a failed reorder writes back the positions that already changed", async () => {
+  const previous = [spot(1, 0), spot(2, 1)];
+  const next = reorderFavorites(previous, [2, 1]);
+  const stored = new Map(previous.map((favorite) => [favorite.id, favorite.position]));
+  await assert.rejects(
+    writeFavoritePositions(next, previous, async (id, position) => {
+      if (id === 1) throw new Error("second write failed");
+      stored.set(id, position);
+    }),
+  );
+  assert.equal(stored.get(1), 0);
+  assert.equal(stored.get(2), 1);
 });
