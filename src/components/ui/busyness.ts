@@ -26,10 +26,20 @@ export function formatHour(hour: number) {
 }
 
 export function busiestSummary(values: readonly number[]) {
-  if (values.length === 0 || values.every((value) => !(value > 0))) return "No typical busyness";
-  let peak = 0;
-  for (let hour = 1; hour < values.length; hour++) {
-    if (values[hour] > values[peak]) peak = hour;
+  let peak = -1;
+  for (let hour = 0; hour < values.length; hour++) {
+    const value = values[hour];
+    if (!(value > 0)) continue;
+    if (peak < 0 || value > values[peak]) peak = hour;
   }
+  if (peak < 0) return "No typical busyness";
   return `Busiest around ${formatHour(peak)}`;
+}
+
+export function busynessChartLabel(values: readonly number[], highlightHour?: number) {
+  const summary = busiestSummary(values);
+  if (highlightHour == null || !Number.isInteger(highlightHour) || highlightHour < 0 || highlightHour >= values.length) {
+    return summary;
+  }
+  return `${summary}. Highlighted hour: ${formatHour(highlightHour)}.`;
 }

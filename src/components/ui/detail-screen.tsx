@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, type KeyboardEvent, type ReactNode } from "react";
+import { ChevronLeftIcon } from "@/components/ui/icons";
 import { PanelBackButton } from "@/components/ui/panel-back-button";
 // Same breakpoint as the map dock, so Escape only goes back on the wide layout.
 import { WIDE_QUERY } from "@/features/map/map-layout-config";
@@ -38,26 +39,26 @@ export function DetailScreen({
     titleRef.current?.focus({ focusVisible: true });
   }, [title]);
 
-  useEffect(() => {
-    if (!wide) return;
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key !== "Escape" || event.defaultPrevented) return;
-      event.preventDefault();
-      onBack();
-    }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [wide, onBack]);
+  function onKeyDown(event: KeyboardEvent<HTMLElement>) {
+    if (!wide || event.key !== "Escape" || event.defaultPrevented) return;
+    event.preventDefault();
+    event.stopPropagation();
+    onBack();
+  }
 
   return (
-    <section aria-labelledby={titleId} className={cx("flex h-full min-h-0 flex-col bg-background", className)}>
+    <section
+      aria-labelledby={titleId}
+      onKeyDown={onKeyDown}
+      className={cx("flex h-full min-h-0 flex-col bg-background", className)}
+    >
       <header className="flex items-center gap-1 px-1">
-        <PanelBackButton label={`Back to ${backTo}`} onClick={onBack} />
+        <PanelBackButton label={`Back to ${backTo}`} onClick={onBack} icon={<ChevronLeftIcon />} />
         <div className="min-w-0 flex-1">
+          {subtitle ? <p className="text-sm text-muted-foreground">{subtitle}</p> : null}
           <h1 id={titleId} ref={titleRef} tabIndex={-1} className="text-lg break-words">
             {title}
           </h1>
-          {subtitle ? <p className="text-sm text-muted-foreground">{subtitle}</p> : null}
         </div>
         {actions ? <div className="flex shrink-0 items-center gap-1">{actions}</div> : null}
       </header>

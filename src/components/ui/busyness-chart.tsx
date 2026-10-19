@@ -1,4 +1,4 @@
-import { busiestSummary, busynessAxisLabel, formatHour } from "./busyness";
+import { busynessAxisLabel, busynessChartLabel, formatHour } from "./busyness";
 
 const CHART_WIDTH = 240;
 const CHART_HEIGHT = 72;
@@ -10,7 +10,7 @@ export function BusynessChart({
   values: readonly number[];
   highlightHour?: number;
 }) {
-  const summary = busiestSummary(values);
+  const summary = busynessChartLabel(values, highlightHour);
   const max = Math.max(1, ...values.map((value) => (Number.isFinite(value) ? value : 0)));
   const count = values.length;
   const gap = count > 1 ? 2 : 0;
@@ -27,19 +27,30 @@ export function BusynessChart({
         {values.map((raw, hour) => {
           const value = Number.isFinite(raw) ? Math.max(0, raw) : 0;
           const height = value <= 0 ? 1 : Math.max(2, (value / max) * (CHART_HEIGHT - 2));
+          const x = hour * (barWidth + gap);
+          const y = CHART_HEIGHT - height;
           const highlighted = hour === highlightHour;
           return (
-            <rect
-              key={hour}
-              x={hour * (barWidth + gap)}
-              y={CHART_HEIGHT - height}
-              width={barWidth}
-              height={height}
-              rx={1}
-              className={
-                highlighted ? "fill-primary" : value <= 0 ? "fill-muted-foreground/25" : "fill-muted-foreground/45"
-              }
-            />
+            <g key={hour}>
+              {highlighted ? (
+                <rect
+                  x={x - 0.75}
+                  y={Math.max(0, y - 3)}
+                  width={barWidth + 1.5}
+                  height={height + 3}
+                  rx={1}
+                  className="fill-foreground"
+                />
+              ) : null}
+              <rect
+                x={x}
+                y={y}
+                width={barWidth}
+                height={height}
+                rx={1}
+                className={highlighted ? "fill-primary" : "fill-muted-foreground"}
+              />
+            </g>
           );
         })}
       </svg>
@@ -47,14 +58,10 @@ export function BusynessChart({
         {values.map((_, hour) => {
           const label = busynessAxisLabel(hour);
           if (!label || count === 0) return null;
-          const atStart = hour === 0;
-          const atEnd = hour >= count - 3;
           return (
             <span
               key={hour}
-              className={`absolute top-0 text-xs whitespace-nowrap text-muted-foreground ${
-                atStart ? "" : atEnd ? "-translate-x-full" : "-translate-x-1/2"
-              }`}
+              className="absolute top-0 -translate-x-1/2 text-xs whitespace-nowrap text-muted-foreground"
               style={{ left: `${((hour + 0.5) / count) * 100}%` }}
             >
               {label}
@@ -67,7 +74,10 @@ export function BusynessChart({
         <tbody>
           {values.map((value, hour) => (
             <tr key={hour}>
-              <th scope="row">{formatHour(hour)}</th>
+              <th scope="row">
+                {formatHour(hour)}
+                {hour === highlightHour ? " (highlighted)" : ""}
+              </th>
               <td>{Number.isFinite(value) ? value : 0}</td>
             </tr>
           ))}

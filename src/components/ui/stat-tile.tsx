@@ -49,11 +49,12 @@ export function StatTile({ label, value, detail, tone, className, href, onClick 
   return <div className={cx(tileClass, className)}>{body}</div>;
 }
 
-// Three tiles across at 400px, two in between, one at 320px.
+// Three across once the row is about 22rem (a 400px panel after its padding),
+// two between that and 20.5rem, and one column on a 320px screen.
 export function StatTileGrid({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className={cx("@container", className)}>
-      <div className="grid grid-cols-1 gap-2 @min-[22rem]:grid-cols-2 @min-[25rem]:grid-cols-3">{children}</div>
+      <div className="grid grid-cols-1 gap-2 @min-[20.5rem]:grid-cols-2 @min-[22rem]:grid-cols-3">{children}</div>
     </div>
   );
 }

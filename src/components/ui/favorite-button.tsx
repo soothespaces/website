@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { HeartFilledIcon, HeartIcon } from "@/components/ui/icons";
@@ -18,6 +19,7 @@ export function FavoriteButton({
   onPressedChange: (pressed: boolean) => void;
   signedIn: boolean;
 }) {
+  const pathname = usePathname();
   const [bounce, setBounce] = useState(false);
   const label = pressed ? `Remove ${name} from your spots` : `Add ${name} to your spots`;
   const heart = pressed ? (
@@ -38,7 +40,7 @@ export function FavoriteButton({
           <div className="flex flex-col items-start gap-3">
             <p className="text-sm">Sign in to save your spots</p>
             <Button asChild size="sm">
-              <Link href={loginHref()}>Sign in</Link>
+              <Link href={loginHref(pathname)}>Sign in</Link>
             </Button>
           </div>
         </PopoverContent>

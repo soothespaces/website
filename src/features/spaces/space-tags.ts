@@ -1,7 +1,7 @@
 import { ENCLOSURE_LABELS, FEATURE_LABELS, LIGHT_LABELS } from "./labels";
 
 // The one-line summary under a space name ("Enclosed · Dim · Computers ·
-// Printer"). Distinct from spaceTags() in labels.ts, which builds the pills.
+// Printer"). labels.ts keeps spaceTags() for the pill list.
 
 const MAX_TAGS = 4;
 
@@ -14,7 +14,7 @@ export type SpaceTagInput = {
   enclosure?: string | null;
 };
 
-export function spaceTags(
+export function spaceTagWords(
   space: SpaceTagInput,
   { printerOnFloor = false }: { printerOnFloor?: boolean } = {},
 ): string[] {

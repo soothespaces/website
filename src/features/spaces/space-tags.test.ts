@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { spaceTags } from "./space-tags.ts";
+import { spaceTagWords } from "./space-tags.ts";
 
 const everyFeature = [
   "natural_light",
@@ -18,7 +18,7 @@ const everyFeature = [
 
 test("orders setting, brightness, then features, and caps at four", () => {
   assert.deepEqual(
-    spaceTags(
+    spaceTagWords(
       {
         enclosure: "enclosed",
         light_level: "dim",
@@ -32,7 +32,7 @@ test("orders setting, brightness, then features, and caps at four", () => {
 
 test("keeps feature order even when the space lists them differently", () => {
   assert.deepEqual(
-    spaceTags({
+    spaceTagWords({
       features: ["whiteboards", "printing", "outlets", "computers"],
     }),
     ["Computers", "Outlets", "Whiteboards", "Printer"],
@@ -40,34 +40,34 @@ test("keeps feature order even when the space lists them differently", () => {
 });
 
 test("adds Printer once when the floor has one and the space does too", () => {
-  assert.deepEqual(spaceTags({ features: [] }, { printerOnFloor: true }), ["Printer"]);
-  assert.deepEqual(spaceTags({ features: ["printing"] }, { printerOnFloor: true }), ["Printer"]);
+  assert.deepEqual(spaceTagWords({ features: [] }, { printerOnFloor: true }), ["Printer"]);
+  assert.deepEqual(spaceTagWords({ features: ["printing"] }, { printerOnFloor: true }), ["Printer"]);
 });
 
 test("includes moderate and bright, and open rooms", () => {
-  assert.deepEqual(spaceTags({ enclosure: "open", light_level: "moderate" }), ["Open", "Moderate"]);
-  assert.deepEqual(spaceTags({ light_level: "bright" }), ["Bright"]);
+  assert.deepEqual(spaceTagWords({ enclosure: "open", light_level: "moderate" }), ["Open", "Moderate"]);
+  assert.deepEqual(spaceTagWords({ light_level: "bright" }), ["Bright"]);
 });
 
 test("skips missing data and anything it does not know", () => {
-  assert.deepEqual(spaceTags({}), []);
-  assert.deepEqual(spaceTags({ light_level: null, features: null, enclosure: null }), []);
+  assert.deepEqual(spaceTagWords({}), []);
+  assert.deepEqual(spaceTagWords({ light_level: null, features: null, enclosure: null }), []);
   assert.deepEqual(
-    spaceTags({
+    spaceTagWords({
       light_level: "Unknown",
       enclosure: "Unknown",
       features: ["Unknown", "natural_light", "bookable"],
     }),
     [],
   );
-  const line = spaceTags({
+  const line = spaceTagWords({
     light_level: "dim",
     enclosure: "nope",
     features: ["computers", "not-a-feature"],
   }).join(" ");
   assert.equal(line.includes("Unknown"), false);
   assert.deepEqual(
-    spaceTags({
+    spaceTagWords({
       light_level: "dim",
       enclosure: "nope",
       features: ["computers", "not-a-feature"],

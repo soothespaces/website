@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { SHAPIRO_TUESDAY_BUSYNESS, busiestSummary, busynessAxisLabel, formatHour } from "./busyness.ts";
+import { SHAPIRO_TUESDAY_BUSYNESS, busiestSummary, busynessAxisLabel, busynessChartLabel, formatHour } from "./busyness.ts";
 
 test("Shapiro on Tuesday is busiest around 4 PM", () => {
   assert.equal(SHAPIRO_TUESDAY_BUSYNESS.length, 24);
@@ -15,6 +15,14 @@ test("breaks a tie by the earlier hour and stays quiet when every hour is empty"
   assert.equal(busiestSummary(values), "Busiest around 2 PM");
   assert.equal(busiestSummary(Array.from({ length: 24 }, () => 0)), "No typical busyness");
   assert.equal(busiestSummary([]), "No typical busyness");
+});
+
+test("ignores a missing first hour when a later hour is the peak", () => {
+  const values = Array.from({ length: 24 }, () => 0);
+  values[0] = Number.NaN;
+  values[15] = 90;
+  assert.equal(busiestSummary(values), "Busiest around 3 PM");
+  assert.equal(busynessChartLabel(values, 20), "Busiest around 3 PM. Highlighted hour: 8 PM.");
 });
 
 test("labels the axis every three hours", () => {

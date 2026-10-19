@@ -13,11 +13,11 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { SlotTimeline } from "@/components/ui/slot-timeline";
 import { SpaceTagLine } from "@/components/ui/space-tag-line";
 import { StatTile, StatTileGrid } from "@/components/ui/stat-tile";
-import { spaceTags } from "@/features/spaces/space-tags";
+import { spaceTagWords } from "@/features/spaces/space-tags";
 
 const EIGHT_PM = 20 * 60;
 const MIXED_SLOTS = ["free", "free", "booked", "booked", "free", "free", "free", "free"] as const;
-const READING_ROOM_TAGS = spaceTags(
+const READING_ROOM_TAGS = spaceTagWords(
   {
     enclosure: "enclosed",
     light_level: "dim",
@@ -89,7 +89,7 @@ function StatExample() {
   return (
     <Example title="Stat tile">
       <p className="text-sm text-muted-foreground">
-        Three across at 400px, two between that and 320px, then one column.
+        Three across from 22rem, two until 20.5rem, then one column.
         {opened ? " Hours opened." : ""}
       </p>
       <div className="w-[25rem] max-w-full">
@@ -97,7 +97,7 @@ function StatExample() {
           <StatTiles onOpenHours={() => setOpened(true)} />
         </StatTileGrid>
       </div>
-      <div className="w-[23rem] max-w-full">
+      <div className="w-[21rem] max-w-full">
         <StatTileGrid>
           <StatTiles onOpenHours={() => setOpened(true)} />
         </StatTileGrid>

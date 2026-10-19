@@ -307,7 +307,9 @@
 /*
  * Noise fills for the badge and, later, floor-plan room fills (L1).
  * Decorative only: the bar count and the word carry the meaning.
- * --noise-bar is the unfilled bar. --slot-free is the grey free block
+ * --noise-bar is the unfilled bar: light on light backgrounds and dark on
+ * dark ones, so it stays far from every fill (including high contrast).
+ * --slot-free is the grey free block
  * on the room timeline (#bfc3c0 on the board). Booked blocks use
  * --destructive plus a hatch, so they are not given another red.
  */
@@ -316,7 +318,7 @@
   --noise-low: #3d6b4f;
   --noise-conversational: #8a5a12;
   --noise-loud: #a33b32;
-  --noise-bar: #c6c6c6;
+  --noise-bar: #e5e5e5;
   --slot-free: #bfc3c0;
 }
 
@@ -325,7 +327,7 @@
   --noise-low: #8cc7a1;
   --noise-conversational: #e0b15a;
   --noise-loud: #f0a090;
-  --noise-bar: #5c5c5c;
+  --noise-bar: #333333;
   --slot-free: #bfc3c0;
 }
 
@@ -335,7 +337,7 @@
     --noise-low: #8cc7a1;
     --noise-conversational: #e0b15a;
     --noise-loud: #f0a090;
-    --noise-bar: #5c5c5c;
+    --noise-bar: #333333;
     --slot-free: #bfc3c0;
   }
 }
@@ -345,7 +347,7 @@
   --noise-low: #1f4a31;
   --noise-conversational: #6b3e00;
   --noise-loud: #8b1e12;
-  --noise-bar: #595959;
+  --noise-bar: #e5e5e5;
   --slot-free: #5c615e;
 }
 
@@ -355,7 +357,7 @@
     --noise-low: #1f4a31;
     --noise-conversational: #6b3e00;
     --noise-loud: #8b1e12;
-    --noise-bar: #595959;
+    --noise-bar: #e5e5e5;
     --slot-free: #5c615e;
   }
 }
@@ -365,7 +367,7 @@
   --noise-low: #a8dcb8;
   --noise-conversational: #f0c878;
   --noise-loud: #ffb0a4;
-  --noise-bar: #cfcfcf;
+  --noise-bar: #333333;
   --slot-free: #d5d8d6;
 }
 
@@ -375,7 +377,7 @@
     --noise-low: #a8dcb8;
     --noise-conversational: #f0c878;
     --noise-loud: #ffb0a4;
-    --noise-bar: #cfcfcf;
+    --noise-bar: #333333;
     --slot-free: #d5d8d6;
   }
 }
@@ -386,7 +388,7 @@
     --noise-low: #a8dcb8;
     --noise-conversational: #f0c878;
     --noise-loud: #ffb0a4;
-    --noise-bar: #cfcfcf;
+    --noise-bar: #333333;
     --slot-free: #d5d8d6;
   }
 }
@@ -397,7 +399,7 @@
     --noise-low: #a8dcb8;
     --noise-conversational: #f0c878;
     --noise-loud: #ffb0a4;
-    --noise-bar: #cfcfcf;
+    --noise-bar: #333333;
     --slot-free: #d5d8d6;
   }
 }

@@ -11,6 +11,8 @@ import { Tooltip } from "@/components/ui/tooltip";
 
 type ChipGroupBase = {
   label: string;
+  /** Hide the label visually. It stays the group's accessible name. */
+  labelHidden?: boolean;
   children: ReactNode;
   className?: string;
 };
@@ -25,7 +27,7 @@ export function ChipGroup(props: ChipGroupProps) {
   const labelId = useId();
   const groupClass = "flex flex-wrap gap-2";
   const label = (
-    <span id={labelId} className="text-sm font-medium">
+    <span id={labelId} className={props.labelHidden ? "sr-only" : "text-sm font-medium"}>
       {props.label}
     </span>
   );
@@ -36,7 +38,9 @@ export function ChipGroup(props: ChipGroupProps) {
         <ToggleGroup.Root
           type="single"
           value={props.value}
-          onValueChange={props.onValueChange}
+          onValueChange={(value) => {
+            if (value) props.onValueChange(value);
+          }}
           aria-labelledby={labelId}
           className={groupClass}
         >

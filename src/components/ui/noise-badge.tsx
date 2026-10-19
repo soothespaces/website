@@ -39,7 +39,11 @@ export function NoiseBadge({ level, size = "md" }: { level: NoiseLevel; size?: "
           {BAR_HEIGHT.map((height, index) => (
             <span
               key={height}
-              className={cx("w-0.5 rounded-sm", height, index < filled ? NOISE_FILL_CLASS[level] : "bg-noise-bar")}
+              className={cx(
+                "w-1 rounded-sm",
+                height,
+                index < filled ? NOISE_FILL_CLASS[level] : "border border-foreground bg-noise-bar",
+              )}
             />
           ))}
         </span>
