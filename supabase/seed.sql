@@ -13,6 +13,7 @@
 
 begin;
 
+-- @section buildings
 insert into public.buildings (slug, name, short_name, acronym, official_id, address, category, campus, lat, lng, footprint, floors, website, ramp_access, elevator_access, extra)
 values
   ('alfred-a-taubman-health-care-ctr', 'Alfred A. Taubman Health Care Ctr', 'Taubman Center', 'Taubman', '1000317', '1500 E. MEDICAL CENTER DR', 'Medical', 'Medical', 42.28371, -83.728, '{"type":"Polygon","coordinates":[[[-83.72806,42.28438],[-83.72781,42.28437],[-83.72776,42.28435],[-83.7277,42.28434],[-83.72763,42.28424],[-83.72761,42.28387],[-83.7278,42.28387],[-83.7278,42.28373],[-83.72789,42.28372],[-83.7279,42.28288],[-83.72789,42.2828],[-83.72798,42.2828],[-83.72797,42.28272],[-83.72823,42.28272],[-83.72853,42.28291],[-83.7285,42.28427],[-83.72805,42.28428],[-83.72806,42.28438]]]}'::jsonb, 4, 'https://uofmhealth.org/our-locations/taubman-health-center', null, null, '{"buildingRecordNumber":"1000317","buildingPhase":"In Service","buildingType":"Clinical Delivery System","ownership":"Owned","classroomCount":1,"history":{"yearBuilt":1986,"architect":"Albert Kahn Associates","style":"Late Modern","namedFor":"A. Alfred Taubman, real estate developer and major U-M donor","notable":"120 outpatient clinics; main entrance to U-M Hospitals complex","uses":"Multi-specialty outpatient clinics"},"children":["adult-neurology","adult-urology","cardiac-surgery","dermatology","elbow-center","faculty-diagnostic-unit","general-medicine","general-obstetrics-and-gynecology-services","general-surgery","neuro-ophthalmology","neurosurgery","otolaryngology","pediatric-dermatology","pediatric-endocrinology","pediatric-gastroenterology","pediatric-genetics","pediatric-neurology","pediatric-neurosurgery","pediatric-otolaryngology","pediatric-psychology","pediatric-pulminology","preoperative-anesthesia-clinic","rheumatology-nephrology-clinic","thoracic-surgery","vascular-surgery","women-s-health-resource-center"]}'::jsonb),
@@ -498,6 +499,7 @@ on conflict (slug) do update set
   elevator_access = excluded.elevator_access,
   extra = excluded.extra;
 
+-- @section spaces
 insert into public.spaces (slug, building_slug, name, summary, description, floor, floor_label, noise_level, features, capacity, image_url, image_alt, source, source_url, waitz_id, is_listed)
 values
   ('art-architecture-and-engineering-library-floor-2-computing-spaces', 'james-and-anne-duderstadt-center', 'Art, Architecture, and Engineering Library Floor 2 Computing Spaces', 'Connect to an external monitor or work with a group at a VizHub in this mixed seating space.', 'When you arrive on floor 2 of the Duderstadt Center via the central stairs, escalator, or elevator, you’re in the Art, Architecture, and Engineering Library.
@@ -740,6 +742,7 @@ on conflict (slug) do update set
   waitz_id = excluded.waitz_id,
   is_listed = excluded.is_listed;
 
+-- @section opening_hours
 delete from public.opening_hours where source = 'um_library';
 insert into public.opening_hours (building_slug, space_id, label, valid_from, valid_until, weekday, opens, closes, access, source, source_url)
 select v.building_slug, s.id, v.label, v.valid_from::date, v.valid_until::date, v.weekday::smallint, v.opens::time, v.closes::time, v.access, v.source, v.source_url
@@ -1445,6 +1448,7 @@ from (values
 ) as v (space_slug, building_slug, label, valid_from, valid_until, weekday, opens, closes, access, source, source_url)
 left join public.spaces s on s.slug = v.space_slug;
 
+-- @section bookable_items
 insert into public.bookable_items (instance, libcal_item_id, lid, kind, title, location_name, grouping, building_slug, floor, room_number, capacity, booking_url, thumbnail_url, is_listed)
 values
   ('umich-cc.libcal.com', 193111, 21968, 'space', '3401 Mason Hall (Capacity 32)', 'SOAS', 'SOAS Free Rooms', 'mason-hall', 3, '3401', 32, 'https://umich-cc.libcal.com/space/193111', null, true),
@@ -1685,6 +1689,7 @@ on conflict (instance, libcal_item_id) do update set
   thumbnail_url = excluded.thumbnail_url,
   is_listed = excluded.is_listed;
 
+-- @section building_entrances
 delete from public.building_entrances where source = 'fo_campus_map';
 insert into public.building_entrances (id, fo_object_id, building_record_number, building_name, building_slug, lat, lng, floor_label, accessible, automatic, keypad, location_description, notes)
 values
@@ -4342,6 +4347,7 @@ values
   ('935a5f69-113f-4019-9968-c656858fee56', 51450, null, null, null, 42.275487, -83.734341, null, false, false, false, null, null),
   ('81966c74-4ff3-4847-b84c-95f39ac73c8d', 51451, null, null, null, 42.275472, -83.734467, null, false, false, false, null, null);
 
+-- @section google
 delete from public.building_popular_times where building_slug is not null;
 delete from public.google_places where building_slug is not null;
 delete from public.opening_hours where source = 'google';
@@ -5031,6 +5037,7 @@ values
   ('harold-t-and-vivian-b-shapiro-library', 6, 22, 0, '2026-10-13T20:19:17.609605Z'),
   ('harold-t-and-vivian-b-shapiro-library', 6, 23, 0, '2026-10-13T20:19:17.609605Z');
 
+-- @section classroom_meetings
 delete from public.classroom_meetings where source = 'mguide';
 insert into public.classroom_meetings (room_code, building_code, room_number, building_slug, course, section, title, cross_listed, weekdays, starts, ends, first_day, last_day)
 values
@@ -14159,6 +14166,7 @@ values
   ('WQ-G027', 'WQ', 'G027', 'west-quadrangle', 'ALA 102', 'DIS 004', 'Student in the Univ', '{}'::text[], '{4}'::smallint[], '15:00', '16:00', '2026-08-31', '2026-12-11'),
   ('WQ-G027', 'WQ', 'G027', 'west-quadrangle', 'ALA 102', 'DIS 008', 'Student in the Univ', '{}'::text[], '{5}'::smallint[], '11:00', '12:00', '2026-08-31', '2026-12-11');
 
+-- @section mclassrooms
 delete from public.classrooms where mclassrooms_id is not null;
 delete from public.classroom_characteristics where value is not null;
 insert into public.classroom_characteristics (value, category, label, page_label, description, glossary_anchor, space_feature, feature_match)
@@ -14603,6 +14611,7 @@ values
   (2196069, 'PHARM2000', 'new-college-of-pharmacy-building', 'official_id', '1005492', 'College Of Pharmacy Building', 'PHARM', '2000', null, '1007 E Huron St', 'College of Pharmacy', 108, '{"ProjDigit","TablesAny","TeamTables"}'::text[], '{}'::public.space_feature[], '{"office":"College Of Pharmacy Facilities","phone":"(734) 547-2365","email":"cop.facilities@umich.edu"}'::jsonb, '{"office":"College of Pharmacy","phone":"(734) 615-0100","email":"LSATechnologyServices@umich.edu"}'::jsonb, null, null, 'https://mclassrooms.umich.edu/rooms/2196069', 'https://csprod.dsc.umich.edu/services/facilitycalendar?facilityid=PHARM2000', null, null, 'https://mclassrooms.umich.edu/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6ODIzOCwicHVyIjoiYmxvYl9pZCJ9fQ==--6375d476269031ca09577eb0300a88d6be131f79/PHARM%202000%20_2026.jpg', '[{"url":"https://mclassrooms.umich.edu/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6ODIzOSwicHVyIjoiYmxvYl9pZCJ9fQ==--3922fe464df7162daea4e272cda8b8359fefc97c/PHARM%202000%20Image%201%202026.jpeg","width":2771,"height":2078},{"url":"https://mclassrooms.umich.edu/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6ODI0MCwicHVyIjoiYmxvYl9pZCJ9fQ==--9b70978ffb8c23b45a2cd7b2b015e0af87e645d5/PHARM%202000%20Image%202%202026.jpeg","width":2790,"height":2092},{"url":"https://mclassrooms.umich.edu/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6ODI0MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1cff19dbdcd1bc8e3aa62e1b8da82f999b93384e/PHARM%202000%20Image%203%202026.jpeg","width":2856,"height":2142},{"url":"https://mclassrooms.umich.edu/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6ODI0MiwicHVyIjoiYmxvYl9pZCJ9fQ==--bbe05a461a9af1be247b16a2b8c9bae7d75c8223/PHARM%202000%20Image%204%202026.jpeg","width":2142,"height":2856}]'::jsonb, '2026-10-15'),
   (2197112, 'AH1170', 'angell-hall', 'manual', '1000152', 'Angell James B Hall And Tisch Hall', 'AH', '1170', null, '435 S State St', 'College of Lit, Science & Arts', 18, '{"BluRayDVD","DocCam","InstrComp","IntrScreen","LectureCap","ProjDigit","SoundPrgrm","TablesAny","TablesMov","Whtbrd"}'::text[], '{whiteboards}'::public.space_feature[], '{"office":"Comprehensive Studies Program","phone":"(734) 764-9128","email":"csp-support@umich.edu"}'::jsonb, '{"office":"College of LSA","phone":"(734) 615-0100","email":"LSATechnologyServices@umich.edu"}'::jsonb, null, null, 'https://mclassrooms.umich.edu/rooms/2197112', 'https://csprod.dsc.umich.edu/services/facilitycalendar?facilityid=AH1170', null, null, 'https://mclassrooms.umich.edu/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NzUzNywicHVyIjoiYmxvYl9pZCJ9fQ==--75b8273702353a38c5bbaf7ab72c486f7aaa3f35/AH%201170%20_Su2025.jpg', '[{"url":"https://mclassrooms.umich.edu/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NzUzOCwicHVyIjoiYmxvYl9pZCJ9fQ==--311335199e078b9c428973318bce300344390dc4/AH%201170%20Image%201%202025.jpg","width":2016,"height":1512},{"url":"https://mclassrooms.umich.edu/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NzUzOSwicHVyIjoiYmxvYl9pZCJ9fQ==--01b9a0fe81caba76e6d76967989e0a26ba2e998e/AH%201170%20Image%202%202025.jpg","width":2016,"height":1512},{"url":"https://mclassrooms.umich.edu/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NzU0MCwicHVyIjoiYmxvYl9pZCJ9fQ==--59578d81d0e1c02a871832c567a142d7d5b79a2f/AH%201170%20Image%203%202025.jpg","width":2016,"height":1512},{"url":"https://mclassrooms.umich.edu/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NzU0MSwicHVyIjoiYmxvYl9pZCJ9fQ==--35f71ba0175afc7703e60efa6179cfb96fb2b404/AH%201170%20Image%204%202025.jpg","width":1512,"height":2016},{"url":"https://mclassrooms.umich.edu/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NzU0MiwicHVyIjoiYmxvYl9pZCJ9fQ==--7c6ac2eb56d2b537ccd0c5856444ae8eb8a91926/AH%201170%20Image%205%202025.jpg","width":1512,"height":2016}]'::jsonb, '2026-10-15');
 
+-- @section printers
 delete from public.printers where source = 'mprint';
 insert into public.printers (mprint_name, display_name, building_record_number, building_name, building_slug, floor_label, floor, room_number, color, tabloid, copier, poster, staple, card_reader, price, price_unit, notes, floor_map, floor_map_x, floor_map_y)
 values
