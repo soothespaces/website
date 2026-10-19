@@ -19,6 +19,15 @@ export type GeoPoint = Coordinates | LatLng;
 
 export type LocationPermissionStatus = "pre_prompt" | "granted" | "denied" | "unsupported";
 
+/** Names `useLocation().permission` exposes. `pre_prompt` is `prompt`; no geolocation is `unknown`. */
+export type HookLocationPermission = "unknown" | "prompt" | "granted" | "denied";
+
+/**
+ * A position counts as inside a building within this many meters of its
+ * coordinates. 60 m covers a typical campus footprint without reaching the next building.
+ */
+export const INSIDE_BUILDING_RADIUS_METERS = 60;
+
 export interface OneShotPositionResult {
   ok: boolean;
   coords?: Coordinates;
@@ -87,6 +96,38 @@ export function distanceToBuildingMeters(
   return Math.round(haversineDistanceMeters(from, to));
 }
 
+/** The building with the shortest finite distance, or null when none can be measured. */
+export function findNearestBuilding<T extends GeoPoint>(
+  userCoords: GeoPoint | null | undefined,
+  buildings: readonly T[],
+): T | null {
+  let nearest: T | null = null;
+  let nearestMeters = Number.POSITIVE_INFINITY;
+  for (const building of buildings) {
+    const meters = distanceToBuildingMeters(userCoords, building);
+    if (meters == null || meters >= nearestMeters) continue;
+    nearest = building;
+    nearestMeters = meters;
+  }
+  return nearest;
+}
+
+export function isInsideBuilding(
+  userCoords: GeoPoint | null | undefined,
+  building: GeoPoint | null | undefined,
+  radiusMeters = INSIDE_BUILDING_RADIUS_METERS,
+): boolean {
+  const meters = distanceToBuildingMeters(userCoords, building);
+  return meters != null && meters <= radiusMeters;
+}
+
+export function toHookPermission(status: LocationPermissionStatus): HookLocationPermission {
+  if (status === "granted") return "granted";
+  if (status === "denied") return "denied";
+  if (status === "unsupported") return "unknown";
+  return "prompt";
+}
+
 /**
  * Returns whether the user has already acknowledged our custom pre-prompt explanation (K1).
  */
@@ -114,9 +155,10 @@ export function markLocationPrePromptAcknowledged(
 }
 
 /**
- * Inspects the current geolocation permission state without triggering the browser prompt.
- * If the browser permission state is "prompt", returns "pre_prompt" so UI (K1, H6) knows
- * to show our explanation before calling requestOneShotPosition().
+ * Inspects geolocation permission without triggering the browser prompt.
+ * "prompt" comes back as "pre_prompt" so the check-in screen can explain
+ * the request first. A missing Permissions API is "unsupported" (`useLocation`
+ * shows that as "unknown").
  */
 export async function getLocationPermissionState(): Promise<LocationPermissionStatus> {
   if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
@@ -130,15 +172,16 @@ export async function getLocationPermissionState(): Promise<LocationPermissionSt
       if (status.state === "denied") return "denied";
       return "pre_prompt";
     } catch {
-      return "pre_prompt";
+      return "unsupported";
     }
   }
 
-  return "pre_prompt";
+  return "unsupported";
 }
 
 /**
  * Requests a single GPS/Wi-Fi position fix from the browser.
+ * One-shot `getCurrentPosition` — never `watchPosition`.
  */
 export function requestOneShotPosition(
   options: PositionOptions = {

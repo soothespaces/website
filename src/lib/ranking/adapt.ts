@@ -3,13 +3,13 @@ import type { Database } from "@/types/supabase";
 import { distanceToBuildingMeters, type GeoPoint } from "../location";
 import type {
   BrightnessLevel,
-  DaylightLevel,
   NiceToHaveAmenity,
   NoiseLevel,
   RankableSpace,
   RankContext,
   SpaceSetting,
   StudyPreferences,
+  WhenYouStudy,
 } from "./index";
 
 type SpaceRow = Database["public"]["Tables"]["spaces"]["Row"];
@@ -29,25 +29,14 @@ export type RankableSpaceOptions = {
   userCoords?: GeoPoint | null;
 };
 
-// Library noise is quiet < low_noise < conversational < loud. Ranking has no
-// step between quiet and moderate, so low_noise stays with quiet. Ranking's
-// own words (silent, quiet, moderate, lively) pass through unchanged.
-const NOISE_FROM_STORED: Record<string, NoiseLevel> = {
-  silent: "silent",
-  quiet: "quiet",
-  low_noise: "quiet",
-  moderate: "moderate",
-  conversational: "moderate",
-  social: "lively",
-  lively: "lively",
-  loud: "lively",
-};
+const NOISE_LEVELS = ["quiet", "low_noise", "conversational", "loud"] as const;
 
-const BRIGHTNESS_FROM_STORED: Record<string, BrightnessLevel> = {
+const BRIGHTNESS_FROM_STORED: Record<string, BrightnessLevel | "any"> = {
   dim: "dim",
-  medium: "medium",
-  moderate: "medium",
+  medium: "moderate",
+  moderate: "moderate",
   bright: "bright",
+  any: "any",
 };
 
 const SETTING_FROM_STORED: Record<string, SpaceSetting | "any"> = {
@@ -56,33 +45,39 @@ const SETTING_FROM_STORED: Record<string, SpaceSetting | "any"> = {
   any: "any",
 };
 
-const DAYLIGHT_FROM_STORED: Record<string, DaylightLevel | "any"> = {
-  windowless: "windowless",
-  some_daylight: "some_daylight",
-  bright_daylight: "bright_daylight",
-  any: "any",
-};
-
-// `space_feature` values, plus ranking amenity keys already in that vocabulary.
+// `space_feature` values and F3.1 nice-to-have names, in ranking vocabulary.
+// Computers and external monitors share "monitors" (F3.1's monitors_or_computers).
 const AMENITY_FROM_STORED: Record<string, NiceToHaveAmenity> = {
   outlets: "outlets",
   whiteboards: "whiteboard",
   whiteboard: "whiteboard",
-  external_monitors: "external_monitors",
-  computers: "caen_computers",
-  caen_computers: "caen_computers",
+  external_monitors: "monitors",
+  monitors: "monitors",
+  monitors_or_computers: "monitors",
+  computers: "monitors",
+  caen_computers: "monitors",
   printing: "near_printer",
+  printer: "near_printer",
   near_printer: "near_printer",
   all_gender_restroom_on_floor: "near_restroom",
+  restroom: "near_restroom",
   near_restroom: "near_restroom",
-  near_water: "near_water",
+  entrance: "near_entrance",
   near_entrance: "near_entrance",
+  wheelchair_accessible: "accessible",
+  accessible: "accessible",
   bookable: "bookable",
 };
 
-const WHEN_YOU_STUDY = ["morning", "afternoon", "evening", "late_night"] as const;
-
-type WhenYouStudy = NonNullable<StudyPreferences["whenYouStudy"]>[number];
+const WHEN_FROM_STORED: Record<string, WhenYouStudy> = {
+  morning: "mornings",
+  mornings: "mornings",
+  afternoon: "afternoons",
+  afternoons: "afternoons",
+  evening: "evenings",
+  evenings: "evenings",
+  late_night: "late_night",
+};
 
 function isRankableSpace(space: RankableSpaceInput): space is RankableSpace {
   return "buildingId" in space && !("noise_level" in space) && !("building_slug" in space);
@@ -101,7 +96,10 @@ function unique<T>(values: readonly T[]): T[] {
 }
 
 function noiseFromStored(value: unknown): NoiseLevel[] {
-  return unique(asStrings(value).flatMap((token) => NOISE_FROM_STORED[token] ?? []));
+  if (value === "any") return [];
+  return unique(
+    asStrings(value).filter((token): token is NoiseLevel => (NOISE_LEVELS as readonly string[]).includes(token)),
+  );
 }
 
 function amenitiesFromStored(value: unknown): NiceToHaveAmenity[] {
@@ -112,60 +110,77 @@ function hasNaturalLight(value: unknown): boolean {
   return asStrings(value).includes("natural_light");
 }
 
+function whenFromStored(value: unknown): WhenYouStudy[] {
+  return unique(asStrings(value).flatMap((token) => WHEN_FROM_STORED[token] ?? []));
+}
+
+function daylightFromStored(value: unknown): "lots" | "any" | undefined {
+  if (value === "lots" || value === "any") return value;
+  if (value === "some_daylight" || value === "bright_daylight" || value === "natural_light") return "lots";
+  return undefined;
+}
+
 /**
- * `user_settings.settings.needs` (and the same object in settings extras) → ranking preferences.
- * Accepts the stored shape `{ noise, features }` and ranking's own field names.
- * Step-free access has no ranking signal yet, so `wheelchair_accessible` is ignored.
+ * F3.1 `settings.study` (or an already normalized preference object) → ranking preferences.
+ * Quiet and low noise stay distinct. "any" and unknown values become no preference.
  */
-export function studyPreferencesFromNeeds(needs: unknown): StudyPreferences {
-  if (!needs || typeof needs !== "object" || Array.isArray(needs)) return {};
-  const record = needs as Record<string, unknown>;
+export function toStudyPreferences(study: unknown): StudyPreferences {
+  if (!study || typeof study !== "object" || Array.isArray(study)) return {};
+  const record = study as Record<string, unknown>;
   const preferences: StudyPreferences = {};
 
   const noise = noiseFromStored(record.noise);
-  if (noise.length > 0) preferences.noise = noise;
+  if (noise.length === 1) preferences.noise = noise[0];
+  else if (noise.length > 1) preferences.noise = noise;
 
   const setting = typeof record.setting === "string" ? SETTING_FROM_STORED[record.setting] : undefined;
-  if (setting) preferences.setting = setting;
+  if (setting && setting !== "any") preferences.setting = setting;
 
   const brightnessSource = record.brightness ?? record.light ?? record.light_level;
-  if (brightnessSource === "any") {
-    preferences.brightness = "any";
-  } else if (typeof brightnessSource === "string" && BRIGHTNESS_FROM_STORED[brightnessSource]) {
-    preferences.brightness = BRIGHTNESS_FROM_STORED[brightnessSource];
-  }
+  const brightness = typeof brightnessSource === "string" ? BRIGHTNESS_FROM_STORED[brightnessSource] : undefined;
+  if (brightness && brightness !== "any") preferences.brightness = brightness;
 
-  const daylight = typeof record.daylight === "string" ? DAYLIGHT_FROM_STORED[record.daylight] : undefined;
-  if (daylight) {
-    preferences.daylight = daylight;
-  } else if (hasNaturalLight(record.features) || hasNaturalLight(record.niceToHave)) {
-    preferences.daylight = "some_daylight";
-  }
+  const daylight = daylightFromStored(record.daylight);
+  if (daylight === "lots") preferences.daylight = "lots";
+  else if (hasNaturalLight(record.features) || hasNaturalLight(record.niceToHave)) preferences.daylight = "lots";
 
   const niceToHave = amenitiesFromStored(record.niceToHave ?? record.features);
   if (niceToHave.length > 0) preferences.niceToHave = niceToHave;
 
-  const whenYouStudy = unique(
-    asStrings(record.whenYouStudy).filter((token): token is WhenYouStudy =>
-      (WHEN_YOU_STUDY as readonly string[]).includes(token),
-    ),
-  );
-  if (whenYouStudy.length > 0) preferences.whenYouStudy = whenYouStudy;
+  const when = whenFromStored(record.when ?? record.whenYouStudy);
+  if (when.length > 0) preferences.when = when;
 
   return preferences;
 }
 
 /**
- * Ranking context from `parseSettings` / `readStoredSettings` extras.
- * Saved `needs` fill `preferences` unless the caller already passed them.
+ * Reads F3.1 study preferences. `settings.study` wins. Until that field is
+ * part of `Settings`, unknown keys land in `extras.study`, which is the fallback.
+ * `extras.needs` is not a study profile.
+ */
+export function studyPreferencesFromSettings(
+  settings: { study?: unknown } | null | undefined,
+  extras?: Record<string, unknown> | null,
+): StudyPreferences {
+  if (settings && typeof settings === "object" && "study" in settings && settings.study != null) {
+    return toStudyPreferences(settings.study);
+  }
+  if (extras && typeof extras === "object" && "study" in extras) return toStudyPreferences(extras.study);
+  return {};
+}
+
+/**
+ * Ranking context from a settings object. Saved `settings.study` fills
+ * `preferences` unless the caller already passed them.
  */
 export function rankContextFromSettings(
-  extras: Record<string, unknown> | null | undefined,
+  settings: { study?: unknown } | null | undefined,
+  extras?: Record<string, unknown> | null,
   context: RankContext = {},
 ): RankContext {
   return {
     ...context,
-    preferences: context.preferences ?? studyPreferencesFromNeeds(extras?.needs),
+    preferences: context.preferences ?? studyPreferencesFromSettings(settings, extras),
   };
 }
 
@@ -211,7 +226,7 @@ function fromRecord(space: RecordSpace, options: RankableSpaceOptions | undefine
   }
 
   const noiseValues = noiseFromStored(space.noise_level);
-  const brightness =
+  const mappedBrightness =
     typeof space.light_level === "string" ? BRIGHTNESS_FROM_STORED[space.light_level] : undefined;
   const capacity =
     typeof space.capacity === "number" && Number.isFinite(space.capacity) && space.capacity > 0
@@ -232,8 +247,8 @@ function fromRecord(space: RecordSpace, options: RankableSpaceOptions | undefine
     isOpenNow: options?.isOpenNow,
     isOpenLate: options?.isOpenLate,
     noise: noiseValues[0] ?? null,
-    brightness: brightness ?? null,
-    daylight: features.includes("natural_light") ? "some_daylight" : null,
+    brightness: mappedBrightness && mappedBrightness !== "any" ? mappedBrightness : null,
+    daylight: features.includes("natural_light") ? "lots" : null,
     maxGroupSize: capacity ?? null,
     bookable: features.includes("bookable"),
     amenities,

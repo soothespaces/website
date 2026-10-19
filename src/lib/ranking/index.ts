@@ -1,32 +1,51 @@
-import { toRankableSpace, type RankableSpaceInput, type RankableSpaceOptions } from "./adapt";
+import {
+  toRankableSpace,
+  toStudyPreferences,
+  type RankableSpaceInput,
+  type RankableSpaceOptions,
+} from "./adapt";
 
 export type { RankableSpaceInput, RankableSpaceOptions } from "./adapt";
-export { rankContextFromSettings, studyPreferencesFromNeeds, toRankableSpace } from "./adapt";
+export {
+  rankContextFromSettings,
+  studyPreferencesFromSettings,
+  toRankableSpace,
+  toStudyPreferences,
+} from "./adapt";
 
-export type NoiseLevel = "silent" | "quiet" | "moderate" | "lively";
+/** Same four levels as `spaces.noise_level` and F3.1's noise preference. */
+export type NoiseLevel = "quiet" | "low_noise" | "conversational" | "loud";
 export type SpaceSetting = "enclosed" | "open";
-export type BrightnessLevel = "dim" | "medium" | "bright";
-export type DaylightLevel = "windowless" | "some_daylight" | "bright_daylight";
+/** Same three levels as `spaces.light_level` and F3.1's brightness preference. */
+export type BrightnessLevel = "dim" | "moderate" | "bright";
+/** F3.1 daylight is "lots" or "any". A space with natural light is "lots". */
+export type DaylightLevel = "lots";
 export type GroupSize = "just_me" | "2_3" | "4_plus";
+export type WhenYouStudy = "mornings" | "afternoons" | "evenings" | "late_night";
 
 export type NiceToHaveAmenity =
   | "outlets"
   | "whiteboard"
-  | "external_monitors"
-  | "caen_computers"
+  | "monitors"
   | "near_printer"
   | "near_restroom"
-  | "near_water"
   | "near_entrance"
+  | "accessible"
   | "bookable";
 
+/**
+ * F3.1 `settings.study`, or the same fields already normalized.
+ * `noise` is one choice on the preferences screen and may also be a list.
+ */
 export interface StudyPreferences {
-  noise?: NoiseLevel[];
+  noise?: NoiseLevel | NoiseLevel[] | "any";
   setting?: SpaceSetting | "any";
   brightness?: BrightnessLevel | "any";
   daylight?: DaylightLevel | "any";
-  niceToHave?: NiceToHaveAmenity[];
-  whenYouStudy?: ("morning" | "afternoon" | "evening" | "late_night")[];
+  niceToHave?: readonly string[];
+  when?: readonly string[];
+  /** Older name for {@link StudyPreferences.when}. */
+  whenYouStudy?: readonly string[];
 }
 
 export interface RankableSpace {
@@ -63,30 +82,26 @@ export interface RankContext {
 }
 
 export type MatchReasonKey =
-  | "silent"
   | "quiet"
-  | "moderate_noise"
-  | "lively"
+  | "low_noise"
+  | "conversational"
+  | "loud"
   | "enclosed"
   | "open_area"
   | "soft_lighting"
-  | "medium_lighting"
-  | "bright_lighting"
-  | "natural_light"
-  | "windowless"
-  | "solo_friendly"
-  | "small_group"
-  | "large_group"
+  | "moderate_lighting"
+  | "bright"
+  | "lots_of_daylight"
+  | "fits_group"
   | "open_late"
   | "bookable"
   | "outlets"
   | "whiteboard"
-  | "external_monitors"
-  | "computers"
+  | "monitors"
   | "near_printer"
-  | "near_restroom"
-  | "near_water"
+  | "restroom"
   | "near_entrance"
+  | "accessible"
   | "open_now"
   | "nearby";
 
@@ -94,39 +109,59 @@ export interface RankedSpace<T extends RankableSpace = RankableSpace> {
   space: T;
   score: number;
   matchedReasons: MatchReasonKey[];
-  matchesLine: string;
+  /** Null when nothing the user asked for matched, so the line stays hidden. */
+  matchesLine: string | null;
 }
 
 const MATCH_REASON_LABELS: Record<MatchReasonKey, string> = {
-  silent: "silent",
   quiet: "quiet",
-  moderate_noise: "moderate noise",
-  lively: "lively",
+  low_noise: "low noise",
+  conversational: "conversational",
+  loud: "loud",
   enclosed: "enclosed",
   open_area: "open room",
   soft_lighting: "soft lighting",
-  medium_lighting: "medium lighting",
-  bright_lighting: "bright lighting",
-  natural_light: "natural light",
-  windowless: "no windows",
-  solo_friendly: "good for solo study",
-  small_group: "fits 2–3",
-  large_group: "fits 4+",
+  moderate_lighting: "moderate",
+  bright: "bright",
+  lots_of_daylight: "lots of daylight",
+  fits_group: "fits your group",
   open_late: "open late",
   bookable: "bookable",
   outlets: "outlets",
   whiteboard: "whiteboard",
-  external_monitors: "monitors",
-  computers: "CAEN computers",
+  monitors: "monitors",
   near_printer: "near a printer",
-  near_restroom: "near a restroom",
-  near_water: "near water",
+  restroom: "restroom nearby",
   near_entrance: "near an entrance",
+  accessible: "accessible",
   open_now: "open now",
   nearby: "nearby",
 };
 
-const WEIGHTS = {
+/**
+ * SOS-121 order: noise, lighting, daylight, setting, group, then nice-to-haves.
+ * Open now, nearby, and other non-preference signals stay out of the sentence.
+ */
+const MATCH_LINE_ORDER: readonly MatchReasonKey[] = [
+  "quiet",
+  "low_noise",
+  "conversational",
+  "soft_lighting",
+  "bright",
+  "lots_of_daylight",
+  "enclosed",
+  "open_area",
+  "fits_group",
+  "outlets",
+  "monitors",
+  "near_printer",
+  "restroom",
+  "whiteboard",
+  "near_entrance",
+  "accessible",
+];
+
+export const WEIGHTS = {
   OPEN_NOW: 100,
   CHIP_MATCH: 35,
   NOISE_EXACT: 30,
@@ -139,7 +174,7 @@ const WEIGHTS = {
   DISTANCE_MAX_BONUS: 18,
 } as const;
 
-const NOISE_ORDER: NoiseLevel[] = ["silent", "quiet", "moderate", "lively"];
+const NOISE_ORDER: NoiseLevel[] = ["quiet", "low_noise", "conversational", "loud"];
 
 function getNoiseDistance(a: NoiseLevel, b: NoiseLevel): number {
   return Math.abs(NOISE_ORDER.indexOf(a) - NOISE_ORDER.indexOf(b));
@@ -158,26 +193,39 @@ function supportsGroupSize(space: RankableSpace, requested: GroupSize): boolean 
     return cap === "4_plus";
   }
   if (requested === "just_me") {
-    return space.noise === "silent" || space.noise === "quiet";
+    return space.noise === "quiet" || space.noise === "low_noise";
   }
   if (requested === "2_3") {
-    return space.noise === "moderate" || space.noise === "lively" || Boolean(space.bookable);
+    return space.noise === "conversational" || space.noise === "loud" || Boolean(space.bookable);
   }
-  return space.noise === "lively" || Boolean(space.bookable);
+  return space.noise === "loud" || Boolean(space.bookable);
+}
+
+function noiseLevels(noise: StudyPreferences["noise"]): NoiseLevel[] {
+  if (!noise || noise === "any") return [];
+  const values = Array.isArray(noise) ? noise : [noise];
+  return values.filter((level): level is NoiseLevel => NOISE_ORDER.includes(level));
 }
 
 /**
- * F3.5 (SOS-121): Formats the "Matches: quiet · soft lighting · near a printer"
- * explainer string from a list of matched reason keys.
+ * F3.5 (SOS-121): "Matches: quiet · soft lighting · near a printer".
+ * At most three phrases, in priority order. Null when nothing matched.
  */
-export function formatMatchesLine(reasons: readonly MatchReasonKey[], maxItems = 3): string {
-  const uniqueReasons = Array.from(new Set(reasons));
-  const selected = uniqueReasons.slice(0, Math.max(1, maxItems));
-  if (selected.length === 0) {
-    return "";
+export function matchesLine(reasons: readonly MatchReasonKey[], maxItems = 3): string | null {
+  const present = new Set(reasons);
+  const labels: string[] = [];
+  for (const key of MATCH_LINE_ORDER) {
+    if (!present.has(key)) continue;
+    labels.push(MATCH_REASON_LABELS[key]);
+    if (labels.length >= Math.max(1, maxItems)) break;
   }
-  const labels = selected.map((key) => MATCH_REASON_LABELS[key]);
+  if (labels.length === 0) return null;
   return `Matches: ${labels.join(" · ")}`;
+}
+
+/** Same sentence as {@link matchesLine}. */
+export function formatMatchesLine(reasons: readonly MatchReasonKey[], maxItems = 3): string | null {
+  return matchesLine(reasons, maxItems);
 }
 
 /**
@@ -185,7 +233,8 @@ export function formatMatchesLine(reasons: readonly MatchReasonKey[], maxItems =
  * open status, and walking distance.
  */
 export function scoreSpace<T extends RankableSpace>(space: T, context: RankContext = {}): RankedSpace<T> {
-  const { preferences, groupSize, chips } = context;
+  const { groupSize, chips } = context;
+  const preferences = toStudyPreferences(context.preferences);
   let score = 0;
   const reasons: MatchReasonKey[] = [];
 
@@ -199,17 +248,16 @@ export function scoreSpace<T extends RankableSpace>(space: T, context: RankConte
   }
 
   const wantsQuietChip = Boolean(chips?.quiet);
-  const preferredNoise = preferences?.noise ?? [];
+  const preferredNoise = noiseLevels(preferences.noise);
   const noise = space.noise;
 
   if (noise) {
-    const isQuietOrSilent = noise === "silent" || noise === "quiet";
-    if (wantsQuietChip && isQuietOrSilent) {
+    if (wantsQuietChip && noise === "quiet") {
       score += WEIGHTS.CHIP_MATCH;
-      reasons.push(noise === "silent" ? "silent" : "quiet");
+      reasons.push("quiet");
     } else if (preferredNoise.includes(noise)) {
       score += WEIGHTS.NOISE_EXACT;
-      reasons.push(noise === "moderate" ? "moderate_noise" : noise);
+      reasons.push(noise);
     } else if (preferredNoise.length > 0) {
       const minDistance = Math.min(...preferredNoise.map((target) => getNoiseDistance(noise, target)));
       if (minDistance === 1) {
@@ -229,8 +277,8 @@ export function scoreSpace<T extends RankableSpace>(space: T, context: RankConte
     } else if (preferredBrightness && space.brightness === preferredBrightness) {
       score += WEIGHTS.BRIGHTNESS;
       if (space.brightness === "dim") reasons.push("soft_lighting");
-      else if (space.brightness === "medium") reasons.push("medium_lighting");
-      else reasons.push("bright_lighting");
+      else if (space.brightness === "bright") reasons.push("bright");
+      else reasons.push("moderate_lighting");
     }
   }
 
@@ -239,26 +287,21 @@ export function scoreSpace<T extends RankableSpace>(space: T, context: RankConte
     reasons.push(space.setting === "enclosed" ? "enclosed" : "open_area");
   }
 
-  if (preferences?.daylight && preferences.daylight !== "any" && space.daylight === preferences.daylight) {
+  if (preferences.daylight === "lots" && space.daylight === "lots") {
     score += WEIGHTS.DAYLIGHT;
-    if (space.daylight === "windowless") {
-      reasons.push("windowless");
-    } else {
-      reasons.push("natural_light");
-    }
+    reasons.push("lots_of_daylight");
   }
 
   if (groupSize && supportsGroupSize(space, groupSize)) {
     score += WEIGHTS.GROUP_SIZE;
-    if (groupSize === "just_me") reasons.push("solo_friendly");
-    else if (groupSize === "2_3") reasons.push("small_group");
-    else reasons.push("large_group");
+    reasons.push("fits_group");
   }
 
+  const wantsLate = preferences.when?.includes("late_night") || preferences.whenYouStudy?.includes("late_night");
   if (chips?.openLate && space.isOpenLate) {
     score += WEIGHTS.CHIP_MATCH;
     reasons.push("open_late");
-  } else if (preferences?.whenYouStudy?.includes("late_night") && space.isOpenLate) {
+  } else if (wantsLate && space.isOpenLate) {
     score += WEIGHTS.NICE_TO_HAVE;
     reasons.push("open_late");
   }
@@ -269,9 +312,9 @@ export function scoreSpace<T extends RankableSpace>(space: T, context: RankConte
     reasons.push("bookable");
   }
 
-  if (chips?.computers && space.amenities?.caen_computers) {
+  if (chips?.computers && space.amenities?.monitors) {
     score += WEIGHTS.CHIP_MATCH;
-    reasons.push("computers");
+    reasons.push("monitors");
   }
 
   if (chips?.printerNearby && space.amenities?.near_printer) {
@@ -281,27 +324,28 @@ export function scoreSpace<T extends RankableSpace>(space: T, context: RankConte
 
   if (chips?.restroomNearby && space.amenities?.near_restroom) {
     score += WEIGHTS.CHIP_MATCH;
-    reasons.push("near_restroom");
+    reasons.push("restroom");
   }
 
-  const niceToHave = preferences?.niceToHave ?? [];
+  const niceToHave = preferences.niceToHave ?? [];
   const amenityReasonMap: Record<NiceToHaveAmenity, MatchReasonKey> = {
     outlets: "outlets",
     whiteboard: "whiteboard",
-    external_monitors: "external_monitors",
-    caen_computers: "computers",
+    monitors: "monitors",
     near_printer: "near_printer",
-    near_restroom: "near_restroom",
-    near_water: "near_water",
+    near_restroom: "restroom",
     near_entrance: "near_entrance",
+    accessible: "accessible",
     bookable: "bookable",
   };
 
   for (const amenity of niceToHave) {
-    const hasAmenity = amenity === "bookable" ? isBookable : Boolean(space.amenities?.[amenity]);
+    if (!(amenity in amenityReasonMap)) continue;
+    const key = amenity as NiceToHaveAmenity;
+    const hasAmenity = key === "bookable" ? isBookable : Boolean(space.amenities?.[key]);
     if (hasAmenity) {
       score += WEIGHTS.NICE_TO_HAVE;
-      reasons.push(amenityReasonMap[amenity]);
+      reasons.push(amenityReasonMap[key]);
     }
   }
 
@@ -317,29 +361,13 @@ export function scoreSpace<T extends RankableSpace>(space: T, context: RankConte
     }
   }
 
-  // With no active match yet, still describe the space from what we know.
-  if (reasons.length === 0) {
-    if (noise === "silent" || noise === "quiet") {
-      reasons.push(noise);
-    }
-    if (space.brightness === "dim") {
-      reasons.push("soft_lighting");
-    }
-    if (space.amenities?.near_printer) {
-      reasons.push("near_printer");
-    }
-    if (space.isOpenNow) {
-      reasons.push("open_now");
-    }
-  }
-
   const uniqueReasons = Array.from(new Set(reasons));
 
   return {
     space,
     score,
     matchedReasons: uniqueReasons,
-    matchesLine: formatMatchesLine(uniqueReasons),
+    matchesLine: matchesLine(uniqueReasons),
   };
 }
 

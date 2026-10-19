@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   formatMatchesLine,
+  matchesLine,
   rankContextFromSettings,
   rankSpaceRecords,
   rankSpaces,
@@ -15,7 +16,7 @@ const SAMPLE_SPACES: RankableSpace[] = [
     name: "Atrium Tables",
     buildingId: "dude",
     isOpenNow: false,
-    noise: "lively",
+    noise: "loud",
     brightness: "bright",
     setting: "open",
     distanceMeters: 100,
@@ -36,8 +37,8 @@ const SAMPLE_SPACES: RankableSpace[] = [
     name: "2nd Floor Collab Booths",
     buildingId: "shapiro",
     isOpenNow: true,
-    noise: "moderate",
-    brightness: "medium",
+    noise: "conversational",
+    brightness: "moderate",
     setting: "open",
     maxGroupSize: "4_plus",
     bookable: true,
@@ -118,9 +119,32 @@ test("formatMatchesLine builds the quiet, soft lighting, printer explainer", () 
   assert.equal(top.matchesLine, "Matches: quiet · soft lighting · near a printer");
 });
 
-test("formatMatchesLine caps the explainer at 3 reasons and drops duplicate keys", () => {
-  const line = formatMatchesLine(["quiet", "quiet", "soft_lighting", "near_printer", "outlets"]);
-  assert.equal(line, "Matches: quiet · soft lighting · near a printer");
+test("formatMatchesLine caps the explainer at 3 reasons, drops duplicates, and uses priority order", () => {
+  const line = formatMatchesLine(["near_printer", "quiet", "quiet", "soft_lighting", "outlets"]);
+  assert.equal(line, "Matches: quiet · soft lighting · outlets");
+  assert.equal(formatMatchesLine([]), null);
+  assert.equal(matchesLine(["open_now", "nearby", "bookable"]), null);
+});
+
+test("matches line is null when the user has not asked for anything", () => {
+  const results = rankSpaces([{ id: "a", name: "A", buildingId: "b", noise: "quiet", isOpenNow: true }]);
+  assert.equal(results.length, 1);
+  assert.equal(results[0]?.matchesLine, null);
+});
+
+test("quiet and low noise are different preferences", () => {
+  const results = rankSpaces(
+    [
+      { id: "quiet-room", name: "Quiet Room", buildingId: "shapiro", noise: "quiet", isOpenNow: true },
+      { id: "low-room", name: "Low Noise Room", buildingId: "shapiro", noise: "low_noise", isOpenNow: true },
+    ],
+    { preferences: { noise: "low_noise" } },
+  );
+
+  assert.equal(results[0]?.space.id, "low-room");
+  assert.equal(results[0]?.matchesLine, "Matches: low noise");
+  assert.ok((results[0]?.score ?? 0) > (results[1]?.score ?? 0));
+  assert.equal(results[1]?.matchesLine, null);
 });
 
 test("toRankableSpace maps a spaces row and saved needs into rankSpaces", () => {
@@ -156,15 +180,22 @@ test("toRankableSpace maps a spaces row and saved needs into rankSpaces", () => 
   const context = rankContextFromSettings(
     {
       theme: "system",
-      needs: { noise: ["quiet"], features: ["printing", "wheelchair_accessible"] },
+      study: { noise: "quiet", niceToHave: ["printer", "accessible"], when: ["late_night"] },
     },
+    { needs: { noise: ["loud"] }, study: { noise: "conversational" } },
     { groupSize: "just_me" },
   );
 
   assert.deepEqual(context.preferences, {
-    noise: ["quiet"],
-    niceToHave: ["near_printer"],
+    noise: "quiet",
+    niceToHave: ["near_printer", "accessible"],
+    when: ["late_night"],
   });
+  assert.deepEqual(
+    rankContextFromSettings({ theme: "system" }, { needs: { noise: ["loud"] }, study: { noise: "low_noise" } })
+      .preferences,
+    { noise: "low_noise" },
+  );
 
   const results = rankSpaceRecords([readingRoom, atrium], context, (space) => ({
     isOpenNow: space.id === "reading",
@@ -178,17 +209,19 @@ test("toRankableSpace maps a spaces row and saved needs into rankSpaces", () => 
   assert.equal(results[0]?.space.buildingId, "shapiro");
   assert.equal(results[0]?.space.noise, "quiet");
   assert.equal(results[0]?.space.brightness, "dim");
-  assert.equal(results[0]?.space.daylight, "some_daylight");
+  assert.equal(results[0]?.space.daylight, "lots");
   assert.equal(results[0]?.space.floor, 2);
   assert.equal(results[0]?.space.maxGroupSize, 40);
   assert.equal(results[0]?.space.amenities?.near_printer, true);
   assert.equal(results[0]?.space.amenities?.outlets, true);
   assert.equal(typeof results[0]?.space.distanceMeters, "number");
   assert.ok((results[0]?.space.distanceMeters ?? Infinity) < 50);
-  assert.equal(results[0]?.matchesLine, "Matches: quiet · good for solo study · near a printer");
+  assert.equal(results[0]?.matchesLine, "Matches: quiet · fits your group · near a printer");
+  assert.equal(results[0]?.space.amenities?.accessible, undefined);
   assert.equal(results[0]?.space.amenities?.bookable, undefined);
   assert.equal(results[1]?.space.id, "atrium");
-  assert.equal(results[1]?.space.noise, "lively");
+  assert.equal(results[1]?.space.noise, "loud");
+  assert.equal(results[1]?.space.amenities?.accessible, true);
   assert.equal(results[1]?.space.isOpenNow, false);
   assert.equal(results[1]?.space.distanceMeters, null);
 });
@@ -214,7 +247,7 @@ test("toRankableSpace reads a list row's building coordinates and keeps an alrea
   assert.equal(adapted.id, "reading-room");
   assert.equal(adapted.buildingId, "shapiro");
   assert.equal(adapted.floor, "Floor 2");
-  assert.equal(adapted.noise, "quiet");
+  assert.equal(adapted.noise, "low_noise");
   assert.equal(adapted.bookable, true);
   assert.equal(adapted.amenities?.whiteboard, true);
   assert.equal(adapted.isOpenLate, true);
