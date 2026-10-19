@@ -1,8 +1,8 @@
 import type { GeoPoint } from "@/lib/location";
 
-export type NoiseLevel = "silent" | "quiet" | "moderate" | "lively";
+export type NoiseLevel = "quiet" | "low_noise" | "conversational" | "loud";
 export type SpaceSetting = "enclosed" | "open";
-export type BrightnessLevel = "dim" | "medium" | "bright";
+export type BrightnessLevel = "dim" | "moderate" | "bright";
 export type DaylightLevel = "windowless" | "some_daylight" | "bright_daylight";
 export type GroupSize = "just_me" | "2_3" | "4_plus";
 
@@ -15,7 +15,8 @@ export type NiceToHaveAmenity =
   | "near_restroom"
   | "near_water"
   | "near_entrance"
-  | "bookable";
+  | "bookable"
+  | "accessible";
 
 export interface StudyPreferences {
   noise?: NoiseLevel[];
@@ -117,30 +118,26 @@ export type NormalizedRankContext = Omit<RankContext, "preferences"> & {
 };
 
 export type MatchReasonKey =
-  | "silent"
   | "quiet"
-  | "moderate_noise"
-  | "lively"
+  | "low_noise"
+  | "conversational"
+  | "loud"
   | "enclosed"
   | "open_area"
   | "soft_lighting"
-  | "medium_lighting"
   | "bright_lighting"
   | "natural_light"
-  | "windowless"
-  | "solo_friendly"
-  | "small_group"
-  | "large_group"
+  | "fits_group"
   | "open_late"
   | "bookable"
   | "outlets"
   | "whiteboard"
-  | "external_monitors"
-  | "computers"
+  | "monitors"
   | "near_printer"
   | "near_restroom"
   | "near_water"
   | "near_entrance"
+  | "accessible"
   | "open_now"
   | "nearby";
 
@@ -148,5 +145,6 @@ export interface RankedSpace<T extends CatalogSpace = RankableSpace> {
   space: T;
   score: number;
   matchedReasons: MatchReasonKey[];
-  matchesLine: string;
+  /** Null when no chosen preference matched, so the line stays hidden. */
+  matchesLine: string | null;
 }

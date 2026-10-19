@@ -22,7 +22,8 @@ const AMENITY_ALIASES: Record<string, readonly NiceToHaveAmenity[]> = {
   whiteboards: ["whiteboard"],
   external_monitors: ["external_monitors"],
   monitors: ["external_monitors"],
-  monitors_or_computers: ["external_monitors", "caen_computers"],
+  // One preference: a space with monitors or CAEN computers matches once.
+  monitors_or_computers: ["external_monitors"],
   caen_computers: ["caen_computers"],
   computers: ["caen_computers"],
   near_printer: ["near_printer"],
@@ -34,8 +35,7 @@ const AMENITY_ALIASES: Record<string, readonly NiceToHaveAmenity[]> = {
   near_entrance: ["near_entrance"],
   entrance: ["near_entrance"],
   bookable: ["bookable"],
-  // F3.1's "accessible" has no ranking amenity yet.
-  accessible: [],
+  accessible: ["accessible"],
 };
 
 function asRecord(input: unknown): Record<string, unknown> | undefined {
@@ -63,12 +63,7 @@ function unwrapStudy(input: unknown): Record<string, unknown> | undefined {
 }
 
 function mapNoiseValue(value: unknown): NoiseLevel | undefined {
-  if (value === "silent" || value === "quiet" || value === "moderate" || value === "lively") return value;
-  // Catalog noise is quiet → low_noise → conversational → loud.
-  // quiet and low_noise share the ranking "quiet" bucket so a quiet preference matches both.
-  if (value === "low_noise") return "quiet";
-  if (value === "conversational") return "moderate";
-  if (value === "loud") return "lively";
+  if (value === "quiet" || value === "low_noise" || value === "conversational" || value === "loud") return value;
   return undefined;
 }
 
@@ -78,8 +73,7 @@ function mapSetting(value: unknown): SpaceSetting | "any" | undefined {
 }
 
 function mapBrightness(value: unknown): BrightnessLevel | "any" | undefined {
-  if (value === "dim" || value === "medium" || value === "bright" || value === "any") return value;
-  if (value === "moderate") return "medium";
+  if (value === "dim" || value === "moderate" || value === "bright" || value === "any") return value;
   return undefined;
 }
 
@@ -214,7 +208,7 @@ function isPreparedRankable(space: CatalogSpace): space is RankableSpace {
 /**
  * Turns a ranking space, a `spaces` row, or a {@link CatalogSpace} list row
  * into the shape `scoreSpace` reads. Catalog noise, light, and features are
- * mapped onto the ranking vocabulary. An explicit `distanceMeters` wins;
+ * kept as the catalog stores them (`noise_level`, `light_level`). An explicit `distanceMeters` wins;
  * otherwise `origin` plus `lat`/`lng` (or the building pin) fills it in.
  */
 export function toRankableSpace(space: CatalogSpace, origin?: RankContext["origin"]): RankableSpace {
@@ -230,6 +224,7 @@ export function toRankableSpace(space: CatalogSpace, origin?: RankContext["origi
   if (features.has("whiteboards") || features.has("whiteboard")) amenities.whiteboard = true;
   if (features.has("external_monitors")) amenities.external_monitors = true;
   if (features.has("computers")) amenities.caen_computers = true;
+  if (features.has("wheelchair_accessible")) amenities.accessible = true;
   if (features.has("printing")) amenities.near_printer = true;
   if (features.has("all_gender_restroom_on_floor")) amenities.near_restroom = true;
   if (features.has("bookable")) amenities.bookable = true;

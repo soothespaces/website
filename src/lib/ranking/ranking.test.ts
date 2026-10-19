@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
-import type { SpaceSummary } from "@/features/spaces/types";
-import { DEFAULT_SETTINGS } from "@/lib/settings/model";
-import type { Database } from "@/types/supabase";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import type { SpaceSummary } from "../../features/spaces/types.ts";
+import { DEFAULT_SETTINGS } from "../settings/model.ts";
+import type { Database } from "../../types/supabase.ts";
 import {
   formatMatchesLine,
   matchesLine,
@@ -11,7 +12,7 @@ import {
   studyPreferencesFromSettings,
   toStudyPreferences,
   type RankableSpace,
-} from "./index";
+} from "./index.ts";
 
 type SpaceRow = Database["public"]["Tables"]["spaces"]["Row"];
 
@@ -21,7 +22,7 @@ const SAMPLE_SPACES: RankableSpace[] = [
     name: "Atrium Tables",
     buildingId: "dude",
     isOpenNow: false,
-    noise: "lively",
+    noise: "loud",
     brightness: "bright",
     setting: "open",
     distanceMeters: 100,
@@ -42,8 +43,8 @@ const SAMPLE_SPACES: RankableSpace[] = [
     name: "2nd Floor Collab Booths",
     buildingId: "shapiro",
     isOpenNow: true,
-    noise: "moderate",
-    brightness: "medium",
+    noise: "conversational",
+    brightness: "moderate",
     setting: "open",
     maxGroupSize: "4_plus",
     bookable: true,
@@ -63,8 +64,11 @@ describe("rankSpaces (F3.4 / SOS-114)", () => {
       chips: { quiet: true, dimLighting: true },
     });
 
-    expect(results).toHaveLength(SAMPLE_SPACES.length);
-    expect(results.map((r) => r.space.id)).toEqual(["quiet-open-dim", "group-collab", "loud-closed"]);
+    assert.equal(results.length, SAMPLE_SPACES.length);
+    assert.deepEqual(
+      results.map((result) => result.space.id),
+      ["quiet-open-dim", "group-collab", "loud-closed"],
+    );
   });
 
   it("prioritizes group-friendly bookable spaces when groupSize is 4_plus and bookable chip is active", () => {
@@ -73,8 +77,9 @@ describe("rankSpaces (F3.4 / SOS-114)", () => {
       chips: { bookable: true },
     });
 
-    expect(results[0]?.space.id).toBe("group-collab");
-    expect(results[results.length - 1]?.space.id).toBe("loud-closed");
+    assert.equal(results[0]?.space.id, "group-collab");
+    assert.equal(results[results.length - 1]?.space.id, "loud-closed");
+    assert.equal(results[0]?.matchesLine, "Matches: fits your group");
   });
 
   it("uses walking distance as a bonus and tie-breaker", () => {
@@ -101,7 +106,34 @@ describe("rankSpaces (F3.4 / SOS-114)", () => {
       preferences: { noise: ["quiet"] },
     });
 
-    expect(results.map((r) => r.space.id)).toEqual(["near", "far"]);
+    assert.deepEqual(
+      results.map((result) => result.space.id),
+      ["near", "far"],
+    );
+  });
+
+  it("ranks low noise apart from quiet", () => {
+    const quiet: RankableSpace = {
+      id: "quiet",
+      name: "Quiet Room",
+      buildingId: "b",
+      isOpenNow: true,
+      noise: "quiet",
+    };
+    const low: RankableSpace = {
+      id: "low",
+      name: "Low Room",
+      buildingId: "b",
+      isOpenNow: true,
+      noise: "low_noise",
+    };
+
+    const results = rankSpaces([quiet, low], { preferences: { noise: "low_noise" } });
+
+    assert.equal(results[0]?.space.id, "low");
+    assert.equal(results[0]?.matchesLine, "Matches: low noise");
+    assert.ok((results[0]?.score ?? 0) > (results[1]?.score ?? 0));
+    assert.equal(results[1]?.matchesLine, null);
   });
 });
 
@@ -115,24 +147,58 @@ describe("formatMatchesLine (F3.5 / SOS-121)", () => {
       },
     });
 
-    const top = results[0]!;
-    expect(top.space.id).toBe("quiet-open-dim");
-    expect(top.matchesLine).toBe("Matches: quiet · soft lighting · near a printer");
+    const top = results[0];
+    assert.ok(top);
+    assert.equal(top.space.id, "quiet-open-dim");
+    assert.equal(top.matchesLine, "Matches: quiet · soft lighting · near a printer");
   });
 
   it("caps the explainer at 3 reasons and deduplicates keys", () => {
     const line = formatMatchesLine(["quiet", "quiet", "soft_lighting", "near_printer", "outlets"]);
-    expect(line).toBe("Matches: quiet · soft lighting · near a printer");
+    assert.equal(line, "Matches: quiet · soft lighting · near a printer");
   });
 
   it("returns null when nothing matched", () => {
-    expect(formatMatchesLine([])).toBe("");
-    expect(matchesLine([])).toBeNull();
+    assert.equal(formatMatchesLine([]), "");
+    assert.equal(matchesLine([]), null);
+    assert.equal(matchesLine(["open_now", "nearby"]), null);
+  });
+
+  it("hides the line when the user has set no preferences or chips", () => {
+    const results = rankSpaces([
+      {
+        id: "a",
+        name: "A",
+        buildingId: "b",
+        noise: "quiet",
+        isOpenNow: true,
+        brightness: "dim",
+        amenities: { near_printer: true },
+        distanceMeters: 40,
+      },
+    ]);
+
+    assert.equal(results[0]?.matchesLine, null);
+    assert.equal(results[0]?.matchedReasons.includes("quiet"), false);
+    assert.equal(results[0]?.matchedReasons.includes("open_now"), false);
+    assert.equal(results[0]?.matchedReasons.includes("nearby"), true);
   });
 
   it("orders reasons noise, lighting, daylight, setting, then nice-to-haves", () => {
-    expect(matchesLine(["near_printer", "enclosed", "soft_lighting", "quiet"])).toBe(
+    assert.equal(
+      matchesLine(["near_printer", "enclosed", "soft_lighting", "quiet"]),
       "Matches: quiet · soft lighting · enclosed",
+    );
+  });
+
+  it("uses the board phrases", () => {
+    assert.equal(
+      matchesLine(["natural_light", "near_restroom", "bright_lighting", "fits_group", "monitors", "accessible"]),
+      "Matches: bright · lots of daylight · monitors",
+    );
+    assert.equal(
+      matchesLine(["near_restroom", "fits_group", "accessible"]),
+      "Matches: restroom nearby · accessible · fits your group",
     );
   });
 });
@@ -166,9 +232,12 @@ describe("catalog spaces and F3.1 preferences", () => {
       preferences: { noise: "quiet", setting: "any", brightness: "any", daylight: "any", niceToHave: [], when: [] },
     });
 
-    expect(results).toHaveLength(2);
-    expect(results.map((result) => result.space.slug)).toEqual(["reading-room", "atrium"]);
-    expect(results[0]?.space).toBe(readingRoom);
+    assert.equal(results.length, 2);
+    assert.deepEqual(
+      results.map((result) => result.space.slug),
+      ["reading-room", "atrium"],
+    );
+    assert.equal(results[0]?.space, readingRoom);
   });
 
   it("maps a spaces row and F3.1 study preferences into the matches line", () => {
@@ -178,7 +247,7 @@ describe("catalog spaces and F3.1 preferences", () => {
       name: "Reading Room",
       noise_level: "quiet",
       light_level: "dim",
-      features: ["printing"],
+      features: ["printing", "wheelchair_accessible", "computers"],
       isOpenNow: true,
     });
     const closed = spaceRow({
@@ -197,13 +266,16 @@ describe("catalog spaces and F3.1 preferences", () => {
         setting: "any",
         brightness: "dim",
         daylight: "any",
-        niceToHave: ["printer"],
+        niceToHave: ["printer", "accessible", "monitors_or_computers"],
         when: [],
       },
     });
 
-    expect(results.map((result) => result.space.id)).toEqual(["reading-room", "atrium"]);
-    expect(results[0]?.matchesLine).toBe("Matches: quiet · soft lighting · near a printer");
+    assert.deepEqual(
+      results.map((result) => result.space.id),
+      ["reading-room", "atrium"],
+    );
+    assert.equal(results[0]?.matchesLine, "Matches: quiet · soft lighting · monitors");
   });
 
   it("lets capacity change group order and origin fill walking distance", () => {
@@ -228,7 +300,10 @@ describe("catalog spaces and F3.1 preferences", () => {
     });
 
     const byGroup = rankSpaceRows([carrel, booth], { groupSize: "4_plus" });
-    expect(byGroup.map((result) => result.space.id)).toEqual(["booth", "carrel"]);
+    assert.deepEqual(
+      byGroup.map((result) => result.space.id),
+      ["booth", "carrel"],
+    );
 
     const byDistance = rankSpaceRows(
       [
@@ -237,11 +312,14 @@ describe("catalog spaces and F3.1 preferences", () => {
       ],
       { origin },
     );
-    expect(byDistance.map((result) => result.space.id)).toEqual(["booth", "carrel"]);
+    assert.deepEqual(
+      byDistance.map((result) => result.space.id),
+      ["booth", "carrel"],
+    );
   });
 
   it("reads study preferences from settings extras until settings.study exists", () => {
-    expect(
+    assert.deepEqual(
       studyPreferencesFromSettings(DEFAULT_SETTINGS, {
         study: {
           noise: "low_noise",
@@ -252,23 +330,25 @@ describe("catalog spaces and F3.1 preferences", () => {
           when: ["late_night", "mornings"],
         },
       }),
-    ).toEqual({
-      noise: ["quiet"],
-      setting: "enclosed",
-      brightness: "medium",
-      daylight: "bright_daylight",
-      niceToHave: ["near_printer", "external_monitors", "caen_computers"],
-      whenYouStudy: ["late_night", "morning"],
-    });
+      {
+        noise: ["low_noise"],
+        setting: "enclosed",
+        brightness: "moderate",
+        daylight: "bright_daylight",
+        niceToHave: ["near_printer", "accessible", "external_monitors"],
+        whenYouStudy: ["late_night", "morning"],
+      },
+    );
 
-    expect(
+    assert.deepEqual(
       studyPreferencesFromSettings(
         { ...DEFAULT_SETTINGS, study: { noise: "conversational" } },
         { study: { noise: "quiet" } },
       ),
-    ).toEqual({ noise: ["moderate"] });
+      { noise: ["conversational"] },
+    );
 
-    expect(toStudyPreferences({ noise: "nope", brightness: "blinding" })).toEqual({});
+    assert.deepEqual(toStudyPreferences({ noise: "nope", brightness: "blinding" }), {});
   });
 });
 

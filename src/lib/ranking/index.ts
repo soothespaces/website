@@ -33,64 +33,47 @@ export { studyPreferencesFromSettings, toRankableSpace, toStudyPreferences } fro
 
 type SpaceRow = Database["public"]["Tables"]["spaces"]["Row"];
 
-const MATCH_REASON_LABELS: Record<MatchReasonKey, string> = {
-  silent: "silent",
+/** Board phrases from SOS-121. Keys omitted here still score, but stay off the line. */
+const MATCH_REASON_LABELS: Partial<Record<MatchReasonKey, string>> = {
   quiet: "quiet",
-  moderate_noise: "moderate noise",
-  lively: "lively",
+  low_noise: "low noise",
+  conversational: "conversational",
+  loud: "loud",
+  soft_lighting: "soft lighting",
+  bright_lighting: "bright",
+  natural_light: "lots of daylight",
   enclosed: "enclosed",
   open_area: "open room",
-  soft_lighting: "soft lighting",
-  medium_lighting: "medium lighting",
-  bright_lighting: "bright lighting",
-  natural_light: "natural light",
-  windowless: "no windows",
-  solo_friendly: "good for solo study",
-  small_group: "fits 2–3",
-  large_group: "fits 4+",
-  open_late: "open late",
-  bookable: "bookable",
   outlets: "outlets",
-  whiteboard: "whiteboard",
-  external_monitors: "monitors",
-  computers: "CAEN computers",
+  monitors: "monitors",
   near_printer: "near a printer",
-  near_restroom: "near a restroom",
-  near_water: "near water",
+  near_restroom: "restroom nearby",
+  whiteboard: "whiteboard",
   near_entrance: "near an entrance",
-  open_now: "open now",
-  nearby: "nearby",
+  accessible: "accessible",
+  fits_group: "fits your group",
 };
 
-// Noise, then lighting, daylight, setting, group fit, then nice-to-haves.
-const MATCH_REASON_PRIORITY: Record<MatchReasonKey, number> = {
-  silent: 0,
-  quiet: 1,
-  moderate_noise: 2,
-  lively: 3,
-  soft_lighting: 4,
-  medium_lighting: 5,
-  bright_lighting: 6,
-  natural_light: 7,
-  windowless: 8,
-  enclosed: 9,
-  open_area: 10,
-  solo_friendly: 11,
-  small_group: 12,
-  large_group: 13,
-  outlets: 14,
-  external_monitors: 15,
-  computers: 16,
-  near_printer: 17,
-  near_restroom: 18,
-  whiteboard: 19,
-  near_water: 20,
-  near_entrance: 21,
-  bookable: 22,
-  open_late: 23,
-  open_now: 24,
-  nearby: 25,
-};
+// Noise, lighting, daylight, setting, nice-to-haves, then group fit.
+const MATCH_LINE_ORDER: MatchReasonKey[] = [
+  "quiet",
+  "low_noise",
+  "conversational",
+  "loud",
+  "soft_lighting",
+  "bright_lighting",
+  "natural_light",
+  "enclosed",
+  "open_area",
+  "outlets",
+  "monitors",
+  "near_printer",
+  "near_restroom",
+  "whiteboard",
+  "near_entrance",
+  "accessible",
+  "fits_group",
+];
 
 /** Tunable score weights. Preferences sort; they never remove a space. */
 export const WEIGHTS = {
@@ -106,7 +89,7 @@ export const WEIGHTS = {
   DISTANCE_MAX_BONUS: 18,
 } as const;
 
-const NOISE_ORDER: NoiseLevel[] = ["silent", "quiet", "moderate", "lively"];
+const NOISE_ORDER: NoiseLevel[] = ["quiet", "low_noise", "conversational", "loud"];
 
 function getNoiseDistance(a: NoiseLevel, b: NoiseLevel): number {
   return Math.abs(NOISE_ORDER.indexOf(a) - NOISE_ORDER.indexOf(b));
@@ -125,38 +108,47 @@ function supportsGroupSize(space: RankableSpace, requested: NonNullable<RankCont
     return cap === "4_plus";
   }
   if (requested === "just_me") {
-    return space.noise === "silent" || space.noise === "quiet";
+    return space.noise === "quiet" || space.noise === "low_noise";
   }
   if (requested === "2_3") {
-    return space.noise === "moderate" || space.noise === "lively" || Boolean(space.bookable);
+    return space.noise === "conversational" || space.noise === "loud" || Boolean(space.bookable);
   }
-  return space.noise === "lively" || Boolean(space.bookable);
+  return space.noise === "loud" || Boolean(space.bookable);
+}
+
+function phraseFor(key: MatchReasonKey): string | undefined {
+  return MATCH_REASON_LABELS[key];
 }
 
 /**
  * F3.5 (SOS-121): Formats the "Matches: quiet · soft lighting · near a printer"
- * explainer string from a list of matched reason keys.
- * Keeps the incoming order. Returns "" when nothing matched.
+ * explainer from reason keys, keeping the incoming order. Skips reasons that
+ * are not preference phrases (open now, nearby). Returns "" when none remain.
  */
 export function formatMatchesLine(reasons: readonly MatchReasonKey[], maxItems = 3): string {
-  const uniqueReasons = Array.from(new Set(reasons));
-  const selected = uniqueReasons.slice(0, Math.max(1, maxItems));
-  if (selected.length === 0) {
-    return "";
+  const labels: string[] = [];
+  for (const key of reasons) {
+    const label = phraseFor(key);
+    if (!label || labels.includes(label)) continue;
+    labels.push(label);
+    if (labels.length >= Math.max(1, maxItems)) break;
   }
-  const labels = selected.map((key) => MATCH_REASON_LABELS[key]);
+  if (labels.length === 0) return "";
   return `Matches: ${labels.join(" · ")}`;
 }
 
 /**
- * F3.5: same sentence as {@link formatMatchesLine}, but reasons are ordered
- * noise → lighting → daylight → setting → group → nice-to-haves, capped at
- * three. Returns null when nothing matched so the line can be hidden.
+ * F3.5: same sentence, ordered noise → lighting → daylight → setting →
+ * nice-to-haves → group. Returns null when nothing the user chose matched.
  */
 export function matchesLine(reasons: readonly MatchReasonKey[], maxItems = 3): string | null {
-  const unique = Array.from(new Set(reasons)).sort(
-    (a, b) => MATCH_REASON_PRIORITY[a] - MATCH_REASON_PRIORITY[b],
-  );
+  const unique = Array.from(new Set(reasons)).sort((a, b) => {
+    const rank = (key: MatchReasonKey) => {
+      const index = MATCH_LINE_ORDER.indexOf(key);
+      return index === -1 ? MATCH_LINE_ORDER.length : index;
+    };
+    return rank(a) - rank(b);
+  });
   const line = formatMatchesLine(unique, maxItems);
   return line === "" ? null : line;
 }
@@ -187,13 +179,12 @@ export function scoreSpace<T extends CatalogSpace>(space: T, context: RankContex
 
   if (view.noise) {
     const noise = view.noise;
-    const isQuietOrSilent = noise === "silent" || noise === "quiet";
-    if (wantsQuietChip && isQuietOrSilent) {
+    if (wantsQuietChip && noise === "quiet") {
       score += WEIGHTS.CHIP_MATCH;
-      reasons.push(noise === "silent" ? "silent" : "quiet");
+      reasons.push("quiet");
     } else if (preferredNoise.includes(noise)) {
       score += WEIGHTS.NOISE_EXACT;
-      reasons.push(noise === "moderate" ? "moderate_noise" : noise);
+      reasons.push(noise);
     } else if (preferredNoise.length > 0) {
       const minDistance = Math.min(...preferredNoise.map((target) => getNoiseDistance(noise, target)));
       if (minDistance === 1) {
@@ -214,8 +205,7 @@ export function scoreSpace<T extends CatalogSpace>(space: T, context: RankContex
     } else if (preferredBrightness && view.brightness === preferredBrightness) {
       score += WEIGHTS.BRIGHTNESS;
       if (view.brightness === "dim") reasons.push("soft_lighting");
-      else if (view.brightness === "medium") reasons.push("medium_lighting");
-      else reasons.push("bright_lighting");
+      else if (view.brightness === "bright") reasons.push("bright_lighting");
     }
   }
 
@@ -228,19 +218,13 @@ export function scoreSpace<T extends CatalogSpace>(space: T, context: RankContex
   // 5. Daylight preference
   if (preferences?.daylight && preferences.daylight !== "any" && view.daylight === preferences.daylight) {
     score += WEIGHTS.DAYLIGHT;
-    if (view.daylight === "windowless") {
-      reasons.push("windowless");
-    } else {
-      reasons.push("natural_light");
-    }
+    if (view.daylight === "bright_daylight") reasons.push("natural_light");
   }
 
   // 6. Group size ("Just me", "2–3", "4+")
   if (groupSize && supportsGroupSize(view, groupSize)) {
     score += WEIGHTS.GROUP_SIZE;
-    if (groupSize === "just_me") reasons.push("solo_friendly");
-    else if (groupSize === "2_3") reasons.push("small_group");
-    else reasons.push("large_group");
+    reasons.push("fits_group");
   }
 
   // 7. Quick chips: Open late, Bookable, Computers, Printer, Restroom
@@ -260,7 +244,7 @@ export function scoreSpace<T extends CatalogSpace>(space: T, context: RankContex
 
   if (chips?.computers && view.amenities?.caen_computers) {
     score += WEIGHTS.CHIP_MATCH;
-    reasons.push("computers");
+    reasons.push("monitors");
   }
 
   if (chips?.printerNearby && view.amenities?.near_printer) {
@@ -278,17 +262,24 @@ export function scoreSpace<T extends CatalogSpace>(space: T, context: RankContex
   const amenityReasonMap: Record<NiceToHaveAmenity, MatchReasonKey> = {
     outlets: "outlets",
     whiteboard: "whiteboard",
-    external_monitors: "external_monitors",
-    caen_computers: "computers",
+    external_monitors: "monitors",
+    caen_computers: "monitors",
     near_printer: "near_printer",
     near_restroom: "near_restroom",
     near_water: "near_water",
     near_entrance: "near_entrance",
     bookable: "bookable",
+    accessible: "accessible",
   };
 
   for (const amenity of niceToHave) {
-    const hasAmenity = amenity === "bookable" ? isBookable : Boolean(view.amenities?.[amenity]);
+    const hasMonitors = Boolean(view.amenities?.external_monitors || view.amenities?.caen_computers);
+    const hasAmenity =
+      amenity === "bookable"
+        ? isBookable
+        : amenity === "external_monitors"
+          ? hasMonitors
+          : Boolean(view.amenities?.[amenity]);
     if (hasAmenity) {
       score += WEIGHTS.NICE_TO_HAVE;
       reasons.push(amenityReasonMap[amenity]);
@@ -304,29 +295,13 @@ export function scoreSpace<T extends CatalogSpace>(space: T, context: RankContex
     }
   }
 
-  // Fallback descriptive reasons if user has no active filters/preferences yet
-  if (reasons.length === 0) {
-    if (view.noise === "silent" || view.noise === "quiet") {
-      reasons.push(view.noise);
-    }
-    if (view.brightness === "dim") {
-      reasons.push("soft_lighting");
-    }
-    if (view.amenities?.near_printer) {
-      reasons.push("near_printer");
-    }
-    if (view.isOpenNow) {
-      reasons.push("open_now");
-    }
-  }
-
   const uniqueReasons = Array.from(new Set(reasons));
 
   return {
     space,
     score,
     matchedReasons: uniqueReasons,
-    matchesLine: formatMatchesLine(uniqueReasons),
+    matchesLine: matchesLine(uniqueReasons),
   };
 }
 
