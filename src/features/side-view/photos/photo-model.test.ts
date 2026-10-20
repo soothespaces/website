@@ -9,6 +9,7 @@ import {
   photoCountLabel,
   photoFileUrl,
   photoSrcSet,
+  swipeDirection,
   widthThatFits,
   type GalleryPhoto,
 } from "./photo-model.ts";
@@ -120,6 +121,13 @@ test("photos group by room and spot, low floors first", () => {
     ],
   );
   assert.equal(groups[3]?.photos[0]?.caption, "Reading Room");
+});
+
+test("a sideways swipe changes photos and a short drag does not", () => {
+  assert.equal(swipeDirection(-80, 10), "next");
+  assert.equal(swipeDirection(80, 10), "prev");
+  assert.equal(swipeDirection(-20, 0), null);
+  assert.equal(swipeDirection(-40, 80), null);
 });
 
 test("srcset uses stored widths and the viewer picks the largest that fits", () => {

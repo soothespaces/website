@@ -5,8 +5,10 @@ import { Chip, ChipGroup } from "@/components/ui/chip-group";
 import { DetailScreen } from "@/components/ui/detail-screen";
 import { EmptyState, Skeleton } from "@/components/ui/feedback";
 import { useMapState } from "@/features/map/map-state";
+import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { PanelScreenProps } from "../registry";
 import { PhotoGrid } from "./photo-grid";
+import { PhotoViewer } from "./photo-viewer";
 import { classifyPhoto, filterPhotos, groupPhotos, photoCountLabel, type PhotoFilter } from "./photo-model";
 import { useBuildingPhotos } from "./use-building-photos";
 
@@ -25,6 +27,7 @@ function isFilter(value: string): value is PhotoFilter {
 export function PhotosScreen({ route }: PanelScreenProps) {
   const { back, stack, data } = useMapState();
   const [filter, setFilter] = useState<PhotoFilter>("all");
+  const [openId, setOpenId] = useState<string | null>(null);
   const slug = route.kind === "photos" ? route.slug : "";
   const spaceSlug = route.kind === "photos" ? route.spaceId : undefined;
   const loadedPhotos = useBuildingPhotos(slug, spaceSlug);
@@ -33,6 +36,9 @@ export function PhotosScreen({ route }: PanelScreenProps) {
   const allowed = useMemo(() => classified.filter((photo) => !photo.hidden), [classified]);
   const shown = useMemo(() => filterPhotos(classified, filter), [classified, filter]);
   const groups = useMemo(() => groupPhotos(shown), [shown]);
+  const ordered = useMemo(() => groups.flatMap((group) => group.photos), [groups]);
+  const openIndex = ordered.findIndex((photo) => photo.id === openId);
+  const supabaseUrl = getSupabaseEnv()?.url;
 
   if (route.kind !== "photos") return null;
 
@@ -71,8 +77,24 @@ export function PhotosScreen({ route }: PanelScreenProps) {
           filter={filter}
           groups={groups}
           total={shown.length}
+          onOpen={setOpenId}
         />
       </div>
+      {supabaseUrl ? (
+        <PhotoViewer
+          photos={ordered}
+          index={openIndex < 0 ? 0 : openIndex}
+          open={openIndex >= 0}
+          supabaseUrl={supabaseUrl}
+          onOpenChange={(next) => {
+            if (!next) setOpenId(null);
+          }}
+          onIndexChange={(next) => {
+            const photo = ordered[next];
+            if (photo) setOpenId(photo.id);
+          }}
+        />
+      ) : null}
     </DetailScreen>
   );
 }
@@ -83,12 +105,14 @@ function PhotoBody({
   filter,
   groups,
   total,
+  onOpen,
 }: {
   loaded: boolean;
   error: string | null;
   filter: PhotoFilter;
   groups: ReturnType<typeof groupPhotos>;
   total: number;
+  onOpen: (id: string) => void;
 }) {
   if (!loaded) {
     return (
@@ -118,5 +142,5 @@ function PhotoBody({
     return <EmptyState title={description} />;
   }
 
-  return <PhotoGrid groups={groups} total={total} />;
+  return <PhotoGrid groups={groups} total={total} onOpen={onOpen} />;
 }

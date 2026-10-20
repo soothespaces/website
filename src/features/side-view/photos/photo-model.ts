@@ -208,6 +208,12 @@ export function photoFileUrl(supabaseUrl: string, pathPrefix: string, width: num
   return `${base}/storage/v1/object/public/${prefix}-${width}.webp`;
 }
 
+/** Left goes to the next photo, right to the previous. A short or vertical drag is ignored. */
+export function swipeDirection(dx: number, dy: number): "next" | "prev" | null {
+  if (Math.abs(dx) < 56 || Math.abs(dx) < Math.abs(dy) * 1.35) return null;
+  return dx < 0 ? "next" : "prev";
+}
+
 export function photoSrcSet(supabaseUrl: string, pathPrefix: string, widths: readonly number[]): string {
   return orderedWidths(widths)
     .map((width) => `${photoFileUrl(supabaseUrl, pathPrefix, width)} ${width}w`)
