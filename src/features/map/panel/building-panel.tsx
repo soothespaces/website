@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { Button } from "@/components/ui/button";
 import { SpaceList, type SpaceListDensity } from "@/features/spaces";
 import { type MapSelection, useMapState } from "../map-state";
 import { FloorSwitcher } from "./floor-switcher";
@@ -9,7 +10,7 @@ type BuildingSelection = Extract<MapSelection, { kind: "building" }>;
 
 // A building: its accessible entrances, floor plans and study spaces.
 export function BuildingPanel({ building, density }: { building: BuildingSelection; density: SpaceListDensity }) {
-  const { data, select, floorPlans, floor, setFloor } = useMapState();
+  const { data, select, floorPlans, floor, setFloor, push } = useMapState();
 
   const doors = useMemo(() => {
     if (!building.recordNumber) return null;
@@ -41,9 +42,23 @@ export function BuildingPanel({ building, density }: { building: BuildingSelecti
       ) : null}
       {spaces.length ? (
         <section aria-labelledby="building-spaces" className="flex flex-col gap-1">
-          <h3 id="building-spaces" className="px-3 text-sm font-medium">
-            Study spaces
-          </h3>
+          <div className="flex items-baseline justify-between gap-3 px-3">
+            <h3 id="building-spaces" className="text-sm font-medium">
+              Study spaces
+            </h3>
+            {building.slug && spaces.length ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (building.slug) push({ kind: "spaces", slug: building.slug });
+                }}
+                className="h-auto min-h-0 px-0 py-0 text-sm font-medium text-primary underline underline-offset-2 hover:bg-transparent"
+              >
+                {`See all ${spaces.length}`}
+              </Button>
+            ) : null}
+          </div>
           <SpaceList
             spaces={spaces}
             label={`Study spaces in ${building.name}`}

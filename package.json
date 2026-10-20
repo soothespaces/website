@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test src/lib/ranking/ranking.test.ts src/lib/location/location.test.ts src/lib/settings/model.test.ts src/lib/geo.test.ts src/lib/data/*.test.ts src/features/side-view/panel-route.test.ts src/features/map/layers/floor-staff.test.ts src/features/spaces/space-tags.test.ts src/components/ui/slot-times.test.ts src/components/ui/busyness.test.ts src/features/map/group-size.test.ts",
+    "test": "tsx --test src/lib/ranking/ranking.test.ts src/lib/location/location.test.ts src/lib/settings/model.test.ts src/lib/geo.test.ts src/lib/data/*.test.ts src/features/side-view/panel-route.test.ts src/features/side-view/spaces/*.test.ts src/features/map/layers/floor-staff.test.ts src/features/spaces/space-tags.test.ts src/components/ui/slot-times.test.ts src/components/ui/busyness.test.ts src/features/map/group-size.test.ts",
     "env:pull": "npx vercel env pull .env.local --environment=production",
     "db:types": "supabase gen types typescript --project-id doinwugtdzxxrmvcmemm --schema public > src/types/supabase.ts",
     "campus-map:fetch": "node scripts/campus-map/fetch.mjs",
