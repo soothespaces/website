@@ -1,13 +1,34 @@
 "use client";
 
-import { Suspense, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  Suspense,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
+import { useSearchParams } from "next/navigation";
 import { type SpaceSearch, useSpaceSearch } from "@/features/spaces";
 import { HOME_ROUTE, stackForRoute, type PanelRoute } from "@/features/side-view/panel-route";
+import {
+  historyStateWithoutNextKeys,
+  hrefWithGroupSize,
+  parseGroupSize,
+  PEOPLE_PARAM,
+  resolveVisitGroupSize,
+  type GroupSize,
+} from "./group-size";
 import type { LayerToggles } from "./layers-panel";
 import { type FloorPlan, useFloorIndex } from "./use-floor-index";
 import { type Entrance, type MapData, useMapData } from "./use-map-data";
 import { PanelQuerySync, usePanelStack } from "./use-panel-stack";
 
+export type { GroupSize } from "./group-size";
 export type { PanelRoute };
 
 // What the map's camera and outline follow. A building can be one of ours
@@ -49,9 +70,68 @@ type MapState = {
   // The floor shown for the selected building, or null for none.
   floor: number | null;
   setFloor: (floor: number | null) => void;
+  // "How many people?" null means not chosen. Ranking scores a group size
+  // only when one is set. Mirrored to ?people= (just-me, 2-3, 4+).
+  groupSize: GroupSize | null;
+  setGroupSize: (groupSize: GroupSize | null) => void;
 };
 
 const MapStateContext = createContext<MapState | null>(null);
+
+// Tells useSyncExternalStore that ?people= changed. replaceState does not
+// fire popstate, and a Next navigation does not go through setGroupSize.
+const GROUP_SIZE_URL_EVENT = "soothe-group-size";
+const MAP_PATH = "/map";
+
+// The choice for this visit. The first map URL establishes it. After that,
+// panel Back rewrites the entry to this choice, so an older ?people= cannot
+// replace a newer one.
+let retainedGroupSize: GroupSize | null | undefined;
+
+function subscribeToGroupSizeUrl(onChange: () => void) {
+  const onPop = () => {
+    syncVisitGroupSize();
+    onChange();
+  };
+  window.addEventListener("popstate", onPop);
+  window.addEventListener(GROUP_SIZE_URL_EVENT, onChange);
+  return () => {
+    window.removeEventListener("popstate", onPop);
+    window.removeEventListener(GROUP_SIZE_URL_EVENT, onChange);
+  };
+}
+
+function groupSizeFromLocation(): GroupSize | null {
+  return parseGroupSize(new URLSearchParams(window.location.search).get(PEOPLE_PARAM));
+}
+
+function serverGroupSize(): GroupSize | null {
+  return null;
+}
+
+function notifyGroupSizeUrl() {
+  window.dispatchEvent(new Event(GROUP_SIZE_URL_EVENT));
+}
+
+function writeGroupSizeToUrl(next: GroupSize | null) {
+  const href = hrefWithGroupSize(window.location, next);
+  const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (href === current) return;
+  window.history.replaceState(historyStateWithoutNextKeys(window.history.state), "", href);
+}
+
+// On the map, keep the visit's group size. Leave other pages alone.
+function syncVisitGroupSize() {
+  if (window.location.pathname !== MAP_PATH) return;
+  const next = resolveVisitGroupSize(retainedGroupSize, groupSizeFromLocation());
+  retainedGroupSize = next.groupSize;
+  if (!next.rewrite) return;
+  try {
+    writeGroupSizeToUrl(next.groupSize);
+  } catch {
+    // The choice stays in memory for this visit when the URL can't be written.
+  }
+}
 
 function routeFromSelection(selection: MapSelection): PanelRoute {
   if (selection.kind === "space") return { kind: "space", id: selection.slug };
@@ -165,6 +245,8 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
   });
   const [floorChoice, setFloorChoice] = useState<{ building: string; floor: number | null } | null>(null);
   const [userMoved, setUserMoved] = useState(false);
+  // The URL is the stored value, so a reload keeps the choice.
+  const groupSize = useSyncExternalStore(subscribeToGroupSizeUrl, groupSizeFromLocation, serverGroupSize);
 
   const { stack, route } = panel;
   const selection = useMemo(() => mapSelectionFor(stack, data), [stack, data]);
@@ -241,6 +323,22 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
     [buildingSlug],
   );
 
+  // replaceState updates the address bar before this returns, so a second
+  // choice in the same turn sees the first. App history keys (the panel
+  // stack) are passed through; Next's own keys are left for its patch to copy.
+  const setGroupSize = useCallback((next: GroupSize | null) => {
+    if (typeof window === "undefined") return;
+    const previous = retainedGroupSize;
+    retainedGroupSize = next;
+    try {
+      writeGroupSizeToUrl(next);
+    } catch {
+      retainedGroupSize = previous;
+      return;
+    }
+    notifyGroupSizeUrl();
+  }, []);
+
   const setQuery = search.setQuery;
   const value = useMemo<MapState>(
     () => ({
@@ -275,6 +373,8 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
       floorPlans,
       floor: floors?.some((plan) => plan.floor === chosenFloor) ? chosenFloor : null,
       setFloor,
+      groupSize,
+      setGroupSize,
     }),
     [
       data,
@@ -298,19 +398,33 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
       floors,
       chosenFloor,
       setFloor,
+      groupSize,
+      setGroupSize,
     ],
   );
 
   return (
     <MapStateContext value={value}>
-      {/* Only this child reads the query string, so the dock and the map
+      {/* Only these children read the query string, so the dock and the map
           stay in the prerendered HTML. */}
       <Suspense fallback={null}>
         <PanelQuerySync onParams={panel.adoptUrl} />
+        <GroupSizeFromUrl />
       </Suspense>
       {children}
     </MapStateContext>
   );
+}
+
+// Next can change the query without a popstate. Keep the visit's group size
+// on the URL, including after panel Back.
+function GroupSizeFromUrl() {
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    syncVisitGroupSize();
+    notifyGroupSizeUrl();
+  }, [searchParams]);
+  return null;
 }
 
 export function useMapState() {
