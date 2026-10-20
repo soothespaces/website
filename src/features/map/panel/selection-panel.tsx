@@ -97,7 +97,7 @@ function PanelFrame({
       }
     >
       <div className="flex flex-col gap-1">
-        <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />
+        {route.kind === "home" ? null : <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />}
         {body}
       </div>
     </div>

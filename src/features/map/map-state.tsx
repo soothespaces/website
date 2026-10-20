@@ -15,6 +15,8 @@ import {
 import { useSearchParams } from "next/navigation";
 import { type SpaceSearch, useSpaceSearch } from "@/features/spaces";
 import { HOME_ROUTE, stackForRoute, type PanelRoute } from "@/features/side-view/panel-route";
+import type { Coordinates } from "@/lib/location";
+import { EMPTY_SPACE_FILTERS, type SpaceFilters } from "./space-filters";
 import {
   historyStateWithoutNextKeys,
   hrefWithGroupSize,
@@ -30,6 +32,7 @@ import { PanelQuerySync, usePanelStack } from "./use-panel-stack";
 
 export type { GroupSize } from "./group-size";
 export type { PanelRoute };
+export type { SpaceFilters } from "./space-filters";
 
 // What the map's camera and outline follow. A building can be one of ours
 // (slug), one only FO knows about (recordNumber), or both. The panel itself
@@ -45,7 +48,7 @@ export type CameraRequest = { key: number; selection: MapSelection };
 type MapState = {
   data: MapData;
   search: SpaceSearch;
-  // The panel stack. The last entry is on screen; Home is the search results.
+  // The panel stack. The last entry is on screen. Home is the default panel.
   stack: PanelRoute[];
   route: PanelRoute;
   // The place the camera and the floor plan follow, or null on Home.
@@ -74,6 +77,13 @@ type MapState = {
   // only when one is set. Mirrored to ?people= (just-me, 2-3, 4+).
   groupSize: GroupSize | null;
   setGroupSize: (groupSize: GroupSize | null) => void;
+  // Home quick chips. They hide spaces, and they share this object with any
+  // other map filter that sets the same flags.
+  filters: SpaceFilters;
+  setFilters: (filters: SpaceFilters) => void;
+  // Set when the map's location control gets a fix. Null until then.
+  origin: Coordinates | null;
+  setOrigin: (origin: Coordinates | null) => void;
 };
 
 const MapStateContext = createContext<MapState | null>(null);
@@ -245,6 +255,8 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
   });
   const [floorChoice, setFloorChoice] = useState<{ building: string; floor: number | null } | null>(null);
   const [userMoved, setUserMoved] = useState(false);
+  const [filters, setFilters] = useState<SpaceFilters>(EMPTY_SPACE_FILTERS);
+  const [origin, setOriginState] = useState<Coordinates | null>(null);
   // The URL is the stored value, so a reload keeps the choice.
   const groupSize = useSyncExternalStore(subscribeToGroupSizeUrl, groupSizeFromLocation, serverGroupSize);
 
@@ -323,6 +335,14 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
     [buildingSlug],
   );
 
+  const setOrigin = useCallback((next: Coordinates | null) => {
+    setOriginState((current) => {
+      if (next == null) return current == null ? current : null;
+      if (current && current.latitude === next.latitude && current.longitude === next.longitude) return current;
+      return next;
+    });
+  }, []);
+
   // replaceState updates the address bar before this returns, so a second
   // choice in the same turn sees the first. App history keys (the panel
   // stack) are passed through; Next's own keys are left for its patch to copy.
@@ -345,7 +365,7 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
       data,
       search: {
         ...search,
-        // Typing a search goes back to the results.
+        // Typing a search returns to Home, which lists the matches.
         setQuery: (query: string) => {
           setQuery(query);
           if (panelRef.current.route.kind !== "home") {
@@ -375,6 +395,10 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
       setFloor,
       groupSize,
       setGroupSize,
+      filters,
+      setFilters,
+      origin,
+      setOrigin,
     }),
     [
       data,
@@ -400,6 +424,9 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
       setFloor,
       groupSize,
       setGroupSize,
+      filters,
+      origin,
+      setOrigin,
     ],
   );
 

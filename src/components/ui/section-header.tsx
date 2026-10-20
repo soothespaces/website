@@ -41,7 +41,12 @@ function SectionActionLink({ action }: { action: SectionAction }) {
     <Button
       variant="ghost"
       size="sm"
-      onClick={action.onClick}
+      onClick={(event) => {
+        // The panel that holds this button is about to be hidden. Leave it
+        // before that, so focus is not trapped under aria-hidden.
+        event.currentTarget.blur();
+        action.onClick();
+      }}
       className={cx(className, "h-auto min-h-0 px-0 py-0 hover:bg-transparent")}
     >
       {action.label}

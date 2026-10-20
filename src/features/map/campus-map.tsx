@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import Map, { GeolocateControl, NavigationControl, ScaleControl } from "react-map-gl/maplibre";
 import { useReducedMotion } from "@/lib/settings/use-reduced-motion";
 import { useResolvedTheme } from "@/lib/use-resolved-theme";
+import { useMapState } from "./map-state";
 import {
   CAMPUS_BOUNDS,
   CAMPUS_INITIAL_VIEW,
@@ -25,6 +26,7 @@ import { LayerSlots } from "./slots";
 export default function CampusMap({ children }: { children?: ReactNode }) {
   const theme = useResolvedTheme();
   const reducedMotion = useReducedMotion();
+  const { setOrigin } = useMapState();
 
   return (
     <div data-map-theme={theme} className="absolute inset-0 bg-muted">
@@ -59,7 +61,12 @@ export default function CampusMap({ children }: { children?: ReactNode }) {
         style={{ width: "100%", height: "100%" }}
       >
         <NavigationControl position="top-right" showCompass={false} />
-        <GeolocateControl position="top-right" />
+        <GeolocateControl
+          position="top-right"
+          onGeolocate={(event) => {
+            setOrigin({ latitude: event.coords.latitude, longitude: event.coords.longitude });
+          }}
+        />
         <ScaleControl position="bottom-left" />
         <LayerSlots />
         {children}
