@@ -125,7 +125,7 @@ function Frame({ photo, supabaseUrl, sizes }: { photo: ListedPhoto; supabaseUrl:
         alt={photo.alt}
         width={photo.width}
         height={photo.height}
-        className="h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover"
       />
       <span className="sr-only">Photo credit: {photo.credit}</span>
     </>

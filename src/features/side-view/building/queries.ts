@@ -42,6 +42,7 @@ const NO_FLOORS: number[] = [];
 
 function useCached<T>(slug: string | null, cache: Map<string, T>, load: (slug: string) => Promise<T>, empty: T) {
   const [tick, setTick] = useState(0);
+  const [failed, setFailed] = useState<string | null>(null);
   useEffect(() => {
     if (!slug || cache.has(slug) || !getSupabaseEnv()) return;
     let cancelled = false;
@@ -51,9 +52,10 @@ function useCached<T>(slug: string | null, cache: Map<string, T>, load: (slug: s
         if (!cancelled) setTick((n) => n + 1);
       })
       .catch((error: unknown) => {
+        // A failed read is not "nothing there". Leave it out of the cache so
+        // the next time this screen mounts it tries again.
         console.error(error);
-        cache.set(slug, empty);
-        if (!cancelled) setTick((n) => n + 1);
+        if (!cancelled) setFailed(slug);
       });
     return () => {
       cancelled = true;
@@ -61,6 +63,7 @@ function useCached<T>(slug: string | null, cache: Map<string, T>, load: (slug: s
   }, [slug, cache, load, empty]);
   void tick;
   if (!slug || !getSupabaseEnv()) return { data: empty, ready: true };
+  if (failed === slug && !cache.has(slug)) return { data: empty, ready: true };
   if (!cache.has(slug)) return { data: empty, ready: false };
   return { data: cache.get(slug) ?? empty, ready: true };
 }

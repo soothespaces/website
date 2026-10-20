@@ -50,7 +50,7 @@ function BuildingScreen({ route }: PanelScreenProps) {
       <RoomsPreview slug={slug} />
       <BuildingFacts
         entrances={entrances}
-        entrancesKnown={data.loaded && !data.error}
+        entrancesKnown={data.loaded && !data.error && data.entrances.length > 0}
         rampAccess={profile.data?.rampAccess ?? null}
         elevatorAccess={profile.data?.elevatorAccess ?? null}
       />

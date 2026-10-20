@@ -8,7 +8,7 @@ import { NoiseBadge } from "@/components/ui/noise-badge";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useMapState } from "@/features/map/map-state";
 import type { SpaceSummary } from "@/features/spaces";
-import { loginHref } from "@/lib/auth/paths";
+import { loginHref, loginHrefFor } from "@/lib/auth/paths";
 import { useSession } from "@/lib/auth/use-session";
 import { rankSpaces } from "@/lib/ranking";
 import { useStudyPreferences } from "@/lib/settings/settings-provider";
@@ -72,7 +72,16 @@ export function RecommendedSection({ slug }: { slug: string | null }) {
             </Button>
           ) : (
             <Button asChild size="sm">
-              <Link href={loginHref(pathname)}>Sign in</Link>
+              <Link
+                href={loginHref(pathname)}
+                onClick={(event) => {
+                  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+                  event.preventDefault();
+                  window.location.assign(loginHrefFor(window.location.pathname, window.location.search));
+                }}
+              >
+                Sign in
+              </Link>
             </Button>
           )}
         </div>

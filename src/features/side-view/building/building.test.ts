@@ -12,7 +12,16 @@ import {
 } from "./copy.ts";
 import { collectFloors } from "./floors.ts";
 import { rankPreview } from "./preview.ts";
+import { loginHrefFor } from "../../../lib/auth/paths.ts";
 import { DEFAULT_STUDY } from "../../../lib/settings/model.ts";
+
+test("sign-in comes back to the open building", () => {
+  assert.equal(
+    loginHrefFor("/map", "?panel=building&b=harold-t-and-vivian-b-shapiro-library"),
+    "/login?next=%2Fmap%3Fpanel%3Dbuilding%26b%3Dharold-t-and-vivian-b-shapiro-library",
+  );
+  assert.equal(loginHrefFor("/map", ""), "/login?next=%2Fmap");
+});
 
 test("floor tile counts basement through 4", () => {
   assert.deepEqual(
