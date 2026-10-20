@@ -57,6 +57,7 @@ function PanelFrame({
   const ref = useRef<HTMLDivElement>(null);
   const key = panelRouteKey(route);
   const Screen = panelRegistry[route.kind];
+  const ownsChrome = Screen?.ownsChrome === true;
 
   // Scroll lives on the frame. Back hides it instead of unmounting it. The
   // saved offset covers a browser that zeroes scrollTop when the frame is
@@ -97,7 +98,7 @@ function PanelFrame({
       }
     >
       <div className="flex flex-col gap-1">
-        <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />
+        {ownsChrome ? null : <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />}
         {body}
       </div>
     </div>
