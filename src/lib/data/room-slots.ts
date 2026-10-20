@@ -23,6 +23,10 @@ export type RoomSlot = {
   /** Null when LibCal couldn't be read. Classrooms always have slots. */
   slots: SlotState[] | null;
   status: string;
+  /** Class meeting now, when this room is a classroom and a course is known. */
+  currentCourse?: string;
+  /** Next class today, when this room is a classroom and one is still ahead. */
+  nextCourse?: string;
 };
 
 export type SlotBooking = { start: number; end: number };
@@ -43,8 +47,13 @@ export type ClassroomRoomInput = {
   floor: number | null;
   capacity: number | null;
   /** Meeting clock times on the window's Detroit date, "HH:MM:SS". */
-  meetings: { starts: string; ends: string }[];
+  meetings: { starts: string; ends: string; course?: string }[];
 };
+
+/** Half-hour the eight-slot window starts on, in minutes from Detroit midnight. */
+export function slotWindowStart(from: Date): number {
+  return Math.floor(detroitParts(from).minutes / SLOT_MINUTES) * SLOT_MINUTES;
+}
 
 /** "2026-10-21 20:15:00" or "20:15:00" → minutes from midnight of `date`. */
 export function minutesFrom(value: string, date: string): number | null {
@@ -105,6 +114,41 @@ function presentRoom(room: RoomSlot & { bookings?: SlotBooking[] }): RoomSlot {
     ...(room.bookingUrl ? { bookingUrl: room.bookingUrl } : {}),
     slots: room.slots,
     status: room.status,
+    ...(room.currentCourse ? { currentCourse: room.currentCourse } : {}),
+    ...(room.nextCourse ? { nextCourse: room.nextCourse } : {}),
+  };
+}
+
+/** Course in session at `at`, and the next course later today. */
+export function classroomCourses(
+  meetings: readonly { starts: string; ends: string; course?: string }[],
+  at: number,
+): { currentCourse?: string; nextCourse?: string } {
+  let currentEnd = -1;
+  let currentCourse: string | undefined;
+  let nextStart = Number.POSITIVE_INFINITY;
+  let nextCourse: string | undefined;
+  for (const meeting of meetings) {
+    const course = meeting.course?.trim();
+    if (!course) continue;
+    const start = minutesFrom(meeting.starts, "1970-01-01");
+    const end = minutesFrom(meeting.ends, "1970-01-01");
+    if (start == null || end == null || end <= start) continue;
+    if (start <= at && end > at) {
+      if (end > currentEnd) {
+        currentEnd = end;
+        currentCourse = course;
+      }
+      continue;
+    }
+    if (start > at && start < 1440 && start < nextStart) {
+      nextStart = start;
+      nextCourse = course;
+    }
+  }
+  return {
+    ...(currentCourse ? { currentCourse } : {}),
+    ...(nextCourse ? { nextCourse } : {}),
   };
 }
 
@@ -142,7 +186,7 @@ export function buildRoomSlots(input: {
   classrooms: readonly ClassroomRoomInput[];
 }): RoomSlot[] {
   const parts = detroitParts(input.from);
-  const start = Math.floor(parts.minutes / SLOT_MINUTES) * SLOT_MINUTES;
+  const start = slotWindowStart(input.from);
   const bookedByItem = new Map<number, { start: string; end: string }[]>();
   if (!isUnavailable(input.availability)) {
     for (const item of input.availability.items) bookedByItem.set(item.libcalItemId, item.booked);
@@ -209,6 +253,7 @@ export function buildRoomSlots(input: {
       kind: "classroom",
       slots: slotsFor(bookings, start),
       status: statusAt(bookings, parts.minutes),
+      ...classroomCourses(room.meetings, parts.minutes),
     });
   }
 
@@ -243,6 +288,7 @@ type MeetingRecord = {
   room_number: string;
   starts: string;
   ends: string;
+  course: string;
   weekdays: number[];
   first_day: string;
   last_day: string;
@@ -291,7 +337,7 @@ export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlots
           readAll<MeetingRecord>((start, end) =>
             supabase
               .from("classroom_meetings")
-              .select("room_code, room_number, starts, ends, weekdays, first_day, last_day")
+              .select("room_code, room_number, starts, ends, course, weekdays, first_day, last_day")
               .eq("building_slug", buildingSlug)
               .order("room_code")
               .range(start, end),
@@ -331,7 +377,11 @@ export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlots
             roomNumber: row.room_number,
             floor: floorFromLabel(detail?.floor_label ?? null),
             capacity: detail?.seats ?? null,
-            meetings: roomMeetings.map((meeting) => ({ starts: meeting.starts, ends: meeting.ends })),
+            meetings: roomMeetings.map((meeting) => ({
+              starts: meeting.starts,
+              ends: meeting.ends,
+              course: meeting.course,
+            })),
           });
         }
 

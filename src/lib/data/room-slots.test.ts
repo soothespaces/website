@@ -106,6 +106,39 @@ test("touching LibCal cells and a following class are one booked stretch", () =>
   ]), [{ start: 20 * 60, end: 21 * 60 }]);
 });
 
+test("a classroom keeps the course in session and the next course today", () => {
+  const classroom: ClassroomRoomInput = {
+    roomCode: "AH-1400",
+    roomNumber: "1400",
+    floor: 1,
+    capacity: 30,
+    meetings: [
+      { starts: "20:00:00", ends: "21:00:00", course: "EECS 281" },
+      { starts: "21:30:00", ends: "22:30:00", course: "EECS 370" },
+    ],
+  };
+  const inClass = buildRoomSlots({
+    from,
+    bookable: [],
+    availability: { items: [] },
+    classrooms: [classroom],
+  });
+  assert.equal(inClass[0]?.status, "Booked until 9 PM");
+  assert.equal(inClass[0]?.currentCourse, "EECS 281");
+  assert.equal(inClass[0]?.nextCourse, "EECS 370");
+
+  const after = buildRoomSlots({
+    from: new Date("2026-10-22T01:10:00Z"),
+    bookable: [],
+    availability: { items: [] },
+    classrooms: [classroom],
+  });
+  assert.equal(after[0]?.status, "Free until 9:30 PM");
+  assert.equal(after[0]?.currentCourse, undefined);
+  assert.equal(after[0]?.nextCourse, "EECS 370");
+  assert.equal(JSON.stringify(after).includes("bookings"), false);
+});
+
 test("status uses the current minute, not the start of the half hour", () => {
   const at820 = new Date("2026-10-22T00:20:00Z");
   const slots = buildRoomSlots({
