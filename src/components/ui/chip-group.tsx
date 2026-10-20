@@ -13,6 +13,8 @@ type ChipGroupBase = {
   label: string;
   /** Hide the label visually. It stays the group's accessible name. */
   labelHidden?: boolean;
+  /** Muted words after the label, such as "pick any". */
+  hint?: string;
   children: ReactNode;
   className?: string;
 };
@@ -27,8 +29,12 @@ export function ChipGroup(props: ChipGroupProps) {
   const labelId = useId();
   const groupClass = "flex flex-wrap gap-2";
   const label = (
-    <span id={labelId} className={props.labelHidden ? "sr-only" : "text-sm font-medium"}>
+    <span
+      id={labelId}
+      className={props.labelHidden ? "sr-only" : "flex flex-wrap items-baseline gap-2 text-sm font-medium"}
+    >
       {props.label}
+      {props.hint ? <span className="font-normal text-muted-foreground">{props.hint}</span> : null}
     </span>
   );
   return (
