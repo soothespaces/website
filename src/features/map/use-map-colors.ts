@@ -5,7 +5,7 @@ import { useMemo, useSyncExternalStore } from "react";
 // Design tokens the map's own layers paint with. MapLibre paints on a canvas
 // and can't read CSS variables, so their current values are read from the
 // page and re-read whenever the theme, contrast or palette changes.
-const TOKENS = ["primary", "primary-foreground", "card", "foreground", "muted-foreground"] as const;
+const TOKENS = ["primary", "primary-foreground", "card", "foreground", "muted-foreground", "floor-staff"] as const;
 export type MapColors = Record<(typeof TOKENS)[number], string>;
 
 const QUERIES = ["(prefers-color-scheme: dark)", "(prefers-contrast: more)"];
