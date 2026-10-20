@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { onCheckedIn } from "@/features/check-in/checked-in";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { Database } from "@/types/supabase";
@@ -186,6 +187,12 @@ export function useCheckInSummary(
     };
   }, [targetKind, targetId, since, nonce, requestKey]);
 
+  useEffect(() => {
+    return onCheckedIn((event) => {
+      if (event.targetKind === targetKind && event.targetId === targetId) refresh();
+    });
+  }, [refresh, targetId, targetKind]);
+
   if (unconfigured()) return { summary: null, loaded: true, error: "Supabase isn't configured.", refresh };
   if (!targetId) return { summary: null, loaded: true, error: null, refresh };
   if (state.key !== requestKey) return { summary: null, loaded: false, error: null, refresh };
@@ -225,6 +232,12 @@ export function useCheckInOverview(targetKind: CheckInTargetKind, since?: string
       cancelled = true;
     };
   }, [targetKind, since, nonce, requestKey]);
+
+  useEffect(() => {
+    return onCheckedIn((event) => {
+      if (event.targetKind === targetKind) refresh();
+    });
+  }, [refresh, targetKind]);
 
   if (unconfigured()) return { byId: EMPTY_OVERVIEW, loaded: true, error: "Supabase isn't configured.", refresh };
   if (state.key !== requestKey) return { byId: EMPTY_OVERVIEW, loaded: false, error: null, refresh };
