@@ -18,7 +18,7 @@ function space(partial: Partial<CheckInSpace> & Pick<CheckInSpace, "id" | "name"
 }
 
 describe("check-in spaces (K2 / SOS-137)", () => {
-  it("lists the nearest spaces in the building, with the open space first", () => {
+  it("lists the nearest spaces in the building and keeps the open space in the row", () => {
     const near = space({ id: "near", name: "Reading Room", lat: 42.27561, lng: -83.73721 });
     const mid = space({ id: "mid", name: "Fishbowl", lat: 42.2759, lng: -83.7374 });
     const far = space({ id: "far", name: "Stacks", lat: 42.2764, lng: -83.738 });
@@ -31,7 +31,7 @@ describe("check-in spaces (K2 / SOS-137)", () => {
     });
     assert.deepEqual(
       rows.map((row) => row.id),
-      ["picked", "near", "mid"],
+      ["near", "mid", "picked"],
     );
   });
 

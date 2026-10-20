@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip, ChipGroup } from "@/components/ui/chip-group";
 import { Input, Label } from "@/components/ui/field";
@@ -40,7 +40,6 @@ export function CheckInSheet({
   request: CheckInRequest | null;
   onOpenChange: (open: boolean) => void;
 }) {
-  const pathname = usePathname();
   const toast = useToast();
   const { user, loading } = useSession();
   const fix = useGrantedPosition();
@@ -142,7 +141,7 @@ export function CheckInSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" aria-describedby={undefined}>
+      <SheetContent side="bottom">
         {banner ? (
           <p className="rounded-md bg-primary px-3 py-2 pr-10 text-sm font-medium text-primary-foreground">You&apos;re at {banner}</p>
         ) : null}
@@ -150,15 +149,14 @@ export function CheckInSheet({
         <SheetDescription className="sr-only">
           Noise, brightness, daylight, and how full the space is. Where you are is the only required answer.
         </SheetDescription>
-        {signedOut ? (
-          <div className="flex flex-col gap-3">
-            <Button asChild>
-              <Link href={loginHref(pathname)}>Sign in to check in</Link>
-            </Button>
-            <Button variant="outline" onClick={close}>
-              Later
-            </Button>
-          </div>
+        {loading ? (
+          <p role="status" className="text-sm text-muted-foreground">
+            Loading…
+          </p>
+        ) : signedOut ? (
+          <Suspense fallback={null}>
+            <SignInToCheckIn onLater={close} />
+          </Suspense>
         ) : (
           <div className="flex flex-col gap-5">
             {error ? <p role="alert">{error}</p> : null}
@@ -257,6 +255,23 @@ export function CheckInSheet({
         )}
       </SheetContent>
     </Sheet>
+  );
+}
+
+function SignInToCheckIn({ onLater }: { onLater: () => void }) {
+  const pathname = usePathname();
+  const search = useSearchParams();
+  const query = search.toString();
+  const next = query ? `${pathname}?${query}` : pathname;
+  return (
+    <div className="flex flex-col gap-3">
+      <Button asChild>
+        <Link href={loginHref(next)}>Sign in to check in</Link>
+      </Button>
+      <Button variant="outline" onClick={onLater}>
+        Later
+      </Button>
+    </div>
   );
 }
 

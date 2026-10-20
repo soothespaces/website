@@ -12,6 +12,7 @@ import {
   bookingTitle,
   currentBooking,
   forgetBooking,
+  onBookingSaved,
   rememberBooking,
   type SavedBooking,
 } from "./booking-memory";
@@ -33,21 +34,26 @@ export function BookingPrompt() {
 
   useEffect(() => {
     if (loading || !user) return;
-    const timer = window.setTimeout(() => {
-      if (!isDialogOpen()) setBooking(currentBooking());
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [loading, user]);
-
-  useEffect(() => {
-    if (!user) return;
-    const onVisible = () => {
-      if (document.visibilityState !== "visible" || isDialogOpen()) return;
+    let retry = 0;
+    const show = () => {
+      window.clearInterval(retry);
+      if (document.visibilityState === "hidden") return;
+      if (isDialogOpen()) {
+        retry = window.setInterval(show, 1000);
+        return;
+      }
       setBooking((current) => current ?? currentBooking());
     };
-    document.addEventListener("visibilitychange", onVisible);
-    return () => document.removeEventListener("visibilitychange", onVisible);
-  }, [user]);
+    const timer = window.setTimeout(show, 0);
+    const stopSaved = onBookingSaved(show);
+    document.addEventListener("visibilitychange", show);
+    return () => {
+      window.clearTimeout(timer);
+      window.clearInterval(retry);
+      stopSaved();
+      document.removeEventListener("visibilitychange", show);
+    };
+  }, [loading, user]);
 
   function later() {
     if (shown) forgetBooking(shown);

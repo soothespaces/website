@@ -42,7 +42,11 @@ function getServerFix() {
 async function sample(current: number) {
   if (current !== generation) return;
   if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
-  const result = await requestOneShotPosition();
+  const result = await requestOneShotPosition({
+    enableHighAccuracy: true,
+    timeout: 10_000,
+    maximumAge: 0,
+  });
   if (current !== generation || !result.coords) return;
   publishFix(result.coords);
 }

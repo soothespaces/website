@@ -27,16 +27,17 @@ export function LocationPrompt() {
   const bodyId = useId();
   const cardRef = useRef<HTMLElement>(null);
   const { permission, request } = useLocation();
+  const permissionRef = useRef(permission);
   const { route } = useMapState();
   const wide = useMediaQuery(WIDE_QUERY);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    permissionRef.current = permission;
     if (permission === "denied") rememberLocationDenied(window.localStorage);
   }, [permission]);
 
   useEffect(() => {
-    if (permission !== "prompt" && permission !== "unknown") return;
     let ready = false;
     let stopped = false;
     let timer = 0;
@@ -51,9 +52,14 @@ export function LocationPrompt() {
     };
 
     const tryShow = () => {
+      const current = permissionRef.current;
+      if (current === "granted" || current === "denied") {
+        stop();
+        return;
+      }
       if (stopped || !ready || isDialogOpen()) return;
       const show = shouldShowLocationPrompt({
-        permission,
+        permission: current,
         now: Date.now(),
         dismissedUntil: readDismissedUntil(window.localStorage),
         deniedForever: readLocationDenied(window.localStorage),
@@ -81,7 +87,7 @@ export function LocationPrompt() {
     window.addEventListener("pointerdown", arm);
     window.addEventListener("keydown", arm);
     return () => stop();
-  }, [permission]);
+  }, []);
 
   const visible = open && permission !== "granted" && permission !== "denied";
 

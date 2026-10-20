@@ -58,18 +58,14 @@ export function nearestSpaces(
     return a.name.localeCompare(b.name);
   });
   const top = ranked.slice(0, limit);
+  // Keep nearest-first order. A chosen space that missed the cut replaces
+  // the last row so it can stay selected without shuffling the others.
   if (options.preferId && !top.some((space) => space.id === options.preferId)) {
     const preferred = pool.find((space) => space.id === options.preferId) ?? spaces.find((space) => space.id === options.preferId);
     if (preferred) {
       if (top.length < limit) top.push(preferred);
       else top[top.length - 1] = preferred;
     }
-  }
-  if (!options.preferId) return top;
-  const index = top.findIndex((space) => space.id === options.preferId);
-  if (index > 0) {
-    const [preferred] = top.splice(index, 1);
-    if (preferred) top.unshift(preferred);
   }
   return top;
 }

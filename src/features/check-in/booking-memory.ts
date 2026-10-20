@@ -112,9 +112,19 @@ export function writeBookings(bookings: readonly SavedBooking[], storage: Store 
   }
 }
 
+const savedListeners = new Set<() => void>();
+
+export function onBookingSaved(listener: () => void): () => void {
+  savedListeners.add(listener);
+  return () => savedListeners.delete(listener);
+}
+
 export function rememberBooking(booking: SavedBooking, now = Date.now(), storage?: Store): void {
   const store = storage ?? browserStore();
   writeBookings(withBooking(readBookings(store), booking, now), store);
+  if (storage == null) {
+    for (const listener of savedListeners) listener();
+  }
 }
 
 export function forgetBooking(booking: SavedBooking, storage?: Store): void {
