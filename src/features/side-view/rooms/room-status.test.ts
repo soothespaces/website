@@ -66,3 +66,12 @@ test("the LibCal link name uses the room name", () => {
   assert.equal(roomBookingLabel("Room 2124"), "Book Room 2124 on LibCal");
   assert.equal(roomBookingLabel("Booth 1"), "Book Booth 1 on LibCal");
 });
+
+test("only an http(s) LibCal page is a link", () => {
+  const bookable = room({ kind: "bookable", status: "Free until 10 PM", bookingUrl: "https://umich.libcal.com/space/1" });
+  assert.equal(roomIsBookableLink(bookable), true);
+  assert.equal(roomIsBookableLink({ ...bookable, bookingUrl: "http://umich.libcal.com/space/1" }), true);
+  assert.equal(roomIsBookableLink({ ...bookable, bookingUrl: "javascript:alert(1)" }), false);
+  assert.equal(roomIsBookableLink({ ...bookable, bookingUrl: "/space/1" }), false);
+  assert.equal(roomIsBookableLink({ ...bookable, kind: "classroom", bookingUrl: "https://umich.libcal.com/space/1" }), false);
+});

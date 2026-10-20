@@ -1,10 +1,10 @@
-import { cx } from "@/lib/cx";
 import { SLOT_COUNT, SLOT_MINUTES } from "@/lib/data/room-slots";
 import { formatClock, hourTicks } from "@/components/ui/slot-times";
 
 // Hour labels for one shared timeline, lined up with the slot columns.
-// The closing hour (12 AM after an 8 PM start) is left off so the row
-// reads 8 PM, 9 PM, 10 PM, 11 PM.
+// Each label starts at its hour, so "8 PM" doesn't sit on top of "9 PM"
+// when the dock is 320px. The closing hour (12 AM after an 8 PM start)
+// is left off.
 export function TimelineTicks({
   start,
   slotCount = SLOT_COUNT,
@@ -19,21 +19,15 @@ export function TimelineTicks({
   const ticks = hourTicks(start, slotCount, slotMinutes).filter((tick) => tick < end);
   return (
     <div aria-hidden="true" className="relative h-4 min-w-0">
-      {ticks.map((tick) => {
-        const left = ((tick - start) / span) * 100;
-        return (
-          <span
-            key={tick}
-            className={cx(
-              "absolute top-0 text-xs whitespace-nowrap text-muted-foreground",
-              left <= 0 ? "" : "-translate-x-1/2",
-            )}
-            style={{ left: `${left}%` }}
-          >
-            {formatClock(tick)}
-          </span>
-        );
-      })}
+      {ticks.map((tick) => (
+        <span
+          key={tick}
+          className="absolute top-0 text-xs whitespace-nowrap text-muted-foreground"
+          style={{ left: `${((tick - start) / span) * 100}%` }}
+        >
+          {formatClock(tick)}
+        </span>
+      ))}
     </div>
   );
 }

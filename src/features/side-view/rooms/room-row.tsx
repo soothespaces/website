@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { SlotTimeline } from "@/components/ui/slot-timeline";
 import { cx } from "@/lib/cx";
 import type { RoomSlot } from "@/lib/data/room-slots";
@@ -8,7 +9,7 @@ const rowClass = cx(roomColumns, "items-center py-3 text-left");
 
 export function RoomRow({ room, start }: { room: RoomSlot; start: number }) {
   const status = roomStatusLine(room);
-  const statusId = `room-status-${room.id.replace(/[^A-Za-z0-9_-]/g, "-")}`;
+  const statusId = useId();
   const body = (
     <>
       <span className="min-w-0">

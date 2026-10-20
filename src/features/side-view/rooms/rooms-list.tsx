@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip, ChipGroup } from "@/components/ui/chip-group";
 import { DetailScreen } from "@/components/ui/detail-screen";
@@ -43,6 +44,7 @@ export function RoomsList({
   onViewFloorPlan: (floor: number) => void;
 }) {
   const start = slotWindowStart(now);
+  const listId = useId();
   const period = periodLabel(detroitParts(now).minutes);
   const filtered = rooms.filter((room) => roomMatchesSize(room.capacity, size));
   const groups = groupRoomsByFloor(filtered);
@@ -75,8 +77,8 @@ export function RoomsList({
           <TimelineTicks start={start} />
         </div>
         {groups.map((group) => (
-          <section key={group.label} aria-labelledby={`rooms-floor-${group.floor ?? "other"}`} className="flex flex-col">
-            <h2 id={`rooms-floor-${group.floor ?? "other"}`} className="pt-2 text-sm font-semibold">
+          <section key={group.label} aria-labelledby={`${listId}-floor-${group.floor ?? "other"}`} className="flex flex-col">
+            <h2 id={`${listId}-floor-${group.floor ?? "other"}`} className="pt-2 text-sm font-semibold">
               {group.label}
             </h2>
             <ul className="divide-y divide-border">
@@ -104,6 +106,7 @@ export function RoomsList({
           onValueChange={(value) => {
             if (isRoomSize(value)) onSizeChange(value);
           }}
+          className="[&_[role=radio]]:px-2.5 [&_[role=radiogroup]]:gap-1.5"
         >
           {ROOM_SIZES.map((option) => (
             <Chip key={option.value} value={option.value}>

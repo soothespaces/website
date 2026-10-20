@@ -10,8 +10,13 @@ export const ROOM_SIZES: { value: RoomSize; label: string }[] = [
   { value: "4_plus", label: "4+" },
 ];
 
-/** Shared by the hour ticks and each room row so the columns stay aligned. */
-export const roomColumns = "grid w-full grid-cols-[minmax(5.5rem,0.9fr)_minmax(0,1.25fr)] gap-x-3";
+/**
+ * Shared by the hour ticks and each room row so the columns stay aligned.
+ * The timeline stays at least 11rem so 8 PM, 9 PM, 10 PM and 11 PM don't
+ * sit on top of each other when the dock is 320px. The name column wraps.
+ */
+export const roomColumns =
+  "grid w-full grid-cols-[minmax(4.5rem,1fr)_minmax(11rem,1.6fr)] gap-x-2";
 
 export function roomSizeFromGroup(groupSize: GroupSize | null): RoomSize {
   return groupSize ?? "any";

@@ -51,6 +51,13 @@ export function roomBookingLabel(name: string): string {
   return `Book ${name} on LibCal`;
 }
 
+/** Only an http(s) LibCal page. Anything else stays plain text. */
 export function roomIsBookableLink(room: Pick<RoomSlot, "kind" | "bookingUrl">): boolean {
-  return room.kind === "bookable" && typeof room.bookingUrl === "string" && room.bookingUrl.length > 0;
+  if (room.kind !== "bookable" || !room.bookingUrl) return false;
+  try {
+    const url = new URL(room.bookingUrl);
+    return url.protocol === "https:" || url.protocol === "http:";
+  } catch {
+    return false;
+  }
 }
