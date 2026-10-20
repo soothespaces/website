@@ -4,6 +4,7 @@ import {
   historyStateWithoutNextKeys,
   hrefWithGroupSize,
   parseGroupSize,
+  resolveVisitGroupSize,
   searchWithGroupSize,
   serializeGroupSize,
   type GroupSize,
@@ -69,6 +70,15 @@ test("hrefWithGroupSize survives a reload", () => {
   const large = hrefWithGroupSize({ pathname: "/map", search: "", hash: "" }, "4_plus");
   assert.equal(large, "/map?people=4%2B");
   assert.equal(parseGroupSize(new URL(large, "https://soothe.test").searchParams.get("people")), "4_plus");
+});
+
+test("a newer group size wins over an older people query", () => {
+  assert.deepEqual(resolveVisitGroupSize(undefined, "4_plus"), { groupSize: "4_plus", rewrite: false });
+  assert.deepEqual(resolveVisitGroupSize(undefined, null), { groupSize: null, rewrite: false });
+  assert.deepEqual(resolveVisitGroupSize("just_me", "4_plus"), { groupSize: "just_me", rewrite: true });
+  assert.deepEqual(resolveVisitGroupSize("just_me", "just_me"), { groupSize: "just_me", rewrite: false });
+  assert.deepEqual(resolveVisitGroupSize("just_me", null), { groupSize: "just_me", rewrite: true });
+  assert.deepEqual(resolveVisitGroupSize(null, "4_plus"), { groupSize: null, rewrite: true });
 });
 
 test("historyStateWithoutNextKeys keeps app history keys", () => {

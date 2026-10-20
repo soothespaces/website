@@ -13,11 +13,46 @@ export const TEXT_VALUES = [100, 112.5, 125, 150] as const;
 export const MOTION_VALUES = ["system", "reduce"] as const;
 export const VIEW_VALUES = ["map", "list"] as const;
 
+export const STUDY_NOISE_VALUES = ["quiet", "low_noise", "conversational", "any"] as const;
+// Board: Open room / Enclosed / Either.
+export const STUDY_SETTING_VALUES = ["open", "enclosed", "any"] as const;
+// Board: Dim / Moderate / Bright / Doesn't matter.
+export const STUDY_BRIGHTNESS_VALUES = ["dim", "moderate", "bright", "any"] as const;
+// Board: Lots / Doesn't matter.
+export const STUDY_DAYLIGHT_VALUES = ["lots", "any"] as const;
+export const STUDY_NICE_TO_HAVE_VALUES = [
+  "outlets",
+  "monitors_or_computers",
+  "printer",
+  "restroom",
+  "whiteboard",
+  "entrance",
+  "accessible",
+] as const;
+// Empty means any time of day.
+export const STUDY_WHEN_VALUES = ["mornings", "afternoons", "evenings", "late_night"] as const;
+
 export type ThemeSetting = (typeof THEME_VALUES)[number];
 export type ContrastSetting = (typeof CONTRAST_VALUES)[number];
 export type TextSetting = (typeof TEXT_VALUES)[number];
 export type MotionSetting = (typeof MOTION_VALUES)[number];
 export type DefaultView = (typeof VIEW_VALUES)[number];
+export type StudyNoise = (typeof STUDY_NOISE_VALUES)[number];
+export type StudySetting = (typeof STUDY_SETTING_VALUES)[number];
+export type StudyBrightness = (typeof STUDY_BRIGHTNESS_VALUES)[number];
+export type StudyDaylight = (typeof STUDY_DAYLIGHT_VALUES)[number];
+export type StudyNiceToHave = (typeof STUDY_NICE_TO_HAVE_VALUES)[number];
+export type StudyWhen = (typeof STUDY_WHEN_VALUES)[number];
+
+// Sort preferences for recommendations. They never hide a space.
+export type StudyPreferences = {
+  noise: StudyNoise;
+  setting: StudySetting;
+  brightness: StudyBrightness;
+  daylight: StudyDaylight;
+  niceToHave: StudyNiceToHave[];
+  when: StudyWhen[];
+};
 
 export type Settings = {
   theme: ThemeSetting;
@@ -25,6 +60,16 @@ export type Settings = {
   text: TextSetting;
   motion: MotionSetting;
   defaultView: DefaultView;
+  study: StudyPreferences;
+};
+
+export const DEFAULT_STUDY: StudyPreferences = {
+  noise: "any",
+  setting: "any",
+  brightness: "any",
+  daylight: "any",
+  niceToHave: [],
+  when: [],
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -33,9 +78,10 @@ export const DEFAULT_SETTINGS: Settings = {
   text: 100,
   motion: "system",
   defaultView: "map",
+  study: DEFAULT_STUDY,
 };
 
-const KNOWN_KEYS = ["theme", "contrast", "text", "motion", "defaultView"] as const;
+const KNOWN_KEYS = ["theme", "contrast", "text", "motion", "defaultView", "study"] as const;
 
 function isOneOf<T extends string>(values: readonly T[], value: unknown): value is T {
   return typeof value === "string" && (values as readonly unknown[]).includes(value);
@@ -45,15 +91,61 @@ function isText(value: unknown): value is TextSetting {
   return typeof value === "number" && (TEXT_VALUES as readonly number[]).includes(value);
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function copyStudy(study: StudyPreferences): StudyPreferences {
+  return { ...study, niceToHave: [...study.niceToHave], when: [...study.when] };
+}
+
+function defaultSettings(): Settings {
+  return { ...DEFAULT_SETTINGS, study: copyStudy(DEFAULT_STUDY) };
+}
+
+// Known entries stay, in the order they were saved. Anything else is dropped.
+function parseChoiceList<T extends string>(values: readonly T[], value: unknown): T[] {
+  if (!Array.isArray(value)) return [];
+  const chosen: T[] = [];
+  for (const item of value) {
+    if (isOneOf(values, item) && !chosen.includes(item)) chosen.push(item);
+  }
+  return chosen;
+}
+
+// Unknown study values fall back to defaults. Unknown keys inside `study`
+// are returned separately so a newer field survives a save from this version.
+function parseStudy(value: unknown): { study: StudyPreferences; extras: Record<string, unknown> } {
+  const study = copyStudy(DEFAULT_STUDY);
+  const extras: Record<string, unknown> = {};
+  if (!isPlainObject(value)) return { study, extras };
+
+  for (const [key, field] of Object.entries(value)) {
+    if (key === "noise") {
+      if (isOneOf(STUDY_NOISE_VALUES, field)) study.noise = field;
+    } else if (key === "setting") {
+      if (isOneOf(STUDY_SETTING_VALUES, field)) study.setting = field;
+    } else if (key === "brightness") {
+      if (isOneOf(STUDY_BRIGHTNESS_VALUES, field)) study.brightness = field;
+    } else if (key === "daylight") {
+      if (isOneOf(STUDY_DAYLIGHT_VALUES, field)) study.daylight = field;
+    } else if (key === "niceToHave") {
+      study.niceToHave = parseChoiceList(STUDY_NICE_TO_HAVE_VALUES, field);
+    } else if (key === "when") {
+      study.when = parseChoiceList(STUDY_WHEN_VALUES, field);
+    } else extras[key] = field;
+  }
+
+  return { study, extras };
+}
+
 export function parseSettings(raw: unknown): {
   settings: Settings;
   extras: Record<string, unknown>;
 } {
-  const settings: Settings = { ...DEFAULT_SETTINGS };
+  const settings = defaultSettings();
   const extras: Record<string, unknown> = {};
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
-    return { settings, extras };
-  }
+  if (!isPlainObject(raw)) return { settings, extras };
 
   for (const [key, value] of Object.entries(raw)) {
     if (key === "theme" && isOneOf(THEME_VALUES, value)) settings.theme = value;
@@ -61,7 +153,11 @@ export function parseSettings(raw: unknown): {
     else if (key === "text" && isText(value)) settings.text = value;
     else if (key === "motion" && isOneOf(MOTION_VALUES, value)) settings.motion = value;
     else if (key === "defaultView" && isOneOf(VIEW_VALUES, value)) settings.defaultView = value;
-    else if (!(KNOWN_KEYS as readonly string[]).includes(key)) extras[key] = value;
+    else if (key === "study") {
+      const parsed = parseStudy(value);
+      settings.study = parsed.study;
+      if (Object.keys(parsed.extras).length > 0) extras.study = parsed.extras;
+    } else if (!(KNOWN_KEYS as readonly string[]).includes(key)) extras[key] = value;
   }
 
   return { settings, extras };
@@ -71,7 +167,12 @@ export function settingsDocument(
   settings: Settings,
   extras: Record<string, unknown>,
 ): Record<string, unknown> {
-  return { ...extras, ...settings };
+  const { study: studyExtras, ...rest } = extras;
+  const document: Record<string, unknown> = { ...rest, ...settings };
+  // Keep unrecognized study keys under `study`, ahead of the fields we know,
+  // so the next save does not drop them.
+  if (isPlainObject(studyExtras)) document.study = { ...studyExtras, ...settings.study };
+  return document;
 }
 
 // Attribute values written on <html>. null removes the attribute.
@@ -108,15 +209,13 @@ export function applyDisplayAttributes(
 }
 
 export function readStoredSettings(): { settings: Settings; extras: Record<string, unknown> } {
-  if (typeof window === "undefined") {
-    return { settings: { ...DEFAULT_SETTINGS }, extras: {} };
-  }
+  if (typeof window === "undefined") return { settings: defaultSettings(), extras: {} };
   try {
     const raw = window.localStorage.getItem(SETTINGS_STORAGE_KEY);
-    if (!raw) return { settings: { ...DEFAULT_SETTINGS }, extras: {} };
+    if (!raw) return { settings: defaultSettings(), extras: {} };
     return parseSettings(JSON.parse(raw));
   } catch {
-    return { settings: { ...DEFAULT_SETTINGS }, extras: {} };
+    return { settings: defaultSettings(), extras: {} };
   }
 }
 

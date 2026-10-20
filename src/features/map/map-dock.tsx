@@ -4,6 +4,7 @@ import { SpaceSearchField } from "@/features/spaces";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { WIDE_QUERY } from "./map-layout-config";
 import { useMapState } from "./map-state";
+import { panelRegistry } from "@/features/side-view/registry";
 import { ResultsPanel } from "./panel/results-panel";
 import { SelectionPanel } from "./panel/selection-panel";
 
@@ -11,7 +12,10 @@ import { SelectionPanel } from "./panel/selection-panel";
 // search on top and the results, or what's selected, below.
 export function MapDock() {
   const wide = useMediaQuery(WIDE_QUERY);
-  const { search, selection } = useMapState();
+  const { search, route } = useMapState();
+  // Home stays the search results until its screen registers. The panel
+  // scrolls inside itself so a covered screen keeps its place.
+  const showResults = route.kind === "home" && !panelRegistry.home;
   return (
     <aside
       aria-label="Study spaces"
@@ -23,9 +27,13 @@ export function MapDock() {
       {/* Rendered only on wide screens, so the phone sheet and this never
           both hold the panel (and its ids). */}
       {wide ? (
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-2">
-          {selection ? <SelectionPanel selection={selection} density="compact" /> : <ResultsPanel density="compact" />}
-        </div>
+        showResults ? (
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-2">
+            <ResultsPanel density="compact" />
+          </div>
+        ) : (
+          <SelectionPanel density="compact" />
+        )
       ) : null}
     </aside>
   );

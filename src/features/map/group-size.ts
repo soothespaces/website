@@ -52,6 +52,17 @@ export function hrefWithGroupSize(
 // Next's replaceState keeps only its own keys when the data argument is null,
 // which drops app keys such as the panel stack. Hand those keys back and omit
 // Next's, so its patch copies them on again and still refreshes useSearchParams.
+// The first time the map is seen, `retained` is undefined and the query wins.
+// After that the visit's choice wins, and the caller rewrites the URL when
+// an older entry still has a different `?people=`.
+export function resolveVisitGroupSize(
+  retained: GroupSize | null | undefined,
+  fromUrl: GroupSize | null,
+): { groupSize: GroupSize | null; rewrite: boolean } {
+  if (retained === undefined) return { groupSize: fromUrl, rewrite: false };
+  return { groupSize: retained, rewrite: fromUrl !== retained };
+}
+
 export function historyStateWithoutNextKeys(state: unknown): Record<string, unknown> {
   if (!state || typeof state !== "object") return {};
   const rest: Record<string, unknown> = {};
