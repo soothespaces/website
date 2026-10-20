@@ -55,6 +55,13 @@ const eslintConfig = defineConfig([
     },
   },
   {
+    // The busyness chart is a drawing, not an icon.
+    files: ["src/components/ui/busyness-chart.tsx"],
+    rules: {
+      "no-restricted-syntax": ["error", ...pageWidth, noRawButton],
+    },
+  },
+  {
     files: ["src/**/*.{ts,tsx}"],
     ignores: ["src/components/ui/icons.tsx"],
     rules: {

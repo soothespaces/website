@@ -145,9 +145,8 @@ export function toStudyPreferences(input: unknown): StudyPreferences {
 }
 
 /**
- * Reads study preferences off the settings document. Today they live in
- * `extras.study` (unknown keys stay in extras). Once F3.1 adds `settings.study`,
- * that field wins.
+ * Reads study preferences off the settings document. `settings.study` wins.
+ * `extras.study` covers a document from before that field existed.
  */
 export function studyPreferencesFromSettings(
   settings: Settings | (Settings & { study?: unknown }) | null | undefined,
