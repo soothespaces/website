@@ -19,6 +19,8 @@ function row(partial: Partial<OpeningHourRow> & Pick<OpeningHourRow, "weekday" |
     validFrom: YEAR.validFrom,
     validUntil: YEAR.validUntil,
     access: "public",
+    label: null,
+    source: "um_library",
     ...partial,
   };
 }
@@ -130,6 +132,7 @@ test("week rows stay Sunday through Saturday for the coming week", () => {
     date: "2026-10-21",
     weekday: 3,
     byDate: [],
+    periods: [],
   };
   assert.deepEqual(
     weekRows(hours).map((day) => day.day),

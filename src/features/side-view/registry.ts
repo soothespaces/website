@@ -2,6 +2,7 @@
 
 import type { ComponentType } from "react";
 import { BuildingPanelScreen, SpacePanelScreen, type PanelScreenProps } from "./builtin-screens";
+import { HoursScreen } from "./hours/hours-screen";
 import type { PanelRoute } from "./panel-route";
 
 export type { PanelScreenProps };
@@ -11,4 +12,5 @@ export type { PanelScreenProps };
 export const panelRegistry: Partial<Record<PanelRoute["kind"], ComponentType<PanelScreenProps>>> = {
   building: BuildingPanelScreen,
   space: SpacePanelScreen,
+  hours: HoursScreen,
 };

@@ -31,26 +31,15 @@ export function BusynessChart({
           const y = CHART_HEIGHT - height;
           const highlighted = hour === highlightHour;
           return (
-            <g key={hour}>
-              {highlighted ? (
-                <rect
-                  x={x - 0.75}
-                  y={Math.max(0, y - 3)}
-                  width={barWidth + 1.5}
-                  height={height + 3}
-                  rx={1}
-                  className="fill-foreground"
-                />
-              ) : null}
-              <rect
-                x={x}
-                y={y}
-                width={barWidth}
-                height={height}
-                rx={1}
-                className={highlighted ? "fill-primary" : "fill-muted-foreground"}
-              />
-            </g>
+            <rect
+              key={hour}
+              x={x}
+              y={y}
+              width={barWidth}
+              height={height}
+              rx={1}
+              className={highlighted ? "fill-primary" : "fill-primary opacity-35"}
+            />
           );
         })}
       </svg>
@@ -58,11 +47,19 @@ export function BusynessChart({
         {values.map((_, hour) => {
           const label = busynessAxisLabel(hour);
           if (!label || count === 0) return null;
+          // The first and last ticks sit on the edges so "12 AM" and "11 PM" stay inside the panel.
+          const edge = hour === 0 ? "start" : hour === count - 1 ? "end" : "middle";
           return (
             <span
               key={hour}
-              className="absolute top-0 -translate-x-1/2 text-xs whitespace-nowrap text-muted-foreground"
-              style={{ left: `${((hour + 0.5) / count) * 100}%` }}
+              className="absolute top-0 text-xs whitespace-nowrap text-muted-foreground"
+              style={
+                edge === "start"
+                  ? { left: 0 }
+                  : edge === "end"
+                    ? { right: 0 }
+                    : { left: `${((hour + 0.5) / count) * 100}%`, transform: "translateX(-50%)" }
+              }
             >
               {label}
             </span>

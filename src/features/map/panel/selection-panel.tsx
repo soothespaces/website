@@ -80,6 +80,9 @@ function PanelFrame({
 
   let body: ReactNode = <PanelPlaceholder route={route} />;
   if (Screen) body = <Screen route={route} density={density} />;
+  // Hours (and later detail screens) draw their own back control. A second
+  // Back above that header would not match the board.
+  const ownHeader = route.kind === "hours";
 
   return (
     <div
@@ -92,12 +95,20 @@ function PanelFrame({
       onScroll={onScroll}
       className={
         active
-          ? `overflow-y-auto overscroll-contain ${frameClassName} ${bounded ? "min-h-0 flex-1" : "min-h-0"}`
+          ? `${ownHeader && bounded ? "flex flex-col overflow-hidden" : "overflow-y-auto"} overscroll-contain ${frameClassName} ${bounded ? "min-h-0 flex-1" : "min-h-0"}`
           : "hidden"
       }
     >
-      <div className="flex flex-col gap-1">
-        <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />
+      <div
+        className={
+          ownHeader
+            ? bounded
+              ? "flex h-full min-h-0 flex-1 flex-col"
+              : "flex flex-col"
+            : "flex flex-col gap-1"
+        }
+      >
+        {ownHeader ? null : <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />}
         {body}
       </div>
     </div>
