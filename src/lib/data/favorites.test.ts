@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { nextPosition, optimisticFavorites, reorderFavorites, writeFavoritePositions, type Favorite } from "./favorites.ts";
+import { mergeFavoriteLoad, nextPosition, optimisticFavorites, reorderFavorites, writeFavoritePositions, type Favorite } from "./favorites.ts";
 
 function spot(id: number, position: number, spaceId: string | null = `space-${id}`, buildingSlug: string | null = null): Favorite {
   return { id, position, spaceId, buildingSlug, createdAt: "2026-10-01T00:00:00Z" };
@@ -38,6 +38,28 @@ test("add appends at max + 1 and rollback restores the previous list", () => {
   );
   assert.deepEqual(removed.previous, next);
   assert.deepEqual(optimisticFavorites(favorites, { type: "reorder", ids: [2, 1] }).previous, favorites);
+});
+
+test("a load that arrives after an add keeps the saved list and appends the new one", () => {
+  const server = [spot(1, 0), spot(2, 1), spot(3, 2)];
+  const local = [spot(-1, 0, "space-d")];
+  const merged = mergeFavoriteLoad(server, local);
+  assert.deepEqual(
+    merged.map((favorite) => [favorite.id, favorite.position, favorite.spaceId]),
+    [
+      [1, 0, "space-1"],
+      [2, 1, "space-2"],
+      [3, 2, "space-3"],
+      [-1, 3, "space-d"],
+    ],
+  );
+  assert.equal(nextPosition(server), 3);
+});
+
+test("a load does not duplicate a place the server already has", () => {
+  const server = [spot(4, 0, "space-d")];
+  const merged = mergeFavoriteLoad(server, [spot(-2, 0, "space-d")]);
+  assert.deepEqual(merged.map((favorite) => favorite.id), [4]);
 });
 
 test("a failed reorder writes back the positions that already changed", async () => {

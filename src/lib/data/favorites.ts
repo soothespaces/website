@@ -57,10 +57,6 @@ export function withoutFavorite(favorites: readonly Favorite[], target: Favorite
 }
 
 /**
- * Rewrites `position` to 0..n-1 in `ids` order. Ids the list doesn't have are
- * skipped. Favorites left out of `ids` keep their relative order after those.
- */
-/**
  * Writes positions one at a time. If a later write fails, the ones that
  * succeeded are put back, so the table is not left half reordered.
  */
@@ -85,6 +81,34 @@ export async function writeFavoritePositions(
   }
 }
 
+function targetOf(favorite: Favorite): FavoriteTarget | null {
+  if (favorite.spaceId) return { kind: "space", spaceId: favorite.spaceId };
+  if (favorite.buildingSlug) return { kind: "building", buildingSlug: favorite.buildingSlug };
+  return null;
+}
+
+/**
+ * A load that returns while an add is on screen. Server rows stay, in their
+ * saved order. Optimistic rows that aren't on the server yet are appended,
+ * so a heart tapped before the load finishes doesn't hide the existing list
+ * or take position 0.
+ */
+export function mergeFavoriteLoad(server: readonly Favorite[], local: readonly Favorite[]): Favorite[] {
+  const serverIds = new Set(server.map((favorite) => favorite.id));
+  const extras = local.filter((favorite) => favorite.id < 0 || !serverIds.has(favorite.id));
+  let list = [...server].sort((a, b) => a.position - b.position || a.id - b.id);
+  for (const extra of extras) {
+    const target = targetOf(extra);
+    if (!target || list.some((row) => sameTarget(row, target))) continue;
+    list = [...list, { ...extra, position: nextPosition(list) }];
+  }
+  return list;
+}
+
+/**
+ * Rewrites `position` to 0..n-1 in `ids` order. Ids the list doesn't have are
+ * skipped. Favorites left out of `ids` keep their relative order after those.
+ */
 export function reorderFavorites(favorites: readonly Favorite[], ids: readonly number[]): Favorite[] {
   const byId = new Map(favorites.map((favorite) => [favorite.id, favorite]));
   const listed = ids.flatMap((id) => {
@@ -120,11 +144,17 @@ const EMPTY_FAVORITES: Favorite[] = [];
 const EMPTY: Snapshot = { userId: null, favorites: EMPTY_FAVORITES, loaded: false };
 let snapshot: Snapshot = EMPTY;
 const listeners = new Set<() => void>();
-// Bumped on every local change so a load that started earlier can't overwrite it.
+// Bumped when the signed-in user changes, so a load for the previous user is ignored.
 let generation = 0;
 let requestedUser: string | null | undefined;
 let loadPromise: Promise<void> | null = null;
+let tempSeq = 0;
 const inflightAdds = new Map<number, { cancelled: boolean }>();
+
+function nextTempId(): number {
+  tempSeq += 1;
+  return -tempSeq;
+}
 
 function emit(next: Snapshot) {
   snapshot = next;
@@ -177,21 +207,24 @@ function ensureFavorites(userId: string | null) {
   requestedUser = userId;
   const loadGeneration = generation;
   const supabase = createClient();
-  loadPromise = readAll<FavoriteRecord>((from, to) =>
+  const promise = readAll<FavoriteRecord>((from, to) =>
     supabase.from("favorites").select(FAVORITE_SELECT).order("position").order("id").range(from, to),
   )
     .then((rows) => {
       if (loadGeneration !== generation || requestedUser !== userId) return;
-      emit({ userId, favorites: rows.map(toFavorite), loaded: true });
+      emit({ userId, favorites: mergeFavoriteLoad(rows.map(toFavorite), snapshot.favorites), loaded: true });
     })
     .catch((error: unknown) => {
       console.error("Favorites failed to load", error);
       if (loadGeneration !== generation || requestedUser !== userId) return;
-      emit({ userId, favorites: EMPTY_FAVORITES, loaded: true });
+      // Leave loaded false and forget the attempt, so the next mount or add can try again.
+      requestedUser = undefined;
+      emit({ userId, favorites: snapshot.favorites, loaded: false });
     })
     .finally(() => {
-      if (requestedUser === userId) loadPromise = null;
+      if (loadPromise === promise) loadPromise = null;
     });
+  loadPromise = promise;
 }
 
 /**
@@ -221,17 +254,27 @@ export function useFavorites(): FavoritesApi {
     async (target: FavoriteTarget): Promise<FavoriteMutation> => {
       if (!userId) return { ok: false, error: "needs-sign-in" };
       if (snapshot.favorites.some((favorite) => sameTarget(favorite, target))) return { ok: true };
-      const tempId = -Date.now();
+      const tempId = nextTempId();
       const { next } = optimisticFavorites(snapshot.favorites, {
         type: "add",
         favorite: { id: tempId, spaceId: target.kind === "space" ? target.spaceId : null, buildingSlug: target.kind === "building" ? target.buildingSlug : null, createdAt: new Date().toISOString() },
       });
-      const position = next.find((favorite) => favorite.id === tempId)?.position ?? nextPosition(snapshot.favorites);
       const inflight = { cancelled: false };
       inflightAdds.set(tempId, inflight);
-      generation += 1;
-      emit({ userId, favorites: next, loaded: true });
+      emit({ userId, favorites: next, loaded: snapshot.loaded });
       try {
+        // Wait for the saved list before choosing a position, and try once more if that read failed.
+        for (let attempt = 0; attempt < 2 && !snapshot.loaded; attempt++) {
+          if (!loadPromise) ensureFavorites(userId);
+          if (loadPromise) await loadPromise;
+        }
+        if (!snapshot.loaded) throw new Error("Favorites have not loaded");
+        if (inflight.cancelled) return { ok: true };
+        // The load may have found this place already saved and dropped the placeholder.
+        if (!snapshot.favorites.some((favorite) => favorite.id === tempId) && snapshot.favorites.some((favorite) => sameTarget(favorite, target))) {
+          return { ok: true };
+        }
+        const position = snapshot.favorites.find((favorite) => favorite.id === tempId)?.position ?? nextPosition(snapshot.favorites.filter((favorite) => favorite.id !== tempId));
         const supabase = createClient();
         const { data, error } = await supabase.from("favorites").insert(insertRow(target, position)).select(FAVORITE_SELECT).single();
         if (error) throw error;
@@ -265,13 +308,11 @@ export function useFavorites(): FavoritesApi {
       const inflight = inflightAdds.get(current.id);
       if (inflight) {
         inflight.cancelled = true;
-        generation += 1;
-        emit({ userId, favorites: withoutFavorite(snapshot.favorites, target), loaded: true });
+        emit({ userId, favorites: withoutFavorite(snapshot.favorites, target), loaded: snapshot.loaded });
         return { ok: true };
       }
       const { next } = optimisticFavorites(snapshot.favorites, { type: "remove", target });
-      generation += 1;
-      emit({ userId, favorites: next, loaded: true });
+      emit({ userId, favorites: next, loaded: snapshot.loaded });
       try {
         const supabase = createClient();
         const { error } = await supabase.from("favorites").delete().eq("id", current.id);
@@ -293,8 +334,7 @@ export function useFavorites(): FavoritesApi {
     async (ids: number[]): Promise<FavoriteMutation> => {
       if (!userId) return { ok: false, error: "needs-sign-in" };
       const { next, previous } = optimisticFavorites(snapshot.favorites, { type: "reorder", ids });
-      generation += 1;
-      emit({ userId, favorites: next, loaded: true });
+      emit({ userId, favorites: next, loaded: snapshot.loaded });
       try {
         const supabase = createClient();
         await writeFavoritePositions(next, previous, async (id, position) => {
