@@ -3,6 +3,7 @@ import test from "node:test";
 import vm from "node:vm";
 import {
   DEFAULT_SETTINGS,
+  DEFAULT_STUDY,
   SETTINGS_BOOT_SCRIPT,
   SETTINGS_STORAGE_KEY,
   THEME_STORAGE_KEY,
@@ -10,6 +11,7 @@ import {
   displayAttributes,
   parseSettings,
   readStoredSettings,
+  settingsDocument,
   writeStoredSettings,
 } from "./model.ts";
 
@@ -68,6 +70,63 @@ test("parseSettings falls back when the document is unusable", () => {
   assert.deepEqual(parseSettings(null).settings, DEFAULT_SETTINGS);
   assert.deepEqual(parseSettings("dark").settings, DEFAULT_SETTINGS);
   assert.deepEqual(parseSettings([]).settings, DEFAULT_SETTINGS);
+});
+
+test("settings saved before study preferences still parse", () => {
+  const parsed = parseSettings({
+    theme: "light",
+    contrast: "more",
+    text: 125,
+    motion: "reduce",
+    defaultView: "list",
+    palette: "cvd",
+  });
+
+  assert.equal(parsed.settings.theme, "light");
+  assert.deepEqual(parsed.settings.study, DEFAULT_STUDY);
+  assert.deepEqual(parsed.extras, { palette: "cvd" });
+  assert.equal("study" in parsed.extras, false);
+});
+
+test("study preferences round-trip, and unknown values fall back", () => {
+  const parsed = parseSettings({
+    theme: "dark",
+    needs: { noise: ["quiet"] },
+    study: {
+      noise: "quiet",
+      setting: "cave",
+      brightness: "dim",
+      daylight: "lots",
+      niceToHave: ["printer", "nope", "outlets", "printer"],
+      when: ["late_night", "mornings", "noon"],
+      later: true,
+    },
+  });
+
+  assert.deepEqual(parsed.settings.study, {
+    noise: "quiet",
+    setting: "any",
+    brightness: "dim",
+    daylight: "lots",
+    niceToHave: ["printer", "outlets"],
+    when: ["late_night", "mornings"],
+  });
+  assert.deepEqual(parsed.extras, { needs: { noise: ["quiet"] }, study: { later: true } });
+
+  const again = parseSettings(settingsDocument(parsed.settings, parsed.extras));
+  assert.deepEqual(again.settings, parsed.settings);
+  assert.deepEqual(again.extras, parsed.extras);
+});
+
+test("an unusable study value falls back without landing in extras", () => {
+  const parsed = parseSettings({ study: "quiet", theme: "dark" });
+  assert.equal(parsed.settings.theme, "dark");
+  assert.deepEqual(parsed.settings.study, DEFAULT_STUDY);
+  assert.deepEqual(parsed.extras, {});
+
+  const missingLists = parseSettings({ study: { niceToHave: "printer", when: null, noise: "loud" } });
+  assert.deepEqual(missingLists.settings.study, DEFAULT_STUDY);
+  assert.deepEqual(missingLists.extras, {});
 });
 
 test("text size 112.5 is stored as 112.5 and applied as 112", () => {
@@ -132,6 +191,29 @@ test("localStorage round-trip keeps extras and the theme key", () => {
     assert.deepEqual(read.settings, settings);
     assert.equal(read.extras.palette, "cvd");
     assert.deepEqual(read.extras.needs, { noise: ["quiet"] });
+
+    store.set(
+      SETTINGS_STORAGE_KEY,
+      JSON.stringify({
+        theme: "light",
+        contrast: "normal",
+        text: 100,
+        motion: "system",
+        defaultView: "map",
+        study: { noise: "conversational", when: ["evenings"], later: 1 },
+      }),
+    );
+    const legacy = readStoredSettings();
+    assert.equal(legacy.settings.theme, "light");
+    assert.equal(legacy.settings.study.noise, "conversational");
+    assert.deepEqual(legacy.settings.study.when, ["evenings"]);
+    assert.equal(legacy.settings.study.setting, "any");
+    assert.deepEqual(legacy.extras.study, { later: 1 });
+
+    assert.equal(writeStoredSettings(legacy.settings, legacy.extras), true);
+    const storedAgain = readStoredSettings();
+    assert.deepEqual(storedAgain.settings.study, legacy.settings.study);
+    assert.deepEqual(storedAgain.extras.study, { later: 1 });
   } finally {
     globalThis.window = previousWindow;
     globalThis.localStorage = previousStorage;
