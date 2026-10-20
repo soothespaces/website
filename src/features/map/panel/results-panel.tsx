@@ -1,5 +1,6 @@
 "use client";
 
+import { YourSpotsHomeEntry } from "@/features/side-view/my-spots/home-entry";
 import { SpaceList, type SpaceListDensity, type SpaceSummary } from "@/features/spaces";
 import { useMapState } from "../map-state";
 
@@ -17,6 +18,7 @@ export function ResultsPanel({
   const count = search.results.length;
   return (
     <div className="flex flex-col gap-1">
+      {!search.query.trim() ? <YourSpotsHomeEntry onOpened={onPicked} /> : null}
       {data.loaded && !data.error ? (
         <p aria-live="polite" className="px-3 pb-1 text-xs text-muted-foreground">
           {search.query.trim()
