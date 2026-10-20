@@ -7,21 +7,29 @@ export function SpaceHero({
   photoLabel,
   onPhotos,
 }: {
-  photo: { src: string; alt: string } | null;
+  photo: { src: string; srcSet?: string; alt: string; credit?: string | null } | null;
   photoLabel: string | null;
   onPhotos: (() => void) | null;
 }) {
   if (!photo) return null;
   return (
     <div className="relative">
-      {/* eslint-disable-next-line @next/next/no-img-element -- library and storage URLs, already sized */}
-      <img src={photo.src} alt={photo.alt} className="aspect-[4/3] w-full rounded-xl bg-muted object-cover" />
+      {/* Stored widths and library files are already sized; a loader would only re-encode them. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={photo.src}
+        srcSet={photo.srcSet || undefined}
+        sizes="24rem"
+        alt={photo.alt}
+        className="aspect-[4/3] w-full rounded-xl bg-muted object-cover"
+      />
+      {photo.credit ? <span className="sr-only">Photo credit: {photo.credit}</span> : null}
       {photoLabel && onPhotos ? (
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
           onClick={onPhotos}
-          className="absolute right-2 bottom-2 rounded-full bg-background/95 shadow-sm"
+          className="absolute right-2 bottom-2 z-10 h-auto min-h-9 rounded-full bg-foreground px-3 text-background hover:bg-foreground/90"
         >
           {photoLabel}
         </Button>

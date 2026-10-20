@@ -3,10 +3,11 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/ui/favorite-button";
-import { ChevronLeftIcon } from "@/components/ui/icons";
+import { ChevronLeftIcon, HeartIcon } from "@/components/ui/icons";
 import { NoiseBadge, type NoiseLevel } from "@/components/ui/noise-badge";
 import { PanelBackButton } from "@/components/ui/panel-back-button";
 import { useMapState } from "@/features/map/map-state";
+import { useSession } from "@/lib/auth/use-session";
 import { useFavorites } from "@/lib/data/favorites";
 import { openStatus, useOpeningHours } from "@/lib/data/opening-hours";
 import { useLocation } from "@/lib/location/use-location";
@@ -46,21 +47,32 @@ export function SpaceHeader({
   onBack: () => void;
 }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const askedForFix = useRef(false);
   const { data, push } = useMapState();
+  const session = useSession();
   const favorites = useFavorites();
   const hours = useOpeningHours(hoursTarget);
-  const location = useLocation();
+  const { permission, position, request, distanceTo } = useLocation();
+  const point = walkPoint({ lat, lng }, building);
+  const walkKey = point ? `${point.lat},${point.lng}` : "";
 
   useEffect(() => {
     titleRef.current?.focus({ focusVisible: true });
   }, [name]);
 
+  // Permission was already granted, so this read does not prompt. Without it
+  // the hook's position stays empty and the walk time never appears.
+  useEffect(() => {
+    if (!walkKey || askedForFix.current || permission !== "granted" || position) return;
+    askedForFix.current = true;
+    void request();
+  }, [walkKey, permission, position, request]);
+
   const status = spaceOpenStatus(hours.loaded ? openStatus(hours.hours, new Date()) : null);
-  const point = walkPoint({ lat, lng }, building);
-  const walk = walkTimeLabel(point ? location.distanceTo(point.lat, point.lng) : null);
+  const walk = walkTimeLabel(point ? distanceTo(point.lat, point.lng) : null);
   const buildingLabel = buildingDisplayName(building);
-  const showHeart = favorites.signedIn ? spaceId != null : favorites.loaded;
   const pressed = spaceId != null && favorites.isFavorite({ kind: "space", spaceId });
+  const heartReady = !session.loading && (favorites.signedIn ? spaceId != null : favorites.loaded);
 
   const meta: { key: string; node: ReactNode }[] = [];
   if (noiseLevel) meta.push({ key: "noise", node: <NoiseBadge level={noiseLevel} size="sm" /> });
@@ -73,7 +85,7 @@ export function SpaceHeader({
         <div className="-ml-2">
           <PanelBackButton label={backLabel} onClick={onBack} icon={<ChevronLeftIcon />} />
         </div>
-        {showHeart ? (
+        {heartReady ? (
           <div className="-mr-2">
             <FavoriteButton
               name={name}
@@ -87,7 +99,9 @@ export function SpaceHeader({
             />
           </div>
         ) : (
-          <span className="size-11" aria-hidden="true" />
+          <Button variant="ghost" size="icon" shape="circle" disabled className="-mr-2" aria-label={`Add ${name} to your spots`}>
+            <HeartIcon />
+          </Button>
         )}
       </div>
       <div className="flex flex-col gap-1">

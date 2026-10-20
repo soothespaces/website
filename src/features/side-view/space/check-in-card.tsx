@@ -13,7 +13,7 @@ export function CheckInCard() {
       <p id="space-check-in" className="min-w-0 flex-1 basis-40 text-sm">
         Here now? Tell people what it&apos;s like.
       </p>
-      <Button size="sm" disabled>
+      <Button size="sm" disabled className="disabled:opacity-100">
         Check in
       </Button>
     </section>

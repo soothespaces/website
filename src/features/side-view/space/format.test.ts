@@ -4,10 +4,12 @@ import {
   buildingDisplayName,
   floorPlanSubtitle,
   heroPhoto,
+  isBlockedPhoto,
   photoCountLabel,
   spaceBackLabel,
   spaceOpenStatus,
   spaceParagraph,
+  spacePhotosRoute,
   walkPoint,
   walkTimeLabel,
   whatsHereLabels,
@@ -77,6 +79,20 @@ test("walk distance uses the space, then its building", () => {
   assert.equal(walkPoint({ lat: null, lng: 2 }, null), null);
 });
 
+test("a Google or Yelp photo is not shown", () => {
+  assert.equal(isBlockedPhoto({ sourceUrl: "https://maps.google.com/photo" }), true);
+  assert.equal(isBlockedPhoto({ credit: "Yelp" }), true);
+  assert.equal(isBlockedPhoto({ sourceUrl: "https://www.lib.umich.edu/room.webp" }), false);
+});
+
+test("the photos pill opens the gallery by space slug", () => {
+  assert.deepEqual(spacePhotosRoute("harold-t-and-vivian-b-shapiro-library", "shapiro-reading-room"), {
+    kind: "photos",
+    slug: "harold-t-and-vivian-b-shapiro-library",
+    spaceId: "shapiro-reading-room",
+  });
+});
+
 test("hero prefers the library photo and always has alt text", () => {
   assert.deepEqual(
     heroPhoto({ name: "Reading Room", imageUrl: "https://example.com/a.webp", imageAlt: " Tables ", gallery: { src: "g", alt: "Gallery" } }),
@@ -87,6 +103,15 @@ test("hero prefers the library photo and always has alt text", () => {
     alt: "Photo of Reading Room",
   });
   assert.equal(heroPhoto({ name: "Reading Room", imageUrl: null, imageAlt: null, gallery: null }), null);
+  assert.deepEqual(
+    heroPhoto({
+      name: "Reading Room",
+      imageUrl: "https://lh3.googleusercontent.com/p",
+      imageAlt: "Street view",
+      gallery: { src: "ours", alt: "Tables" },
+    }),
+    { src: "ours", alt: "Tables" },
+  );
 });
 
 test("back names the building under this space", () => {

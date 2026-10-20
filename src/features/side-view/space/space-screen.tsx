@@ -17,6 +17,7 @@ import {
   photoCountLabel,
   spaceBackLabel,
   spaceParagraph,
+  spacePhotosRoute,
   whatsHereLabels,
 } from "./format";
 import { SpaceHeader, type SpaceHeaderBuilding } from "./header";
@@ -40,7 +41,7 @@ function attributesOf(space: SpaceDetail): AttributeSpace {
 
 function Note({ children }: { children: string }) {
   return (
-    <p role="status" className="px-3 text-sm text-muted-foreground">
+    <p role="status" className="px-1 text-sm text-muted-foreground">
       {children}
     </p>
   );
@@ -70,7 +71,7 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
     if (detail.error) return <Note>{detail.error}</Note>;
     if (data.loaded && detail.loaded) return <Note>This space isn’t listed.</Note>;
     return (
-      <div role="status" className="flex flex-col gap-3 px-3">
+      <div role="status" className="flex flex-col gap-3 px-1">
         <span className="sr-only">Loading…</span>
         <Skeleton className="h-8 w-2/3" />
         <Skeleton className="aspect-[4/3] w-full rounded-xl" />
@@ -102,9 +103,7 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
     else clear();
   };
   const onPhotos =
-    record && building && photoLabel
-      ? () => push({ kind: "photos", slug: building.slug, spaceId: record.id })
-      : null;
+    record && building && photoLabel ? () => push(spacePhotosRoute(building.slug, record.slug)) : null;
   const onShowFloor =
     record && placedFloors.length > 0
       ? () => {
@@ -113,7 +112,7 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
       : null;
 
   return (
-    <section aria-labelledby={titleId} aria-busy={!detail.loaded} className="flex min-w-0 flex-col gap-5 px-3 pt-1 pb-4">
+    <section aria-labelledby={titleId} aria-busy={!detail.loaded} className="flex min-w-0 flex-col gap-5 px-1 pb-2">
       <SpaceHeader
         titleId={titleId}
         name={name}

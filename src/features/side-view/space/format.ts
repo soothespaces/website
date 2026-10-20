@@ -103,17 +103,39 @@ export function walkPoint(
   return null;
 }
 
+// Same hosts the photos screen refuses to republish.
+const BLOCKED_PHOTO = /google|gstatic|ggpht|serpapi|yelp/i;
+
+export function isBlockedPhoto(photo: {
+  credit?: string | null;
+  license?: string | null;
+  sourceUrl?: string | null;
+}): boolean {
+  return BLOCKED_PHOTO.test(`${photo.credit ?? ""}\n${photo.license ?? ""}\n${photo.sourceUrl ?? ""}`);
+}
+
 export function heroPhoto(space: {
   name: string;
   imageUrl: string | null;
   imageAlt: string | null;
-  gallery: { src: string; alt: string } | null;
-}): { src: string; alt: string } | null {
-  if (space.imageUrl) {
+  gallery: { src: string; srcSet?: string; alt: string; credit?: string | null } | null;
+}): { src: string; srcSet?: string; alt: string; credit?: string | null } | null {
+  if (space.imageUrl && !isBlockedPhoto({ sourceUrl: space.imageUrl })) {
     return { src: space.imageUrl, alt: space.imageAlt?.trim() || `Photo of ${space.name}` };
   }
   if (!space.gallery) return null;
-  return { src: space.gallery.src, alt: space.gallery.alt.trim() || `Photo of ${space.name}` };
+  const alt = space.gallery.alt.trim() || `Photo of ${space.name}`;
+  return space.gallery.srcSet
+    ? { src: space.gallery.src, srcSet: space.gallery.srcSet, alt, credit: space.gallery.credit }
+    : { src: space.gallery.src, alt };
+}
+
+/**
+ * The photos route's `space` param is the space slug. The gallery looks the
+ * slug up and then reads `photos.space_id`. Passing the uuid matches nothing.
+ */
+export function spacePhotosRoute(buildingSlug: string, spaceSlug: string) {
+  return { kind: "photos" as const, slug: buildingSlug, spaceId: spaceSlug };
 }
 
 export function spaceBackLabel(parent: PanelRoute | undefined, buildingName: string | null): string {

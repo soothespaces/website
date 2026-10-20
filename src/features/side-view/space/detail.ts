@@ -1,5 +1,7 @@
+import { photoUrl } from "@/features/admin-photos/photo";
 import type { LightLevel, NoiseLevel, SpaceFeature } from "@/lib/data/check-ins";
 import type { Database } from "@/types/supabase";
+import { isBlockedPhoto } from "./format";
 
 type SpaceSource = Database["public"]["Enums"]["space_source"];
 
@@ -35,7 +37,18 @@ export type SpaceLocation = {
 
 export type SpaceGallery = {
   src: string;
+  srcSet: string;
   alt: string;
+  credit: string | null;
+};
+
+export type SpacePhotoRow = {
+  alt: string;
+  pathPrefix: string;
+  widths: readonly number[];
+  credit: string | null;
+  license: string | null;
+  sourceUrl: string | null;
 };
 
 export type SpaceDetail = {
@@ -108,6 +121,27 @@ function asEnum<T extends string>(value: string | null | undefined, allowed: rea
 
 function asNumber(value: number | null | undefined): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function photoSources(supabaseUrl: string, pathPrefix: string, widths: readonly number[]) {
+  const sorted = [...new Set(widths.filter((width) => width > 0))].sort((a, b) => a - b);
+  if (sorted.length === 0) return null;
+  const largest = sorted[sorted.length - 1]!;
+  return {
+    src: photoUrl(supabaseUrl, pathPrefix, largest),
+    srcSet: sorted.map((width) => `${photoUrl(supabaseUrl, pathPrefix, width)} ${width}w`).join(", "),
+  };
+}
+
+/** Listed photos we can show. Google and Yelp rows are dropped, matching the gallery. */
+export function chooseSpacePhotos(rows: readonly SpacePhotoRow[], supabaseUrl: string): SpacePhotos {
+  const allowed = rows.filter((row) => !isBlockedPhoto(row));
+  const first = allowed[0];
+  const sources = first ? photoSources(supabaseUrl, first.pathPrefix, first.widths) : null;
+  return {
+    count: allowed.length,
+    gallery: first && sources ? { ...sources, alt: first.alt, credit: first.credit?.trim() || null } : null,
+  };
 }
 
 export function locationFloors(locations: readonly { floor: number }[]): number[] {

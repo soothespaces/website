@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { photoUrl } from "@/features/admin-photos/photo";
+import { readAll } from "@/lib/data/read-all";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
-import { toSpaceDetail, type SpaceDetail, type SpaceDetailRow, type SpacePhotos } from "./detail";
+import { chooseSpacePhotos, toSpaceDetail, type SpaceDetail, type SpaceDetailRow, type SpacePhotoRow, type SpacePhotos } from "./detail";
 
 const SPACE_DETAIL_SELECT =
   "id, slug, name, summary, description, floor, floor_label, noise_level, light_level, features, capacity, image_url, image_alt, source, edited_fields, lat, lng, building:buildings(slug, name, short_name, lat, lng), locations:space_locations(floor, room_number)";
@@ -17,27 +17,41 @@ export type SpaceDetailState = {
 
 const EMPTY_PHOTOS: SpacePhotos = { count: 0, gallery: null };
 
-function pickWidth(widths: readonly number[]): number | null {
-  if (widths.length === 0) return null;
-  const sorted = [...widths].sort((a, b) => a - b);
-  return sorted.find((width) => width >= 960) ?? sorted[sorted.length - 1] ?? null;
+const PHOTO_SELECT = "alt, path_prefix, widths, credit, license, source_url";
+
+type PhotoRecord = {
+  alt: string;
+  path_prefix: string;
+  widths: number[];
+  credit: string | null;
+  license: string | null;
+  source_url: string | null;
+};
+
+function toPhotoRow(record: PhotoRecord): SpacePhotoRow {
+  return {
+    alt: record.alt,
+    pathPrefix: record.path_prefix,
+    widths: record.widths ?? [],
+    credit: record.credit,
+    license: record.license,
+    sourceUrl: record.source_url,
+  };
 }
 
 async function loadPhotos(spaceId: string, supabaseUrl: string): Promise<SpacePhotos> {
   const supabase = createClient();
-  const { data, count, error } = await supabase
-    .from("photos")
-    .select("alt, path_prefix, widths", { count: "exact" })
-    .eq("space_id", spaceId)
-    .eq("is_listed", true)
-    .order("sort_order")
-    .order("created_at")
-    .limit(1);
-  if (error) throw error;
-  const row = data?.[0];
-  const width = row ? pickWidth(row.widths) : null;
-  const gallery = row && width != null ? { src: photoUrl(supabaseUrl, row.path_prefix, width), alt: row.alt } : null;
-  return { count: count ?? 0, gallery };
+  const rows = await readAll<PhotoRecord>((from, to) =>
+    supabase
+      .from("photos")
+      .select(PHOTO_SELECT)
+      .eq("space_id", spaceId)
+      .eq("is_listed", true)
+      .order("sort_order")
+      .order("created_at")
+      .range(from, to),
+  );
+  return chooseSpacePhotos(rows.map(toPhotoRow), supabaseUrl);
 }
 
 // The map list is a short summary. The screen also needs the id, the photo,

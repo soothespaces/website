@@ -93,11 +93,11 @@ function PanelFrame({
       onScroll={onScroll}
       className={
         active
-          ? `overflow-y-auto overscroll-contain ${ownsChrome ? "pb-3" : frameClassName} ${bounded ? "min-h-0 flex-1" : "min-h-0"}`
+          ? `overflow-y-auto overscroll-contain ${frameClassName} ${bounded ? "min-h-0 flex-1" : "min-h-0"}`
           : "hidden"
       }
     >
-      <div className={ownsChrome ? "flex flex-col" : "flex flex-col gap-1"}>
+      <div className="flex flex-col gap-1">
         {ownsChrome ? null : <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />}
         {body}
       </div>

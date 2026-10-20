@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { floorsForPrinters, locationFloors, toSpaceDetail, type SpaceDetailRow } from "./detail.ts";
+import { chooseSpacePhotos, floorsForPrinters, locationFloors, toSpaceDetail, type SpaceDetailRow } from "./detail.ts";
 
 const row: SpaceDetailRow = {
   id: "space-1",
@@ -28,7 +28,10 @@ const row: SpaceDetailRow = {
 };
 
 test("a space row keeps the building short name, floors, and listed features", () => {
-  const detail = toSpaceDetail(row, { count: 5, gallery: { src: "g", alt: "Gallery" } });
+  const detail = toSpaceDetail(row, {
+    count: 5,
+    gallery: { src: "g", srcSet: "g 960w", alt: "Gallery", credit: null },
+  });
   assert.ok(detail);
   assert.equal(detail.name, "Shapiro Reading Room");
   assert.equal(detail.summary, "Long tables.");
@@ -48,6 +51,34 @@ test("a space row keeps the building short name, floors, and listed features", (
 test("a row without an id is not a space", () => {
   assert.equal(toSpaceDetail({ ...row, id: "" }, { count: 0, gallery: null }), null);
   assert.equal(toSpaceDetail({ ...row, source: "google" }, { count: 0, gallery: null }), null);
+});
+
+test("gallery photos drop Google rows and keep the stored widths", () => {
+  const photos = chooseSpacePhotos(
+    [
+      {
+        alt: "Street",
+        pathPrefix: "photos/street",
+        widths: [960],
+        credit: "Google",
+        license: null,
+        sourceUrl: null,
+      },
+      {
+        alt: "Tables",
+        pathPrefix: "photos/tables",
+        widths: [480, 960],
+        credit: "Soothe Spaces team",
+        license: "Soothe Spaces team photo",
+        sourceUrl: null,
+      },
+    ],
+    "https://example.supabase.co",
+  );
+  assert.equal(photos.count, 1);
+  assert.equal(photos.gallery?.alt, "Tables");
+  assert.match(photos.gallery?.src ?? "", /photos\/tables-960\.webp$/);
+  assert.match(photos.gallery?.srcSet ?? "", /480w/);
 });
 
 test("printer floors include the library floor when no polygon is placed", () => {
