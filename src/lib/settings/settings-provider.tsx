@@ -23,6 +23,7 @@ import {
   writeStoredSettings,
   SETTINGS_STORAGE_KEY,
   type Settings,
+  type StudyPreferences,
   type ThemeSetting,
 } from "./model";
 
@@ -41,6 +42,7 @@ type SettingsContextValue = {
   signedIn: boolean;
   persistence: SettingsPersistence;
   update: (patch: Partial<Settings>) => void;
+  updateStudy: (patch: Partial<StudyPreferences>) => void;
 };
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
@@ -51,6 +53,12 @@ export function useSettings(): SettingsContextValue {
     throw new Error("useSettings must be used within SettingsProvider");
   }
   return value;
+}
+
+// The study block of settings: local for guests, `user_settings.settings` once signed in.
+export function useStudyPreferences() {
+  const { settings, ready, updateStudy } = useSettings();
+  return { study: settings.study, ready, updateStudy };
 }
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
@@ -186,6 +194,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       });
   }
 
+  // Merges against the ref so two changes in one turn both stick.
+  function updateStudy(patch: Partial<StudyPreferences>) {
+    update({ study: { ...settingsRef.current.study, ...patch } });
+  }
+
   return (
     <SettingsContext.Provider
       value={{
@@ -194,6 +207,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         signedIn: userId !== null,
         persistence,
         update,
+        updateStudy,
       }}
     >
       {children}
