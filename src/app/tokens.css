@@ -315,3 +315,127 @@
 :root[data-text="150"] {
   font-size: 150%;
 }
+
+/*
+ * Noise fills for the badge and, later, floor-plan room fills (L1).
+ * Decorative only: the bar count and the word carry the meaning.
+ * --noise-bar is the unfilled bar: light on light backgrounds and dark on
+ * dark ones, so it stays far from every fill (including high contrast).
+ * --slot-free is the grey free block
+ * on the room timeline (#bfc3c0 on the board). Booked blocks use
+ * --destructive plus a hatch, so they are not given another red.
+ */
+:root {
+  --noise-quiet: #3e6f8e;
+  --noise-low: #3d6b4f;
+  --noise-conversational: #8a5a12;
+  --noise-loud: #a33b32;
+  --noise-bar: #e5e5e5;
+  --slot-free: #bfc3c0;
+}
+
+:root[data-theme="dark"] {
+  --noise-quiet: #8fb4d6;
+  --noise-low: #8cc7a1;
+  --noise-conversational: #e0b15a;
+  --noise-loud: #f0a090;
+  --noise-bar: #333333;
+  --slot-free: #bfc3c0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --noise-quiet: #8fb4d6;
+    --noise-low: #8cc7a1;
+    --noise-conversational: #e0b15a;
+    --noise-loud: #f0a090;
+    --noise-bar: #333333;
+    --slot-free: #bfc3c0;
+  }
+}
+
+:root[data-contrast="more"] {
+  --noise-quiet: #1f4e73;
+  --noise-low: #1f4a31;
+  --noise-conversational: #6b3e00;
+  --noise-loud: #8b1e12;
+  --noise-bar: #e5e5e5;
+  --slot-free: #5c615e;
+}
+
+@media (prefers-contrast: more) {
+  :root:not([data-contrast="normal"]) {
+    --noise-quiet: #1f4e73;
+    --noise-low: #1f4a31;
+    --noise-conversational: #6b3e00;
+    --noise-loud: #8b1e12;
+    --noise-bar: #e5e5e5;
+    --slot-free: #5c615e;
+  }
+}
+
+:root[data-theme="dark"][data-contrast="more"] {
+  --noise-quiet: #b8d8f2;
+  --noise-low: #a8dcb8;
+  --noise-conversational: #f0c878;
+  --noise-loud: #ffb0a4;
+  --noise-bar: #333333;
+  --slot-free: #d5d8d6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-contrast="more"] {
+    --noise-quiet: #b8d8f2;
+    --noise-low: #a8dcb8;
+    --noise-conversational: #f0c878;
+    --noise-loud: #ffb0a4;
+    --noise-bar: #333333;
+    --slot-free: #d5d8d6;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root[data-theme="dark"]:not([data-contrast="normal"]) {
+    --noise-quiet: #b8d8f2;
+    --noise-low: #a8dcb8;
+    --noise-conversational: #f0c878;
+    --noise-loud: #ffb0a4;
+    --noise-bar: #333333;
+    --slot-free: #d5d8d6;
+  }
+}
+
+@media (prefers-color-scheme: dark) and (prefers-contrast: more) {
+  :root:not([data-theme="light"]):not([data-contrast="normal"]) {
+    --noise-quiet: #b8d8f2;
+    --noise-low: #a8dcb8;
+    --noise-conversational: #f0c878;
+    --noise-loud: #ffb0a4;
+    --noise-bar: #333333;
+    --slot-free: #d5d8d6;
+  }
+}
+
+/* Colorblind-safe hues. Declared last so they win over the rules above. */
+:root[data-palette="cvd"] {
+  --noise-quiet: #005a9c;
+  --noise-low: #0072b2;
+  --noise-conversational: #8a5a00;
+  --noise-loud: #9a3a00;
+}
+
+:root[data-palette="cvd"][data-theme="dark"] {
+  --noise-quiet: #56b4e9;
+  --noise-low: #9ad8f5;
+  --noise-conversational: #f0c14d;
+  --noise-loud: #f5a06e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="cvd"]:not([data-theme="light"]) {
+    --noise-quiet: #56b4e9;
+    --noise-low: #9ad8f5;
+    --noise-conversational: #f0c14d;
+    --noise-loud: #f5a06e;
+  }
+}

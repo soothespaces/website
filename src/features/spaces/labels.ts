@@ -8,6 +8,17 @@ export const NOISE_LABELS: Record<NonNullable<SpaceSummary["noise_level"]>, stri
   loud: "Loud",
 };
 
+export const LIGHT_LABELS = {
+  dim: "Dim",
+  moderate: "Moderate",
+  bright: "Bright",
+} as const;
+
+export const ENCLOSURE_LABELS = {
+  open: "Open",
+  enclosed: "Enclosed",
+} as const;
+
 export const FEATURE_LABELS: Record<SpaceSummary["features"][number], string> = {
   natural_light: "Natural light",
   wheelchair_accessible: "Wheelchair accessible",

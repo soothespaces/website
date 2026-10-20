@@ -1,5 +1,6 @@
-import { BackIcon, CloseIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
+import { CloseIcon } from "@/components/ui/icons";
+import { PanelBackButton } from "@/components/ui/panel-back-button";
 
 const iconButton = "text-muted-foreground hover:text-foreground";
 
@@ -19,9 +20,7 @@ export function PanelHeader({
   return (
     <div className="flex items-center justify-between">
       {canGoBack ? (
-        <Button variant="ghost" size="icon" shape="circle" onClick={onBack} className={iconButton} aria-label="Back">
-          <BackIcon />
-        </Button>
+        <PanelBackButton label="Back" onClick={onBack} />
       ) : (
         <span />
       )}
