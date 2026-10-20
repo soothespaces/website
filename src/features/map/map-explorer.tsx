@@ -9,6 +9,9 @@ import { CurbRampLayer, ENTRANCES_LAYER, EntranceLayer } from "./layers/accessib
 import { BUILDINGS_HIT_LAYER, BuildingLayers } from "./layers/buildings";
 import { CampusDetailLayers, FO_BUILDINGS_SOURCE } from "./layers/campus-detail";
 import { FLOOR_PLAN_MIN_ZOOM, FloorPlanLayers } from "./layers/floor-plans";
+import { ROOM_AVAILABILITY_HIT_LAYER, RoomAvailabilityPin } from "./layers/floor-room-availability";
+import { normalizeRoomNumber, propertyRoomNumber } from "./layers/room-match";
+import { useRoomsData } from "@/features/side-view/rooms-map/rooms-data";
 import { SpacePins } from "./layers/space-pins";
 import { LayersPanel } from "./layers-panel";
 import { WIDE_QUERY } from "./map-layout-config";
@@ -39,8 +42,22 @@ export function MapExplorer() {
   const theme = useResolvedTheme();
   const colors = useMapColors();
   const wide = useMediaQuery(WIDE_QUERY);
-  const { data, selection, select, clear, camera, entrance, setEntrance, layers, setLayers, floorPlans, floor } =
-    useMapState();
+  const {
+    data,
+    selection,
+    select,
+    clear,
+    camera,
+    entrance,
+    setEntrance,
+    layers,
+    setLayers,
+    floorPlans,
+    floor,
+    route,
+    setRoomsMap,
+  } = useMapState();
+  const roomData = useRoomsData();
   const { entrances, spots, buildings, buildingsBySlug, spaces, error } = data;
   const map = useMap().current?.getMap();
   const selectedBuilding = useSelectedBuilding();
@@ -80,7 +97,7 @@ export function MapExplorer() {
     function show(target: MapSelection) {
       if (!map) return;
       if (target.kind === "building") {
-        const bounds = target.recordNumber ? boundsOfBuilding(target.recordNumber) : null;
+        const bounds = camera.bounds ?? (target.recordNumber ? boundsOfBuilding(target.recordNumber) : null);
         const fit = bounds ? map.cameraForBounds(bounds, { padding, maxZoom: 18 }) : null;
         const ours = target.slug ? buildingsBySlug.get(target.slug) : undefined;
         const center = bounds
@@ -113,6 +130,16 @@ export function MapExplorer() {
 
     function onClick(event: MapMouseEvent) {
       if (!map) return;
+      // A room on the rooms map selects that room. Other taps stay on this
+      // route so the drawer does not close.
+      if (route.kind === "rooms-map") {
+        if (map.getLayer(ROOM_AVAILABILITY_HIT_LAYER)) {
+          const [roomHit] = map.queryRenderedFeatures(event.point, { layers: [ROOM_AVAILABILITY_HIT_LAYER] });
+          const roomId = normalizeRoomNumber(propertyRoomNumber(roomHit?.properties?.roomNumber));
+          if (roomId) setRoomsMap({ roomId });
+        }
+        return;
+      }
       // Doors are small, so a click within a fingertip of one counts.
       const { x, y } = event.point;
       const [door] = map.getLayer(ENTRANCES_LAYER)
@@ -153,19 +180,24 @@ export function MapExplorer() {
     const pointer = () => (map.getCanvas().style.cursor = "pointer");
     const grab = () => (map.getCanvas().style.cursor = "");
 
+    const pointerLayers = [ENTRANCES_LAYER, BUILDINGS_HIT_LAYER].filter((id) => map.getLayer(id));
+    if (route.kind === "rooms-map" && map.getLayer(ROOM_AVAILABILITY_HIT_LAYER)) {
+      pointerLayers.unshift(ROOM_AVAILABILITY_HIT_LAYER);
+    }
+
     map.on("click", onClick);
-    for (const layer of [ENTRANCES_LAYER, BUILDINGS_HIT_LAYER]) {
+    for (const layer of pointerLayers) {
       map.on("mouseenter", layer, pointer);
       map.on("mouseleave", layer, grab);
     }
     return () => {
       map.off("click", onClick);
-      for (const layer of [ENTRANCES_LAYER, BUILDINGS_HIT_LAYER]) {
+      for (const layer of pointerLayers) {
         map.off("mouseenter", layer, pointer);
         map.off("mouseleave", layer, grab);
       }
     };
-  }, [map, entrancesById, buildings, select, clear, setEntrance]);
+  }, [map, entrancesById, buildings, select, clear, setEntrance, route.kind, setRoomsMap, roomData.loaded, roomData.rooms.length]);
 
   // Escape closes the entrance popup.
   useEffect(() => {
@@ -208,7 +240,8 @@ export function MapExplorer() {
     <>
       <CampusDetailLayers theme={theme} visible={layers.campus} />
       <BuildingLayers selectedRecordNumber={outlined} colors={colors} />
-      <FloorPlanLayers plan={plan ?? null} colors={colors} />
+      <FloorPlanLayers plan={plan ?? null} colors={colors} availability={route.kind === "rooms-map"} />
+      {route.kind === "rooms-map" && plan ? <RoomAvailabilityPin geojson={plan.geojson} /> : null}
       <CurbRampLayer colors={colors} visible={layers.curbRamps} />
       <EntranceLayer entrances={entrances} colors={colors} visible={layers.entrances} />
       {layers.spaces ? <SpacePins spots={spots} selectedKey={selectedSpotKey} onSelect={onSelectSpot} /> : null}

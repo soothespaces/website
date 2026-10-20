@@ -38,6 +38,7 @@ function PanelFrame({
   density,
   frameClassName,
   bounded,
+  fill,
   scrolls,
   onBack,
   onClose,
@@ -50,6 +51,9 @@ function PanelFrame({
   // The dock, and the phone sheet once it is expanded, have a fixed height
   // and the frame fills it. A collapsed sheet sizes to its content.
   bounded: boolean;
+  // The screen fills the frame and scrolls its own list, so a footer can
+  // stay pinned under it. The rooms map uses this for its Book row.
+  fill: boolean;
   scrolls: Map<string, number>;
   onBack: () => void;
   onClose: () => void;
@@ -92,11 +96,13 @@ function PanelFrame({
       onScroll={onScroll}
       className={
         active
-          ? `overflow-y-auto overscroll-contain ${frameClassName} ${bounded ? "min-h-0 flex-1" : "min-h-0"}`
+          ? fill
+            ? `flex min-h-0 flex-1 flex-col overflow-hidden ${frameClassName}`
+            : `overflow-y-auto overscroll-contain ${frameClassName} ${bounded ? "min-h-0 flex-1" : "min-h-0"}`
           : "hidden"
       }
     >
-      <div className="flex flex-col gap-1">
+      <div className={fill ? "flex min-h-0 flex-1 flex-col" : "flex flex-col gap-1"}>
         <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />
         {body}
       </div>
@@ -142,6 +148,7 @@ export function SelectionPanel({
             density={density}
             frameClassName={frameClassName}
             bounded={bounded}
+            fill={route.kind === "rooms-map"}
             scrolls={scrolls}
             onBack={onBack}
             onClose={clear}

@@ -5,6 +5,7 @@ import { Layer, Source, useMap } from "react-map-gl/maplibre";
 import { SLOTS } from "../slots";
 import type { FloorPlan } from "../use-floor-index";
 import type { MapColors } from "../use-map-colors";
+import { FloorRoomAvailability } from "./floor-room-availability";
 import { FloorStaffLayer } from "./floor-staff";
 
 // Selecting a building zooms the map to it, at least this far in. Floor
@@ -48,7 +49,17 @@ function useLabelFont() {
 // structure, rooms on top, then room numbers or names when zoomed in. Sits
 // in SLOTS.floorPlans, over FO's campus detail and under the basemap
 // labels and the overlays.
-export function FloorPlanLayers({ plan, colors }: { plan: FloorPlan | null; colors: MapColors }) {
+export function FloorPlanLayers({
+  plan,
+  colors,
+  availability = false,
+}: {
+  plan: FloorPlan | null;
+  colors: MapColors;
+  // Rooms map: free grey and booked red, with staff grey and noise fills off
+  // so those two states stay readable. Leaving the route paints the normal plan.
+  availability?: boolean;
+}) {
   const font = useLabelFont();
   if (!plan) return null;
   const id = `floor-plan`;
@@ -71,12 +82,21 @@ export function FloorPlanLayers({ plan, colors }: { plan: FloorPlan | null; colo
         paint={{ "fill-color": colors.card, "fill-opacity": 0.92 }}
         beforeId={SLOTS.floorPlans}
       />
-      <FloorStaffLayer
-        colors={colors}
-        minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
-        building={plan.building}
-        floor={plan.floor}
-      />
+      {availability ? (
+        <FloorRoomAvailability
+          building={plan.building}
+          floor={plan.floor}
+          minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
+          colors={colors}
+        />
+      ) : (
+        <FloorStaffLayer
+          colors={colors}
+          minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
+          building={plan.building}
+          floor={plan.floor}
+        />
+      )}
       <Layer
         id={`${id}-room-lines`}
         type="line"

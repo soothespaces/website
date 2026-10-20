@@ -5,6 +5,10 @@ import type { FloorRecord } from "@/features/floor-alignment/floors";
 
 export type FloorPlan = Pick<FloorRecord, "building" | "floor" | "geojson" | "rooms" | "labeled"> & {
   geojson: string;
+  /** Present on plans loaded from the floor index. */
+  buildingName?: string;
+  /** Sheet corners, [lng, lat], when the index has them. */
+  corners?: [number, number][];
 };
 
 // Floor plans the map can draw, by building slug, lowest floor first. Read

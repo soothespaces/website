@@ -286,6 +286,14 @@ export function planPush(
   return { type: "push", stack: next };
 }
 
+// Swap the screen on top. A new room or floor on the rooms map stays one
+// step above the list, so Back still returns there.
+export function replaceTop(stack: PanelRoute[], route: PanelRoute): PanelRoute[] {
+  if (stack.length === 0) return [route];
+  if (samePanelRoute(stack.at(-1), route)) return stack;
+  return [...stack.slice(0, -1), route];
+}
+
 export function backRoute(stack: PanelRoute[]): PanelRoute[] {
   if (stack.length <= 1) return stack.length > 0 ? stack : [HOME_ROUTE];
   return stack.slice(0, -1);
