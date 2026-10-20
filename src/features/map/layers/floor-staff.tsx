@@ -1,7 +1,6 @@
 "use client";
 
 import { Layer } from "react-map-gl/maplibre";
-import { SLOTS } from "../slots";
 import type { MapColors } from "../use-map-colors";
 import { staffRoomFilter } from "./floor-staff-rooms";
 
@@ -42,7 +41,7 @@ export function FloorStaffLayer({
       minzoom={minzoom}
       filter={staffRoomFilter(building, floor)}
       paint={{ "fill-color": colors["floor-staff"], "fill-opacity": 1 }}
-      beforeId={SLOTS.floorPlans}
+      beforeId="floor-plan-room-lines"
     />
   );
 }

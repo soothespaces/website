@@ -23,6 +23,7 @@
   --color-ring: var(--ring);
   --color-sound: var(--sound);
   --color-logo-gap: var(--logo-gap);
+  --color-floor-staff: var(--floor-staff);
   --color-noise-quiet: var(--noise-quiet);
   --color-noise-low: var(--noise-low);
   --color-noise-conversational: var(--noise-conversational);

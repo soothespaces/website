@@ -5,6 +5,9 @@ import { Layer, Source, useMap } from "react-map-gl/maplibre";
 import { SLOTS } from "../slots";
 import type { FloorPlan } from "../use-floor-index";
 import type { MapColors } from "../use-map-colors";
+import { FloorBookableLayer } from "./floor-bookable";
+import { FloorNoiseLayer, useFloorColoring } from "./floor-noise";
+import { FloorPrintersLayer } from "./floor-printers";
 import { FloorStaffLayer } from "./floor-staff";
 
 // Selecting a building zooms the map to it, at least this far in. Floor
@@ -50,11 +53,13 @@ function useLabelFont() {
 // labels and the overlays.
 export function FloorPlanLayers({ plan, colors }: { plan: FloorPlan | null; colors: MapColors }) {
   const font = useLabelFont();
+  const coloring = useFloorColoring(plan);
   if (!plan) return null;
   const id = `floor-plan`;
   return (
-    // Keyed by URL so switching floors swaps the data in place.
-    <Source key={plan.geojson} id={id} type="geojson" data={plan.geojson}>
+    <>
+      {/* Keyed by URL so switching floors swaps the data in place. */}
+      <Source key={plan.geojson} id={id} type="geojson" data={plan.geojson}>
       <Layer
         id={`${id}-structure`}
         type="fill"
@@ -71,12 +76,6 @@ export function FloorPlanLayers({ plan, colors }: { plan: FloorPlan | null; colo
         paint={{ "fill-color": colors.card, "fill-opacity": 0.92 }}
         beforeId={SLOTS.floorPlans}
       />
-      <FloorStaffLayer
-        colors={colors}
-        minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
-        building={plan.building}
-        floor={plan.floor}
-      />
       <Layer
         id={`${id}-room-lines`}
         type="line"
@@ -88,6 +87,14 @@ export function FloorPlanLayers({ plan, colors }: { plan: FloorPlan | null; colo
         }}
         beforeId={SLOTS.floorPlans}
       />
+      <FloorStaffLayer
+        colors={colors}
+        minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
+        building={plan.building}
+        floor={plan.floor}
+      />
+      <FloorNoiseLayer colors={colors} minzoom={FLOOR_PLAN_MIN_ZOOM - 1} byNoise={coloring.byNoise} />
+      <FloorBookableLayer minzoom={FLOOR_PLAN_MIN_ZOOM - 1} rooms={coloring.bookableRooms} />
       {font ? (
         <Layer
           id={`${id}-labels`}
@@ -110,5 +117,7 @@ export function FloorPlanLayers({ plan, colors }: { plan: FloorPlan | null; colo
         />
       ) : null}
     </Source>
+    <FloorPrintersLayer plan={plan} rooms={coloring.rooms} />
+    </>
   );
 }

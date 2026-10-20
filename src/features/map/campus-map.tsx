@@ -45,14 +45,18 @@ export default function CampusMap({ children }: { children?: ReactNode }) {
         maxPitch={0}
         onLoad={(event) => {
           const map = event.target;
+          // The basemap's missing-sprite stand-in must not claim images the
+          // floor plan registers itself (stripes, printer markers). A 1px
+          // stand-in would stick after a theme change, when images are wiped
+          // and the layers ask for them again.
+          const owned = new Set(["bookable-stripes", "printer-marker"]);
           map.touchZoomRotate.disableRotation();
           map.keyboard.disableRotation();
           // Some styles reference sprite images they don't ship (OpenFreeMap's
           // "wood-pattern"); a blank stand-in keeps the console quiet.
           map.on("styleimagemissing", ({ id }) => {
-            if (!map.hasImage(id)) {
-              map.addImage(id, { width: 1, height: 1, data: new Uint8Array(4) });
-            }
+            if (owned.has(id) || map.hasImage(id)) return;
+            map.addImage(id, { width: 1, height: 1, data: new Uint8Array(4) });
           });
         }}
         locale={{ "Map.Title": "Campus map" }}

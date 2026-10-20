@@ -317,8 +317,12 @@
 }
 
 /*
- * Noise fills for the badge and, later, floor-plan room fills (L1).
+ * Noise fills for the badge (F2.1) and the floor-plan room fills (L1).
  * Decorative only: the bar count and the word carry the meaning.
+ * Light values are the FloorStyle board: quiet #2f5a40, low noise #7fa58b,
+ * conversational #d9b45a, loud #c8704e. Dark and high contrast keep those
+ * hues and stay apart from the page background. The colorblind palette
+ * below replaces them so the four levels do not collapse into green and gold.
  * --noise-bar is the unfilled bar: light on light backgrounds and dark on
  * dark ones, so it stays far from every fill (including high contrast).
  * --slot-free is the grey free block
@@ -326,69 +330,69 @@
  * --destructive plus a hatch, so they are not given another red.
  */
 :root {
-  --noise-quiet: #3e6f8e;
-  --noise-low: #3d6b4f;
-  --noise-conversational: #8a5a12;
-  --noise-loud: #a33b32;
+  --noise-quiet: #2f5a40;
+  --noise-low: #7fa58b;
+  --noise-conversational: #d9b45a;
+  --noise-loud: #c8704e;
   --noise-bar: #e5e5e5;
   --slot-free: #bfc3c0;
 }
 
 :root[data-theme="dark"] {
-  --noise-quiet: #8fb4d6;
-  --noise-low: #8cc7a1;
-  --noise-conversational: #e0b15a;
-  --noise-loud: #f0a090;
+  --noise-quiet: #3f6b52;
+  --noise-low: #a9d0b8;
+  --noise-conversational: #e6c56a;
+  --noise-loud: #e39a82;
   --noise-bar: #333333;
   --slot-free: #bfc3c0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --noise-quiet: #8fb4d6;
-    --noise-low: #8cc7a1;
-    --noise-conversational: #e0b15a;
-    --noise-loud: #f0a090;
+    --noise-quiet: #3f6b52;
+    --noise-low: #a9d0b8;
+    --noise-conversational: #e6c56a;
+    --noise-loud: #e39a82;
     --noise-bar: #333333;
     --slot-free: #bfc3c0;
   }
 }
 
 :root[data-contrast="more"] {
-  --noise-quiet: #1f4e73;
-  --noise-low: #1f4a31;
-  --noise-conversational: #6b3e00;
-  --noise-loud: #8b1e12;
+  --noise-quiet: #143828;
+  --noise-low: #1e5c3a;
+  --noise-conversational: #6e5200;
+  --noise-loud: #7a3418;
   --noise-bar: #e5e5e5;
   --slot-free: #5c615e;
 }
 
 @media (prefers-contrast: more) {
   :root:not([data-contrast="normal"]) {
-    --noise-quiet: #1f4e73;
-    --noise-low: #1f4a31;
-    --noise-conversational: #6b3e00;
-    --noise-loud: #8b1e12;
+    --noise-quiet: #143828;
+    --noise-low: #1e5c3a;
+    --noise-conversational: #6e5200;
+    --noise-loud: #7a3418;
     --noise-bar: #e5e5e5;
     --slot-free: #5c615e;
   }
 }
 
 :root[data-theme="dark"][data-contrast="more"] {
-  --noise-quiet: #b8d8f2;
-  --noise-low: #a8dcb8;
-  --noise-conversational: #f0c878;
-  --noise-loud: #ffb0a4;
+  --noise-quiet: #7dcaa0;
+  --noise-low: #d5f5e3;
+  --noise-conversational: #ffe08a;
+  --noise-loud: #ffc7b3;
   --noise-bar: #333333;
   --slot-free: #d5d8d6;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"])[data-contrast="more"] {
-    --noise-quiet: #b8d8f2;
-    --noise-low: #a8dcb8;
-    --noise-conversational: #f0c878;
-    --noise-loud: #ffb0a4;
+    --noise-quiet: #7dcaa0;
+    --noise-low: #d5f5e3;
+    --noise-conversational: #ffe08a;
+    --noise-loud: #ffc7b3;
     --noise-bar: #333333;
     --slot-free: #d5d8d6;
   }
@@ -396,10 +400,10 @@
 
 @media (prefers-contrast: more) {
   :root[data-theme="dark"]:not([data-contrast="normal"]) {
-    --noise-quiet: #b8d8f2;
-    --noise-low: #a8dcb8;
-    --noise-conversational: #f0c878;
-    --noise-loud: #ffb0a4;
+    --noise-quiet: #7dcaa0;
+    --noise-low: #d5f5e3;
+    --noise-conversational: #ffe08a;
+    --noise-loud: #ffc7b3;
     --noise-bar: #333333;
     --slot-free: #d5d8d6;
   }
@@ -407,10 +411,10 @@
 
 @media (prefers-color-scheme: dark) and (prefers-contrast: more) {
   :root:not([data-theme="light"]):not([data-contrast="normal"]) {
-    --noise-quiet: #b8d8f2;
-    --noise-low: #a8dcb8;
-    --noise-conversational: #f0c878;
-    --noise-loud: #ffb0a4;
+    --noise-quiet: #7dcaa0;
+    --noise-low: #d5f5e3;
+    --noise-conversational: #ffe08a;
+    --noise-loud: #ffc7b3;
     --noise-bar: #333333;
     --slot-free: #d5d8d6;
   }

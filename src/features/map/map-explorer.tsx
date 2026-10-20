@@ -8,6 +8,8 @@ import { useResolvedTheme } from "@/lib/use-resolved-theme";
 import { CurbRampLayer, ENTRANCES_LAYER, EntranceLayer } from "./layers/accessibility";
 import { BUILDINGS_HIT_LAYER, BuildingLayers } from "./layers/buildings";
 import { CampusDetailLayers, FO_BUILDINGS_SOURCE } from "./layers/campus-detail";
+import { FloorLegend } from "./floor-legend";
+import { FLOOR_PRINTERS_LAYER } from "./layers/floor-printer-points";
 import { FLOOR_PLAN_MIN_ZOOM, FloorPlanLayers } from "./layers/floor-plans";
 import { SpacePins } from "./layers/space-pins";
 import { LayersPanel } from "./layers-panel";
@@ -113,6 +115,12 @@ export function MapExplorer() {
 
     function onClick(event: MapMouseEvent) {
       if (!map) return;
+      // Printer markers handle their own popup. A click there must not clear
+      // the building, or the floor plan (and the marker) would disappear.
+      if (map.getLayer(FLOOR_PRINTERS_LAYER)) {
+        const printers = map.queryRenderedFeatures(event.point, { layers: [FLOOR_PRINTERS_LAYER] });
+        if (printers.length) return;
+      }
       // Doors are small, so a click within a fingertip of one counts.
       const { x, y } = event.point;
       const [door] = map.getLayer(ENTRANCES_LAYER)
@@ -209,6 +217,7 @@ export function MapExplorer() {
       <CampusDetailLayers theme={theme} visible={layers.campus} />
       <BuildingLayers selectedRecordNumber={outlined} colors={colors} />
       <FloorPlanLayers plan={plan ?? null} colors={colors} />
+      {plan ? <FloorLegend plan={plan} /> : null}
       <CurbRampLayer colors={colors} visible={layers.curbRamps} />
       <EntranceLayer entrances={entrances} colors={colors} visible={layers.entrances} />
       {layers.spaces ? <SpacePins spots={spots} selectedKey={selectedSpotKey} onSelect={onSelectSpot} /> : null}
