@@ -1,8 +1,9 @@
 "use client";
 
 import type { ComponentType } from "react";
-import { BuildingPanelScreen, SpacePanelScreen, type PanelScreenProps } from "./builtin-screens";
+import { BuildingPanelScreen, type PanelScreenProps } from "./builtin-screens";
 import type { PanelRoute } from "./panel-route";
+import { SpaceScreen } from "./space/space-screen";
 
 export type { PanelScreenProps };
 
@@ -10,5 +11,9 @@ export type { PanelScreenProps };
 // with no entry render a placeholder in the selection panel.
 export const panelRegistry: Partial<Record<PanelRoute["kind"], ComponentType<PanelScreenProps>>> = {
   building: BuildingPanelScreen,
-  space: SpacePanelScreen,
+  space: SpaceScreen,
 };
+
+// These screens draw their own back control. The shared panel header would
+// stack a second Back (and a Close the space board does not have) above it.
+export const panelScreenChrome = new Set<PanelRoute["kind"]>(["space"]);
