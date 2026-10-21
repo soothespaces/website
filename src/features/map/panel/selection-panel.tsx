@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import type { SpaceListDensity } from "@/features/spaces";
 import { panelRouteKey, type PanelRoute } from "@/features/side-view/panel-route";
-import { panelFillsFrame, panelRegistry } from "@/features/side-view/registry";
+import { detailPanelKinds, panelRegistry } from "@/features/side-view/registry";
 import { useMapState } from "../map-state";
 import { PanelHeader } from "./panel-header";
 
@@ -66,7 +66,10 @@ function PanelFrame({
   const ref = useRef<HTMLDivElement>(null);
   const key = panelRouteKey(route);
   const Screen = panelRegistry[route.kind];
-  const fills = panelFillsFrame.has(route.kind);
+  // Detail screens bring their own back control. When the frame has a fixed
+  // height they fill it, so their footer stays on screen while the body scrolls.
+  const detail = Boolean(Screen) && detailPanelKinds.has(route.kind);
+  const fill = detail && bounded;
 
   // Scroll lives on the frame, or on the detail screen's own scroller.
   // Back hides the frame instead of unmounting it. The saved offset covers a
@@ -103,23 +106,17 @@ function PanelFrame({
       aria-hidden={active ? undefined : true}
       inert={active ? undefined : true}
       className={
-        active
-          ? fills
-            ? bounded
-              ? "flex min-h-0 flex-1 flex-col overflow-hidden"
-              : `overflow-y-auto overscroll-contain ${frameClassName}`
+        !active
+          ? "hidden"
+          : fill
+            ? `flex min-h-0 flex-1 flex-col overflow-hidden ${frameClassName}`
             : `overflow-y-auto overscroll-contain ${frameClassName} ${bounded ? "min-h-0 flex-1" : "min-h-0"}`
-          : "hidden"
       }
     >
-      {fills ? (
-        <div className={bounded ? "flex min-h-0 flex-1 flex-col" : "flex flex-col"}>{body}</div>
-      ) : (
-        <div className="flex flex-col gap-1">
-          <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />
-          {body}
-        </div>
-      )}
+      <div className={fill ? "flex min-h-0 flex-1 flex-col" : "flex flex-col gap-1"}>
+        {detail ? null : <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />}
+        {body}
+      </div>
     </div>
   );
 }

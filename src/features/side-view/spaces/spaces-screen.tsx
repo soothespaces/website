@@ -12,7 +12,7 @@ import type { PanelScreenProps } from "../builtin-screens";
 import type { ListedSpace } from "./listed-space";
 import { SpaceFilterChips } from "./space-filter-chips";
 import { filterSpaces } from "./space-filters";
-import { hasStudyPreferences, spacesTitle, withFloorNotes } from "./space-floors";
+import { hasStudyPreferences, spacesSortCaption, spacesTitle, withFloorNotes } from "./space-floors";
 import { SpaceRow } from "./space-row";
 import { useBuildingSpaces } from "./use-building-spaces";
 import { useRankedSpaces } from "./use-ranked-spaces";
@@ -24,7 +24,7 @@ export function SpacesScreen({ route }: PanelScreenProps) {
 }
 
 function SpacesList({ slug }: { slug: string }) {
-  const { back, push, data } = useMapState();
+  const { back, push, data, groupSize } = useMapState();
   const catalog = useBuildingSpaces(slug);
   const printers = usePrinters(slug);
   const overview = useCheckInOverview("space");
@@ -32,13 +32,15 @@ function SpacesList({ slug }: { slug: string }) {
   const [filters, setFilters] = useSpaceFilters();
 
   const printerFloors = useMemo(() => {
-    if (!printers.loaded) return null;
+    // An error leaves printers empty. Treat that as unknown, not as "no printers",
+    // or Printer nearby would hide every space and show no error.
+    if (!printers.loaded || printers.error) return null;
     const floors = new Set<number>();
     for (const printer of printers.printers) {
       if (printer.floor != null) floors.add(printer.floor);
     }
     return floors;
-  }, [printers.loaded, printers.printers]);
+  }, [printers.loaded, printers.error, printers.printers]);
 
   const entrances = useMemo(
     () => data.entrances.filter((entrance) => entrance.building_slug === slug),
@@ -65,7 +67,8 @@ function SpacesList({ slug }: { slug: string }) {
     catalog.spaces[0]?.building?.name ||
     data.buildingsBySlug.get(slug)?.name ||
     "Building";
-  const sorting = hasStudyPreferences(study);
+  const sortCaption = spacesSortCaption(study, groupSize);
+  const canChangeSort = hasStudyPreferences(study);
   const openSpace = (space: ListedSpace) => push({ kind: "space", id: space.slug });
 
   let body = null;
@@ -83,21 +86,29 @@ function SpacesList({ slug }: { slug: string }) {
   } else {
     body = (
       <div className="flex flex-col gap-4">
-        {sorting ? (
+        {sortCaption ? (
           <p className="text-sm text-muted-foreground">
-            Sorted by how you like to study{" "}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => push({ kind: "preferences" })}
-              aria-label="Change study preferences"
-              className="h-auto min-h-0 px-0 py-0 text-sm font-medium text-primary underline underline-offset-2 hover:bg-transparent"
-            >
-              Change
-            </Button>
+            {sortCaption}
+            {canChangeSort ? (
+              <>
+                {" "}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => push({ kind: "preferences" })}
+                  aria-label="Change study preferences"
+                  className="h-auto min-h-0 px-0 py-0 text-sm font-medium text-primary underline underline-offset-2 hover:bg-transparent"
+                >
+                  Change
+                </Button>
+              </>
+            ) : null}
           </p>
         ) : null}
         <SpaceFilterChips value={filters} onValueChange={setFilters} />
+        {filters.includes("printer") && printers.error ? (
+          <p className="text-sm text-muted-foreground">{printers.error}</p>
+        ) : null}
         {catalog.spaces.length === 0 ? (
           <p className="text-sm text-muted-foreground">No study spaces listed yet.</p>
         ) : groups.length === 0 ? (

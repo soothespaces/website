@@ -14,6 +14,8 @@ export type ListedSpace = {
   light_level: Enums["light_level"] | null;
   features: readonly string[];
   capacity: number | null;
+  source: Enums["space_source"] | null;
+  edited_fields: readonly string[];
   lat: number | null;
   lng: number | null;
   imageUrl: string | null;

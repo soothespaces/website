@@ -15,5 +15,6 @@ export const panelRegistry: Partial<Record<PanelRoute["kind"], ComponentType<Pan
   spaces: SpacesScreen,
 };
 
-// Detail screens draw their own back button and scroll their own body.
-export const panelFillsFrame: ReadonlySet<PanelRoute["kind"]> = new Set(["spaces"]);
+// These screens draw their own back button and title, and fill the frame so
+// a footer stays visible. The selection panel hides its own header for them.
+export const detailPanelKinds: ReadonlySet<PanelRoute["kind"]> = new Set(["spaces"]);

@@ -43,6 +43,14 @@ test("keeps unrelated query params when the filter param changes", () => {
   assert.equal(searchWithSpaceFilters("?f=quiet&people=just-me", []), "people=just-me");
 });
 
+test("dim lighting follows the attribute resolver when the listing source is known", () => {
+  const listed = { light_level: "dim", source: "um_library" as const, edited_fields: [] };
+  const bright = { light_level: "bright", source: "um_library" as const, edited_fields: [] };
+  const cleared = { light_level: null, source: "um_library" as const, edited_fields: ["light_level"] };
+  assert.equal(filterSpaces([listed, bright, cleared], ["dim"]).length, 1);
+  assert.equal(filterSpaces([listed, bright, cleared], ["dim"])[0]?.light_level, "dim");
+});
+
 test("quiet, dim and computers match the documented fields", () => {
   const all = [quiet, low, loud, noFloor];
   assert.deepEqual(

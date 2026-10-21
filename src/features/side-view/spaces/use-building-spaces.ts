@@ -26,6 +26,8 @@ type SpaceRecord = {
   light_level: ListedSpace["light_level"];
   features: string[] | null;
   capacity: number | null;
+  source: ListedSpace["source"];
+  edited_fields: string[] | null;
   lat: number | null;
   lng: number | null;
   image_url: string | null;
@@ -41,7 +43,7 @@ type PhotoRecord = {
 };
 
 const SPACE_SELECT =
-  "id, slug, name, summary, floor, floor_label, noise_level, light_level, features, capacity, lat, lng, image_url, image_alt, building:buildings(slug, name, short_name, lat, lng)";
+  "id, slug, name, summary, floor, floor_label, noise_level, light_level, features, capacity, source, edited_fields, lat, lng, image_url, image_alt, building:buildings(slug, name, short_name, lat, lng)";
 
 export type BuildingSpacesState = {
   spaces: ListedSpace[];
@@ -84,6 +86,8 @@ function toListedSpace(record: SpaceRecord, photo: { url: string; alt: string } 
     light_level: record.light_level,
     features: record.features ?? [],
     capacity: record.capacity,
+    source: record.source,
+    edited_fields: record.edited_fields ?? [],
     lat: record.lat,
     lng: record.lng,
     imageUrl: photo?.url ?? safeSpaceImageUrl(record.image_url),
@@ -139,7 +143,13 @@ export function useBuildingSpaces(buildingSlug: string | null): BuildingSpacesSt
           .range(from, to),
       ),
       readAll<{ floor: number | null }>((from, to) =>
-        supabase.from("bookable_items").select("floor").eq("building_slug", buildingSlug).eq("is_listed", true).range(from, to),
+        supabase
+          .from("bookable_items")
+          .select("floor")
+          .eq("building_slug", buildingSlug)
+          .eq("is_listed", true)
+          .eq("kind", "space")
+          .range(from, to),
       ),
     ])
       .then(([spaces, photos, bookable]) => {

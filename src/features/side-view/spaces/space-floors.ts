@@ -1,4 +1,7 @@
-import { rankSpaces, type CatalogSpace, type RankContext } from "@/lib/ranking";
+import { rankSpaces, type CatalogSpace, type GroupSize, type RankContext } from "@/lib/ranking";
+import { hasStudyPreferences, type StudyPreferences } from "@/lib/settings/model";
+
+export { hasStudyPreferences };
 
 export const UNLISTED_FLOOR = "Floor not listed yet";
 
@@ -99,22 +102,16 @@ export function spacesTitle(count: number): string {
   return count === 1 ? "1 study space" : `${count} study spaces`;
 }
 
-export function hasStudyPreferences(study: {
-  noise: string;
-  setting: string;
-  brightness: string;
-  daylight: string;
-  niceToHave: readonly unknown[];
-  when: readonly unknown[];
-}): boolean {
-  return (
-    study.noise !== "any" ||
-    study.setting !== "any" ||
-    study.brightness !== "any" ||
-    study.daylight !== "any" ||
-    study.niceToHave.length > 0 ||
-    study.when.length > 0
-  );
+/**
+ * Why the rows are ordered. Preferences and group size both feed rankSpaces.
+ * Null when neither is set, so the line stays hidden.
+ */
+export function spacesSortCaption(study: StudyPreferences, groupSize: GroupSize | null): string | null {
+  const preferences = hasStudyPreferences(study);
+  if (!preferences && groupSize == null) return null;
+  if (preferences && groupSize) return "Sorted by how you like to study and your group size";
+  if (preferences) return "Sorted by how you like to study";
+  return "Sorted for your group size";
 }
 
 const NOISE_RANK = { quiet: 0, low_noise: 1, conversational: 2, loud: 3 } as const;

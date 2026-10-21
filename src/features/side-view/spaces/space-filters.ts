@@ -1,3 +1,9 @@
+import { resolveAttributes } from "@/lib/data/attributes";
+import type { Database } from "@/types/supabase";
+
+type LightLevel = Database["public"]["Enums"]["light_level"];
+type SpaceSource = Database["public"]["Enums"]["space_source"];
+
 // Explicit filters for the Spaces screen. Unlike study preferences, a selected
 // chip hides spaces that do not match. Restroom stays off until point
 // amenities exist (BK1); the chip is disabled in the UI.
@@ -15,6 +21,9 @@ export type FilterableSpace = {
   light_level?: string | null;
   features?: readonly string[] | null;
   floor?: number | null;
+  /** Listing source. Dim uses the attribute resolver when this is set. */
+  source?: SpaceSource | null;
+  edited_fields?: readonly string[] | null;
 };
 
 export type SpaceFilterContext = {
@@ -58,10 +67,30 @@ function hasComputer(space: FilterableSpace): boolean {
   return features.includes("computers") || features.includes("external_monitors");
 }
 
+const LIGHT_LEVELS = new Set<string>(["dim", "moderate", "bright"]);
+
+// Same brightness the Home chips use: an edit wins, otherwise the listing.
+function isDim(space: FilterableSpace): boolean {
+  const light = space.light_level && LIGHT_LEVELS.has(space.light_level) ? (space.light_level as LightLevel) : null;
+  if (!space.source) return light === "dim";
+  const resolved = resolveAttributes(
+    {
+      noiseLevel: null,
+      lightLevel: light,
+      features: [],
+      capacity: null,
+      source: space.source,
+      editedFields: space.edited_fields ?? [],
+    },
+    null,
+  );
+  return resolved.brightness?.value === "Dim";
+}
+
 function matches(space: FilterableSpace, filters: readonly SpaceFilter[], context: SpaceFilterContext): boolean {
   for (const filter of filters) {
     if (filter === "quiet" && space.noise_level !== "quiet" && space.noise_level !== "low_noise") return false;
-    if (filter === "dim" && space.light_level !== "dim") return false;
+    if (filter === "dim" && !isDim(space)) return false;
     if (filter === "computers" && !hasComputer(space)) return false;
     if (filter === "printer") {
       // Still loading: don't blank the list. An empty set means no printers.

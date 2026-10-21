@@ -7,6 +7,7 @@ import {
   backRoute,
   normalizePanelStack,
   panelHref,
+  panelSearchForStack,
   parsePanelRoute,
   planPush,
   reconcileStack,
@@ -45,7 +46,11 @@ function writeHistory(mode: "push" | "replace", stack: PanelRoute[]) {
     [INDEX_KEY]: mode === "push" ? index + 1 : index,
   };
   const top = stack.at(-1) ?? HOME_ROUTE;
-  const href = panelHref(window.location.pathname, top, new URLSearchParams(window.location.search));
+  const href = panelHref(
+    window.location.pathname,
+    top,
+    panelSearchForStack(stack, new URLSearchParams(window.location.search)),
+  );
   const current = `${window.location.pathname}${window.location.search}`;
   if (mode === "replace" && href === current && samePanelStack(normalizePanelStack(state[STACK_KEY]) ?? [], stack)) {
     return;

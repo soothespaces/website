@@ -5,6 +5,7 @@ import {
   groupSpacesByFloor,
   hasStudyPreferences,
   rankWithinFloors,
+  spacesSortCaption,
   spacesTitle,
   UNLISTED_FLOOR,
   withFloorNotes,
@@ -24,6 +25,8 @@ function space(partial: Pick<ListedSpace, "name" | "floor" | "floor_label"> & Pa
     light_level: partial.light_level ?? null,
     features: partial.features ?? [],
     capacity: partial.capacity ?? null,
+    source: partial.source ?? null,
+    edited_fields: partial.edited_fields ?? [],
     lat: null,
     lng: null,
     imageUrl: null,
@@ -157,22 +160,15 @@ test("ranks inside each floor and never hides a space or moves a floor", () => {
   );
 });
 
-test("the screen title and the sort line follow the counts and the saved study choices", () => {
+test("the screen title and the sort line follow preferences and group size", () => {
+  const none = { noise: "any", setting: "any", brightness: "any", daylight: "any", niceToHave: [], when: [] } as const;
+  const quiet = { ...none, noise: "quiet" } as const;
   assert.equal(spacesTitle(11), "11 study spaces");
   assert.equal(spacesTitle(1), "1 study space");
-  assert.equal(
-    hasStudyPreferences({ noise: "any", setting: "any", brightness: "any", daylight: "any", niceToHave: [], when: [] }),
-    false,
-  );
-  assert.equal(
-    hasStudyPreferences({
-      noise: "quiet",
-      setting: "any",
-      brightness: "any",
-      daylight: "any",
-      niceToHave: [],
-      when: [],
-    }),
-    true,
-  );
+  assert.equal(hasStudyPreferences(none), false);
+  assert.equal(hasStudyPreferences(quiet), true);
+  assert.equal(spacesSortCaption(none, null), null);
+  assert.equal(spacesSortCaption(quiet, null), "Sorted by how you like to study");
+  assert.equal(spacesSortCaption(none, "2_3"), "Sorted for your group size");
+  assert.equal(spacesSortCaption(quiet, "2_3"), "Sorted by how you like to study and your group size");
 });

@@ -62,6 +62,10 @@ export function DetailScreen({
         </div>
         {actions ? <div className="flex shrink-0 items-center gap-1">{actions}</div> : null}
       </header>
+      {/* flex-auto keeps the body content-sized when the frame has no fixed
+          height (the collapsed phone sheet) and still shrinks to scroll when
+          the frame is bounded, so a footer can sit at the bottom.
+          data-detail-scroll is the element the panel restores on Back. */}
       <div data-detail-scroll="" className="min-h-0 flex-auto overflow-y-auto overscroll-contain px-3 py-2">
         {children}
       </div>
