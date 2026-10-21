@@ -10,6 +10,8 @@ const rowClass = cx(roomColumns, "items-center py-3 text-left");
 export function RoomRow({ room, start }: { room: RoomSlot; start: number }) {
   const status = roomStatusLine(room);
   const statusId = useId();
+  const summaryId = useId();
+  const describedBy = room.slots == null ? statusId : `${statusId} ${summaryId}`;
   const body = (
     <>
       <span className="min-w-0">
@@ -25,7 +27,9 @@ export function RoomRow({ room, start }: { room: RoomSlot; start: number }) {
         </span>
       </span>
       <span className="min-w-0">
-        {room.slots == null ? null : <SlotTimeline start={start} slots={room.slots} showTicks={false} />}
+        {room.slots == null ? null : (
+          <SlotTimeline start={start} slots={room.slots} showTicks={false} summaryId={summaryId} />
+        )}
       </span>
     </>
   );
@@ -37,7 +41,7 @@ export function RoomRow({ room, start }: { room: RoomSlot; start: number }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label={roomBookingLabel(room.name)}
-        aria-describedby={statusId}
+        aria-describedby={describedBy}
         className={cx(rowClass, "rounded-md hover:bg-accent")}
       >
         {body}

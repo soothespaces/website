@@ -139,6 +139,51 @@ test("a classroom keeps the course in session and the next course today", () => 
   assert.equal(JSON.stringify(after).includes("bookings"), false);
 });
 
+test("a back-to-back block is named for the class that ends it", () => {
+  const at230 = buildRoomSlots({
+    from: new Date("2026-10-21T18:30:00Z"),
+    bookable: [],
+    availability: { items: [] },
+    classrooms: [
+      {
+        roomCode: "AH-1400",
+        roomNumber: "1400",
+        floor: 1,
+        capacity: 30,
+        meetings: [
+          { starts: "14:00:00", ends: "15:00:00", course: "EECS 281" },
+          { starts: "15:00:00", ends: "16:00:00", course: "EECS 370" },
+        ],
+      },
+    ],
+  });
+  assert.equal(at230[0]?.status, "Booked until 4 PM");
+  assert.equal(at230[0]?.currentCourse, "EECS 370");
+});
+
+test("the next course is the meeting that starts at the free-until time", () => {
+  const at100 = buildRoomSlots({
+    from: new Date("2026-10-21T17:00:00Z"),
+    bookable: [],
+    availability: { items: [] },
+    classrooms: [
+      {
+        roomCode: "AH-1400",
+        roomNumber: "1400",
+        floor: 1,
+        capacity: 30,
+        meetings: [
+          { starts: "14:00:00", ends: "15:00:00", course: " " },
+          { starts: "16:00:00", ends: "17:00:00", course: "EECS 370" },
+        ],
+      },
+    ],
+  });
+  assert.equal(at100[0]?.status, "Free until 2 PM");
+  assert.equal(at100[0]?.nextCourse, undefined);
+  assert.equal(at100[0]?.currentCourse, undefined);
+});
+
 test("status uses the current minute, not the start of the half hour", () => {
   const at820 = new Date("2026-10-22T00:20:00Z");
   const slots = buildRoomSlots({

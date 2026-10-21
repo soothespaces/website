@@ -35,6 +35,12 @@ test("a LibCal row links out and a classroom row does not", () => {
   assert.match(linked, /rel="noopener noreferrer"/);
   assert.match(linked, /aria-label="Book Room 2124 on LibCal"/);
   assert.match(linked, /Free until 10 PM/);
+  assert.match(linked, /Free 8 to 10 PM, booked 10 PM to 12 AM/);
+  const describedBy = /aria-describedby="([^"]+)"/.exec(linked);
+  assert.ok(describedBy);
+  const ids = describedBy[1]!.split(" ");
+  assert.equal(ids.length, 2);
+  for (const id of ids) assert.match(linked, new RegExp(`id="${id}"`));
   assert.match(linked, /text-foreground/);
   assert.equal(/\bavailable\b/i.test(linked), false);
 

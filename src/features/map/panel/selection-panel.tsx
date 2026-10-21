@@ -1,11 +1,20 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, type ReactNode, type UIEvent } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import type { SpaceListDensity } from "@/features/spaces";
 import { panelRouteKey, type PanelRoute } from "@/features/side-view/panel-route";
 import { panelRegistry } from "@/features/side-view/registry";
 import { useMapState } from "../map-state";
 import { PanelHeader } from "./panel-header";
+
+// Detail screens scroll their own body when the frame is a fixed-height column.
+// A collapsed phone sheet scrolls the frame instead, so the list can grow.
+function scrollContainer(frame: HTMLElement): HTMLElement {
+  const detail = frame.querySelector<HTMLElement>("[data-detail-scroll]");
+  if (!detail) return frame;
+  const overflow = getComputedStyle(frame).overflowY;
+  return overflow === "auto" || overflow === "scroll" ? frame : detail;
+}
 
 const TITLES: Record<PanelRoute["kind"], string> = {
   home: "Home",
@@ -59,25 +68,28 @@ function PanelFrame({
   const Screen = panelRegistry[route.kind];
   const detail = Screen?.detailScreen === true;
 
-  // Scroll lives on the frame. Back hides it instead of unmounting it. The
-  // saved offset covers a browser that zeroes scrollTop when the frame is
-  // hidden: hiding sets `inert` before this effect's cleanup, so a cleanup
-  // read would save the wrong place.
+  // Scroll lives on the frame, or on the detail screen's own scroller.
+  // Back hides the frame instead of unmounting it. The saved offset covers a
+  // browser that zeroes scrollTop when the frame is hidden: hiding sets
+  // `inert` before this effect's cleanup, so a cleanup read would save the
+  // wrong place. The scroll listener records the position while it is visible.
   useLayoutEffect(() => {
     const frame = ref.current;
     if (!frame) return;
+    const scroller = scrollContainer(frame);
     if (active) {
       const saved = scrolls.get(key);
-      if (saved != null && frame.scrollTop !== saved) frame.scrollTop = saved;
+      if (saved != null && scroller.scrollTop !== saved) scroller.scrollTop = saved;
     }
-    return () => {
-      if (!frame.hasAttribute("inert")) scrolls.set(key, frame.scrollTop);
+    const remember = () => {
+      if (!frame.hasAttribute("inert")) scrolls.set(key, scroller.scrollTop);
     };
-  }, [active, key, scrolls]);
-
-  const onScroll = (event: UIEvent<HTMLDivElement>) => {
-    scrolls.set(key, event.currentTarget.scrollTop);
-  };
+    scroller.addEventListener("scroll", remember, { passive: true });
+    return () => {
+      scroller.removeEventListener("scroll", remember);
+      if (!frame.hasAttribute("inert")) scrolls.set(key, scroller.scrollTop);
+    };
+  }, [active, bounded, key, scrolls]);
 
   let body: ReactNode = <PanelPlaceholder route={route} />;
   if (Screen) body = <Screen route={route} density={density} />;
@@ -90,7 +102,6 @@ function PanelFrame({
       data-panel-active={active ? "true" : "false"}
       aria-hidden={active ? undefined : true}
       inert={active ? undefined : true}
-      onScroll={onScroll}
       className={
         active
           ? detail
@@ -133,7 +144,8 @@ export function SelectionPanel({
     // Read the position before Back hides the frame.
     const frame = rootRef.current?.querySelector<HTMLElement>("[data-panel-active='true']");
     const key = frame?.dataset.panelKey;
-    if (frame && key) scrolls.set(key, frame.scrollTop);
+    const scroller = frame ? scrollContainer(frame) : null;
+    if (scroller && key) scrolls.set(key, scroller.scrollTop);
     back();
   };
 

@@ -119,33 +119,44 @@ function presentRoom(room: RoomSlot & { bookings?: SlotBooking[] }): RoomSlot {
   };
 }
 
-/** Course in session at `at`, and the next course later today. */
+type TimedMeeting = { start: number; end: number; course?: string };
+
+function timedMeetings(meetings: readonly { starts: string; ends: string; course?: string }[]): TimedMeeting[] {
+  const timed: TimedMeeting[] = [];
+  for (const meeting of meetings) {
+    const start = minutesFrom(meeting.starts, "1970-01-01");
+    const end = minutesFrom(meeting.ends, "1970-01-01");
+    if (start == null || end == null || end <= start) continue;
+    const course = meeting.course?.trim();
+    timed.push(course ? { start, end, course } : { start, end });
+  }
+  return timed;
+}
+
+/**
+ * Course names for the status line. A back-to-back block is named for the
+ * meeting that ends it, not the one running at `at`. The next course is the
+ * one that starts at the free-until time; a blank meeting in between doesn't
+ * lend its later class's name.
+ */
 export function classroomCourses(
   meetings: readonly { starts: string; ends: string; course?: string }[],
   at: number,
 ): { currentCourse?: string; nextCourse?: string } {
-  let currentEnd = -1;
+  const timed = timedMeetings(meetings);
+  const merged = mergeBookings(timed.map(({ start, end }) => ({ start, end })));
+  const covering = merged.find((booking) => booking.start <= at && booking.end > at);
+  const upcoming = merged.find((booking) => booking.start > at && booking.start < 1440);
   let currentCourse: string | undefined;
-  let nextStart = Number.POSITIVE_INFINITY;
-  let nextCourse: string | undefined;
-  for (const meeting of meetings) {
-    const course = meeting.course?.trim();
-    if (!course) continue;
-    const start = minutesFrom(meeting.starts, "1970-01-01");
-    const end = minutesFrom(meeting.ends, "1970-01-01");
-    if (start == null || end == null || end <= start) continue;
-    if (start <= at && end > at) {
-      if (end > currentEnd) {
-        currentEnd = end;
-        currentCourse = course;
-      }
-      continue;
+  if (covering) {
+    let last: TimedMeeting | undefined;
+    for (const meeting of timed) {
+      if (meeting.start >= covering.end || meeting.end <= covering.start) continue;
+      if (!last || meeting.end > last.end || (meeting.end === last.end && meeting.start >= last.start)) last = meeting;
     }
-    if (start > at && start < 1440 && start < nextStart) {
-      nextStart = start;
-      nextCourse = course;
-    }
+    currentCourse = last?.course;
   }
+  const nextCourse = upcoming ? timed.find((meeting) => meeting.start === upcoming.start && meeting.course)?.course : undefined;
   return {
     ...(currentCourse ? { currentCourse } : {}),
     ...(nextCourse ? { nextCourse } : {}),

@@ -62,7 +62,9 @@ export function DetailScreen({
         </div>
         {actions ? <div className="flex shrink-0 items-center gap-1">{actions}</div> : null}
       </header>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2">{children}</div>
+      <div data-detail-scroll="" className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2">
+        {children}
+      </div>
       {footer ? <div className="shrink-0 border-t border-border bg-background px-3 py-3">{footer}</div> : null}
     </section>
   );
