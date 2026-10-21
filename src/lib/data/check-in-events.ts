@@ -1,5 +1,3 @@
-"use client";
-
 // A check-in just landed. Screens that show aggregates or history listen
 // here, so the sheet doesn't import them.
 

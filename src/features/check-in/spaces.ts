@@ -14,6 +14,27 @@ export type CheckInSpace = {
   buildingLng: number | null;
 };
 
+export function toCheckInSpace(space: {
+  id: string;
+  slug: string;
+  name: string;
+  lat: number | null;
+  lng: number | null;
+  building: { slug: string; name: string; lat: number | null; lng: number | null } | null;
+}): CheckInSpace {
+  return {
+    id: space.id,
+    slug: space.slug,
+    name: space.name,
+    lat: space.lat,
+    lng: space.lng,
+    buildingSlug: space.building?.slug ?? null,
+    buildingName: space.building?.name ?? null,
+    buildingLat: space.building?.lat ?? null,
+    buildingLng: space.building?.lng ?? null,
+  };
+}
+
 export const WHERE_LIMIT = 3;
 export const ELSEWHERE = "elsewhere";
 

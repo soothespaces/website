@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { buildingAt } from "./arrival";
 import { useArrivalBuildings } from "./buildings";
 import { useCheckIn } from "./check-in-context";
-import { useGrantedPosition } from "./live-position";
+import { useLiveFix } from "@/lib/location/use-live-fix";
 
 // Shown in the building panel header while the user is inside that building.
 export function CheckInHereButton({ buildingSlug, buildingName }: { buildingSlug: string; buildingName: string }) {
-  const fix = useGrantedPosition();
-  const buildings = useArrivalBuildings();
+  const fix = useLiveFix();
+  const buildings = useArrivalBuildings(fix != null);
   const checkIn = useCheckIn();
   const inside =
     fix != null &&

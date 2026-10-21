@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { onCheckedIn } from "@/features/check-in/checked-in";
+import { onCheckedIn } from "@/lib/data/check-in-events";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { Database } from "@/types/supabase";

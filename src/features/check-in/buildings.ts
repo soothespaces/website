@@ -22,10 +22,12 @@ export function loadArrivalBuildings(): Promise<ArrivalBuilding[]> {
   return pending;
 }
 
-export function useArrivalBuildings(): ArrivalBuilding[] {
+// Footprints load the first time a fix exists, not when the map mounts.
+export function useArrivalBuildings(enabled: boolean): ArrivalBuilding[] {
   const [buildings, setBuildings] = useState<ArrivalBuilding[]>([]);
 
   useEffect(() => {
+    if (!enabled) return;
     let cancelled = false;
     loadArrivalBuildings()
       .then((rows) => {
@@ -37,7 +39,7 @@ export function useArrivalBuildings(): ArrivalBuilding[] {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [enabled]);
 
   return buildings;
 }

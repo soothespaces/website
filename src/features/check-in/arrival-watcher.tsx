@@ -13,14 +13,14 @@ import {
 } from "./arrival";
 import { useArrivalBuildings } from "./buildings";
 import { useCheckIn } from "./check-in-context";
-import { useGrantedPosition } from "./live-position";
+import { useLiveFix } from "@/lib/location/use-live-fix";
 import { isDialogOpen } from "./overlay";
 
 // Opens the arrival sheet after the user has been inside one building for a
 // minute. Only while this tab is visible, and at most once per building today.
 export function ArrivalWatcher() {
-  const fix = useGrantedPosition();
-  const buildings = useArrivalBuildings();
+  const fix = useLiveFix();
+  const buildings = useArrivalBuildings(fix != null);
   const checkIn = useCheckIn();
   const started = useRef<{ slug: string; at: number } | null>(null);
 

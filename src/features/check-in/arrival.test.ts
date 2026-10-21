@@ -4,7 +4,6 @@ import {
   ARRIVAL_DWELL_MS,
   buildingAt,
   dwellReady,
-  pointInFootprint,
   readArrivalLog,
   wasPromptedToday,
   withArrivalPrompt,
@@ -43,27 +42,18 @@ function memory() {
 }
 
 describe("arrival (K4 / SOS-162)", () => {
-  it("treats a footprint hit as inside, including holes", () => {
-    const point = { latitude: 42.272, longitude: -83.735 };
-    assert.equal(pointInFootprint(point, square), true);
-    assert.equal(pointInFootprint({ latitude: 42.275, longitude: -83.735 }, square), false);
-    assert.equal(pointInFootprint(point, { type: "Feature", geometry: square }), true);
-    assert.equal(
-      pointInFootprint(point, { type: "MultiPolygon", coordinates: [square.coordinates] }),
-      true,
-    );
-  });
-
-  it("uses the footprint before the 40 m radius", () => {
+  it("picks the nearest building the visitor is inside", () => {
     const inside = { latitude: 42.272, longitude: -83.735 };
     const buildings: ArrivalBuilding[] = [
-      { slug: "far", name: "Far", lat: inside.latitude, lng: inside.longitude, footprint: null },
+      { slug: "away", name: "Away", lat: 42.29, lng: -83.8, footprint: null },
       { slug: "here", name: "Here", lat: 42.29, lng: -83.8, footprint: square },
+      { slug: "closer", name: "Closer", lat: inside.latitude, lng: inside.longitude, footprint: null },
     ];
-    assert.equal(buildingAt(inside, buildings)?.slug, "here");
+    assert.equal(buildingAt(inside, buildings.slice(0, 2))?.slug, "here");
+    assert.equal(buildingAt(inside, buildings)?.slug, "closer");
   });
 
-  it("matches a building within 40 m when it has no footprint", () => {
+  it("matches a building within 60 m when it has no footprint", () => {
     const point = { latitude: 42.2756, longitude: -83.7372 };
     const near: ArrivalBuilding = { slug: "near", name: "Near", lat: 42.27575, lng: -83.7372, footprint: null };
     const far: ArrivalBuilding = { slug: "far", name: "Far", lat: 42.277, lng: -83.7372, footprint: null };

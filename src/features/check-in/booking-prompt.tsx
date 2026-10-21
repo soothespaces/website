@@ -16,7 +16,8 @@ import {
   rememberBooking,
   type SavedBooking,
 } from "./booking-memory";
-import { emitCheckedIn } from "./checked-in";
+import { emitCheckedIn } from "@/lib/data/check-in-events";
+import { useCheckIn } from "./check-in-context";
 import { isDialogOpen } from "./overlay";
 import { noiseChoices } from "./noise-bars";
 import { submitCheckIn } from "./submit-check-in";
@@ -31,6 +32,18 @@ export function BookingPrompt() {
   const [noise, setNoise] = useState<NoiseLevel | "">("");
   const [submitting, setSubmitting] = useState(false);
   const shown = !loading && user ? booking : null;
+  const checkIn = useCheckIn();
+
+  useEffect(() => {
+    if (!shown || shown.spaceId || !checkIn) return;
+    const pending = shown;
+    const timer = window.setTimeout(() => {
+      checkIn.openCheckIn({ buildingSlug: pending.buildingSlug });
+      forgetBooking(pending);
+      setBooking(null);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [shown, checkIn]);
 
   useEffect(() => {
     if (loading || !user) return;
@@ -62,7 +75,7 @@ export function BookingPrompt() {
   }
 
   async function onSubmit() {
-    if (!shown || submitting) return;
+    if (!shown?.spaceId || !noise || submitting) return;
     setSubmitting(true);
     const result = await submitCheckIn({
       targetKind: "space",
@@ -81,13 +94,13 @@ export function BookingPrompt() {
   }
 
   return (
-    <Sheet open={shown != null} onOpenChange={(next) => (next ? null : later())}>
+    <Sheet open={shown?.spaceId != null} onOpenChange={(next) => (next ? null : later())}>
       <SheetContent side="bottom">
         {shown ? (
           <>
-            <p className="w-fit rounded-full bg-muted px-3 py-1 text-sm font-medium">{bookingPill(shown.start, shown.end)}</p>
+            <p className="w-fit rounded-full bg-muted px-3 py-1 text-sm font-medium">{bookingPill(shown.startsAt, shown.endsAt)}</p>
             <SheetTitle>{bookingTitle(shown)}</SheetTitle>
-            <SheetDescription className="sr-only">How noisy the room is. You can check in without answering.</SheetDescription>
+            <SheetDescription className="sr-only">How noisy the room is. Pick a noise level to check in.</SheetDescription>
             <ChipGroup type="single" label="Noise" value={noise} onValueChange={(value) => setNoise(value as NoiseLevel)}>
               {noiseChoices().map((choice) => (
                 <Chip key={choice.value} value={choice.value} icon={choice.icon}>
@@ -95,12 +108,12 @@ export function BookingPrompt() {
                 </Chip>
               ))}
             </ChipGroup>
-            <div className="flex flex-col gap-2">
-              <Button className="w-full" disabled={submitting} onClick={() => void onSubmit()}>
-                Check in
-              </Button>
-              <Button className="w-full" variant="outline" onClick={later}>
+            <div className="flex gap-2">
+              <Button className="flex-1" variant="outline" onClick={later}>
                 Later
+              </Button>
+              <Button className="flex-1" disabled={!noise || submitting} onClick={() => void onSubmit()}>
+                Check in
               </Button>
             </div>
           </>

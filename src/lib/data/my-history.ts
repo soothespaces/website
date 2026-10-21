@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useSession } from "@/lib/auth/use-session";
-import { onCheckedIn } from "@/features/check-in/checked-in";
+import { onCheckedIn } from "@/lib/data/check-in-events";
 import { addDays, detroitParts, monthName, weekdayOfDate } from "@/lib/detroit";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";

@@ -1,9 +1,9 @@
 import { distanceMeters } from "@/lib/geo";
+import { isInsideBuilding } from "@/lib/location";
 
-// Arrival (K4 / SOS-162): inside a footprint, or within about 40 m of the
-// building point, for a minute, at most once per building per day.
+// Arrival (K4 / SOS-162): inside a building for a minute, at most once per
+// building per day. "Inside" is the shared footprint-or-60 m test.
 
-export const ARRIVAL_RADIUS_METERS = 40;
 export const ARRIVAL_DWELL_MS = 60_000;
 
 const ARRIVAL_KEY = "soothespaces:arrival-prompted";
@@ -27,49 +27,6 @@ export function dwellReady(startedAt: number | null, now: number, dwellMs = ARRI
   return startedAt != null && now - startedAt >= dwellMs;
 }
 
-function ringContains(point: ArrivalPoint, ring: readonly (readonly number[])[]): boolean {
-  let inside = false;
-  for (let index = 0, previous = ring.length - 1; index < ring.length; previous = index++) {
-    const current = ring[index];
-    const prior = ring[previous];
-    if (!current || !prior || current.length < 2 || prior.length < 2) continue;
-    const xi = current[0]!;
-    const yi = current[1]!;
-    const xj = prior[0]!;
-    const yj = prior[1]!;
-    const crosses = yi > point.latitude !== yj > point.latitude;
-    if (!crosses) continue;
-    const xAtLat = ((xj - xi) * (point.latitude - yi)) / (yj - yi) + xi;
-    if (point.longitude < xAtLat) inside = !inside;
-  }
-  return inside;
-}
-
-function polygonContains(point: ArrivalPoint, coordinates: unknown): boolean {
-  if (!Array.isArray(coordinates) || coordinates.length === 0) return false;
-  const [outer, ...holes] = coordinates as number[][][];
-  if (!outer || !ringContains(point, outer)) return false;
-  return holes.every((hole) => !ringContains(point, hole));
-}
-
-function geometryContains(point: ArrivalPoint, geometry: unknown): boolean {
-  if (!geometry || typeof geometry !== "object") return false;
-  const record = geometry as { type?: string; coordinates?: unknown; geometry?: unknown; features?: unknown };
-  if (record.type === "Feature") return geometryContains(point, record.geometry);
-  if (record.type === "FeatureCollection" && Array.isArray(record.features)) {
-    return record.features.some((feature) => geometryContains(point, feature));
-  }
-  if (record.type === "Polygon") return polygonContains(point, record.coordinates);
-  if (record.type === "MultiPolygon" && Array.isArray(record.coordinates)) {
-    return record.coordinates.some((polygon) => polygonContains(point, polygon));
-  }
-  return false;
-}
-
-export function pointInFootprint(point: ArrivalPoint, footprint: unknown): boolean {
-  return geometryContains(point, footprint);
-}
-
 function metersTo(point: ArrivalPoint, building: ArrivalBuilding): number | null {
   if (building.lat == null || building.lng == null) return null;
   return distanceMeters({ lat: point.latitude, lng: point.longitude }, { lat: building.lat, lng: building.lng });
@@ -88,19 +45,16 @@ function closest(point: ArrivalPoint, buildings: readonly ArrivalBuilding[]): Ar
   return best;
 }
 
-/** The building the user is standing in, or null when they aren't near one. */
+/** The nearest building the visitor is inside, or null. */
 export function buildingAt(point: ArrivalPoint, buildings: readonly ArrivalBuilding[]): ArrivalBuilding | null {
-  const inside = buildings.filter((building) => pointInFootprint(point, building.footprint));
-  if (inside.length > 0) return closest(point, inside);
-  let nearest: ArrivalBuilding | null = null;
-  let nearestMeters = ARRIVAL_RADIUS_METERS;
-  for (const building of buildings) {
-    const meters = metersTo(point, building);
-    if (meters == null || meters > nearestMeters) continue;
-    nearest = building;
-    nearestMeters = meters;
-  }
-  return nearest;
+  const inside = buildings.filter((building) =>
+    isInsideBuilding(
+      { latitude: point.latitude, longitude: point.longitude },
+      { lat: building.lat, lng: building.lng, footprint: building.footprint },
+    ),
+  );
+  if (inside.length === 0) return null;
+  return closest(point, inside);
 }
 
 export function readArrivalLog(storage: Reader): ArrivalLog {

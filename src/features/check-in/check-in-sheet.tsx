@@ -11,11 +11,11 @@ import { useToast } from "@/components/ui/toast";
 import { useSession } from "@/lib/auth/use-session";
 import { loginHref } from "@/lib/auth/paths";
 import type { BusynessLevel, LightLevel, NoiseLevel } from "@/lib/data/check-ins";
-import { emitCheckedIn } from "./checked-in";
-import { useGrantedPosition } from "./live-position";
-import { useCheckInSpaces } from "./load-spaces";
+import { useMapState } from "@/features/map/map-state";
+import { useLocation } from "@/lib/location/use-location";
+import { emitCheckedIn } from "@/lib/data/check-in-events";
 import { noiseChoices } from "./noise-bars";
-import { ELSEWHERE, nearestSpaces, searchSpaces, type CheckInSpace } from "./spaces";
+import { ELSEWHERE, nearestSpaces, searchSpaces, toCheckInSpace, type CheckInSpace } from "./spaces";
 import type { CheckInRequest } from "./check-in-request";
 import { submitCheckIn } from "./submit-check-in";
 
@@ -42,8 +42,11 @@ export function CheckInSheet({
 }) {
   const toast = useToast();
   const { user, loading } = useSession();
-  const fix = useGrantedPosition();
-  const { spaces, loaded, error } = useCheckInSpaces(open);
+  const located = useLocation();
+  const map = useMapState();
+  const spaces = map.data.spaces.map(toCheckInSpace);
+  const loaded = map.data.loaded;
+  const error = map.data.error;
   const searchId = useId();
   const searchRef = useRef<HTMLInputElement>(null);
   const [whereId, setWhereId] = useState("");
@@ -79,10 +82,10 @@ export function CheckInSheet({
     setSubmitting(false);
     setOrigin({
       id: request.id,
-      point: fix ? { lat: fix.latitude, lng: fix.longitude } : null,
+      point: located.position ? { lat: located.position.latitude, lng: located.position.longitude } : null,
     });
-  } else if (request && origin?.id === request.id && !origin.point && fix) {
-    setOrigin({ id: request.id, point: { lat: fix.latitude, lng: fix.longitude } });
+  } else if (request && origin?.id === request.id && !origin.point && located.position) {
+    setOrigin({ id: request.id, point: { lat: located.position.latitude, lng: located.position.longitude } });
   } else if (request && loaded && appliedId !== request.id) {
     setAppliedId(request.id);
     if (preset) setWhereId(preset.id);
@@ -93,7 +96,7 @@ export function CheckInSheet({
   }, [elsewhere]);
 
   const preferred = preset;
-  const buildingSlug = request?.arrivalBuildingSlug ?? preferred?.buildingSlug ?? null;
+  const buildingSlug = request?.arrivalBuildingSlug ?? request?.buildingSlug ?? preferred?.buildingSlug ?? null;
   const choices = nearestSpaces(spaces, {
     buildingSlug,
     origin: origin && request && origin.id === request.id ? origin.point : null,
@@ -138,6 +141,9 @@ export function CheckInSheet({
   }
 
   const signedOut = !loading && !user;
+  // #57 drops the database rule that an answer is required. Until that lands,
+  // Check in stays disabled when only Where is chosen.
+  const hasAnswer = noise !== "" || light !== "" || daylight !== "" || fullness !== "";
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -147,7 +153,7 @@ export function CheckInSheet({
         ) : null}
         <SheetTitle>How&apos;s it looking?</SheetTitle>
         <SheetDescription className="sr-only">
-          Noise, brightness, daylight, and how full the space is. Where you are is the only required answer.
+          Choose where you are and at least one of noise, brightness, daylight, or how full.
         </SheetDescription>
         {loading ? (
           <p role="status" className="text-sm text-muted-foreground">
@@ -243,12 +249,12 @@ export function CheckInSheet({
                 </Chip>
               ))}
             </ChipGroup>
-            <div className="flex flex-col gap-2">
-              <Button className="w-full" disabled={!whereId || submitting || loading} onClick={() => void onSubmit()}>
-                Check in
-              </Button>
-              <Button className="w-full" variant="outline" onClick={close}>
+            <div className="flex gap-2">
+              <Button className="flex-1" variant="outline" onClick={close}>
                 Later
+              </Button>
+              <Button className="flex-1" disabled={!whereId || !hasAnswer || submitting || loading} onClick={() => void onSubmit()}>
+                Check in
               </Button>
             </div>
           </div>
