@@ -7,14 +7,23 @@ function room(floor: number, status: string): MatchableRoom {
   return { roomNumber: `${floor}100`, floor, slots: ["free"], status };
 }
 
-test("a focused room's floor wins, then the floor the map last showed", () => {
+test("the floor the map last showed wins over a focused room", () => {
   const rooms = [room(1, "Free until 9 PM"), room(2, "Free until 9 PM"), room(2, "Free until 9 PM")];
   assert.equal(
-    chooseRoomsMapFloor({ plans: [1, 2, 3], rooms, focusedFloor: 3, rememberedFloor: 1 }),
+    chooseRoomsMapFloor({ plans: [1, 2, 3], rooms, focusedFloor: 2, rememberedFloor: 3 }),
     3,
   );
   assert.equal(chooseRoomsMapFloor({ plans: [1, 2], rooms, focusedFloor: 4, rememberedFloor: 1 }), 1);
+  assert.equal(chooseRoomsMapFloor({ plans: [1, 2, 3], rooms, focusedFloor: 2 }), 2);
   assert.equal(chooseRoomsMapFloor({ plans: [], rooms, focusedFloor: 2 }), null);
+});
+
+test("before rooms load, the map does not guess the first floor", () => {
+  assert.equal(chooseRoomsMapFloor({ plans: [1, 2, 3], rooms: [], roomsLoaded: false }), null);
+  assert.equal(
+    chooseRoomsMapFloor({ plans: [1, 2, 3], rooms: [], roomsLoaded: false, rememberedFloor: 2 }),
+    2,
+  );
 });
 
 test("without a memory, the floor with the most free rooms opens", () => {
@@ -27,7 +36,6 @@ test("without a memory, the floor with the most free rooms opens", () => {
     room(3, "Booked until 8 PM"),
   ];
   assert.equal(chooseRoomsMapFloor({ plans: [1, 2, 3], rooms }), 3);
-  // Floor 2 and 3 have one free room; floor 3 has more rooms, so it wins.
   assert.equal(
     chooseRoomsMapFloor({
       plans: [2, 3],

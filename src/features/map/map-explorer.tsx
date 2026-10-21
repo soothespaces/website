@@ -68,6 +68,7 @@ export function MapExplorer() {
   // click on the map, a pin, or a search result.
   useEffect(() => {
     if (!map || !camera) return;
+    const request = camera;
     const duration = prefersReducedMotion() ? 0 : 600;
     // On phones the selection sheet covers the bottom of the map.
     const padding = wide
@@ -97,7 +98,7 @@ export function MapExplorer() {
     function show(target: MapSelection) {
       if (!map) return;
       if (target.kind === "building") {
-        const bounds = camera.bounds ?? (target.recordNumber ? boundsOfBuilding(target.recordNumber) : null);
+        const bounds = request.bounds ?? (target.recordNumber ? boundsOfBuilding(target.recordNumber) : null);
         const fit = bounds ? map.cameraForBounds(bounds, { padding, maxZoom: 18 }) : null;
         const ours = target.slug ? buildingsBySlug.get(target.slug) : undefined;
         const center = bounds
@@ -118,7 +119,7 @@ export function MapExplorer() {
       map.easeTo({ center: [lng, lat], zoom: Math.max(map.getZoom(), FLOOR_PLAN_MIN_ZOOM), padding, duration });
     }
 
-    show(camera.selection);
+    show(request.selection);
     // Only a new request moves the camera, not new data or a resize.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, camera]);

@@ -12,7 +12,6 @@ import {
   ExclamationTriangleIcon as WarningGlyph,
   ExternalLinkIcon as ExternalLinkGlyph,
   GearIcon as SettingsGlyph,
-  GlobeIcon as MapGlyph,
   HamburgerMenuIcon as MenuGlyph,
   HeartFilledIcon as HeartFilledGlyph,
   HeartIcon as HeartGlyph,
@@ -90,7 +89,6 @@ export const HeartIcon = icon("HeartIcon", HeartGlyph);
 export const InfoIcon = icon("InfoIcon", InfoGlyph);
 export const LayersIcon = icon("LayersIcon", LayersGlyph);
 export const LightIcon = icon("LightIcon", LightGlyph);
-export const MapIcon = icon("MapIcon", MapGlyph);
 export const MenuIcon = icon("MenuIcon", MenuGlyph);
 export const MoonIcon = icon("MoonIcon", MoonGlyph);
 export const PauseIcon = icon("PauseIcon", PauseGlyph);

@@ -5,7 +5,7 @@ import { Layer, Source, useMap } from "react-map-gl/maplibre";
 import { SLOTS } from "../slots";
 import type { FloorPlan } from "../use-floor-index";
 import type { MapColors } from "../use-map-colors";
-import { FloorRoomAvailability } from "./floor-room-availability";
+import { FLOOR_ROOM_LINES, FloorRoomAvailability } from "./floor-room-availability";
 import { FloorStaffLayer } from "./floor-staff";
 
 // Selecting a building zooms the map to it, at least this far in. Floor
@@ -82,14 +82,9 @@ export function FloorPlanLayers({
         paint={{ "fill-color": colors.card, "fill-opacity": 0.92 }}
         beforeId={SLOTS.floorPlans}
       />
-      {availability ? (
-        <FloorRoomAvailability
-          building={plan.building}
-          floor={plan.floor}
-          minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
-          colors={colors}
-        />
-      ) : (
+      {availability ? null : (
+        // Noise fills and bookable stripes belong beside the staff layer.
+        // They stay off the rooms map, where free grey and booked red are the fills.
         <FloorStaffLayer
           colors={colors}
           minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
@@ -98,7 +93,7 @@ export function FloorPlanLayers({
         />
       )}
       <Layer
-        id={`${id}-room-lines`}
+        id={FLOOR_ROOM_LINES}
         type="line"
         minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
         filter={["==", ["get", "layer"], "room"]}
@@ -108,6 +103,14 @@ export function FloorPlanLayers({
         }}
         beforeId={SLOTS.floorPlans}
       />
+      {availability ? (
+        <FloorRoomAvailability
+          building={plan.building}
+          floor={plan.floor}
+          minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
+          colors={colors}
+        />
+      ) : null}
       {font ? (
         <Layer
           id={`${id}-labels`}

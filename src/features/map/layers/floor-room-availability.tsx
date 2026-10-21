@@ -19,10 +19,15 @@ import {
 
 export const ROOM_AVAILABILITY_HIT_LAYER = "floor-room-availability-hit";
 
+// Room outlines. Fills use this as beforeId so a late mount stays underneath them.
+export const FLOOR_ROOM_LINES = "floor-plan-room-lines";
+
+const MATCH_NONE: FilterSpecification = ["==", ["get", "roomNumber"], ""] as unknown as FilterSpecification;
+
 const HATCH_IMAGE = "room-booked-hatch";
 
-function numberFilter(numbers: readonly string[]): FilterSpecification | null {
-  if (numbers.length === 0) return null;
+function numberFilter(numbers: readonly string[]): FilterSpecification {
+  if (numbers.length === 0) return MATCH_NONE;
   return [
     "all",
     ["==", ["get", "layer"], "room"],
@@ -113,33 +118,29 @@ export function FloorRoomAvailability({
   const free = numberFilter(groups.free);
   const booked = numberFilter(groups.booked);
   const selectable = numberFilter(groups.selectable);
-  const outline = selected ? selectedFilter(selected) : null;
+  const outline = selected ? selectedFilter(selected) : MATCH_NONE;
 
   return (
     <>
-      {selectable ? (
-        <Layer
-          id={ROOM_AVAILABILITY_HIT_LAYER}
-          type="fill"
-          source={source}
-          minzoom={minzoom}
-          filter={selectable}
-          paint={{ "fill-color": colors.foreground, "fill-opacity": 0.01 }}
-          beforeId={SLOTS.floorPlans}
-        />
-      ) : null}
-      {free ? (
-        <Layer
-          id="floor-room-availability-free"
-          type="fill"
-          source={source}
-          minzoom={minzoom}
-          filter={free}
-          paint={{ "fill-color": colors["slot-free"], "fill-opacity": 1 }}
-          beforeId={SLOTS.floorPlans}
-        />
-      ) : null}
-      {booked && patternReady ? (
+      <Layer
+        id={ROOM_AVAILABILITY_HIT_LAYER}
+        type="fill"
+        source={source}
+        minzoom={minzoom}
+        filter={selectable}
+        paint={{ "fill-color": colors.foreground, "fill-opacity": 0.01 }}
+        beforeId={FLOOR_ROOM_LINES}
+      />
+      <Layer
+        id="floor-room-availability-free"
+        type="fill"
+        source={source}
+        minzoom={minzoom}
+        filter={free}
+        paint={{ "fill-color": colors["slot-free"], "fill-opacity": 1 }}
+        beforeId={FLOOR_ROOM_LINES}
+      />
+      {patternReady ? (
         <Layer
           id="floor-room-availability-booked"
           type="fill"
@@ -147,24 +148,22 @@ export function FloorRoomAvailability({
           minzoom={minzoom}
           filter={booked}
           paint={{ "fill-pattern": HATCH_IMAGE, "fill-opacity": 1 }}
-          beforeId={SLOTS.floorPlans}
+          beforeId={FLOOR_ROOM_LINES}
         />
       ) : null}
-      {outline ? (
-        <Layer
-          id="floor-room-availability-selected"
-          type="line"
-          source={source}
-          minzoom={minzoom}
-          filter={outline}
-          paint={{
-            "line-color": colors.foreground,
-            "line-width": ["interpolate", ["linear"], ["zoom"], 16, 2.5, 19, 5],
-          }}
-          layout={{ "line-join": "round", "line-cap": "round" }}
-          beforeId={SLOTS.floorPlans}
-        />
-      ) : null}
+      <Layer
+        id="floor-room-availability-selected"
+        type="line"
+        source={source}
+        minzoom={minzoom}
+        filter={outline}
+        paint={{
+          "line-color": colors.foreground,
+          "line-width": ["interpolate", ["linear"], ["zoom"], 16, 2.5, 19, 5],
+        }}
+        layout={{ "line-join": "round", "line-cap": "round" }}
+        beforeId={SLOTS.floorPlans}
+      />
     </>
   );
 }

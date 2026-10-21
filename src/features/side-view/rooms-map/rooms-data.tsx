@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { detroitParts } from "@/lib/detroit";
 import { useRoomSlots, type RoomSlot } from "@/lib/data/room-slots";
 import { slotWindowStart } from "./room-copy";
 
@@ -15,12 +16,23 @@ export type RoomsData = {
 
 const RoomsDataContext = createContext<RoomsData | null>(null);
 
-// One fetch for the rooms list, the floor-plan fills, and the drawer. The
-// window moves with the clock so a long visit doesn't keep the first hour.
+function sameHalfHour(a: Date, b: Date) {
+  const left = detroitParts(a);
+  const right = detroitParts(b);
+  return left.date === right.date && Math.floor(left.minutes / 30) === Math.floor(right.minutes / 30);
+}
+
+// One fetch for the floor-plan fills and the drawer. The window stays put
+// until the half hour changes, so LibCal is not fetched every minute.
 export function RoomsDataProvider({ buildingSlug, children }: { buildingSlug: string | null; children: ReactNode }) {
   const [from, setFrom] = useState(() => new Date());
   useEffect(() => {
-    const id = setInterval(() => setFrom(new Date()), 60_000);
+    const id = setInterval(() => {
+      setFrom((current) => {
+        const next = new Date();
+        return sameHalfHour(current, next) ? current : next;
+      });
+    }, 30_000);
     return () => clearInterval(id);
   }, []);
   const slots = useRoomSlots(buildingSlug, from);

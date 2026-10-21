@@ -1,33 +1,35 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip, ChipGroup } from "@/components/ui/chip-group";
 import { SlotTimeline } from "@/components/ui/slot-timeline";
 import { formatClock, hourTicks } from "@/components/ui/slot-times";
-import { bookingWindow, recordPendingBooking } from "@/features/check-in/booking-memory";
+import { rememberBooking } from "@/features/check-in/booking-memory";
 import type { PanelScreenProps } from "@/features/side-view/registry";
 import { roomFloor, roomRouteId, sameRoom } from "@/features/map/layers/room-match";
 import { useMapState } from "@/features/map/map-state";
 import { useReducedMotion } from "@/lib/settings/use-reduced-motion";
 import { cx } from "@/lib/cx";
 import type { RoomSlot } from "@/lib/data/room-slots";
+import { SLOT_COUNT, SLOT_MINUTES } from "@/lib/data/room-slots";
 import { useRoomsData } from "./rooms-data";
-import { roomAccessibleName, roomFooter, roomTitle, windowLabel } from "./room-copy";
+import { roomAccessibleName, roomFooter, roomTitle, slotRange, windowLabel } from "./room-copy";
 import { detroitParts } from "@/lib/detroit";
 
+const rowGrid = "grid grid-cols-[minmax(0,1fr)_minmax(7.5rem,46%)] items-center gap-x-3";
+
 function TimeTicks({ start }: { start: number }) {
-  const ticks = hourTicks(start, 8, 30);
-  const span = 8 * 30;
+  const span = SLOT_COUNT * SLOT_MINUTES;
+  const end = start + span;
+  // The closing hour sits past the last block, so it is left off.
+  const ticks = hourTicks(start, SLOT_COUNT, SLOT_MINUTES).filter((tick) => tick < end);
   return (
-    <div className="relative mb-1 h-4" aria-hidden="true">
-      {ticks.map((tick, index) => (
+    <div className="relative h-4 min-w-0" aria-hidden="true">
+      {ticks.map((tick) => (
         <span
           key={tick}
-          className={cx(
-            "absolute top-0 text-xs whitespace-nowrap text-muted-foreground",
-            index === 0 ? "" : index === ticks.length - 1 ? "-translate-x-full" : "-translate-x-1/2",
-          )}
+          className="absolute top-0 text-xs whitespace-nowrap text-muted-foreground"
           style={{ left: `${((tick - start) / span) * 100}%` }}
         >
           {formatClock(tick)}
@@ -41,36 +43,44 @@ function RoomMapRow({
   room,
   start,
   selected,
+  selectedSlot,
   onSelect,
+  onSlotSelect,
 }: {
   room: RoomSlot;
   start: number;
   selected: boolean;
+  selectedSlot: number;
   onSelect: () => void;
+  onSlotSelect: (index: number) => void;
 }) {
-  const ref = useRef<HTMLButtonElement>(null);
   const reducedMotion = useReducedMotion();
   useEffect(() => {
     if (!selected) return;
-    ref.current?.scrollIntoView({ block: "nearest", behavior: reducedMotion ? "auto" : "smooth" });
-  }, [selected, reducedMotion]);
+    const row = document.getElementById(`rooms-map-row-${room.id}`);
+    row?.scrollIntoView({ block: "nearest", behavior: reducedMotion ? "auto" : "smooth" });
+  }, [selected, reducedMotion, room.id]);
   const free = room.status.startsWith("Free");
   return (
-    <Button
-      ref={ref}
-      variant="ghost"
-      aria-current={selected ? "true" : undefined}
-      aria-label={roomAccessibleName(room)}
-      onClick={onSelect}
-      className={cx(
-        "h-auto w-full flex-col items-stretch justify-start gap-1 rounded-md px-2 py-2 text-left font-normal whitespace-normal",
-        selected && "bg-accent",
-      )}
-    >
-      <span className="font-medium">{roomTitle(room)}</span>
-      <span className={cx("text-sm", free ? "text-foreground" : "text-muted-foreground")}>{room.status}</span>
-      <SlotTimeline start={start} slots={room.slots} showTicks={false} />
-    </Button>
+    <div id={`rooms-map-row-${room.id}`} className={cx(rowGrid, "py-2", selected && "rounded-md bg-accent")}>
+      <Button
+        variant="ghost"
+        aria-current={selected ? "true" : undefined}
+        aria-label={roomAccessibleName(room)}
+        onClick={onSelect}
+        className="h-auto min-h-0 w-full flex-col items-start justify-start gap-0.5 rounded-md px-2 py-1 text-left font-normal whitespace-normal"
+      >
+        <span className="font-medium">{roomTitle(room)}</span>
+        <span className={cx("text-sm", free ? "text-foreground" : "text-muted-foreground")}>{room.status}</span>
+      </Button>
+      <SlotTimeline
+        start={start}
+        slots={room.slots}
+        showTicks={false}
+        selectedSlot={selected ? selectedSlot : undefined}
+        onSlotSelect={room.slots ? onSlotSelect : undefined}
+      />
+    </div>
   );
 }
 
@@ -79,6 +89,7 @@ function RoomMapRow({
 export function RoomsDrawer({ route }: PanelScreenProps) {
   const { data, floorPlans, setRoomsMap } = useMapState();
   const { from, start, rooms, loaded, error } = useRoomsData();
+  const [picked, setPicked] = useState<{ roomId: string; slot: number } | null>(null);
   useEffect(() => {
     if (route.kind !== "rooms-map") return;
     const list = floorPlans.get(route.slug);
@@ -91,6 +102,8 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
   const place = plans[0]?.buildingName || building?.name || "Building";
   const onFloor = rooms.filter((room) => roomFloor(room) === route.floor);
   const selected = rooms.find((room) => sameRoom(room, route.roomId)) ?? null;
+  const selectedId = selected ? roomRouteId(selected) : null;
+  const slotIndex = picked && selectedId && picked.roomId === selectedId ? picked.slot : 0;
   const label = windowLabel(detroitParts(from).minutes);
 
   return (
@@ -130,7 +143,10 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
               Booked
             </li>
           </ul>
-          <TimeTicks start={start} />
+          <div className={rowGrid}>
+            <span />
+            <TimeTicks start={start} />
+          </div>
           {!loaded ? <p className="text-sm text-muted-foreground">Loading rooms…</p> : null}
           {error ? <p className="text-sm text-muted-foreground">{error}</p> : null}
           {loaded && !error && onFloor.length === 0 ? (
@@ -146,7 +162,15 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
                   room={room}
                   start={start}
                   selected={sameRoom(room, route.roomId)}
-                  onSelect={() => setRoomsMap({ roomId: id })}
+                  selectedSlot={slotIndex}
+                  onSelect={() => {
+                    setRoomsMap({ roomId: id });
+                    setPicked({ roomId: id, slot: 0 });
+                  }}
+                  onSlotSelect={(slot) => {
+                    setRoomsMap({ roomId: id });
+                    setPicked({ roomId: id, slot });
+                  }}
                 />
               );
             })}
@@ -162,12 +186,13 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => {
-                const span = bookingWindow(from);
-                recordPendingBooking({
+                if (!selected.roomNumber || !selected.spaceId) return;
+                const span = slotRange(from, slotIndex);
+                rememberBooking({
                   roomName: roomTitle(selected),
                   roomNumber: selected.roomNumber,
                   buildingSlug: route.slug,
-                  spaceId: null,
+                  spaceId: selected.spaceId,
                   start: span.start,
                   end: span.end,
                 });

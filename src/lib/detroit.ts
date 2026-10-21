@@ -83,6 +83,20 @@ export function daysBetween(from: string, until: string): number {
   return Math.round((end - start) / 86_400_000);
 }
 
+/** UTC instant for a Detroit civil date plus minutes from that local midnight. */
+export function detroitInstant(date: string, minutes: number): Date {
+  const [year, month, day] = date.split("-").map(Number);
+  let utc = Date.UTC(year!, (month ?? 1) - 1, day ?? 1, 0, 0, 0);
+  for (let pass = 0; pass < 4; pass++) {
+    const parts = detroitParts(new Date(utc));
+    const got = parts.minutes + daysBetween(date, parts.date) * 1440;
+    const delta = got - minutes;
+    if (delta === 0) return new Date(utc);
+    utc -= delta * 60_000;
+  }
+  return new Date(utc);
+}
+
 export function monthName(date: string): string {
   const [year, month, day] = date.split("-").map(Number);
   return new Intl.DateTimeFormat("en-US", { month: "long", timeZone: "UTC" }).format(new Date(Date.UTC(year!, month! - 1, day)));

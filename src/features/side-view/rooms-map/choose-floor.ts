@@ -1,20 +1,22 @@
 import { fillNow, roomFloor, type MatchableRoom } from "@/features/map/layers/room-match";
 
-// Which floor the rooms map opens on.
-// A focused room wins, then the floor the user last left on, then the floor
-// with the most rooms that are free right now. A tie goes to the floor with
-// more bookable rooms, then the lowest floor. With no rooms, the first plan.
+// Which floor the rooms map opens on. The floor the user last left on wins,
+// so reopening lands there even if a room row was focused earlier. A focused
+// room is next, then the floor with the most rooms free right now. Before
+// the room list has loaded, this returns null instead of guessing floor 1.
 export function chooseRoomsMapFloor(input: {
   plans: readonly number[];
   rooms: readonly MatchableRoom[];
   focusedFloor?: number | null;
   rememberedFloor?: number | null;
+  roomsLoaded?: boolean;
 }): number | null {
   const plans = [...new Set(input.plans)].filter((floor) => Number.isInteger(floor)).sort((a, b) => a - b);
   if (plans.length === 0) return null;
   const allowed = new Set(plans);
-  if (input.focusedFloor != null && allowed.has(input.focusedFloor)) return input.focusedFloor;
   if (input.rememberedFloor != null && allowed.has(input.rememberedFloor)) return input.rememberedFloor;
+  if (input.focusedFloor != null && allowed.has(input.focusedFloor)) return input.focusedFloor;
+  if (input.roomsLoaded === false) return null;
 
   const counts = new Map<number, { free: number; total: number }>();
   for (const floor of plans) counts.set(floor, { free: 0, total: 0 });

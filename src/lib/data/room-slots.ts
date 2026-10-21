@@ -20,6 +20,8 @@ export type RoomSlot = {
   capacity: number | null;
   kind: "bookable" | "classroom";
   bookingUrl?: string;
+  /** Space this LibCal room is linked to, when bookable_items has one. */
+  spaceId?: string;
   /** Null when LibCal couldn't be read. Classrooms always have slots. */
   slots: SlotState[] | null;
   status: string;
@@ -35,6 +37,7 @@ export type BookableRoomInput = {
   floor: number | null;
   capacity: number | null;
   bookingUrl: string;
+  spaceId?: string | null;
 };
 
 export type ClassroomRoomInput = {
@@ -103,6 +106,7 @@ function presentRoom(room: RoomSlot & { bookings?: SlotBooking[] }): RoomSlot {
     capacity: room.capacity,
     kind: room.kind,
     ...(room.bookingUrl ? { bookingUrl: room.bookingUrl } : {}),
+    ...(room.spaceId ? { spaceId: room.spaceId } : {}),
     slots: room.slots,
     status: room.status,
   };
@@ -163,6 +167,7 @@ export function buildRoomSlots(input: {
         capacity: room.capacity,
         kind: "bookable",
         bookingUrl: room.bookingUrl,
+        ...(room.spaceId ? { spaceId: room.spaceId } : {}),
         slots: null,
         status: "Availability unavailable",
       };
@@ -179,6 +184,7 @@ export function buildRoomSlots(input: {
       capacity: room.capacity,
       kind: "bookable",
       bookingUrl: room.bookingUrl,
+      ...(room.spaceId ? { spaceId: room.spaceId } : {}),
       bookings,
       slots: slotsFor(bookings, start),
       status: statusAt(bookings, parts.minutes),
@@ -236,6 +242,7 @@ type BookableRecord = {
   floor: number | null;
   capacity: number | null;
   booking_url: string;
+  space_id: string | null;
 };
 
 type MeetingRecord = {
@@ -277,7 +284,7 @@ export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlots
           readAll<BookableRecord>((start, end) =>
             supabase
               .from("bookable_items")
-              .select("instance, libcal_item_id, title, room_number, floor, capacity, booking_url")
+              .select("instance, libcal_item_id, title, room_number, floor, capacity, booking_url, space_id")
               .eq("building_slug", buildingSlug)
               .eq("is_listed", true)
               .eq("kind", "space")
@@ -345,6 +352,7 @@ export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlots
             floor: room.floor,
             capacity: room.capacity,
             bookingUrl: room.booking_url,
+            spaceId: room.space_id,
           })),
           availability: availabilityResponse,
           classrooms,
@@ -363,6 +371,12 @@ export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlots
 
   if (!getSupabaseEnv()) return { rooms: [], loaded: true, error: "Supabase isn't configured." };
   if (!buildingSlug) return { rooms: [], loaded: true, error: null };
-  if (state.key !== requestKey) return { rooms: [], loaded: false, error: null };
+  if (state.key !== requestKey) {
+    // A new half hour refetches. Keep this building's last list until it lands
+    // so the drawer and the map fills don't blank.
+    const sameBuilding = state.key.startsWith(`${buildingSlug}\n`);
+    if (sameBuilding) return { rooms: state.rooms, loaded: true, error: state.error };
+    return { rooms: [], loaded: false, error: null };
+  }
   return { rooms: state.rooms, loaded: state.loaded, error: state.error };
 }

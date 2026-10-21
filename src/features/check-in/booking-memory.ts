@@ -1,84 +1,141 @@
-import { daysBetween, detroitParts } from "@/lib/detroit";
+import { detroitParts, formatClock } from "@/lib/detroit";
 
-// K3 reads this when the app opens again. LibCal is read-only (ADR 0008), so
-// the Book link only remembers which room and window the person was looking at.
-export const PENDING_BOOKING_KEY = "soothe.pending-booking";
+// A booking the user was looking at when they tapped Book (K3 / SOS-161).
+// LibCal is read-only, so this is the only record that they might be there.
 
-export type PendingBooking = {
+const KEY = "soothespaces:bookings";
+
+export type SavedBooking = {
   roomName: string;
-  roomNumber: string | null;
+  roomNumber: string;
   buildingSlug: string;
-  spaceId: string | null;
-  /** ISO timestamps for the timeline window that was on screen. */
+  spaceId: string;
   start: string;
   end: string;
 };
 
-type StorageLike = {
-  getItem: (key: string) => string | null;
-  setItem: (key: string, value: string) => void;
-};
+type Store = Pick<Storage, "getItem" | "setItem"> | undefined;
 
-function browserStorage(): StorageLike | null {
+export function parseBookings(value: unknown): SavedBooking[] {
+  if (!Array.isArray(value)) return [];
+  const bookings: SavedBooking[] = [];
+  for (const row of value) {
+    if (!row || typeof row !== "object") continue;
+    const record = row as Record<string, unknown>;
+    if (typeof record.roomName !== "string" || typeof record.roomNumber !== "string") continue;
+    if (typeof record.buildingSlug !== "string" || typeof record.spaceId !== "string") continue;
+    if (typeof record.start !== "string" || typeof record.end !== "string") continue;
+    if (!record.spaceId || Number.isNaN(Date.parse(record.start)) || Number.isNaN(Date.parse(record.end))) continue;
+    bookings.push({
+      roomName: record.roomName,
+      roomNumber: record.roomNumber,
+      buildingSlug: record.buildingSlug,
+      spaceId: record.spaceId,
+      start: record.start,
+      end: record.end,
+    });
+  }
+  return bookings;
+}
+
+export function bookingKey(booking: SavedBooking): string {
+  return `${booking.buildingSlug}\n${booking.roomNumber}\n${booking.start}`;
+}
+
+export function pruneBookings(bookings: readonly SavedBooking[], now: number): SavedBooking[] {
+  return bookings.filter((booking) => Date.parse(booking.end) > now);
+}
+
+/** The booking whose window contains `now`, preferring the one that started latest. */
+export function activeBooking(bookings: readonly SavedBooking[], now: number): SavedBooking | null {
+  const active = pruneBookings(bookings, now).filter((booking) => Date.parse(booking.start) <= now);
+  active.sort((a, b) => Date.parse(b.start) - Date.parse(a.start));
+  return active[0] ?? null;
+}
+
+export function withoutBooking(bookings: readonly SavedBooking[], booking: SavedBooking): SavedBooking[] {
+  const key = bookingKey(booking);
+  return bookings.filter((item) => bookingKey(item) !== key);
+}
+
+export function withBooking(bookings: readonly SavedBooking[], booking: SavedBooking, now: number): SavedBooking[] {
+  return pruneBookings([...withoutBooking(bookings, booking), booking], now);
+}
+
+function sameMeridiem(clock: string): " AM" | " PM" | "" {
+  if (clock.endsWith(" AM")) return " AM";
+  if (clock.endsWith(" PM")) return " PM";
+  return "";
+}
+
+/** "8 – 10 PM" when both clocks share a meridiem, otherwise "8 AM – 10 PM". */
+export function formatBookingRange(startIso: string, endIso: string): string {
+  const start = formatClock(detroitParts(new Date(startIso)).minutes);
+  const end = formatClock(detroitParts(new Date(endIso)).minutes);
+  const startMeridiem = sameMeridiem(start);
+  const endMeridiem = sameMeridiem(end);
+  const startLabel = startMeridiem && startMeridiem === endMeridiem ? start.slice(0, -startMeridiem.length) : start;
+  return `${startLabel} – ${end}`;
+}
+
+export function bookingPill(startIso: string, endIso: string): string {
+  return `Your booking · ${formatBookingRange(startIso, endIso)}`;
+}
+
+export function bookingTitle(booking: Pick<SavedBooking, "roomName" | "roomNumber">): string {
+  const number = booking.roomNumber.trim().replace(/^room\s+/i, "");
+  if (number) return `How's Room ${number}?`;
+  const name = booking.roomName.trim();
+  return name ? `How's ${name}?` : "How's this room?";
+}
+
+function browserStore(): Store {
+  if (typeof window === "undefined") return undefined;
+  return window.localStorage;
+}
+
+export function readBookings(storage: Store = browserStore()): SavedBooking[] {
   try {
-    if (typeof localStorage === "undefined") return null;
-    return localStorage;
+    const raw = storage?.getItem(KEY);
+    if (!raw) return [];
+    return parseBookings(JSON.parse(raw) as unknown);
   } catch {
-    return null;
+    return [];
   }
 }
 
-/** UTC instant for a Detroit civil date plus minutes from that local midnight. */
-export function detroitInstant(date: string, minutes: number): Date {
-  const [year, month, day] = date.split("-").map(Number);
-  let utc = Date.UTC(year!, (month ?? 1) - 1, day ?? 1, 0, 0, 0);
-  for (let pass = 0; pass < 4; pass++) {
-    const parts = detroitParts(new Date(utc));
-    const got = parts.minutes + daysBetween(date, parts.date) * 1440;
-    const delta = got - minutes;
-    if (delta === 0) return new Date(utc);
-    utc -= delta * 60_000;
-  }
-  return new Date(utc);
-}
-
-/** The eight half-hour slots on screen, starting at the current half hour. */
-export function bookingWindow(from: Date): { start: string; end: string } {
-  const parts = detroitParts(from);
-  const startMinutes = Math.floor(parts.minutes / 30) * 30;
-  return {
-    start: detroitInstant(parts.date, startMinutes).toISOString(),
-    end: detroitInstant(parts.date, startMinutes + 8 * 30).toISOString(),
-  };
-}
-
-export function recordPendingBooking(booking: PendingBooking, storage: StorageLike | null = browserStorage()) {
-  if (!storage) return;
+export function writeBookings(bookings: readonly SavedBooking[], storage: Store = browserStore()): void {
   try {
-    storage.setItem(PENDING_BOOKING_KEY, JSON.stringify(booking));
+    storage?.setItem(KEY, JSON.stringify(bookings));
   } catch {
-    // Private mode and blocked storage still leave the LibCal tab to open.
+    // Storage can be unavailable. Skip the booking quietly.
   }
 }
 
-export function readPendingBooking(storage: StorageLike | null = browserStorage()): PendingBooking | null {
-  if (!storage) return null;
-  try {
-    const raw = storage.getItem(PENDING_BOOKING_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as Partial<PendingBooking>;
-    if (typeof parsed.buildingSlug !== "string" || typeof parsed.start !== "string" || typeof parsed.end !== "string") {
-      return null;
-    }
-    return {
-      roomName: typeof parsed.roomName === "string" ? parsed.roomName : "",
-      roomNumber: typeof parsed.roomNumber === "string" ? parsed.roomNumber : null,
-      buildingSlug: parsed.buildingSlug,
-      spaceId: typeof parsed.spaceId === "string" ? parsed.spaceId : null,
-      start: parsed.start,
-      end: parsed.end,
-    };
-  } catch {
-    return null;
+const savedListeners = new Set<() => void>();
+
+export function onBookingSaved(listener: () => void): () => void {
+  savedListeners.add(listener);
+  return () => savedListeners.delete(listener);
+}
+
+export function rememberBooking(booking: SavedBooking, now = Date.now(), storage?: Store): void {
+  const store = storage ?? browserStore();
+  writeBookings(withBooking(readBookings(store), booking, now), store);
+  if (storage == null) {
+    for (const listener of savedListeners) listener();
   }
+}
+
+export function forgetBooking(booking: SavedBooking, storage?: Store): void {
+  const store = storage ?? browserStore();
+  writeBookings(withoutBooking(readBookings(store), booking), store);
+}
+
+/** Drops bookings whose end has passed, then returns one that contains `now`. */
+export function currentBooking(now = Date.now(), storage?: Store): SavedBooking | null {
+  const store = storage ?? browserStore();
+  const pruned = pruneBookings(readBookings(store), now);
+  writeBookings(pruned, store);
+  return activeBooking(pruned, now);
 }

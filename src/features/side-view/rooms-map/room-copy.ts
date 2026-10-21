@@ -1,4 +1,4 @@
-import { detroitParts } from "@/lib/detroit";
+import { detroitInstant, detroitParts } from "@/lib/detroit";
 
 export function roomTitle(room: { name: string; roomNumber: string | null }): string {
   const number = room.roomNumber?.trim();
@@ -32,4 +32,14 @@ export function windowLabel(minutes: number): string {
 
 export function slotWindowStart(from: Date): number {
   return Math.floor(detroitParts(from).minutes / 30) * 30;
+}
+
+/** One half-hour on the timeline, as ISO instants. Index 0 is the current half hour. */
+export function slotRange(from: Date, slotIndex: number): { start: string; end: string } {
+  const parts = detroitParts(from);
+  const startMinutes = slotWindowStart(from) + slotIndex * 30;
+  return {
+    start: detroitInstant(parts.date, startMinutes).toISOString(),
+    end: detroitInstant(parts.date, startMinutes + 30).toISOString(),
+  };
 }
