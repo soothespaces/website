@@ -3,6 +3,7 @@
 import type { ComponentType } from "react";
 import { BuildingPanelScreen, SpacePanelScreen, type PanelScreenProps } from "./builtin-screens";
 import { HoursScreen } from "./hours/hours-screen";
+import { PhotosScreen } from "./photos/photos-screen";
 import type { PanelRoute } from "./panel-route";
 
 export type { PanelScreenProps };
@@ -13,9 +14,9 @@ export const panelRegistry: Partial<Record<PanelRoute["kind"], ComponentType<Pan
   building: BuildingPanelScreen,
   space: SpacePanelScreen,
   hours: HoursScreen,
+  photos: PhotosScreen,
 };
 
-// Screens that draw their own back button and title. The selection panel
-// hides its header for these and, when the frame has a fixed height, lets
-// them fill it. Other detail screens add their kind here.
-export const detailPanelKinds: ReadonlySet<PanelRoute["kind"]> = new Set(["hours"]);
+// These screens draw their own back button and title, and fill the frame so
+// a footer stays visible. The selection panel hides its own header for them.
+export const detailPanelKinds: ReadonlySet<PanelRoute["kind"]> = new Set(["hours", "photos"]);
