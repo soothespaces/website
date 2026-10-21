@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronRightIcon } from "@/components/ui/icons";
+import { CheckInCard } from "@/features/side-view/space/check-in-card";
 import { SpaceDetails } from "@/features/spaces";
 import { useMapState } from "../map-state";
 import { FloorSwitcher } from "./floor-switcher";
@@ -18,6 +19,8 @@ export function SpacePanel({ slug }: { slug: string }) {
   return (
     <div className="flex flex-col gap-4 px-3">
       <SpaceDetails space={space} />
+      {/* G4. The space shell keeps this card under "What it's like". */}
+      <CheckInCard spaceSlug={space.slug} />
       {floors?.length ? <FloorSwitcher floors={floors} floor={floor} onChange={setFloor} /> : null}
       {building ? (
         <Button

@@ -1,7 +1,7 @@
 // Labels, filters and order for the photos gallery. Google photos are never
 // shown. Visitor versus official comes from the credit line.
 
-import { pointInPolygon } from "@/lib/geo";
+import { pointInGeometry } from "@/lib/geo";
 import { photoUrl } from "@/lib/photos/url";
 import { sameRoomNumber } from "@/lib/data/room-number";
 
@@ -140,21 +140,6 @@ export function photoCountLabel(count: number): string {
 
 type PhotoMatch = Pick<GalleryPhoto, "spaceId" | "buildingSlug" | "floor" | "roomNumber" | "lat" | "lng">;
 
-function polygonRing(area: unknown): readonly (readonly [number, number])[] | null {
-  if (!area || typeof area !== "object") return null;
-  const coordinates = (area as { coordinates?: unknown }).coordinates;
-  if (!Array.isArray(coordinates) || !Array.isArray(coordinates[0])) return null;
-  const ring: [number, number][] = [];
-  for (const point of coordinates[0]) {
-    if (!Array.isArray(point) || point.length < 2) return null;
-    const lng = point[0];
-    const lat = point[1];
-    if (typeof lng !== "number" || typeof lat !== "number") return null;
-    ring.push([lng, lat]);
-  }
-  return ring.length >= 3 ? ring : null;
-}
-
 /**
  * The space a photo belongs to. Direct `space_id` wins, then a room number
  * on the same floor, then a spot inside a location's outline.
@@ -183,8 +168,7 @@ export function photoSpace(photo: PhotoMatch, spaces: readonly SpaceRef[]): Spac
         space.buildingSlug === photo.buildingSlug &&
         space.locations.some((location) => {
           if (location.floor !== photo.floor) return false;
-          const ring = polygonRing(location.area);
-          return ring != null && pointInPolygon(point, ring);
+          return pointInGeometry(point, location.area);
         }),
     );
     if (bySpot) return bySpot;

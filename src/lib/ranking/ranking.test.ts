@@ -205,6 +205,7 @@ describe("formatMatchesLine (F3.5 / SOS-121)", () => {
 
 describe("catalog spaces and F3.1 preferences", () => {
   const readingRoom: SpaceSummary = {
+    id: "reading-room",
     slug: "reading-room",
     name: "Reading Room",
     summary: "Quiet tables",
@@ -216,6 +217,7 @@ describe("catalog spaces and F3.1 preferences", () => {
     building: { slug: "shapiro", name: "Shapiro Library", lat: 42.2759, lng: -83.7372 },
   };
   const atrium: SpaceSummary = {
+    id: "atrium",
     slug: "atrium",
     name: "Atrium Tables",
     summary: null,

@@ -1,3 +1,4 @@
+import { pointInGeometry } from "@/lib/geo";
 import type { Database } from "@/types/supabase";
 
 export interface Coordinates {
@@ -120,12 +121,23 @@ export function findNearestBuilding<T extends GeoPoint | BuildingLatLng>(
   return nearest;
 }
 
+/**
+ * Inside the building's footprint when it has one. With no footprint, inside
+ * when the point is within {@link INSIDE_BUILDING_RADIUS_METERS} of the
+ * building's coordinates. A footprint that does not contain the point is
+ * outside even if the point is close to the building coordinate.
+ */
 export function isInsideBuilding(
   userCoords: GeoPoint | BuildingLatLng | null | undefined,
-  building: GeoPoint | BuildingLatLng | null | undefined,
+  building: ((GeoPoint | BuildingLatLng) & { footprint?: unknown }) | null | undefined,
   radiusMeters = INSIDE_BUILDING_RADIUS_METERS,
 ): boolean {
-  const meters = distanceToBuildingMeters(userCoords, building);
+  const point = readGeoPoint(userCoords);
+  if (!point || !building) return false;
+  if ("footprint" in building && building.footprint != null) {
+    return pointInGeometry({ lat: point.latitude, lng: point.longitude }, building.footprint);
+  }
+  const meters = distanceToBuildingMeters(point, building);
   return meters != null && meters <= radiusMeters;
 }
 
