@@ -17,6 +17,8 @@ type ChipGroupBase = {
   hint?: string;
   children: ReactNode;
   className?: string;
+  /** Extra classes for the chip row. `flex-nowrap overflow-x-auto` scrolls instead of wrapping. */
+  groupClassName?: string;
 };
 
 type ChipGroupProps = ChipGroupBase &
@@ -28,7 +30,7 @@ type ChipGroupProps = ChipGroupBase &
 export function ChipGroup(props: ChipGroupProps) {
   const labelId = useId();
   const hintId = useId();
-  const groupClass = "flex flex-wrap gap-2";
+  const groupClass = cx("flex flex-wrap gap-2", props.groupClassName);
   const describedBy = props.hint ? hintId : undefined;
   const label = (
     <span className={props.labelHidden ? "sr-only" : "flex flex-wrap items-baseline gap-2 text-sm font-medium"}>

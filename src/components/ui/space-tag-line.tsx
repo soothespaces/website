@@ -6,8 +6,8 @@ export function SpaceTagLine({ tags, className }: { tags: readonly string[]; cla
   if (tags.length === 0) return null;
   const text = tags.join(" · ");
   return (
-    <p className={cx("min-w-0 truncate text-sm text-muted-foreground", className)} title={text}>
+    <span className={cx("block min-w-0 truncate text-sm text-muted-foreground", className)} title={text}>
       {text}
-    </p>
+    </span>
   );
 }
