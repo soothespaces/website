@@ -96,7 +96,13 @@ export function RoomsList({
   }
 
   return (
-    <DetailScreen title="Book a room" subtitle={buildingName} backTo={buildingName} onBack={onBack}>
+    <DetailScreen
+      title="Book a room"
+      subtitle={buildingName}
+      backTo={buildingName}
+      onBack={onBack}
+      className="h-auto min-h-0 flex-auto"
+    >
       <div className="flex flex-col gap-4">
         <ChipGroup
           type="single"

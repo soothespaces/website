@@ -11,13 +11,16 @@ import {
   EnterIcon as EnterGlyph,
   ExclamationTriangleIcon as WarningGlyph,
   ExternalLinkIcon as ExternalLinkGlyph,
+  FrameIcon as FrameGlyph,
   GearIcon as SettingsGlyph,
-  GlobeIcon as MapGlyph,
+  GlobeIcon as GlobeGlyph,
   HamburgerMenuIcon as MenuGlyph,
+  HomeIcon as HomeGlyph,
   HeartFilledIcon as HeartFilledGlyph,
   HeartIcon as HeartGlyph,
   InfoCircledIcon as InfoGlyph,
   LayersIcon as LayersGlyph,
+  LightningBoltIcon as LightningGlyph,
   MagnifyingGlassIcon as SearchGlyph,
   MixerHorizontalIcon as FilterGlyph,
   MoonIcon as MoonGlyph,
@@ -85,13 +88,17 @@ export const CloseIcon = icon("CloseIcon", CrossGlyph);
 export const EnterIcon = icon("EnterIcon", EnterGlyph);
 export const ExternalLinkIcon = icon("ExternalLinkIcon", ExternalLinkGlyph);
 export const FilterIcon = icon("FilterIcon", FilterGlyph);
+export const FrameIcon = icon("FrameIcon", FrameGlyph);
+export const GlobeIcon = icon("GlobeIcon", GlobeGlyph);
 export const HeartFilledIcon = icon("HeartFilledIcon", HeartFilledGlyph);
 export const HeartIcon = icon("HeartIcon", HeartGlyph);
+export const HomeIcon = icon("HomeIcon", HomeGlyph);
 export const InfoIcon = icon("InfoIcon", InfoGlyph);
 export const LayersIcon = icon("LayersIcon", LayersGlyph);
 export const LightIcon = icon("LightIcon", LightGlyph);
+export const LightningBoltIcon = icon("LightningBoltIcon", LightningGlyph);
 // Radix has no folded-map glyph. The globe is the map icon.
-export const MapIcon = icon("MapIcon", MapGlyph);
+export const MapIcon = icon("MapIcon", GlobeGlyph);
 export const MenuIcon = icon("MenuIcon", MenuGlyph);
 export const MoonIcon = icon("MoonIcon", MoonGlyph);
 export const PauseIcon = icon("PauseIcon", PauseGlyph);

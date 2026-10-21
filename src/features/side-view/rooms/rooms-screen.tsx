@@ -39,8 +39,6 @@ export function RoomsScreen({ route }: PanelScreenProps) {
   );
 }
 
-RoomsScreen.detailScreen = true;
-
 // Move the slot window when the minute changes, and when the tab is shown
 // again, so a list left open does not keep yesterday's status.
 function useNow(): Date {
