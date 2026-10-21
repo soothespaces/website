@@ -21,6 +21,8 @@ export function MapDock() {
       aria-label="Study spaces"
       className="hidden w-80 shrink-0 flex-col border-r border-border bg-background md:flex lg:w-96"
     >
+      {/* Stays mounted on every route. Home hides its own copy from `md` up,
+          so typing here does not swap the focused field. */}
       <div className="border-b border-border p-3">
         <SpaceSearchField value={search.query} onChange={search.setQuery} />
       </div>

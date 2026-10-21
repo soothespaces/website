@@ -28,6 +28,8 @@ export type OpeningHours = {
   weekday: number;
   /** Yesterday through eight days ahead. Each date uses the period that covers it. */
   byDate: DatedHours[];
+  /** Periods behind the Sunday–Saturday list, in that order, without duplicates. */
+  periods: HoursPeriod[];
 };
 
 export type OpeningHourRow = {
@@ -39,6 +41,18 @@ export type OpeningHourRow = {
   opens: string | null;
   closes: string | null;
   access: string;
+  /** Period name, e.g. "Fall and winter semester hours". Optional so callers that only need intervals can omit it. */
+  label?: string | null;
+  /** `um_library`, `google`, or another loader id. Optional for the same reason. */
+  source?: string;
+};
+
+/** One dated period that supplies at least one day on the Hours week list. */
+export type HoursPeriod = {
+  label: string | null;
+  validFrom: string;
+  validUntil: string;
+  source: string;
 };
 
 export type WeekRow = {
@@ -51,7 +65,8 @@ export type WeekRow = {
   today: boolean;
 };
 
-const HOUR_SELECT = "building_slug, space_id, valid_from, valid_until, weekday, opens, closes, access";
+const HOUR_SELECT =
+  "building_slug, space_id, valid_from, valid_until, weekday, opens, closes, access, label, source";
 
 type HourRecord = {
   building_slug: string | null;
@@ -62,6 +77,8 @@ type HourRecord = {
   opens: string | null;
   closes: string | null;
   access: string;
+  label: string | null;
+  source: string;
 };
 
 /** "08:00:00" → 480. "24:00:00" → 1440. */
@@ -88,8 +105,8 @@ function toInterval(row: OpeningHourRow): HourInterval | null {
   return { opens, closes: end, access };
 }
 
-/** Intervals for one calendar date. A space's rows replace the building's. The narrowest covering period wins; a tie goes to the later valid_from. */
-export function intervalsOn(rows: readonly OpeningHourRow[], date: string): HourInterval[] {
+/** Rows that win for one calendar date. A space's rows replace the building's. The narrowest covering period wins; a tie goes to the later valid_from. */
+function winningRows(rows: readonly OpeningHourRow[], date: string): OpeningHourRow[] {
   const weekday = weekdayOfDate(date);
   const covering = rows.filter((row) => row.weekday === weekday && row.validFrom <= date && date <= row.validUntil);
   const space = covering.filter((row) => row.spaceId);
@@ -100,11 +117,41 @@ export function intervalsOn(rows: readonly OpeningHourRow[], date: string): Hour
   const minSpan = Math.min(...pool.map((row) => daysBetween(row.validFrom, row.validUntil)));
   const narrow = pool.filter((row) => daysBetween(row.validFrom, row.validUntil) === minSpan);
   const latest = narrow.map((row) => row.validFrom).sort().at(-1)!;
-  return narrow
-    .filter((row) => row.validFrom === latest)
+  return narrow.filter((row) => row.validFrom === latest);
+}
+
+/** Intervals for one calendar date, from {@link winningRows}. */
+export function intervalsOn(rows: readonly OpeningHourRow[], date: string): HourInterval[] {
+  return winningRows(rows, date)
     .map(toInterval)
     .filter((interval): interval is HourInterval => interval != null)
     .sort((a, b) => a.opens - b.opens);
+}
+
+function periodKey(row: OpeningHourRow): string {
+  return `${row.label ?? ""}\0${row.validFrom}\0${row.validUntil}\0${row.source ?? ""}`;
+}
+
+/** Distinct periods for Sunday through Saturday of the coming week, list order. */
+export function periodsForWeek(rows: readonly OpeningHourRow[], date: string): HoursPeriod[] {
+  const weekday = weekdayOfDate(date);
+  const seen = new Set<string>();
+  const periods: HoursPeriod[] = [];
+  for (let day = 0; day < 7; day++) {
+    const dayDate = addDays(date, (day - weekday + 7) % 7);
+    for (const row of winningRows(rows, dayDate)) {
+      const key = periodKey(row);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      periods.push({
+        label: row.label ?? null,
+        validFrom: row.validFrom,
+        validUntil: row.validUntil,
+        source: row.source ?? "",
+      });
+    }
+  }
+  return periods;
 }
 
 /**
@@ -119,7 +166,7 @@ export function resolveOpeningHours(rows: readonly OpeningHourRow[], date: strin
   }
   const anyRow = byDate.some((day) => rows.some((row) => row.validFrom <= day.date && day.date <= row.validUntil));
   if (!anyRow) return null;
-  return { date, weekday: weekdayOfDate(date), byDate };
+  return { date, weekday: weekdayOfDate(date), byDate, periods: periodsForWeek(rows, date) };
 }
 
 type Span = { start: number; end: number };
@@ -264,6 +311,8 @@ function toRow(record: HourRecord): OpeningHourRow {
     opens: record.opens,
     closes: record.closes,
     access: record.access,
+    label: record.label,
+    source: record.source,
   };
 }
 

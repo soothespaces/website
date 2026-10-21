@@ -6,9 +6,10 @@ import { SLOTS } from "../slots";
 import type { FloorPlan } from "../use-floor-index";
 import type { MapColors } from "../use-map-colors";
 import { FloorBookableLayer } from "./floor-bookable";
-import { FloorNoiseLayer, useFloorColoring } from "./floor-noise";
+import { FloorNoiseGlyphLayer, FloorNoiseLayer, useFloorColoring } from "./floor-noise";
 import { FloorPrintersLayer } from "./floor-printers";
-import { FLOOR_ROOM_LINES, FloorStaffLayer } from "./floor-staff";
+import { FLOOR_ROOM_LINES } from "./floor-layer-ids";
+import { FloorStaffLayer } from "./floor-staff";
 
 // Selecting a building zooms the map to it, at least this far in. Floor
 // plans show from here on.
@@ -68,7 +69,7 @@ export function FloorPlanLayers({
   return (
     <>
       {/* Keyed by URL so switching floors swaps the data in place. */}
-      <Source key={plan.geojson} id={id} type="geojson" data={plan.geojson}>
+      <Source key={plan.geojson} id={id} type="geojson" data={coloring.planData ?? plan.geojson}>
       <Layer
         id={`${id}-structure`}
         type="fill"
@@ -102,12 +103,13 @@ export function FloorPlanLayers({
         building={plan.building}
         floor={plan.floor}
       />
+      {/* Direct children of Source. A fragment would swallow the source id
+          and these layers would never mount. */}
       {availability ? null : (
-        <>
-          <FloorNoiseLayer colors={colors} minzoom={FLOOR_PLAN_MIN_ZOOM - 1} byNoise={coloring.byNoise} />
-          <FloorBookableLayer minzoom={FLOOR_PLAN_MIN_ZOOM - 1} rooms={coloring.bookableRooms} />
-        </>
+        <FloorNoiseLayer colors={colors} minzoom={FLOOR_PLAN_MIN_ZOOM - 1} byNoise={coloring.byNoise} />
       )}
+      {availability ? null : <FloorBookableLayer minzoom={FLOOR_PLAN_MIN_ZOOM - 1} rooms={coloring.bookableRooms} />}
+      {availability ? null : <FloorNoiseGlyphLayer colors={colors} minzoom={LABEL_MIN_ZOOM} />}
       {font ? (
         <Layer
           id={`${id}-labels`}
@@ -120,6 +122,8 @@ export function FloorPlanLayers({
             "text-size": ["interpolate", ["linear"], ["zoom"], LABEL_MIN_ZOOM, 10, 19, 12],
             "text-max-width": 6,
             "text-padding": 1,
+            // Lift the number off a noise glyph so the bars can sit under it.
+            "text-offset": ["case", ["has", "noiseBars"], ["literal", [0, -0.9]], ["literal", [0, 0]]],
           }}
           paint={{
             "text-color": colors.foreground,

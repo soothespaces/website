@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { FilterSpecification } from "maplibre-gl";
 import { Layer, useMap } from "react-map-gl/maplibre";
-import { FLOOR_ROOM_LINES } from "./floor-staff";
+import { FLOOR_ROOM_LINES } from "./floor-layer-ids";
 import { BOOKABLE_PATTERN, bookableStripeImage } from "./floor-bookable-pattern";
 
 function roomNumberFilter(rooms: readonly string[]): FilterSpecification {

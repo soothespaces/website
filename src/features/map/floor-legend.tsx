@@ -3,7 +3,7 @@
 import { useId, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { PrinterIcon } from "@/components/ui/icons";
-import { NOISE_BAR_COUNT, NOISE_FILL_CLASS, type NoiseLevel } from "@/components/ui/noise-badge";
+import { NOISE_BAR_COUNT, type NoiseLevel } from "@/components/ui/noise-badge";
 import { printersOnFloor, usePrinters } from "@/lib/data/printers";
 import { legendGroups, type LegendRowId } from "./floor-legend-model";
 import { useFloorColoring } from "./layers/floor-noise";
@@ -12,6 +12,13 @@ import type { FloorPlan } from "./use-floor-index";
 import { useMapState } from "./map-state";
 
 const NOISE_LEVELS = new Set<LegendRowId>(["quiet", "low_noise", "conversational", "loud"]);
+
+const NOISE_SWATCH: Record<NoiseLevel, string> = {
+  quiet: "var(--noise-quiet)",
+  low_noise: "var(--noise-low)",
+  conversational: "var(--noise-conversational)",
+  loud: "var(--noise-loud)",
+};
 
 // Shown over the map while a vector floor plan is up. Phones start collapsed
 // to a Legend button; wider screens keep the groups open.
@@ -104,15 +111,18 @@ function NoiseSwatch({ level }: { level: NoiseLevel }) {
   const filled = NOISE_BAR_COUNT[level];
   return (
     <span aria-hidden="true" className="inline-flex items-center gap-1">
-      <span className="relative size-4 shrink-0 overflow-hidden rounded-sm bg-card">
-        <span className={`absolute inset-0 ${NOISE_FILL_CLASS[level]} opacity-[0.72]`} />
-      </span>
+      <span
+        className="size-4 shrink-0 rounded-sm"
+        style={{
+          backgroundColor: `color-mix(in srgb, ${NOISE_SWATCH[level]} var(--noise-fill-opacity), var(--card))`,
+        }}
+      />
       <span className="inline-flex items-end gap-px">
         {[0, 1, 2, 3].map((index) => (
           <span
             key={index}
             className={`w-0.5 rounded-sm ${["h-1", "h-1.5", "h-2", "h-2.5"][index]} ${
-              index < filled ? NOISE_FILL_CLASS[level] : "border border-foreground bg-noise-bar"
+              index < filled ? "bg-foreground" : "bg-foreground/30"
             }`}
           />
         ))}

@@ -2,11 +2,11 @@
 
 import { Layer } from "react-map-gl/maplibre";
 import type { MapColors } from "../use-map-colors";
+import { FLOOR_ROOM_LINES } from "./floor-layer-ids";
 import { staffRoomFilter } from "./floor-staff-rooms";
 
 export const FLOOR_STAFF_LAYER = "floor-plan-staff";
-// Always on the plan, including the rooms map, where staff grey is replaced.
-export const FLOOR_ROOM_LINES = "floor-plan-room-lines";
+export { FLOOR_ROOM_LINES };
 
 // Flat grey over staff, office, storage and mechanical rooms. Sits on the
 // floor-plan source, above the white room fill and under the room outlines,

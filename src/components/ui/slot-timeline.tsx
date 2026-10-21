@@ -6,12 +6,15 @@ export function SlotTimeline({
   slots,
   showTicks = true,
   slotMinutes = 30,
+  summaryId,
 }: {
   /** Minutes from midnight. 20 * 60 is 8:00 PM. */
   start: number;
   slots: readonly SlotState[] | null;
   showTicks?: boolean;
   slotMinutes?: number;
+  /** Id of the screen-reader summary, so a parent can point at it. */
+  summaryId?: string;
 }) {
   if (slots == null) {
     return <p className="text-sm text-muted-foreground">Availability unavailable</p>;
@@ -23,7 +26,9 @@ export function SlotTimeline({
 
   return (
     <div>
-      <p className="sr-only">{summary}</p>
+      <p id={summaryId} className="sr-only">
+        {summary}
+      </p>
       <div aria-hidden="true">
         {ticks.length > 0 ? (
           <div className="relative mb-1 h-4">

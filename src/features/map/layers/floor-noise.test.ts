@@ -7,9 +7,10 @@ import {
   bookableRoomNumbers,
   groupByNoise,
   isServiceRoom,
-  loudDotImage,
+  noiseBarImage,
   noiseFromLabel,
   resolvedNoise,
+  withNoiseBars,
   type BookableRoomRef,
   type FloorSpace,
   type RoomPoint,
@@ -73,7 +74,7 @@ test("noise labels from the attribute resolver map back to levels", () => {
   assert.equal(resolved.noise?.value, "Quiet");
 });
 
-test("a room location beats the floor guess, and an area covers the rooms inside it", () => {
+test("a room number beats an area, and a listed space with no location adds nothing", () => {
   const rooms: RoomPoint[] = [
     { roomNumber: "100", lng: 0, lat: 0 },
     { roomNumber: "200", lng: 5, lat: 5 },
@@ -108,9 +109,31 @@ test("a room location beats the floor guess, and an area covers the rooms inside
   assert.equal(assigned.get("200"), "quiet");
   assert.equal(pointInRing(0, 0, area), true);
   assert.equal(pointInRing(5, 5, area), false);
+  const untagged = assignRoomNoise({
+    floor: 1,
+    spaces: [space({ id: "floor", name: "Open floor", floor: 1, noise: "loud" })],
+    bookable: [],
+    rooms,
+  });
+  assert.equal(untagged.size, 0);
 });
 
-test("Shapiro floor 2 colors study rooms and leaves service rooms white", () => {
+test("a listed space with no locations colors nothing", () => {
+  const rooms = roomsOf("public/floor-plans/harold-t-and-vivian-b-shapiro-library/2.geojson");
+  const assigned = assignRoomNoise({
+    floor: 2,
+    spaces: [
+      space({ id: "floor-2", name: "Shapiro Floor 2 Spaces", floor: 2, noise: "conversational" }),
+      space({ id: "rooms", name: "Shapiro Bookable Study Rooms", bookable: true, noise: "conversational" }),
+      space({ id: "booths", name: "Soundproof Booths", bookable: true, noise: "quiet" }),
+    ],
+    bookable: [],
+    rooms,
+  });
+  assert.equal(assigned.size, 0);
+});
+
+test("a bookable item with no spaceId colors nothing", () => {
   const rooms = roomsOf("public/floor-plans/harold-t-and-vivian-b-shapiro-library/2.geojson");
   const bookable: BookableRoomRef[] = [
     ...STUDY.map((roomNumber) => ({
@@ -124,37 +147,55 @@ test("Shapiro floor 2 colors study rooms and leaves service rooms white", () => 
   const assigned = assignRoomNoise({
     floor: 2,
     spaces: [
-      space({ id: "floor-2", name: "Shapiro Floor 2 Spaces", floor: 2, noise: "conversational" }),
       space({ id: "rooms", name: "Shapiro Bookable Study Rooms", bookable: true, noise: "conversational" }),
       space({ id: "booths", name: "Soundproof Booths", bookable: true, noise: "quiet" }),
     ],
     bookable,
     rooms,
   });
-  const grouped = groupByNoise(assigned);
-  for (const room of STUDY) assert.equal(assigned.get(room), "conversational", room);
-  for (const room of ["2024", "2026", "2166", "2178", "2178A", "2000", "2005", "2036", "2160A", "2160B", "2160C"]) {
-    assert.equal(assigned.has(room), false, room);
-  }
-  for (const room of ["2C01", "2S01", "2V01", "2030M", "2036W"]) assert.equal(assigned.has(room), false, room);
-  assert.equal(grouped.conversational.includes("2000"), false);
+  assert.equal(assigned.size, 0);
+  for (const room of ["2024", "2000", "2005", "2030M", "2036W"]) assert.equal(assigned.has(room), false, room);
   assert.deepEqual(bookableRoomNumbers(bookable, 2), STUDY);
   assert.equal(isServiceRoom("2030M"), true);
   assert.equal(isServiceRoom("2002A"), false);
+
+  const linked = assignRoomNoise({
+    floor: 2,
+    spaces: [space({ id: "rooms", name: "Shapiro Bookable Study Rooms", bookable: true, noise: "quiet" })],
+    bookable: [
+      { roomNumber: "2122", floor: 2, spaceId: "rooms", title: "Study Room" },
+      { roomNumber: "2124", floor: 2, spaceId: null, title: "2nd Floor - 2124 - Study Room" },
+    ],
+    rooms,
+  });
+  assert.equal(linked.get("2122"), "quiet");
+  assert.equal(linked.has("2124"), false);
+  const stamped = withNoiseBars(
+    [
+      { properties: { layer: "room", roomNumber: "2122" } },
+      { properties: { layer: "room", roomNumber: "2124" } },
+    ],
+    linked,
+  );
+  assert.equal(stamped[0]?.properties?.noiseBars, 1);
+  assert.equal(stamped[1]?.properties?.noiseBars, undefined);
+  assert.deepEqual(groupByNoise(linked).quiet, ["2122"]);
 });
 
-test("loud dots tile without a seam", () => {
-  const { width, data } = loudDotImage("#c8704e");
-  assert.equal(width, 16);
-  const pixel = (x: number, y: number) => data[(y * width + x) * 4];
-  assert.equal(pixel(0, 0), pixel(8, 0));
-  assert.notEqual(pixel(3, 3), pixel(0, 0));
-});
-
-test("light noise tokens are the FloorStyle board colors", () => {
-  const css = readFileSync("src/app/tokens.css", "utf8");
-  assert.match(css, /--noise-quiet: #2f5a40;/);
-  assert.match(css, /--noise-low: #7fa58b;/);
-  assert.match(css, /--noise-conversational: #d9b45a;/);
-  assert.match(css, /--noise-loud: #c8704e;/);
+test("noise bar images fill from one bar to four", () => {
+  const quiet = noiseBarImage(1, "#171717");
+  const loud = noiseBarImage(4, "#171717");
+  assert.equal(quiet.width, 48);
+  assert.equal(quiet.height, 48);
+  const alpha = (image: { width: number; data: Uint8Array }, x: number, y: number) =>
+    image.data[(y * image.width + x) * 4 + 3];
+  const channel = (image: { width: number; data: Uint8Array }, x: number, y: number) =>
+    image.data[(y * image.width + x) * 4];
+  // First bar is filled at every level; the last bar is empty until loud.
+  assert.equal(alpha(quiet, 5, 40), 255);
+  assert.equal(channel(quiet, 5, 40), 23);
+  assert.equal(alpha(quiet, 41, 20), Math.round(255 * 0.3));
+  assert.equal(alpha(loud, 5, 40), 255);
+  assert.equal(alpha(loud, 41, 20), 255);
+  assert.equal(alpha(quiet, 0, 0), 0);
 });

@@ -15,24 +15,25 @@ import { readAll } from "@/lib/data/read-all";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { Database } from "@/types/supabase";
-import { FLOOR_ROOM_LINES } from "./floor-staff";
+import { FLOOR_ROOM_LINES } from "./floor-layer-ids";
 import type { FloorPlan } from "../use-floor-index";
 import type { MapColors } from "../use-map-colors";
 import {
   assignRoomNoise,
   bookableRoomNumbers,
   groupByNoise,
-  LOUD_DOTS,
-  loudDotImage,
+  NOISE_BAR_IMAGES,
   NOISE_FILL_OPACITY,
   NOISE_LEVELS,
+  noiseBarImage,
   resolvedNoise,
   splitPlanRooms,
+  withNoiseBars,
   type BookableRoomRef,
   type FloorSpace,
   type RoomPoint,
 } from "./floor-noise-rooms";
-import { geometryCenter } from "./room-match";
+import { geometryCenter, normalizeRoomNumber } from "./room-match";
 import { parseArea } from "./sheet-coords";
 
 type NoiseToken = "noise-quiet" | "noise-low" | "noise-conversational" | "noise-loud";
@@ -50,6 +51,8 @@ export type FloorColoring = {
   staffRooms: string[];
   otherRooms: string[];
   rooms: RoomPoint[];
+  /** Floor plan with noiseBars stamped on tagged rooms. Null until it loads. */
+  planData: GeoJSON.FeatureCollection | null;
   loaded: boolean;
 };
 
@@ -61,6 +64,7 @@ const EMPTY: FloorColoring = {
   staffRooms: [],
   otherRooms: [],
   rooms: [],
+  planData: null,
   loaded: false,
 };
 
@@ -104,20 +108,32 @@ function publish(key: string, data: FloorColoring) {
   for (const listener of listeners) listener();
 }
 
-function useLoudDots(color: string) {
+export function noiseFillOpacity(value: string | undefined) {
+  const raw = (value ?? "").trim();
+  if (raw.endsWith("%")) {
+    const percent = Number(raw.slice(0, -1));
+    return Number.isFinite(percent) ? percent / 100 : NOISE_FILL_OPACITY;
+  }
+  const number = Number(raw);
+  return Number.isFinite(number) && number > 0 ? number : NOISE_FILL_OPACITY;
+}
+
+function useNoiseBars(foreground: string) {
   const map = useMap().current?.getMap();
   const painted = useRef<string | null>(null);
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    if (!map || !color) return;
+    if (!map || !foreground.startsWith("#")) return;
     const add = () => {
-      if (map.hasImage(LOUD_DOTS) && painted.current === color) {
+      if (painted.current === foreground && NOISE_BAR_IMAGES.every((id) => map.hasImage(id))) {
         setReady(true);
         return;
       }
-      if (map.hasImage(LOUD_DOTS)) map.removeImage(LOUD_DOTS);
-      map.addImage(LOUD_DOTS, loudDotImage(color));
-      painted.current = color;
+      for (const [index, id] of NOISE_BAR_IMAGES.entries()) {
+        if (map.hasImage(id)) map.removeImage(id);
+        map.addImage(id, noiseBarImage(index + 1, foreground));
+      }
+      painted.current = foreground;
       setReady(true);
     };
     add();
@@ -125,8 +141,15 @@ function useLoudDots(color: string) {
     return () => {
       map.off("styledata", add);
     };
-  }, [map, color]);
+  }, [map, foreground]);
   return ready;
+}
+
+function stampPlan(features: PlanFeature[], noiseByRoom: ReadonlyMap<string, NoiseLevel>): GeoJSON.FeatureCollection {
+  return {
+    type: "FeatureCollection",
+    features: withNoiseBars(features, noiseByRoom) as GeoJSON.Feature[],
+  };
 }
 
 function roomNumberFilter(rooms: readonly string[]): FilterSpecification {
@@ -184,7 +207,7 @@ async function loadFloorColoring(plan: FloorPlan): Promise<FloorColoring> {
   const rooms = roomsFromPlan(features);
   if (!env) {
     const split = splitPlanRooms(features.map((feature) => ({ properties: feature.properties ?? {} })), plan, new Map());
-    return { byNoise: EMPTY_NOISE, bookableRooms: [], ...split, rooms, loaded: true };
+    return { byNoise: EMPTY_NOISE, bookableRooms: [], ...split, rooms, planData: stampPlan(features, new Map()), loaded: true };
   }
 
   const supabase = createClient();
@@ -239,8 +262,17 @@ async function loadFloorColoring(plan: FloorPlan): Promise<FloorColoring> {
     bookable,
     rooms,
   });
-  const drawn = new Map(rooms.map((room) => [room.roomNumber.toUpperCase(), room.roomNumber]));
-  const stripes = bookableRoomNumbers(bookable, plan.floor).map((room) => drawn.get(room.toUpperCase()) ?? room);
+  const drawn = new Map(
+    rooms.flatMap((room) => {
+      const key = normalizeRoomNumber(room.roomNumber);
+      return key ? [[key, room.roomNumber] as const] : [];
+    }),
+  );
+  const stripes = bookableRoomNumbers(bookable, plan.floor).flatMap((room) => {
+    const key = normalizeRoomNumber(room);
+    const drawnRoom = key ? drawn.get(key) : undefined;
+    return drawnRoom ? [drawnRoom] : [];
+  });
   const split = splitPlanRooms(
     features.map((feature) => ({ properties: feature.properties ?? {} })),
     plan,
@@ -251,6 +283,7 @@ async function loadFloorColoring(plan: FloorPlan): Promise<FloorColoring> {
     bookableRooms: stripes,
     ...split,
     rooms,
+    planData: stampPlan(features, noiseByRoom),
     loaded: true,
   };
 }
@@ -296,7 +329,7 @@ export function FloorNoiseLayer({
   byNoise: Record<NoiseLevel, string[]>;
   source?: string;
 }) {
-  const loudReady = useLoudDots(colors["noise-loud"]);
+  const opacity = noiseFillOpacity(colors["noise-fill-opacity"]);
   if (!source) return null;
   return (
     <>
@@ -311,15 +344,45 @@ export function FloorNoiseLayer({
             source={source}
             minzoom={minzoom}
             filter={roomNumberFilter(rooms)}
-            paint={
-              level === "loud" && loudReady
-                ? { "fill-pattern": LOUD_DOTS, "fill-opacity": NOISE_FILL_OPACITY }
-                : { "fill-color": colors[NOISE_TOKEN[level]], "fill-opacity": NOISE_FILL_OPACITY }
-            }
+            paint={{ "fill-color": colors[NOISE_TOKEN[level]], "fill-opacity": opacity }}
             beforeId={FLOOR_ROOM_LINES}
           />
         );
       })}
     </>
+  );
+}
+
+// The 4-bar glyph for each filled room. It sits under the room outlines, and
+// the label layer is above it, so icon-allow-overlap false lets the room
+// number win when the two collide. The offset drops the bars below the number
+// so both fit in a study room.
+export function FloorNoiseGlyphLayer({
+  colors,
+  minzoom,
+  source,
+}: {
+  colors: MapColors;
+  minzoom: number;
+  source?: string;
+}) {
+  const ready = useNoiseBars(colors.foreground);
+  if (!source || !ready) return null;
+  return (
+    <Layer
+      id="floor-noise-glyph"
+      type="symbol"
+      source={source}
+      minzoom={minzoom}
+      filter={["has", "noiseBars"]}
+      layout={{
+        "icon-image": ["concat", "noise-bars-", ["to-string", ["get", "noiseBars"]]],
+        "icon-size": 0.5,
+        "icon-offset": [0, 40],
+        "icon-allow-overlap": false,
+        "icon-anchor": "center",
+      }}
+      beforeId={FLOOR_ROOM_LINES}
+    />
   );
 }

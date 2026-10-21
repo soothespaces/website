@@ -318,81 +318,92 @@
 
 /*
  * Noise fills for the badge (F2.1) and the floor-plan room fills (L1).
- * Decorative only: the bar count and the word carry the meaning.
- * Light values are the FloorStyle board: quiet #2f5a40, low noise #7fa58b,
- * conversational #d9b45a, loud #c8704e. Dark and high contrast keep those
- * hues and stay apart from the page background. The colorblind palette
- * below replaces them so the four levels do not collapse into green and gold.
+ * Each mode is one lightness ramp so adjacent levels stay apart after the
+ * fill is blended. Light is oklch L 0.92, 0.80, 0.68, 0.56 at hue 145.
+ * Dark reverses that ramp. High contrast uses L 0.95, 0.75, 0.55, 0.35
+ * (reversed on a dark page) and a solid fill. The colorblind palette walks
+ * blue to orange on the same kind of lightness steps.
+ * --noise-fill-opacity is how the map and the legend mix the fill over the
+ * room. High contrast paints it solid.
  * --noise-bar is the unfilled bar: light on light backgrounds and dark on
  * dark ones, so it stays far from every fill (including high contrast).
  * --slot-free is the grey free block
  * on the room timeline (#bfc3c0 on the board). Booked blocks use
  * --destructive plus a hatch, so they are not given another red.
  */
+/* ramp: light card #ffffff opacity 72% */
 :root {
-  --noise-quiet: #2f5a40;
-  --noise-low: #7fa58b;
-  --noise-conversational: #d9b45a;
-  --noise-loud: #c8704e;
+  --noise-quiet: #cfefcf;
+  --noise-low: #a8c8a8;
+  --noise-conversational: #84a284;
+  --noise-loud: #607d61;
+  --noise-fill-opacity: 72%;
   --noise-bar: #e5e5e5;
   --slot-free: #bfc3c0;
 }
 
+/* ramp: dark card #171717 opacity 72% */
 :root[data-theme="dark"] {
-  --noise-quiet: #2a6b4c;
-  --noise-low: #d4f5e4;
-  --noise-conversational: #6b3e08;
-  --noise-loud: #ffc2ad;
+  --noise-quiet: #607d61;
+  --noise-low: #84a284;
+  --noise-conversational: #a8c8a8;
+  --noise-loud: #cfefcf;
   --noise-bar: #333333;
   --slot-free: #bfc3c0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --noise-quiet: #2a6b4c;
-    --noise-low: #d4f5e4;
-    --noise-conversational: #6b3e08;
-    --noise-loud: #ffc2ad;
+    --noise-quiet: #607d61;
+    --noise-low: #84a284;
+    --noise-conversational: #a8c8a8;
+    --noise-loud: #cfefcf;
     --noise-bar: #333333;
     --slot-free: #bfc3c0;
   }
 }
 
+/* ramp: high-contrast-light card #ffffff opacity 100% */
 :root[data-contrast="more"] {
-  --noise-quiet: #02110c;
-  --noise-low: #2f8a55;
-  --noise-conversational: #e0b000;
-  --noise-loud: #9a3010;
+  --noise-quiet: #ddf7dc;
+  --noise-low: #9db69d;
+  --noise-conversational: #617962;
+  --noise-loud: #2b412c;
+  --noise-fill-opacity: 100%;
   --noise-bar: #e5e5e5;
   --slot-free: #5c615e;
 }
 
 @media (prefers-contrast: more) {
   :root:not([data-contrast="normal"]) {
-    --noise-quiet: #02110c;
-    --noise-low: #2f8a55;
-    --noise-conversational: #e0b000;
-    --noise-loud: #9a3010;
+    --noise-quiet: #ddf7dc;
+    --noise-low: #9db69d;
+    --noise-conversational: #617962;
+    --noise-loud: #2b412c;
+    --noise-fill-opacity: 100%;
     --noise-bar: #e5e5e5;
     --slot-free: #5c615e;
   }
 }
 
+/* ramp: high-contrast-dark card #000000 opacity 100% */
 :root[data-theme="dark"][data-contrast="more"] {
-  --noise-quiet: #2a6b4c;
-  --noise-low: #d4f5e4;
-  --noise-conversational: #6b3e08;
-  --noise-loud: #ffc2ad;
+  --noise-quiet: #2b412c;
+  --noise-low: #617962;
+  --noise-conversational: #9db69d;
+  --noise-loud: #ddf7dc;
+  --noise-fill-opacity: 100%;
   --noise-bar: #333333;
   --slot-free: #d5d8d6;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"])[data-contrast="more"] {
-    --noise-quiet: #2a6b4c;
-    --noise-low: #d4f5e4;
-    --noise-conversational: #6b3e08;
-    --noise-loud: #ffc2ad;
+    --noise-quiet: #2b412c;
+    --noise-low: #617962;
+    --noise-conversational: #9db69d;
+    --noise-loud: #ddf7dc;
+    --noise-fill-opacity: 100%;
     --noise-bar: #333333;
     --slot-free: #d5d8d6;
   }
@@ -400,10 +411,11 @@
 
 @media (prefers-contrast: more) {
   :root[data-theme="dark"]:not([data-contrast="normal"]) {
-    --noise-quiet: #2a6b4c;
-    --noise-low: #d4f5e4;
-    --noise-conversational: #6b3e08;
-    --noise-loud: #ffc2ad;
+    --noise-quiet: #2b412c;
+    --noise-low: #617962;
+    --noise-conversational: #9db69d;
+    --noise-loud: #ddf7dc;
+    --noise-fill-opacity: 100%;
     --noise-bar: #333333;
     --slot-free: #d5d8d6;
   }
@@ -411,35 +423,38 @@
 
 @media (prefers-color-scheme: dark) and (prefers-contrast: more) {
   :root:not([data-theme="light"]):not([data-contrast="normal"]) {
-    --noise-quiet: #2a6b4c;
-    --noise-low: #d4f5e4;
-    --noise-conversational: #6b3e08;
-    --noise-loud: #ffc2ad;
+    --noise-quiet: #2b412c;
+    --noise-low: #617962;
+    --noise-conversational: #9db69d;
+    --noise-loud: #ddf7dc;
+    --noise-fill-opacity: 100%;
     --noise-bar: #333333;
     --slot-free: #d5d8d6;
   }
 }
 
-/* Colorblind-safe hues. Declared last so they win over the rules above. */
+/* Colorblind: blue to orange on a lightness ramp. Declared last so it wins. */
+/* ramp: colorblind-light card #ffffff opacity 72% */
 :root[data-palette="cvd"] {
-  --noise-quiet: #0b3d7a;
-  --noise-low: #087a52;
-  --noise-conversational: #e0a000;
-  --noise-loud: #c4450a;
+  --noise-quiet: #c4e4f4;
+  --noise-low: #9dc3a3;
+  --noise-conversational: #bb8e63;
+  --noise-loud: #a26050;
 }
 
+/* ramp: colorblind-dark card #171717 opacity 72% */
 :root[data-palette="cvd"][data-theme="dark"] {
-  --noise-quiet: #9ad4f5;
-  --noise-low: #0e6e42;
-  --noise-conversational: #ffd15a;
-  --noise-loud: #ff6b45;
+  --noise-quiet: #5c7988;
+  --noise-low: #7ea385;
+  --noise-conversational: #dbad81;
+  --noise-loud: #ffc9b6;
 }
 
 @media (prefers-color-scheme: dark) {
   :root[data-palette="cvd"]:not([data-theme="light"]) {
-    --noise-quiet: #9ad4f5;
-    --noise-low: #0e6e42;
-    --noise-conversational: #ffd15a;
-    --noise-loud: #ff6b45;
+    --noise-quiet: #5c7988;
+    --noise-low: #7ea385;
+    --noise-conversational: #dbad81;
+    --noise-loud: #ffc9b6;
   }
 }

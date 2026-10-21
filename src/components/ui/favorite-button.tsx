@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { HeartFilledIcon, HeartIcon } from "@/components/ui/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { loginHref } from "@/lib/auth/paths";
+import { loginHref, loginHrefFor } from "@/lib/auth/paths";
 
 export function FavoriteButton({
   name,
@@ -40,7 +40,16 @@ export function FavoriteButton({
           <div className="flex flex-col items-start gap-3">
             <p className="text-sm">Sign in to save your spots</p>
             <Button asChild size="sm">
-              <Link href={loginHref(pathname)}>Sign in</Link>
+              <Link
+                href={loginHref(pathname)}
+                onClick={(event) => {
+                  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+                  event.preventDefault();
+                  window.location.assign(loginHrefFor(window.location.pathname, window.location.search));
+                }}
+              >
+                Sign in
+              </Link>
             </Button>
           </div>
         </PopoverContent>
