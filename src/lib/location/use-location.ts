@@ -1,47 +1,32 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 import {
   distanceToBuildingMeters,
   findNearestBuilding,
-  getLocationPermissionState,
   isInsideBuilding,
-  requestOneShotPosition,
-  toHookPermission,
   type BuildingLatLng,
-  type Coordinates,
   type GeoPoint,
-  type HookLocationPermission,
-  type OneShotPositionResult,
 } from "./index";
+import { ensureStarted, getServerSnapshot, getSnapshot, requestFix, subscribe } from "./store";
 
 /**
  * Location permission for check-in (F3.6 / SOS-115).
  *
- * Reading `permission` on mount uses the Permissions API only. `request()`
- * is the one call that may show the browser prompt, and only after the
- * pre-prompt button. The fix stays in component state and is never uploaded.
+ * One store serves every caller. Reading it uses the Permissions API only.
+ * `request()` is the call that may show the browser prompt, and only after
+ * the pre-prompt button. The fix stays in memory and is never uploaded.
  */
 export function useLocation() {
-  const [permission, setPermission] = useState<HookLocationPermission>("unknown");
-  const [position, setPosition] = useState<Coordinates | null>(null);
+  const snap = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   useEffect(() => {
-    let cancelled = false;
-    void getLocationPermissionState().then((status) => {
-      if (!cancelled) setPermission(toHookPermission(status));
-    });
-    return () => {
-      cancelled = true;
-    };
+    void ensureStarted();
   }, []);
 
-  const request = useCallback(async (): Promise<OneShotPositionResult> => {
-    const result = await requestOneShotPosition();
-    setPermission(toHookPermission(result.status));
-    if (result.coords) setPosition(result.coords);
-    return result;
-  }, []);
+  const position = snap.fix;
+
+  const request = useCallback(() => requestFix(), []);
 
   const distanceTo = useCallback(
     (lat: number, lng: number): number | null =>
@@ -56,9 +41,10 @@ export function useLocation() {
   );
 
   const insideBuilding = useCallback(
-    (building: GeoPoint | BuildingLatLng | null | undefined): boolean => isInsideBuilding(position, building),
+    (building: ((GeoPoint | BuildingLatLng) & { footprint?: unknown }) | null | undefined): boolean =>
+      isInsideBuilding(position, building),
     [position],
   );
 
-  return { permission, request, position, distanceTo, nearestBuilding, insideBuilding };
+  return { permission: snap.permission, request, position, distanceTo, nearestBuilding, insideBuilding };
 }
