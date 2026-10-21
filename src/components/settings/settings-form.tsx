@@ -5,6 +5,7 @@ import { loginHref } from "@/lib/auth/paths";
 import { Button } from "@/components/ui/button";
 import { useSettings, type SettingsPersistence } from "@/lib/settings/settings-provider";
 import { ROUTES } from "@/lib/site";
+import { LocationSettingsNote } from "@/features/check-in/location-prompt";
 import { ChoiceGroup } from "./choice-group";
 
 export function SettingsForm() {
@@ -105,6 +106,8 @@ export function SettingsForm() {
           { value: "list", label: "List" },
         ]}
       />
+
+      <LocationSettingsNote />
     </div>
   );
 }

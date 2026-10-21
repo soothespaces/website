@@ -52,7 +52,7 @@ export function DetailScreen({
       onKeyDown={onKeyDown}
       className={cx("flex h-full min-h-0 flex-col bg-background", className)}
     >
-      <header className="flex items-center gap-1 px-1">
+      <header className="flex items-center gap-1 border-b border-border px-1 pb-2">
         <PanelBackButton label={`Back to ${backTo}`} onClick={onBack} icon={<ChevronLeftIcon />} />
         <div className="min-w-0 flex-1">
           {subtitle ? <p className="text-sm text-muted-foreground">{subtitle}</p> : null}

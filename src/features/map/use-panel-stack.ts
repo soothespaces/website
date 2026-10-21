@@ -46,12 +46,17 @@ function writeHistory(mode: "push" | "replace", stack: PanelRoute[]) {
     [INDEX_KEY]: mode === "push" ? index + 1 : index,
   };
   const top = stack.at(-1) ?? HOME_ROUTE;
-  const href = panelHref(
+  const bare = panelHref(
     window.location.pathname,
     top,
     panelSearchForStack(stack, new URLSearchParams(window.location.search)),
   );
-  const current = `${window.location.pathname}${window.location.search}`;
+  const here = `${window.location.pathname}${window.location.search}`;
+  // A detail link can carry a scroll target (`#busyness`). Keep it when this
+  // write is only syncing the panel stack, and drop it when the route changes.
+  const hash = bare === here ? window.location.hash : "";
+  const href = `${bare}${hash}`;
+  const current = `${here}${window.location.hash}`;
   if (mode === "replace" && href === current && samePanelStack(normalizePanelStack(state[STACK_KEY]) ?? [], stack)) {
     return;
   }
