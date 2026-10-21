@@ -777,6 +777,9 @@ secret key:
   the floor plan's GeoJSON, like `bookable_items.room_number`). A spot adds `lat`/`lng`
   (and optional `heading`), clicked on the vector plan, plus the room it falls in.
 - `uploaded_by` (the admin's email, stamped by a trigger), `created_at` and `updated_at`.
+  Signed-out visitors (`anon`) can't read `uploaded_by`
+  (`20261020060000_hide_photo_uploader.sql`), so public code names its photo
+  columns instead of selecting `*`.
   `import.mjs --prune` only touches rows with no `uploaded_by`, so it never deletes
   admin uploads.
 - For a building's gallery: `where building_slug = $1 and is_listed`, then group or
@@ -884,12 +887,15 @@ supabase/migrations/
   20261016175000_drop_mclassrooms_import.sql  WP3   drop the import's staging table
   20261016180000_printers.sql              WP3      public printers from MPrint
   20261019030000_space_editor.sql          admin    hand edits to spaces, space_locations
+  20261020060000_hide_photo_uploader.sql   admin    anon can't read photos.uploaded_by
+  20261020060100_check_in_where_only.sql   WP2      a check-in needs only Where (SOS-137)
 supabase/tests/
   mvp_backend.test.sql                     shared   pgTAP, run by `supabase test db`
   bookable_items.test.sql, photo_placement.test.sql, hours_and_google.test.sql,
   building_entrances.test.sql, classroom_meetings.test.sql,
   own_history_and_favorites.test.sql, printers.test.sql, classrooms.test.sql,
-  admin_photos.test.sql, space_editor.test.sql
+  admin_photos.test.sql, space_editor.test.sql, photo_uploader.test.sql,
+  check_in_where_only.test.sql
                                            per-migration checks
 ```
 

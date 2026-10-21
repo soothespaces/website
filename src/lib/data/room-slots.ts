@@ -25,6 +25,10 @@ export type RoomSlot = {
   /** Null when LibCal couldn't be read. Classrooms always have slots. */
   slots: SlotState[] | null;
   status: string;
+  /** Class meeting now, when this room is a classroom and a course is known. */
+  currentCourse?: string;
+  /** Next class today, when this room is a classroom and one is still ahead. */
+  nextCourse?: string;
 };
 
 export type SlotBooking = { start: number; end: number };
@@ -46,8 +50,13 @@ export type ClassroomRoomInput = {
   floor: number | null;
   capacity: number | null;
   /** Meeting clock times on the window's Detroit date, "HH:MM:SS". */
-  meetings: { starts: string; ends: string }[];
+  meetings: { starts: string; ends: string; course?: string }[];
 };
+
+/** Half-hour the eight-slot window starts on, in minutes from Detroit midnight. */
+export function slotWindowStart(from: Date): number {
+  return Math.floor(detroitParts(from).minutes / SLOT_MINUTES) * SLOT_MINUTES;
+}
 
 /** "2026-10-21 20:15:00" or "20:15:00" → minutes from midnight of `date`. */
 export function minutesFrom(value: string, date: string): number | null {
@@ -109,6 +118,52 @@ function presentRoom(room: RoomSlot & { bookings?: SlotBooking[] }): RoomSlot {
     ...(room.spaceId ? { spaceId: room.spaceId } : {}),
     slots: room.slots,
     status: room.status,
+    ...(room.currentCourse ? { currentCourse: room.currentCourse } : {}),
+    ...(room.nextCourse ? { nextCourse: room.nextCourse } : {}),
+  };
+}
+
+type TimedMeeting = { start: number; end: number; course?: string };
+
+function timedMeetings(meetings: readonly { starts: string; ends: string; course?: string }[]): TimedMeeting[] {
+  const timed: TimedMeeting[] = [];
+  for (const meeting of meetings) {
+    const start = minutesFrom(meeting.starts, "1970-01-01");
+    const end = minutesFrom(meeting.ends, "1970-01-01");
+    if (start == null || end == null || end <= start) continue;
+    const course = meeting.course?.trim();
+    timed.push(course ? { start, end, course } : { start, end });
+  }
+  return timed;
+}
+
+/**
+ * Course names for the status line. A back-to-back block is named for the
+ * meeting that ends it, not the one running at `at`. The next course is the
+ * one that starts at the free-until time; a blank meeting in between doesn't
+ * lend its later class's name.
+ */
+export function classroomCourses(
+  meetings: readonly { starts: string; ends: string; course?: string }[],
+  at: number,
+): { currentCourse?: string; nextCourse?: string } {
+  const timed = timedMeetings(meetings);
+  const merged = mergeBookings(timed.map(({ start, end }) => ({ start, end })));
+  const covering = merged.find((booking) => booking.start <= at && booking.end > at);
+  const upcoming = merged.find((booking) => booking.start > at && booking.start < 1440);
+  let currentCourse: string | undefined;
+  if (covering) {
+    let last: TimedMeeting | undefined;
+    for (const meeting of timed) {
+      if (meeting.start >= covering.end || meeting.end <= covering.start) continue;
+      if (!last || meeting.end > last.end || (meeting.end === last.end && meeting.start >= last.start)) last = meeting;
+    }
+    currentCourse = last?.course;
+  }
+  const nextCourse = upcoming ? timed.find((meeting) => meeting.start === upcoming.start && meeting.course)?.course : undefined;
+  return {
+    ...(currentCourse ? { currentCourse } : {}),
+    ...(nextCourse ? { nextCourse } : {}),
   };
 }
 
@@ -146,7 +201,7 @@ export function buildRoomSlots(input: {
   classrooms: readonly ClassroomRoomInput[];
 }): RoomSlot[] {
   const parts = detroitParts(input.from);
-  const start = Math.floor(parts.minutes / SLOT_MINUTES) * SLOT_MINUTES;
+  const start = slotWindowStart(input.from);
   const bookedByItem = new Map<number, { start: string; end: string }[]>();
   if (!isUnavailable(input.availability)) {
     for (const item of input.availability.items) bookedByItem.set(item.libcalItemId, item.booked);
@@ -215,6 +270,7 @@ export function buildRoomSlots(input: {
       kind: "classroom",
       slots: slotsFor(bookings, start),
       status: statusAt(bookings, parts.minutes),
+      ...classroomCourses(room.meetings, parts.minutes),
     });
   }
 
@@ -250,6 +306,7 @@ type MeetingRecord = {
   room_number: string;
   starts: string;
   ends: string;
+  course: string;
   weekdays: number[];
   first_day: string;
   last_day: string;
@@ -298,7 +355,7 @@ export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlots
           readAll<MeetingRecord>((start, end) =>
             supabase
               .from("classroom_meetings")
-              .select("room_code, room_number, starts, ends, weekdays, first_day, last_day")
+              .select("room_code, room_number, starts, ends, course, weekdays, first_day, last_day")
               .eq("building_slug", buildingSlug)
               .order("room_code")
               .range(start, end),
@@ -338,7 +395,11 @@ export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlots
             roomNumber: row.room_number,
             floor: floorFromLabel(detail?.floor_label ?? null),
             capacity: detail?.seats ?? null,
-            meetings: roomMeetings.map((meeting) => ({ starts: meeting.starts, ends: meeting.ends })),
+            meetings: roomMeetings.map((meeting) => ({
+              starts: meeting.starts,
+              ends: meeting.ends,
+              course: meeting.course,
+            })),
           });
         }
 
@@ -371,9 +432,9 @@ export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlots
 
   if (!getSupabaseEnv()) return { rooms: [], loaded: true, error: "Supabase isn't configured." };
   if (!buildingSlug) return { rooms: [], loaded: true, error: null };
+  // The start minute rolls over every half hour. Keep showing the same
+  // building's rooms while that refetch runs instead of flashing a skeleton.
   if (state.key !== requestKey) {
-    // A new half hour refetches. Keep this building's last list until it lands
-    // so the drawer and the map fills don't blank.
     const sameBuilding = state.key.startsWith(`${buildingSlug}\n`);
     if (sameBuilding) return { rooms: state.rooms, loaded: true, error: state.error };
     return { rooms: [], loaded: false, error: null };

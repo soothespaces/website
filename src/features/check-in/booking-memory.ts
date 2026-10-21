@@ -9,9 +9,20 @@ export type SavedBooking = {
   roomName: string;
   roomNumber: string;
   buildingSlug: string;
-  spaceId: string;
-  start: string;
-  end: string;
+  spaceId: string | null;
+  startsAt: string;
+  endsAt: string;
+  bookingUrl?: string;
+};
+
+export type BookingInput = {
+  buildingSlug: string;
+  roomNumber: string;
+  spaceId: string | null;
+  startsAt: string;
+  endsAt: string;
+  bookingUrl?: string;
+  roomName?: string;
 };
 
 type Store = Pick<Storage, "getItem" | "setItem"> | undefined;
@@ -22,34 +33,37 @@ export function parseBookings(value: unknown): SavedBooking[] {
   for (const row of value) {
     if (!row || typeof row !== "object") continue;
     const record = row as Record<string, unknown>;
-    if (typeof record.roomName !== "string" || typeof record.roomNumber !== "string") continue;
-    if (typeof record.buildingSlug !== "string" || typeof record.spaceId !== "string") continue;
-    if (typeof record.start !== "string" || typeof record.end !== "string") continue;
-    if (!record.spaceId || Number.isNaN(Date.parse(record.start)) || Number.isNaN(Date.parse(record.end))) continue;
+    const startsAt = typeof record.startsAt === "string" ? record.startsAt : typeof record.start === "string" ? record.start : null;
+    const endsAt = typeof record.endsAt === "string" ? record.endsAt : typeof record.end === "string" ? record.end : null;
+    const spaceId = record.spaceId === null ? null : typeof record.spaceId === "string" ? record.spaceId : undefined;
+    if (typeof record.roomNumber !== "string" || typeof record.buildingSlug !== "string") continue;
+    if (spaceId === undefined || !startsAt || !endsAt) continue;
+    if (Number.isNaN(Date.parse(startsAt)) || Number.isNaN(Date.parse(endsAt))) continue;
     bookings.push({
-      roomName: record.roomName,
+      roomName: typeof record.roomName === "string" ? record.roomName : "",
       roomNumber: record.roomNumber,
       buildingSlug: record.buildingSlug,
-      spaceId: record.spaceId,
-      start: record.start,
-      end: record.end,
+      spaceId,
+      startsAt,
+      endsAt,
+      ...(typeof record.bookingUrl === "string" ? { bookingUrl: record.bookingUrl } : {}),
     });
   }
   return bookings;
 }
 
 export function bookingKey(booking: SavedBooking): string {
-  return `${booking.buildingSlug}\n${booking.roomNumber}\n${booking.start}`;
+  return `${booking.buildingSlug}\n${booking.roomNumber}\n${booking.startsAt}`;
 }
 
 export function pruneBookings(bookings: readonly SavedBooking[], now: number): SavedBooking[] {
-  return bookings.filter((booking) => Date.parse(booking.end) > now);
+  return bookings.filter((booking) => Date.parse(booking.endsAt) > now);
 }
 
 /** The booking whose window contains `now`, preferring the one that started latest. */
 export function activeBooking(bookings: readonly SavedBooking[], now: number): SavedBooking | null {
-  const active = pruneBookings(bookings, now).filter((booking) => Date.parse(booking.start) <= now);
-  active.sort((a, b) => Date.parse(b.start) - Date.parse(a.start));
+  const active = pruneBookings(bookings, now).filter((booking) => Date.parse(booking.startsAt) <= now);
+  active.sort((a, b) => Date.parse(b.startsAt) - Date.parse(a.startsAt));
   return active[0] ?? null;
 }
 
@@ -119,9 +133,18 @@ export function onBookingSaved(listener: () => void): () => void {
   return () => savedListeners.delete(listener);
 }
 
-export function rememberBooking(booking: SavedBooking, now = Date.now(), storage?: Store): void {
+export function rememberBooking(booking: BookingInput, now = Date.now(), storage?: Store): void {
   const store = storage ?? browserStore();
-  writeBookings(withBooking(readBookings(store), booking, now), store);
+  const saved: SavedBooking = {
+    roomName: booking.roomName ?? "",
+    roomNumber: booking.roomNumber,
+    buildingSlug: booking.buildingSlug,
+    spaceId: booking.spaceId,
+    startsAt: booking.startsAt,
+    endsAt: booking.endsAt,
+    ...(booking.bookingUrl ? { bookingUrl: booking.bookingUrl } : {}),
+  };
+  writeBookings(withBooking(readBookings(store), saved, now), store);
   if (storage == null) {
     for (const listener of savedListeners) listener();
   }

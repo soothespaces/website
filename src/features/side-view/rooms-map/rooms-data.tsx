@@ -2,8 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { detroitParts } from "@/lib/detroit";
-import { useRoomSlots, type RoomSlot } from "@/lib/data/room-slots";
-import { slotWindowStart } from "./room-copy";
+import { slotWindowStart, useRoomSlots, type RoomSlot } from "@/lib/data/room-slots";
 
 export type RoomsData = {
   from: Date;
