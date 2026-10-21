@@ -2,7 +2,6 @@
 
 import type { SpaceListDensity } from "@/features/spaces";
 import { BuildingPanel } from "@/features/map/panel/building-panel";
-import { SpacePanel } from "@/features/map/panel/space-panel";
 import { useMapState } from "@/features/map/map-state";
 import type { PanelRoute } from "./panel-route";
 
@@ -28,10 +27,4 @@ export function BuildingPanelScreen({ route, density }: PanelScreenProps) {
       density={density}
     />
   );
-}
-
-// `route.id` is the space slug. G1 replaces this registration.
-export function SpacePanelScreen({ route }: PanelScreenProps) {
-  if (route.kind !== "space") return null;
-  return <SpacePanel slug={route.id} />;
 }
