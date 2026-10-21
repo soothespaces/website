@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { detailPanelKinds, panelRegistry } from "@/features/side-view/registry";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { WIDE_QUERY } from "./map-layout-config";
 import { useMapState } from "./map-state";
@@ -27,14 +28,15 @@ export function MapSheet() {
 
   if (wide || route.kind === "home") return null;
 
+  const detail = Boolean(panelRegistry[route.kind]) && detailPanelKinds.has(route.kind);
   const offset = drag?.direction === "down" ? drag.offset : drag?.direction === "up" ? -drag.offset : 0;
   return (
     <section
       aria-label="Selected place"
       {...handlers}
       style={offset ? { transform: `translateY(${Math.max(offset, -80)}px)`, transition: "none" } : undefined}
-      className={`absolute inset-x-0 bottom-0 z-20 flex min-h-0 flex-col rounded-t-2xl bg-card text-card-foreground shadow-[0_0_0_1px_var(--border),0_-4px_16px_rgb(0_0_0/0.12)] transition-[transform,max-height] duration-200 ease-out motion-reduce:transition-none ${
-        expanded ? "top-2.5" : "max-h-[45%]"
+      className={`absolute inset-x-0 bottom-0 z-20 flex min-h-0 flex-col rounded-t-2xl bg-card text-card-foreground shadow-[0_0_0_1px_var(--border),0_-4px_16px_rgb(0_0_0/0.12)] transition-[transform,max-height,height] duration-200 ease-out motion-reduce:transition-none ${
+        expanded ? "top-2.5" : detail ? "h-[45%] overflow-hidden" : "max-h-[45%]"
       }`}
     >
       <Button
