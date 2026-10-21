@@ -97,6 +97,8 @@ export const InfoIcon = icon("InfoIcon", InfoGlyph);
 export const LayersIcon = icon("LayersIcon", LayersGlyph);
 export const LightIcon = icon("LightIcon", LightGlyph);
 export const LightningBoltIcon = icon("LightningBoltIcon", LightningGlyph);
+// Radix has no folded-map glyph. The globe is the map icon.
+export const MapIcon = icon("MapIcon", GlobeGlyph);
 export const MenuIcon = icon("MenuIcon", MenuGlyph);
 export const MoonIcon = icon("MoonIcon", MoonGlyph);
 export const PauseIcon = icon("PauseIcon", PauseGlyph);

@@ -37,6 +37,7 @@ export type SpaceSpot = {
 export type MapBuilding = {
   slug: string;
   name: string;
+  /** Preferred short name, such as "Shapiro Library". Null when we only have the official name. */
   shortName: string | null;
   lat: number | null;
   lng: number | null;
