@@ -5,13 +5,9 @@ import { Dialog } from "radix-ui";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from "@/components/ui/icons";
+import { photoUrl } from "@/lib/photos/url";
 import { useReducedMotion } from "@/lib/settings/use-reduced-motion";
-import {
-  photoFileUrl,
-  swipeDirection,
-  widthThatFits,
-  type ClassifiedPhoto,
-} from "./photo-model";
+import { swipeDirection, widthThatFits, type ClassifiedPhoto } from "./photo-model";
 
 // Full-screen viewer for the gallery and, later, the building and space
 // photo strips. Same photos, same order, same credit.
@@ -58,14 +54,14 @@ export function PhotoViewer({
     const chosen = widthThatFits(widths, viewport.width, viewport.ratio);
     if (chosen == null) return;
     const image = new window.Image();
-    image.src = photoFileUrl(supabaseUrl, next.pathPrefix, chosen);
+    image.src = photoUrl(supabaseUrl, next.pathPrefix, chosen);
   }, [open, photos, safeIndex, supabaseUrl, viewport.width, viewport.ratio]);
 
   if (!photo) return null;
 
   const widths = photo.widths.length ? photo.widths : [photo.width];
   const chosen = widthThatFits(widths, viewport.width, viewport.ratio) ?? widths[0] ?? photo.width;
-  const src = photoFileUrl(supabaseUrl, photo.pathPrefix, chosen);
+  const src = photoUrl(supabaseUrl, photo.pathPrefix, chosen);
 
   function step(delta: number) {
     const next = safeIndex + delta;
@@ -85,7 +81,13 @@ export function PhotoViewer({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black" />
         <Dialog.Content
+          data-no-swipe=""
           className="fixed inset-0 z-50 flex flex-col bg-black text-white outline-none"
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            const tile = document.querySelector(`[data-photo-tile="${CSS.escape(photo.id)}"]`);
+            if (tile instanceof HTMLElement) tile.focus();
+          }}
           onKeyDown={(event) => {
             if (event.key === "ArrowRight") {
               event.preventDefault();
@@ -96,11 +98,16 @@ export function PhotoViewer({
             }
           }}
           onTouchStart={(event) => {
+            event.stopPropagation();
             const point = event.touches[0];
             if (!point || (event.target as HTMLElement).closest("a, button")) return;
             touch.current = { x: point.clientX, y: point.clientY };
           }}
+          onTouchMove={(event) => {
+            event.stopPropagation();
+          }}
           onTouchEnd={(event) => {
+            event.stopPropagation();
             const start = touch.current;
             touch.current = null;
             const point = event.changedTouches[0];
@@ -109,12 +116,14 @@ export function PhotoViewer({
             if (directionName === "next") step(1);
             else if (directionName === "prev") step(-1);
           }}
-          onTouchCancel={() => {
+          onTouchCancel={(event) => {
+            event.stopPropagation();
             touch.current = null;
           }}
         >
           <div className="flex items-center justify-between gap-2 px-2 py-2">
             <p aria-live="polite" className="px-2 text-sm">
+              <span className="sr-only">{photo.caption}. </span>
               {safeIndex + 1} of {count}
             </p>
             <Dialog.Close asChild>

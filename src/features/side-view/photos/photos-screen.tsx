@@ -9,7 +9,14 @@ import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { PanelScreenProps } from "../registry";
 import { PhotoGrid } from "./photo-grid";
 import { PhotoViewer } from "./photo-viewer";
-import { classifyPhoto, filterPhotos, groupPhotos, photoCountLabel, type PhotoFilter } from "./photo-model";
+import {
+  classifyPhoto,
+  filterPhotos,
+  orderPhotos,
+  photoCountLabel,
+  type ClassifiedPhoto,
+  type PhotoFilter,
+} from "./photo-model";
 import { useBuildingPhotos } from "./use-building-photos";
 
 const FILTERS: { value: PhotoFilter; label: string }[] = [
@@ -33,11 +40,9 @@ export function PhotosScreen({ route }: PanelScreenProps) {
   const loadedPhotos = useBuildingPhotos(slug, spaceSlug);
 
   const classified = useMemo(() => loadedPhotos.photos.map(classifyPhoto), [loadedPhotos.photos]);
-  const allowed = useMemo(() => classified.filter((photo) => !photo.hidden), [classified]);
-  const shown = useMemo(() => filterPhotos(classified, filter), [classified, filter]);
-  const groups = useMemo(() => groupPhotos(shown), [shown]);
-  const ordered = useMemo(() => groups.flatMap((group) => group.photos), [groups]);
-  const openIndex = ordered.findIndex((photo) => photo.id === openId);
+  const allowed = useMemo(() => filterPhotos(classified, "all"), [classified]);
+  const shown = useMemo(() => orderPhotos(filterPhotos(classified, filter)), [classified, filter]);
+  const openIndex = shown.findIndex((photo) => photo.id === openId);
   const supabaseUrl = getSupabaseEnv()?.url;
 
   if (route.kind !== "photos") return null;
@@ -75,14 +80,13 @@ export function PhotosScreen({ route }: PanelScreenProps) {
           loaded={loadedPhotos.loaded}
           error={loadedPhotos.error}
           filter={filter}
-          groups={groups}
-          total={shown.length}
+          photos={shown}
           onOpen={setOpenId}
         />
       </div>
       {supabaseUrl ? (
         <PhotoViewer
-          photos={ordered}
+          photos={shown}
           index={openIndex < 0 ? 0 : openIndex}
           open={openIndex >= 0}
           supabaseUrl={supabaseUrl}
@@ -90,7 +94,7 @@ export function PhotosScreen({ route }: PanelScreenProps) {
             if (!next) setOpenId(null);
           }}
           onIndexChange={(next) => {
-            const photo = ordered[next];
+            const photo = shown[next];
             if (photo) setOpenId(photo.id);
           }}
         />
@@ -103,15 +107,13 @@ function PhotoBody({
   loaded,
   error,
   filter,
-  groups,
-  total,
+  photos,
   onOpen,
 }: {
   loaded: boolean;
   error: string | null;
   filter: PhotoFilter;
-  groups: ReturnType<typeof groupPhotos>;
-  total: number;
+  photos: ClassifiedPhoto[];
   onOpen: (id: string) => void;
 }) {
   if (!loaded) {
@@ -132,7 +134,7 @@ function PhotoBody({
     );
   }
 
-  if (total === 0) {
+  if (photos.length === 0) {
     const description =
       filter === "visitors"
         ? "No visitor photos yet."
@@ -142,5 +144,5 @@ function PhotoBody({
     return <EmptyState title={description} />;
   }
 
-  return <PhotoGrid groups={groups} total={total} onOpen={onOpen} />;
+  return <PhotoGrid photos={photos} onOpen={onOpen} />;
 }

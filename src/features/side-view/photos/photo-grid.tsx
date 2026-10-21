@@ -3,30 +3,17 @@
 import Image, { type ImageLoaderProps } from "next/image";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
+import { photoUrl } from "@/lib/photos/url";
 import { getSupabaseEnv } from "@/lib/supabase/env";
-import { photoFileUrl, widthThatFits, type ClassifiedPhoto, type PhotoGroup } from "./photo-model";
+import { widthAtLeast, type ClassifiedPhoto } from "./photo-model";
 
-// One column until the panel is wide enough for two. 320px of dock is one
-// column; a 400px panel gets two.
-const COLUMNS_CLASS = "columns-1 gap-3 @[20rem]:columns-2";
-
-// Next asks for a width from its own list. Snap to a file we actually stored
-// so the request never goes through Vercel's image optimizer.
+// Next asks for a width from its own list. Use the smallest file that still
+// covers that request so a 640px slot is not served the 480px file.
 function storedWidthLoader(widths: readonly number[], supabaseUrl: string) {
   return ({ src, width }: ImageLoaderProps) => {
-    const chosen = widthThatFits(widths, width, 1);
-    return photoFileUrl(supabaseUrl, src, chosen ?? width);
+    const chosen = widthAtLeast(widths, width);
+    return photoUrl(supabaseUrl, src, chosen ?? width);
   };
-}
-
-function sectionsOf(groups: readonly PhotoGroup[]) {
-  const sections: { group: PhotoGroup; start: number }[] = [];
-  let start = 0;
-  for (const group of groups) {
-    sections.push({ group, start });
-    start += group.photos.length;
-  }
-  return sections;
 }
 
 function Tile({
@@ -76,6 +63,7 @@ function Tile({
   return (
     <Button
       variant="ghost"
+      data-photo-tile={photo.id}
       className="h-auto w-full min-h-0 items-stretch rounded-lg p-0 text-left font-normal hover:bg-transparent"
       aria-label={`${photo.caption}. ${photo.pill}. Photo ${position} of ${total}`}
       onClick={() => onOpen(photo.id)}
@@ -86,47 +74,28 @@ function Tile({
 }
 
 export function PhotoGrid({
-  groups,
-  total,
+  photos,
   onOpen,
 }: {
-  groups: readonly PhotoGroup[];
-  total: number;
+  photos: readonly ClassifiedPhoto[];
   onOpen?: (id: string) => void;
 }) {
   const env = getSupabaseEnv();
   if (!env) return null;
-  const showHeadings = !(groups.length === 1 && groups[0]?.key === "building");
-  const headingId = (key: string) => `photo-group-${key.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
 
   return (
-    <div className="@container flex flex-col gap-6">
-      {sectionsOf(groups).map(({ group, start }) => (
-        <section
-          key={group.key}
-          aria-labelledby={showHeadings ? headingId(group.key) : undefined}
-          className="flex flex-col gap-2"
-        >
-          {showHeadings ? (
-            <h2 id={headingId(group.key)} className="text-sm font-medium">
-              {group.label}
-            </h2>
-          ) : null}
-          <ul className={COLUMNS_CLASS}>
-            {group.photos.map((photo, index) => (
-              <li key={photo.id} className="mb-3 break-inside-avoid">
-                <Tile
-                  photo={photo}
-                  supabaseUrl={env.url}
-                  position={start + index + 1}
-                  total={total}
-                  onOpen={onOpen}
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
+    <ul className="columns-2 gap-2 max-[359px]:columns-1">
+      {photos.map((photo, index) => (
+        <li key={photo.id} className="mb-2 break-inside-avoid">
+          <Tile
+            photo={photo}
+            supabaseUrl={env.url}
+            position={index + 1}
+            total={photos.length}
+            onOpen={onOpen}
+          />
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

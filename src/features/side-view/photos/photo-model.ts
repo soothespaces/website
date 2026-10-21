@@ -1,6 +1,10 @@
 // Labels, filters and order for the photos gallery. Google photos are never
 // shown. Visitor versus official comes from the credit line.
 
+import { pointInPolygon } from "@/lib/geo";
+import { photoUrl } from "@/lib/photos/url";
+import { sameRoomNumber } from "@/lib/data/room-number";
+
 export type GalleryPhoto = {
   id: string;
   pathPrefix: string;
@@ -17,13 +21,29 @@ export type GalleryPhoto = {
   roomNumber: string | null;
   lat: number | null;
   lng: number | null;
+  /** The row's space_id. Admin uploads leave this empty and tag a room instead. */
   spaceId: string | null;
+  buildingSlug: string | null;
+  /** Set when the photo belongs to a space, including a room or spot match. */
   spaceName: string | null;
   spaceSlug: string | null;
-  spaceFloor: number | null;
   createdAt: string;
-  uploadedBy: string | null;
   isListed: boolean;
+};
+
+export type SpaceLocationRef = {
+  floor: number;
+  roomNumber: string | null;
+  /** GeoJSON Polygon, or null for a room that is only a number. */
+  area: unknown;
+};
+
+export type SpaceRef = {
+  id: string;
+  slug: string;
+  name: string;
+  buildingSlug: string;
+  locations: readonly SpaceLocationRef[];
 };
 
 export type PhotoSource = "visitor" | "official";
@@ -37,12 +57,6 @@ export type ClassifiedPhoto = GalleryPhoto & {
 };
 
 export type PhotoFilter = "all" | "visitors" | "official";
-
-export type PhotoGroup = {
-  key: string;
-  label: string;
-  photos: ClassifiedPhoto[];
-};
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
 
@@ -111,7 +125,7 @@ export function classifyPhoto(photo: GalleryPhoto): ClassifiedPhoto {
 
 export function filterPhotos(photos: readonly ClassifiedPhoto[], filter: PhotoFilter): ClassifiedPhoto[] {
   return photos.filter((photo) => {
-    if (photo.hidden) return false;
+    if (photo.hidden || photo.kind === "panorama") return false;
     if (filter === "visitors") return photo.source === "visitor";
     if (filter === "official") return photo.source === "official";
     return true;
@@ -124,65 +138,79 @@ export function photoCountLabel(count: number): string {
   return `${count} photos`;
 }
 
-const FLOOR_LAST = 10_000;
+type PhotoMatch = Pick<GalleryPhoto, "spaceId" | "buildingSlug" | "floor" | "roomNumber" | "lat" | "lng">;
 
-function floorRank(photo: ClassifiedPhoto): number {
-  const floor = photo.floor ?? photo.spaceFloor;
-  return floor == null ? FLOOR_LAST : floor;
+function polygonRing(area: unknown): readonly (readonly [number, number])[] | null {
+  if (!area || typeof area !== "object") return null;
+  const coordinates = (area as { coordinates?: unknown }).coordinates;
+  if (!Array.isArray(coordinates) || !Array.isArray(coordinates[0])) return null;
+  const ring: [number, number][] = [];
+  for (const point of coordinates[0]) {
+    if (!Array.isArray(point) || point.length < 2) return null;
+    const lng = point[0];
+    const lat = point[1];
+    if (typeof lng !== "number" || typeof lat !== "number") return null;
+    ring.push([lng, lat]);
+  }
+  return ring.length >= 3 ? ring : null;
 }
 
-function groupMeta(photo: ClassifiedPhoto): { key: string; label: string; spot: boolean } {
-  if (photo.roomNumber) {
-    const floor = photo.floor == null ? "" : `Floor ${photo.floor} · `;
-    return { key: `room:${photo.floor ?? "x"}:${photo.roomNumber}`, label: `${floor}Room ${photo.roomNumber}`, spot: false };
-  }
+/**
+ * The space a photo belongs to. Direct `space_id` wins, then a room number
+ * on the same floor, then a spot inside a location's outline.
+ */
+export function photoSpace(photo: PhotoMatch, spaces: readonly SpaceRef[]): SpaceRef | null {
   if (photo.spaceId) {
-    return { key: `space:${photo.spaceId}`, label: photo.spaceName?.trim() || "Study space", spot: false };
+    const direct = spaces.find((space) => space.id === photo.spaceId);
+    if (direct) return direct;
   }
-  if (photo.lat != null && photo.lng != null) {
-    const label = photo.floor == null ? "Spot" : `Floor ${photo.floor} spot`;
-    return {
-      key: `spot:${photo.floor ?? "x"}:${photo.lat.toFixed(4)}:${photo.lng.toFixed(4)}`,
-      label,
-      spot: true,
-    };
+
+  if (photo.buildingSlug && photo.floor != null && photo.roomNumber) {
+    const byRoom = spaces.find(
+      (space) =>
+        space.buildingSlug === photo.buildingSlug &&
+        space.locations.some(
+          (location) => location.floor === photo.floor && sameRoomNumber(location.roomNumber, photo.roomNumber),
+        ),
+    );
+    if (byRoom) return byRoom;
   }
-  return { key: "building", label: "Building", spot: false };
+
+  if (photo.buildingSlug && photo.floor != null && photo.lat != null && photo.lng != null) {
+    const point = { lat: photo.lat, lng: photo.lng };
+    const bySpot = spaces.find(
+      (space) =>
+        space.buildingSlug === photo.buildingSlug &&
+        space.locations.some((location) => {
+          if (location.floor !== photo.floor) return false;
+          const ring = polygonRing(location.area);
+          return ring != null && pointInPolygon(point, ring);
+        }),
+    );
+    if (bySpot) return bySpot;
+  }
+
+  return null;
 }
 
-/** Rooms and named spaces first, then spots, low floors before high ones. */
-export function groupPhotos(photos: readonly ClassifiedPhoto[]): PhotoGroup[] {
-  const groups = new Map<string, PhotoGroup & { floor: number; spot: number }>();
-  for (const photo of photos) {
-    const meta = groupMeta(photo);
-    const floor = floorRank(photo);
-    const existing = groups.get(meta.key);
-    if (existing) {
-      existing.photos.push(photo);
-      existing.floor = Math.min(existing.floor, floor);
-    } else {
-      groups.set(meta.key, {
-        key: meta.key,
-        label: meta.label,
-        photos: [photo],
-        floor,
-        spot: meta.spot ? 1 : 0,
-      });
-    }
-  }
+export function photosForSpace<T extends PhotoMatch>(
+  photos: readonly T[],
+  space: SpaceRef,
+  spaces: readonly SpaceRef[],
+): T[] {
+  return photos.filter((photo) => photoSpace(photo, spaces)?.id === space.id);
+}
 
-  const ordered = [...groups.values()].sort(
-    (a, b) => a.floor - b.floor || a.spot - b.spot || a.label.localeCompare(b.label),
-  );
-  for (const group of ordered) {
-    group.photos.sort((a, b) => {
-      const spot = Number(a.lat != null) - Number(b.lat != null);
-      if (spot !== 0) return spot;
-      if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
-      return a.createdAt.localeCompare(b.createdAt);
-    });
-  }
-  return ordered.map(({ key, label, photos: grouped }) => ({ key, label, photos: grouped }));
+/** Spaces first, then the rest of the building. Within each, saved order then date. */
+export function orderPhotos<T extends Pick<GalleryPhoto, "spaceSlug" | "sortOrder" | "createdAt">>(
+  photos: readonly T[],
+): T[] {
+  return [...photos].sort((a, b) => {
+    const placed = Number(b.spaceSlug != null) - Number(a.spaceSlug != null);
+    if (placed !== 0) return placed;
+    if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
+    return a.createdAt.localeCompare(b.createdAt);
+  });
 }
 
 export function orderedWidths(widths: readonly number[]): number[] {
@@ -202,10 +230,11 @@ export function widthThatFits(widths: readonly number[], cssPixels: number, pixe
   return fit ?? sorted[0];
 }
 
-export function photoFileUrl(supabaseUrl: string, pathPrefix: string, width: number): string {
-  const base = supabaseUrl.replace(/\/$/, "");
-  const prefix = pathPrefix.replace(/^\//, "");
-  return `${base}/storage/v1/object/public/${prefix}-${width}.webp`;
+/** Smallest stored width that covers a request. The largest, if none do. */
+export function widthAtLeast(widths: readonly number[], requested: number): number | null {
+  const sorted = orderedWidths(widths);
+  if (!sorted.length) return null;
+  return sorted.find((width) => width >= requested) ?? sorted[sorted.length - 1];
 }
 
 /** Left goes to the next photo, right to the previous. A short or vertical drag is ignored. */
@@ -216,6 +245,6 @@ export function swipeDirection(dx: number, dy: number): "next" | "prev" | null {
 
 export function photoSrcSet(supabaseUrl: string, pathPrefix: string, widths: readonly number[]): string {
   return orderedWidths(widths)
-    .map((width) => `${photoFileUrl(supabaseUrl, pathPrefix, width)} ${width}w`)
+    .map((width) => `${photoUrl(supabaseUrl, pathPrefix, width)} ${width}w`)
     .join(", ");
 }
