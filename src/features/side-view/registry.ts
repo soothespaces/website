@@ -1,9 +1,14 @@
 "use client";
 
 import type { ComponentType } from "react";
-import { BuildingPanelScreen, SpacePanelScreen, type PanelScreenProps } from "./builtin-screens";
+import type { PanelScreenProps } from "./builtin-screens";
+import { BuildingPanelScreen } from "./building/building-screen";
 import { HomeScreen } from "./home/home-screen";
+import { HoursScreen } from "./hours/hours-screen";
+import { PhotosScreen } from "./photos/photos-screen";
 import type { PanelRoute } from "./panel-route";
+import { SpaceScreen } from "./space/space-screen";
+import { SpacesScreen } from "./spaces/spaces-screen";
 
 export type { PanelScreenProps };
 
@@ -12,5 +17,20 @@ export type { PanelScreenProps };
 export const panelRegistry: Partial<Record<PanelRoute["kind"], ComponentType<PanelScreenProps>>> = {
   home: HomeScreen,
   building: BuildingPanelScreen,
-  space: SpacePanelScreen,
+  space: SpaceScreen,
+  hours: HoursScreen,
+  photos: PhotosScreen,
+  spaces: SpacesScreen,
 };
+
+// These screens draw their own back button and title (Home needs none), and
+// fill the frame so a footer stays visible. The selection panel hides its own
+// header for them.
+export const detailPanelKinds: ReadonlySet<PanelRoute["kind"]> = new Set([
+  "home",
+  "building",
+  "hours",
+  "photos",
+  "spaces",
+  "space",
+]);

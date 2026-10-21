@@ -4,7 +4,7 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { ReactNode } from "react";
 import Map, { GeolocateControl, NavigationControl, ScaleControl } from "react-map-gl/maplibre";
-import { rememberPosition } from "@/lib/location/use-location";
+import { rememberFix } from "@/lib/location/store";
 import { useReducedMotion } from "@/lib/settings/use-reduced-motion";
 import { useResolvedTheme } from "@/lib/use-resolved-theme";
 import {
@@ -63,7 +63,10 @@ export default function CampusMap({ children }: { children?: ReactNode }) {
         <GeolocateControl
           position="top-right"
           onGeolocate={(event) => {
-            rememberPosition({ latitude: event.coords.latitude, longitude: event.coords.longitude });
+            rememberFix(
+              { latitude: event.coords.latitude, longitude: event.coords.longitude },
+              event.coords.accuracy,
+            );
           }}
         />
         <ScaleControl position="bottom-left" />

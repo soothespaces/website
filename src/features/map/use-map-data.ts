@@ -154,7 +154,7 @@ export function useMapData(): MapData {
         const buildings: BuildingIndex = new Map();
         const buildingsBySlug: MapData["buildingsBySlug"] = new Map();
         for (const { slug, name, short_name, lat, lng, official_id, record } of rows) {
-          const building = { slug, name, shortName: short_name, lat, lng };
+          const building = { slug, name, shortName: short_name?.trim() || null, lat, lng };
           for (const id of [official_id, record]) {
             if (id && !buildings.has(id)) buildings.set(id, building);
           }

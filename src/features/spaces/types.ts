@@ -5,9 +5,8 @@ type Tables = Database["public"]["Tables"];
 // What lists, search and the detail view need to know about a study space.
 export type SpaceSummary = Pick<
   Tables["spaces"]["Row"],
-  "slug" | "name" | "summary" | "floor_label" | "noise_level" | "features" | "lat" | "lng"
+  "id" | "slug" | "name" | "summary" | "floor_label" | "noise_level" | "features" | "lat" | "lng"
 > & {
-  id?: string;
   light_level?: Tables["spaces"]["Row"]["light_level"];
   capacity?: number | null;
   image_url?: string | null;

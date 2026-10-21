@@ -32,7 +32,10 @@ export function HomeScreen({ density }: PanelScreenProps) {
   const filteredOut = catalog.loaded && spaceFiltersActive(filters) && filtered.length === 0;
 
   return (
-    <div className="flex flex-col gap-4 px-1 pb-3">
+    <div
+      data-detail-scroll=""
+      className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain px-1 pb-3"
+    >
       {/* Wide screens use the dock's field, which stays put while typing. */}
       <div className="sticky top-0 z-10 -mx-1 border-b border-border bg-card px-2 py-2 md:hidden">
         <SpaceSearchField value={search.query} onChange={search.setQuery} />

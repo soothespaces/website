@@ -63,7 +63,16 @@ export type Settings = {
   study: StudyPreferences;
 };
 
-/** True when the visitor chose something other than "any" or an empty list. */
+export const DEFAULT_STUDY: StudyPreferences = {
+  noise: "any",
+  setting: "any",
+  brightness: "any",
+  daylight: "any",
+  niceToHave: [],
+  when: [],
+};
+
+/** True when study choices should change sort order. "Any" and empty lists do not. */
 export function hasStudyPreferences(study: StudyPreferences): boolean {
   return (
     study.noise !== "any" ||
@@ -74,15 +83,6 @@ export function hasStudyPreferences(study: StudyPreferences): boolean {
     study.when.length > 0
   );
 }
-
-export const DEFAULT_STUDY: StudyPreferences = {
-  noise: "any",
-  setting: "any",
-  brightness: "any",
-  daylight: "any",
-  niceToHave: [],
-  when: [],
-};
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: "system",

@@ -363,6 +363,12 @@ export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlots
 
   if (!getSupabaseEnv()) return { rooms: [], loaded: true, error: "Supabase isn't configured." };
   if (!buildingSlug) return { rooms: [], loaded: true, error: null };
-  if (state.key !== requestKey) return { rooms: [], loaded: false, error: null };
+  // The start minute rolls over every half hour. Keep showing the same
+  // building's rooms while that refetch runs instead of flashing a skeleton.
+  if (state.key !== requestKey) {
+    const sameBuilding = state.key.startsWith(`${buildingSlug}\n`);
+    if (sameBuilding) return { rooms: state.rooms, loaded: true, error: state.error };
+    return { rooms: [], loaded: false, error: null };
+  }
   return { rooms: state.rooms, loaded: state.loaded, error: state.error };
 }
