@@ -38,6 +38,13 @@ export function PhotoViewer({
   const count = photos.length;
   const safeIndex = count === 0 ? 0 : Math.min(Math.max(index, 0), count - 1);
   const photo = photos[safeIndex];
+  // Closing clears the open id before focus returns, which would otherwise
+  // resolve to the first tile. Remember the photo that was actually showing.
+  const shownId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (open && photo) shownId.current = photo.id;
+  }, [open, photo]);
 
   useEffect(() => {
     const read = () => setViewport({ width: window.innerWidth, ratio: window.devicePixelRatio || 1 });
@@ -66,6 +73,8 @@ export function PhotoViewer({
   function step(delta: number) {
     const next = safeIndex + delta;
     if (next < 0 || next >= count) return;
+    const nextPhoto = photos[next];
+    if (nextPhoto) shownId.current = nextPhoto.id;
     setMotion(delta > 0 ? "next" : "prev");
     onIndexChange(next);
   }
@@ -85,7 +94,9 @@ export function PhotoViewer({
           className="fixed inset-0 z-50 flex flex-col bg-black text-white outline-none"
           onCloseAutoFocus={(event) => {
             event.preventDefault();
-            const tile = document.querySelector(`[data-photo-tile="${CSS.escape(photo.id)}"]`);
+            const id = shownId.current;
+            if (!id) return;
+            const tile = document.querySelector(`[data-photo-tile="${CSS.escape(id)}"]`);
             if (tile instanceof HTMLElement) tile.focus();
           }}
           onKeyDown={(event) => {
