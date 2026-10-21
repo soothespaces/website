@@ -261,6 +261,22 @@ export function requestFix(): Promise<OneShotPositionResult> {
 }
 
 /**
+ * A fix someone else read after the visitor asked for it, such as the map's
+ * locate button. Callers that sort by distance pick it up from the store.
+ */
+export function rememberFix(coords: Coordinates, accuracyMeters?: number | null) {
+  publish({
+    permission: "granted",
+    fix: {
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+      accuracy: accuracyMeters ?? null,
+      at: env.now(),
+    },
+  });
+}
+
+/**
  * Keep a fresh fix while this caller is mounted, permission is granted, the
  * visitor has interacted, and the tab is visible. The returned function
  * releases the caller.

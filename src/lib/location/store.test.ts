@@ -6,6 +6,7 @@ import {
   configureLocationStore,
   ensureStarted,
   getSnapshot,
+  rememberFix,
   requestFix,
   resetLocationStoreForTests,
 } from "./store.ts";
@@ -228,5 +229,15 @@ describe("location store", () => {
     assert.equal(a.ok, true);
     assert.equal(b.ok, true);
     assert.equal(fake.calls(), 1);
+  });
+
+  it("shares a fix from the map's locate button without reading again", async () => {
+    const fake = harness("prompt");
+    await ensureStarted();
+    rememberFix({ latitude: 42.29, longitude: -83.71 }, 12);
+    assert.equal(getSnapshot().permission, "granted");
+    assert.equal(getSnapshot().fix?.latitude, 42.29);
+    assert.equal(getSnapshot().fix?.accuracy, 12);
+    assert.equal(fake.calls(), 0);
   });
 });

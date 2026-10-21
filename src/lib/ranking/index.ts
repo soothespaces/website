@@ -95,7 +95,8 @@ function getNoiseDistance(a: NoiseLevel, b: NoiseLevel): number {
   return Math.abs(NOISE_ORDER.indexOf(a) - NOISE_ORDER.indexOf(b));
 }
 
-function supportsGroupSize(space: RankableSpace, requested: NonNullable<RankContext["groupSize"]>): boolean {
+/** Whether a space can hold the requested group. Ranking uses this as a bonus, never a filter. */
+export function supportsGroupSize(space: RankableSpace, requested: NonNullable<RankContext["groupSize"]>): boolean {
   const cap = space.maxGroupSize;
   if (typeof cap === "number") {
     if (requested === "just_me") return cap >= 1;
