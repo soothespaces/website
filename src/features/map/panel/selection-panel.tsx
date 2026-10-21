@@ -57,10 +57,10 @@ function PanelFrame({
   const ref = useRef<HTMLDivElement>(null);
   const key = panelRouteKey(route);
   const Screen = panelRegistry[route.kind];
-  // Detail screens bring their own back control. When the frame has a fixed
-  // height they fill it, so their footer stays on screen while the body scrolls.
+  // Detail screens bring their own back control and fill the frame, including
+  // the collapsed phone sheet, so a footer stays visible while the body scrolls.
   const detail = Boolean(Screen) && detailPanelKinds.has(route.kind);
-  const fill = detail && bounded;
+  const fill = detail;
 
   // Scroll lives on the frame. Back hides it instead of unmounting it. The
   // saved offset covers a browser that zeroes scrollTop when the frame is
@@ -125,6 +125,10 @@ export function SelectionPanel({
   const { stack, back, clear } = useMapState();
   const [scrolls] = useState(() => new Map<string, number>());
   const rootRef = useRef<HTMLDivElement>(null);
+  const activeRoute = stack.at(-1);
+  const detailOpen = Boolean(
+    activeRoute && panelRegistry[activeRoute.kind] && detailPanelKinds.has(activeRoute.kind),
+  );
 
   const onBack = () => {
     // Read the position before Back hides the frame.
@@ -135,7 +139,7 @@ export function SelectionPanel({
   };
 
   return (
-    <div ref={rootRef} className={`flex min-h-0 flex-col ${bounded ? "flex-1" : ""}`}>
+    <div ref={rootRef} className={`flex min-h-0 flex-col ${bounded || detailOpen ? "flex-1" : ""}`}>
       {stack.map((route, index) => {
         // Home is the search results until a screen registers for it.
         if (route.kind === "home" && !panelRegistry.home) return null;
