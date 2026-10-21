@@ -30,6 +30,13 @@ export function loginHref(next?: string | null): string {
   return path === "/" ? "/login" : `/login?next=${encodeURIComponent(path)}`;
 }
 
+/** Sign-in link that comes back to this page, including its query string. */
+export function loginHrefFor(pathname: string, search = ""): string {
+  if (!search || search === "?") return loginHref(pathname);
+  const query = search.startsWith("?") ? search : `?${search}`;
+  return loginHref(`${pathname}${query}`);
+}
+
 /** Error codes the auth routes put in /login?error=…, and what to show. */
 export const LOGIN_ERRORS = {
   umich_only: "Use your @umich.edu Google account to sign in.",

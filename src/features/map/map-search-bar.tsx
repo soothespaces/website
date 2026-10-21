@@ -2,13 +2,15 @@
 
 import { SearchIcon } from "@/components/ui/icons";
 import { SPACE_SEARCH_PLACEHOLDER } from "@/features/spaces";
+import { panelRegistry } from "@/features/side-view/registry";
 import { useMapState } from "./map-state";
 import { Button } from "@/components/ui/button";
 
 // Phones: a search bar floating over the map. It's a button: tapping it
-// opens the full-screen search (<MapSearchScreen>).
+// opens the full-screen search (<MapSearchScreen>). Home has its own field.
 export function MapSearchBar({ onOpen }: { onOpen: () => void }) {
-  const { search } = useMapState();
+  const { search, route } = useMapState();
+  if (route.kind === "home" && panelRegistry.home) return null;
   return (
     <Button
       variant="ghost"
