@@ -13,6 +13,7 @@ import {
   ExternalLinkIcon as ExternalLinkGlyph,
   FrameIcon as FrameGlyph,
   GearIcon as SettingsGlyph,
+  GlobeIcon as GlobeGlyph,
   HamburgerMenuIcon as MenuGlyph,
   HomeIcon as HomeGlyph,
   HeartFilledIcon as HeartFilledGlyph,
@@ -88,6 +89,7 @@ export const EnterIcon = icon("EnterIcon", EnterGlyph);
 export const ExternalLinkIcon = icon("ExternalLinkIcon", ExternalLinkGlyph);
 export const FilterIcon = icon("FilterIcon", FilterGlyph);
 export const FrameIcon = icon("FrameIcon", FrameGlyph);
+export const GlobeIcon = icon("GlobeIcon", GlobeGlyph);
 export const HeartFilledIcon = icon("HeartFilledIcon", HeartFilledGlyph);
 export const HeartIcon = icon("HeartIcon", HeartGlyph);
 export const HomeIcon = icon("HomeIcon", HomeGlyph);

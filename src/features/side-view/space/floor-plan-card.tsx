@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ChevronRightIcon, FrameIcon } from "@/components/ui/icons";
+import { ChevronRightIcon, GlobeIcon } from "@/components/ui/icons";
 import { cx } from "@/lib/cx";
 
 const cardClass =
@@ -13,7 +13,7 @@ export function FloorPlanCard({ subtitle, onShow }: { subtitle: string; onShow: 
   const body = (
     <>
       <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-        <FrameIcon />
+        <GlobeIcon />
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-semibold">Show on the floor plan</span>

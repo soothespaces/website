@@ -1,10 +1,13 @@
 "use client";
 
-import { useId } from "react";
+import { useId, type KeyboardEvent } from "react";
 import { Skeleton } from "@/components/ui/feedback";
+import { FloorSwitcher } from "@/features/map/panel/floor-switcher";
+import { WIDE_QUERY } from "@/features/map/map-layout-config";
 import { useMapState } from "@/features/map/map-state";
 import type { PanelRoute } from "@/features/side-view/panel-route";
 import type { SpaceListDensity } from "@/features/spaces";
+import { useMediaQuery } from "@/lib/use-media-query";
 import type { AttributeSpace } from "@/lib/data/attributes";
 import type { SpaceDetail } from "./detail";
 import { floorsForPrinters, locationFloors } from "./detail";
@@ -14,13 +17,16 @@ import {
   buildingDisplayName,
   floorPlanSubtitle,
   heroPhoto,
+  isBlockedPhoto,
   photoCountLabel,
+  placeLine,
   spaceBackLabel,
   spaceParagraph,
   spacePhotosRoute,
+  visiblePhotoCount,
   whatsHereLabels,
 } from "./format";
-import { SpaceHeader, type SpaceHeaderBuilding } from "./header";
+import { SpaceHeading, SpaceToolbar, type SpaceHeaderBuilding } from "./header";
 import { SpaceHero } from "./hero";
 import { useSpaceDetail } from "./use-space-detail";
 import { WhatItsLike, useWhatItsLikeRows } from "./what-its-like";
@@ -50,7 +56,8 @@ function Note({ children }: { children: string }) {
 export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDensity }) {
   const slug = route.kind === "space" ? route.id : null;
   const titleId = useId();
-  const { data, stack, canGoBack, back, clear, push, setFloor } = useMapState();
+  const wide = useMediaQuery(WIDE_QUERY);
+  const { data, stack, canGoBack, back, clear, push, setFloor, floor, floorPlans } = useMapState();
   const detail = useSpaceDetail(slug);
   const listed = slug ? (data.spaces.find((space) => space.slug === slug) ?? null) : null;
   const record = detail.space;
@@ -65,17 +72,42 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
       : null,
   );
 
+  const onBack = () => {
+    if (canGoBack) back();
+    else clear();
+  };
+  function onKeyDown(event: KeyboardEvent<HTMLElement>) {
+    if (!wide || event.key !== "Escape" || event.defaultPrevented) return;
+    event.preventDefault();
+    event.stopPropagation();
+    onBack();
+  }
+
   if (route.kind !== "space") return null;
 
   if (!listed && !record) {
-    if (detail.error) return <Note>{detail.error}</Note>;
-    if (data.loaded && detail.loaded) return <Note>This space isn’t listed.</Note>;
+    if (detail.error) {
+      return (
+        <section onKeyDown={onKeyDown}>
+          <Note>{detail.error}</Note>
+        </section>
+      );
+    }
+    if (data.loaded && detail.loaded) {
+      return (
+        <section onKeyDown={onKeyDown}>
+          <Note>This space isn’t listed.</Note>
+        </section>
+      );
+    }
     return (
-      <div role="status" className="flex flex-col gap-3 px-1">
-        <span className="sr-only">Loading…</span>
-        <Skeleton className="h-8 w-2/3" />
-        <Skeleton className="aspect-[4/3] w-full rounded-xl" />
-      </div>
+      <section onKeyDown={onKeyDown} className="flex flex-col gap-3 px-1">
+        <div role="status">
+          <span className="sr-only">Loading…</span>
+          <Skeleton className="h-8 w-2/3" />
+          <Skeleton className="aspect-[4/3] w-full rounded-xl" />
+        </div>
+      </section>
     );
   }
 
@@ -93,15 +125,14 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
       : null);
   const paragraph = spaceParagraph(record?.summary ?? listed?.summary, record?.description);
   const features = record?.features ?? listed?.features ?? [];
+  const showsLibraryPhoto = Boolean(record?.imageUrl && !isBlockedPhoto({ sourceUrl: record.imageUrl }));
   const photo = record ? heroPhoto(record) : null;
-  const photoLabel = record ? photoCountLabel(record.photoCount) : null;
+  const photoLabel = record ? photoCountLabel(visiblePhotoCount(record.photoCount, showsLibraryPhoto)) : null;
+  const locationLine = placeLine(buildingDisplayName(building), record?.floorLabel ?? listed?.floor_label ?? null);
+  const plans = building ? floorPlans.get(building.slug) : undefined;
   const placedFloors = record ? locationFloors(record.locations) : [];
   const floorSubtitle = record ? floorPlanSubtitle(placedFloors) : null;
   const parent = stack.at(-2);
-  const onBack = () => {
-    if (canGoBack) back();
-    else clear();
-  };
   const onPhotos =
     record && building && photoLabel ? () => push(spacePhotosRoute(building.slug, record.slug)) : null;
   const onShowFloor =
@@ -112,18 +143,15 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
       : null;
 
   return (
-    <section aria-labelledby={titleId} aria-busy={!detail.loaded} className="flex min-w-0 flex-col gap-5 px-1 pb-2">
-      <SpaceHeader
-        titleId={titleId}
+    <section
+      aria-labelledby={titleId}
+      aria-busy={!detail.loaded}
+      onKeyDown={onKeyDown}
+      className="flex min-w-0 flex-col gap-5 px-1 pb-2"
+    >
+      <SpaceToolbar
         name={name}
         spaceId={record?.id ?? null}
-        noiseLevel={record?.noiseLevel ?? listed?.noise_level ?? null}
-        lat={record?.lat ?? listed?.lat ?? null}
-        lng={record?.lng ?? listed?.lng ?? null}
-        building={building}
-        hoursTarget={
-          detail.loaded ? { buildingSlug: building?.slug ?? null, spaceId: record?.id ?? null } : null
-        }
         backLabel={spaceBackLabel(parent, buildingDisplayName(building))}
         onBack={onBack}
       />
@@ -135,10 +163,21 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
       ) : (
         <SpaceHero photo={photo} photoLabel={photoLabel} onPhotos={onPhotos} />
       )}
+      <SpaceHeading
+        titleId={titleId}
+        name={name}
+        noiseLevel={record?.noiseLevel ?? listed?.noise_level ?? null}
+        lat={record?.lat ?? listed?.lat ?? null}
+        lng={record?.lng ?? listed?.lng ?? null}
+        building={building}
+        locationLine={locationLine}
+        hoursTarget={detail.loaded ? { buildingSlug: building?.slug ?? null, spaceId: record?.id ?? null } : null}
+      />
       {paragraph ? <p className="text-sm whitespace-pre-line">{paragraph}</p> : null}
       <WhatItsLike rows={rows} />
-      <CheckInCard />
+      <CheckInCard spaceSlug={route.id} spaceId={record?.id} />
       <WhatsHere labels={whatsHereLabels(features, rows?.map((row) => row.id) ?? null)} />
+      {plans?.length ? <FloorSwitcher floors={plans} floor={floor} onChange={setFloor} /> : null}
       {floorSubtitle ? <FloorPlanCard subtitle={floorSubtitle} onShow={onShowFloor} /> : null}
     </section>
   );

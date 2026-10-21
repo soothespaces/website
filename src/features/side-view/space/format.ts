@@ -36,6 +36,24 @@ export function photoCountLabel(count: number): string | null {
   return count === 1 ? "1 photo" : `${count} photos`;
 }
 
+/**
+ * Uploaded photos plus the library picture when that picture is the hero.
+ * The pill was counting only rows in `photos`, so a library photo on screen
+ * had no number.
+ */
+export function visiblePhotoCount(uploaded: number, showsLibraryPhoto: boolean): number {
+  const listed = Number.isInteger(uploaded) && uploaded > 0 ? uploaded : 0;
+  return listed + (showsLibraryPhoto ? 1 : 0);
+}
+
+/** The old panel's "Shapiro Library · Floor 2". Hidden when the floor is unknown. */
+export function placeLine(buildingName: string | null | undefined, floorLabel: string | null | undefined): string | null {
+  const floor = floorLabel?.trim();
+  if (!floor) return null;
+  const building = buildingName?.trim();
+  return building ? `${building} · ${floor}` : floor;
+}
+
 /** Floors from `space_locations`. No rows means the plan does not know this spot yet. */
 export function floorPlanSubtitle(floors: readonly number[]): string {
   const unique = [...new Set(floors)].sort((a, b) => a - b);

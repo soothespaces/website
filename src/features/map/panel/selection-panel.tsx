@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef, useState, type ReactNode, type UIEvent } from "react";
 import type { SpaceListDensity } from "@/features/spaces";
 import { panelRouteKey, type PanelRoute } from "@/features/side-view/panel-route";
-import { panelRegistry, panelScreenChrome } from "@/features/side-view/registry";
+import { detailPanelKinds, panelRegistry } from "@/features/side-view/registry";
 import { useMapState } from "../map-state";
 import { PanelHeader } from "./panel-header";
 
@@ -57,7 +57,7 @@ function PanelFrame({
   const ref = useRef<HTMLDivElement>(null);
   const key = panelRouteKey(route);
   const Screen = panelRegistry[route.kind];
-  const ownsChrome = panelScreenChrome.has(route.kind);
+  const ownsChrome = Boolean(Screen) && detailPanelKinds.has(route.kind);
 
   // Scroll lives on the frame. Back hides it instead of unmounting it. The
   // saved offset covers a browser that zeroes scrollTop when the frame is

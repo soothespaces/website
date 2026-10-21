@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { EnterIcon, HomeIcon, LightIcon, LightningBoltIcon, PersonIcon, PinIcon } from "@/components/ui/icons";
 import type { AttributeSpace } from "@/lib/data/attributes";
 import { useCheckInSummary } from "@/lib/data/check-ins";
@@ -36,10 +37,11 @@ export function useWhatItsLikeRows(
 }
 
 export function WhatItsLike({ rows }: { rows: readonly LikeRow[] | null }) {
+  const titleId = useId();
   if (!rows || rows.length === 0) return null;
   return (
-    <section aria-labelledby="space-what-its-like" className="flex flex-col gap-1">
-      <h2 id="space-what-its-like" className="text-base">
+    <section aria-labelledby={titleId} className="flex flex-col gap-1">
+      <h2 id={titleId} className="text-base">
         What it&apos;s like
       </h2>
       <ul className="flex flex-col">

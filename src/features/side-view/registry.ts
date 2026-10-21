@@ -14,6 +14,7 @@ export const panelRegistry: Partial<Record<PanelRoute["kind"], ComponentType<Pan
   space: SpaceScreen,
 };
 
-// These screens draw their own back control. The shared panel header would
-// stack a second Back (and a Close the space board does not have) above it.
-export const panelScreenChrome = new Set<PanelRoute["kind"]>(["space"]);
+// Screens that draw their own back control. The selection panel hides its
+// header for these. Preferences (#52) uses the same set; union the kinds
+// when that branch lands.
+export const detailPanelKinds: ReadonlySet<PanelRoute["kind"]> = new Set(["space"]);

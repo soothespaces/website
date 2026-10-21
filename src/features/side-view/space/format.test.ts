@@ -6,10 +6,12 @@ import {
   heroPhoto,
   isBlockedPhoto,
   photoCountLabel,
+  placeLine,
   spaceBackLabel,
   spaceOpenStatus,
   spaceParagraph,
   spacePhotosRoute,
+  visiblePhotoCount,
   walkPoint,
   walkTimeLabel,
   whatsHereLabels,
@@ -21,6 +23,20 @@ test("photo count hides zero and pluralizes", () => {
   assert.equal(photoCountLabel(1.5), null);
   assert.equal(photoCountLabel(1), "1 photo");
   assert.equal(photoCountLabel(5), "5 photos");
+});
+
+test("the pill counts a library hero as well as uploaded photos", () => {
+  assert.equal(visiblePhotoCount(0, false), 0);
+  assert.equal(visiblePhotoCount(0, true), 1);
+  assert.equal(visiblePhotoCount(5, true), 6);
+  assert.equal(visiblePhotoCount(5, false), 5);
+});
+
+test("the floor line is the old building and floor label", () => {
+  assert.equal(placeLine("Shapiro Library", "Floor 2"), "Shapiro Library · Floor 2");
+  assert.equal(placeLine(null, "Floor 2"), "Floor 2");
+  assert.equal(placeLine("Shapiro Library", "  "), null);
+  assert.equal(placeLine("Shapiro Library", null), null);
 });
 
 test("floor plan subtitle uses space_locations floors", () => {
