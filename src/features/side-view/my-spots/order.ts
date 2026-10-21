@@ -49,11 +49,26 @@ export function rowShift(index: number, from: number, over: number, heights: rea
   return 0;
 }
 
-/** The row whose midpoint the pointer has passed, using positions captured at drag start. */
-export function dropIndex(mids: readonly number[], clientY: number): number {
-  let over = 0;
-  for (let index = 0; index < mids.length; index++) {
-    if (clientY > (mids[index] ?? 0)) over = index;
+/**
+ * Where a drag that started on `from` should land.
+ * The pointer has to pass another row's midpoint. A small move inside the
+ * dragged row, including one that starts in its upper half, stays put.
+ */
+export function dropIndex(from: number, mids: readonly number[], clientY: number): number {
+  if (mids.length === 0) return 0;
+  const start = Math.min(Math.max(from, 0), mids.length - 1);
+  const origin = mids[start] ?? 0;
+  let over = start;
+  if (clientY < origin) {
+    for (let index = start - 1; index >= 0; index--) {
+      if (clientY < (mids[index] ?? 0)) over = index;
+      else break;
+    }
+  } else if (clientY > origin) {
+    for (let index = start + 1; index < mids.length; index++) {
+      if (clientY > (mids[index] ?? 0)) over = index;
+      else break;
+    }
   }
   return over;
 }

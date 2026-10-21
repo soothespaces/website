@@ -1,7 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
-import { DropdownMenu } from "radix-ui";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/ui/favorite-button";
 import { Skeleton } from "@/components/ui/feedback";
@@ -79,6 +78,9 @@ export function Rotation({ now }: { now: Date }) {
   });
   const sorted = sortRotation(ranked, mode, { preferences: study, groupSize: groupSize ?? undefined });
   const buildingSlugs = [...new Set(sorted.flatMap((item) => (item.wholeBuilding && item.buildingSlug ? [item.buildingSlug] : [])))];
+  // Room slots only change on the half hour. The minute clock must not refetch them.
+  const slotKey = Math.floor(now.getTime() / 1_800_000);
+  const slotFrom = useMemo(() => new Date(slotKey * 1_800_000), [slotKey]);
 
   function commit(from: number, to: number) {
     const ids = moveIds(
@@ -111,7 +113,7 @@ export function Rotation({ now }: { now: Date }) {
         {announcement}
       </p>
       {buildingSlugs.map((slug) => (
-        <RoomsFree key={slug} slug={slug} now={now} onCount={onRooms} />
+        <RoomsFree key={slug} slug={slug} from={slotFrom} onCount={onRooms} />
       ))}
       {waiting ? (
         <div role="status" className="flex flex-col gap-2">
@@ -188,7 +190,6 @@ function RotationList({
     heights: number[];
     mids: number[];
   } | null>(null);
-  const suppressMenuRef = useRef<number | null>(null);
   const [drag, setDrag] = useState<{ id: number; from: number; over: number; heights: number[] } | null>(null);
 
   function measure() {
@@ -204,6 +205,8 @@ function RotationList({
 
   function onPointerDown(event: ReactPointerEvent<HTMLButtonElement>, id: number) {
     if (event.button !== 0) return;
+    // Stop a menu or click from opening on press. The tap opens Move up / Move down on release.
+    event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
     pointer.current = { id, pointerId: event.pointerId, startY: event.clientY, moved: false, heights: [], mids: [] };
   }
@@ -219,7 +222,7 @@ function RotationList({
       current.mids = measured.mids;
     }
     const from = items.findIndex((item) => item.favorite.id === current.id);
-    const over = dropIndex(current.mids, event.clientY);
+    const over = dropIndex(from, current.mids, event.clientY);
     setDrag((previous) =>
       previous && previous.id === current.id && previous.over === over
         ? previous
@@ -227,19 +230,20 @@ function RotationList({
     );
   }
 
-  function finishPointer(event: ReactPointerEvent<HTMLButtonElement>) {
+  function finishPointer(event: ReactPointerEvent<HTMLButtonElement>): "ignored" | "tap" | "drag" {
     const current = pointer.current;
-    if (!current || event.pointerId !== current.pointerId) return;
+    if (!current || event.pointerId !== current.pointerId) return "ignored";
+    const moved = current.moved;
     pointer.current = null;
-    if (!current.moved) {
+    if (!moved) {
       setDrag(null);
-      return;
+      return "tap";
     }
-    suppressMenuRef.current = current.id;
     const from = items.findIndex((item) => item.favorite.id === current.id);
-    const over = drag && drag.id === current.id ? drag.over : dropIndex(current.mids, event.clientY);
+    const over = drag && drag.id === current.id ? drag.over : dropIndex(from, current.mids, event.clientY);
     setDrag(null);
     if (from >= 0 && over !== from) onMove(from, over);
+    return "drag";
   }
 
   return (
@@ -266,7 +270,6 @@ function RotationList({
                 name={item.name}
                 index={index}
                 count={items.length}
-                suppressMenuRef={suppressMenuRef}
                 onPointerDown={(event) => onPointerDown(event, item.favorite.id)}
                 onPointerMove={onPointerMove}
                 onPointerUp={finishPointer}
@@ -311,7 +314,6 @@ function MoveHandle({
   name,
   index,
   count,
-  suppressMenuRef,
   onPointerDown,
   onPointerMove,
   onPointerUp,
@@ -321,14 +323,16 @@ function MoveHandle({
   name: string;
   index: number;
   count: number;
-  suppressMenuRef: { current: number | null };
   onPointerDown: (event: ReactPointerEvent<HTMLButtonElement>) => void;
   onPointerMove: (event: ReactPointerEvent<HTMLButtonElement>) => void;
-  onPointerUp: (event: ReactPointerEvent<HTMLButtonElement>) => void;
-  onPointerCancel: (event: ReactPointerEvent<HTMLButtonElement>) => void;
+  onPointerUp: (event: ReactPointerEvent<HTMLButtonElement>) => "ignored" | "tap" | "drag";
+  onPointerCancel: (event: ReactPointerEvent<HTMLButtonElement>) => "ignored" | "tap" | "drag";
   onMove: (to: number) => void;
 }) {
+  const menuId = useId();
   const [open, setOpen] = useState(false);
+  // A press focuses the handle. That must not open the buttons until the pointer lifts without dragging.
+  const pointerFocusRef = useRef(false);
 
   function move(delta: number) {
     const to = index + delta;
@@ -337,68 +341,67 @@ function MoveHandle({
   }
 
   return (
-    <DropdownMenu.Root
-      open={open}
-      onOpenChange={(next) => {
-        if (next && suppressMenuRef.current != null) {
-          suppressMenuRef.current = null;
-          return;
-        }
-        setOpen(next);
+    <div
+      className="flex shrink-0 flex-col items-start"
+      onFocus={() => {
+        if (!pointerFocusRef.current) setOpen(true);
+      }}
+      onBlur={(event) => {
+        const next = event.relatedTarget;
+        if (!(next instanceof Node) || !event.currentTarget.contains(next)) setOpen(false);
       }}
     >
-      <DropdownMenu.Trigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          shape="circle"
-          aria-label={`Move ${name}`}
-          className="cursor-grab touch-none text-muted-foreground active:cursor-grabbing"
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerCancel={onPointerCancel}
-          onKeyDown={(event) => {
-            if (event.key === "ArrowUp") {
-              event.preventDefault();
-              move(-1);
-            } else if (event.key === "ArrowDown") {
-              event.preventDefault();
-              move(1);
-            }
-          }}
-        >
-          <DragHandleIcon />
-        </Button>
-      </DropdownMenu.Trigger>
-      <DropdownMenu.Portal>
-        <DropdownMenu.Content
-          align="start"
-          sideOffset={4}
-          className="z-50 min-w-36 rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
-        >
-          <DropdownMenu.Item
-            disabled={index === 0}
-            onSelect={() => move(-1)}
-            className="cursor-default rounded-sm px-3 py-2 text-sm outline-none data-[disabled]:opacity-40 data-[highlighted]:bg-accent"
-          >
+      <Button
+        variant="ghost"
+        size="icon"
+        shape="circle"
+        aria-label={`Move ${name}`}
+        aria-expanded={open}
+        aria-controls={menuId}
+        className="cursor-grab touch-none text-muted-foreground active:cursor-grabbing"
+        onPointerDown={(event) => {
+          pointerFocusRef.current = true;
+          onPointerDown(event);
+        }}
+        onPointerMove={onPointerMove}
+        onPointerUp={(event) => {
+          const end = onPointerUp(event);
+          pointerFocusRef.current = false;
+          if (end === "tap") setOpen(true);
+          if (end === "drag") setOpen(false);
+        }}
+        onPointerCancel={onPointerCancel}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowUp") {
+            event.preventDefault();
+            move(-1);
+          } else if (event.key === "ArrowDown") {
+            event.preventDefault();
+            move(1);
+          } else if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            setOpen(true);
+          }
+        }}
+      >
+        <DragHandleIcon />
+      </Button>
+      {open ? (
+        <div id={menuId} role="group" aria-label={`Reorder ${name}`} className="flex gap-1 pt-1">
+          <Button variant="outline" size="sm" disabled={index === 0} onClick={() => move(-1)}>
             Move up
-          </DropdownMenu.Item>
-          <DropdownMenu.Item
-            disabled={index === count - 1}
-            onSelect={() => move(1)}
-            className="cursor-default rounded-sm px-3 py-2 text-sm outline-none data-[disabled]:opacity-40 data-[highlighted]:bg-accent"
-          >
+          </Button>
+          <Button variant="outline" size="sm" disabled={index === count - 1} onClick={() => move(1)}>
             Move down
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
+          </Button>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
-function RoomsFree({ slug, now, onCount }: { slug: string; now: Date; onCount: (slug: string, count: number | null) => void }) {
-  const slots = useRoomSlots(slug, now);
+function RoomsFree({ slug, from, onCount }: { slug: string; from: Date; onCount: (slug: string, count: number | null) => void }) {
+  const slots = useRoomSlots(slug, from);
   const count = slots.loaded ? roomsFreeNow(slots.rooms) : null;
   useEffect(() => {
     if (slots.loaded) onCount(slug, count);

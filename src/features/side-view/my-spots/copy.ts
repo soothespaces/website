@@ -17,9 +17,10 @@ export function countWord(count: number, singular: string, plural: string): stri
 }
 
 export function monthCardModel(stats: MonthlyStats): MonthCardModel {
-  const title = `${stats.month} so far`;
+  // All-time counts (no visit dates yet) must not wear the current month's name.
+  const title = stats.thisMonth ? `${stats.month} so far` : "So far";
   if (stats.checkIns === 0) {
-    return { title, empty: "No check-ins yet this month.", stats: [] };
+    return { title, empty: stats.thisMonth ? "No check-ins yet this month." : "No check-ins yet.", stats: [] };
   }
   const rows: MonthStat[] = [
     { value: stats.checkIns, label: countWord(stats.checkIns, "check-in", "check-ins") },

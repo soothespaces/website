@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { DetailScreen } from "@/components/ui/detail-screen";
 import { Skeleton } from "@/components/ui/feedback";
@@ -10,7 +12,7 @@ import { useSession } from "@/lib/auth/use-session";
 import { useMyCheckInHistory } from "@/lib/data/my-history";
 import { useMapState } from "@/features/map/map-state";
 import type { PanelScreenProps } from "@/features/side-view/builtin-screens";
-import type { PanelRoute } from "@/features/side-view/panel-route";
+import { panelHref, type PanelRoute } from "@/features/side-view/panel-route";
 import { MonthCard } from "./month-card";
 import { Rotation } from "./rotation";
 import { useNow } from "./use-now";
@@ -80,10 +82,27 @@ function SignedOut() {
       <p className="text-sm text-muted-foreground">
         Sign in to see the places you keep coming back to, and a private summary of your check-ins. Only you can see it.
       </p>
-      <Button asChild>
-        <Link href={loginHref("/map?panel=my-spots")}>Sign in</Link>
-      </Button>
+      <Suspense
+        fallback={
+          <Button asChild>
+            <Link href={loginHref("/map?panel=my-spots")}>Sign in</Link>
+          </Button>
+        }
+      >
+        <SignInLink />
+      </Suspense>
     </div>
+  );
+}
+
+function SignInLink() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const next = panelHref(pathname, { kind: "my-spots" }, new URLSearchParams(searchParams.toString()));
+  return (
+    <Button asChild>
+      <Link href={loginHref(next)}>Sign in</Link>
+    </Button>
   );
 }
 

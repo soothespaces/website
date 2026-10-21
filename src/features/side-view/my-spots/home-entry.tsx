@@ -1,27 +1,30 @@
 "use client";
 
 import { SectionHeader } from "@/components/ui/section-header";
+import { useSession } from "@/lib/auth/use-session";
 import { useFavorites } from "@/lib/data/favorites";
 import { useMapState } from "@/features/map/map-state";
-import { useSpotDirectory } from "./directory";
 
-// Stand-in for H5's chip row on today's search results. Signed-out visitors,
-// and signed-in visitors with no saved spots, do not see the section. They
-// open My spots from the URL or the account menu and get the sign-in prompt there.
+// See all on today's search results. Signed-out visitors get the link so they
+// can open the sign-in prompt. Names come from the map's spaces, which already
+// include ids, so Home does not read the spaces table again.
 export function YourSpotsHomeEntry({ onOpened }: { onOpened?: () => void }) {
+  const { loading } = useSession();
   const { push, data } = useMapState();
   const { favorites, signedIn, loaded } = useFavorites();
-  const directory = useSpotDirectory([]);
-  const names =
-    directory.spacesLoaded
-      ? favorites.flatMap((favorite) => {
-          if (favorite.spaceId) return [directory.spaces.get(favorite.spaceId)?.name ?? "Saved spot"];
-          if (favorite.buildingSlug) return [data.buildingsBySlug.get(favorite.buildingSlug)?.name ?? "Saved building"];
-          return [];
-        })
-      : [];
 
-  if (!signedIn || !loaded || favorites.length === 0) return null;
+  if (loading) return null;
+  if (signedIn && (!loaded || favorites.length === 0)) return null;
+
+  const names = signedIn
+    ? favorites.flatMap((favorite) => {
+        if (favorite.spaceId) {
+          return [data.spaces.find((space) => space.id === favorite.spaceId)?.name ?? "Saved spot"];
+        }
+        if (favorite.buildingSlug) return [data.buildingsBySlug.get(favorite.buildingSlug)?.name ?? "Saved building"];
+        return [];
+      })
+    : [];
 
   return (
     <div className="px-3 pb-3">

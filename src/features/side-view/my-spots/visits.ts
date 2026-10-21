@@ -12,25 +12,38 @@ export type ResolvedVisit = {
 
 export type VisitRow = ResolvedVisit & { meta: string };
 
+function targetKey(target: FavoriteTarget): string {
+  return target.kind === "space" ? `space:${target.spaceId}` : `building:${target.buildingSlug}`;
+}
+
 /**
  * History places that are not already favorites, most check-ins first.
- * Two history rows that save the same spot collapse to the busier one.
+ * A room and its parent space are one row, and their check-ins add together.
+ * The space's own name wins when both are present. The phrase uses the later visit.
  */
 export function visitRows(visits: readonly ResolvedVisit[], favorites: readonly Favorite[], now: Date): VisitRow[] {
-  const ordered = [...visits].sort(
-    (a, b) => b.checkInCount - a.checkInCount || b.lastVisitedOn.localeCompare(a.lastVisitedOn) || a.name.localeCompare(b.name),
-  );
-  const seen = new Set<string>();
-  const rows: VisitRow[] = [];
-  for (const visit of ordered) {
+  const byTarget = new Map<string, ResolvedVisit>();
+  for (const visit of visits) {
     if (favorites.some((favorite) => sameTarget(favorite, visit.target))) continue;
-    const key = visit.target.kind === "space" ? `space:${visit.target.spaceId}` : `building:${visit.target.buildingSlug}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    rows.push({
-      ...visit,
-      meta: visitedMeta(visit.buildingName, visit.checkInCount, lastVisitedPhrase(visit.lastVisitedOn, now)),
+    const key = targetKey(visit.target);
+    const existing = byTarget.get(key);
+    if (!existing) {
+      byTarget.set(key, { ...visit });
+      continue;
+    }
+    const later = visit.lastVisitedOn > existing.lastVisitedOn ? visit : existing;
+    const named = visit.key.startsWith("space:") ? visit : existing.key.startsWith("space:") ? existing : later;
+    byTarget.set(key, {
+      ...named,
+      checkInCount: existing.checkInCount + visit.checkInCount,
+      lastVisitedOn: later.lastVisitedOn,
+      buildingName: named.buildingName ?? later.buildingName,
     });
   }
-  return rows;
+  return [...byTarget.values()]
+    .sort((a, b) => b.checkInCount - a.checkInCount || b.lastVisitedOn.localeCompare(a.lastVisitedOn) || a.name.localeCompare(b.name))
+    .map((visit) => ({
+      ...visit,
+      meta: visitedMeta(visit.buildingName, visit.checkInCount, lastVisitedPhrase(visit.lastVisitedOn, now)),
+    }));
 }

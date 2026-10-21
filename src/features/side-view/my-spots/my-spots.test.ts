@@ -20,7 +20,7 @@ function favorite(partial: Partial<Favorite> & Pick<Favorite, "id" | "position">
 }
 
 test("month card uses singular labels and hides a null streak", () => {
-  const full = monthCardModel({ month: "October", checkIns: 9, spots: 4, weeksInARow: 3 });
+  const full = monthCardModel({ month: "October", checkIns: 9, spots: 4, weeksInARow: 3, thisMonth: true });
   assert.equal(full.title, "October so far");
   assert.equal(full.empty, null);
   assert.deepEqual(
@@ -28,20 +28,25 @@ test("month card uses singular labels and hides a null streak", () => {
     ["check-ins", "spots", "weeks in a row"],
   );
 
-  const one = monthCardModel({ month: "October", checkIns: 1, spots: 1, weeksInARow: 1 });
+  const one = monthCardModel({ month: "October", checkIns: 1, spots: 1, weeksInARow: 1, thisMonth: true });
   assert.deepEqual(
     one.stats.map((stat) => `${stat.value} ${stat.label}`),
     ["1 check-in", "1 spot", "1 week in a row"],
   );
 
-  const hidden = monthCardModel({ month: "October", checkIns: 2, spots: 1, weeksInARow: null });
+  const hidden = monthCardModel({ month: "October", checkIns: 2, spots: 1, weeksInARow: null, thisMonth: false });
+  assert.equal(hidden.title, "So far");
   assert.equal(hidden.stats.length, 2);
 
-  const none = monthCardModel({ month: "October", checkIns: 0, spots: 0, weeksInARow: null });
-  assert.equal(none.empty, "No check-ins yet this month.");
+  const none = monthCardModel({ month: "October", checkIns: 0, spots: 0, weeksInARow: null, thisMonth: false });
+  assert.equal(none.empty, "No check-ins yet.");
   assert.deepEqual(none.stats, []);
 
-  const zeroStreak = monthCardModel({ month: "October", checkIns: 2, spots: 1, weeksInARow: 0 });
+  const emptyMonth = monthCardModel({ month: "October", checkIns: 0, spots: 0, weeksInARow: 0, thisMonth: true });
+  assert.equal(emptyMonth.title, "October so far");
+  assert.equal(emptyMonth.empty, "No check-ins yet this month.");
+
+  const zeroStreak = monthCardModel({ month: "October", checkIns: 2, spots: 1, weeksInARow: 0, thisMonth: true });
   assert.equal(zeroStreak.stats[2]?.label, "weeks in a row");
   assert.equal(zeroStreak.stats[2]?.value, 0);
 });
@@ -153,11 +158,18 @@ test("drag math moves an id and shifts the rows it passes", () => {
   assert.equal(rowShift(2, 0, 2, heights), -10);
   assert.equal(rowShift(2, 2, 0, heights), -30);
   assert.equal(rowShift(0, 2, 0, heights), 30);
-  assert.equal(dropIndex([10, 30, 60], 31), 1);
-  assert.equal(dropIndex([10, 30, 60], 5), 0);
+  assert.equal(dropIndex(0, [10, 30, 60], 31), 1);
+  assert.equal(dropIndex(2, [10, 30, 60], 5), 0);
+  // Rows are 60px. Row 2's midpoint is y=150. A short move must stay on row 2.
+  const mids = [30, 90, 150, 210];
+  assert.equal(dropIndex(2, mids, 142), 2);
+  assert.equal(dropIndex(2, mids, 158), 2);
+  assert.equal(dropIndex(2, mids, 138), 2);
+  assert.equal(dropIndex(2, mids, 89), 1);
+  assert.equal(dropIndex(2, mids, 211), 3);
 });
 
-test("visited rows skip favorites, keep the busiest duplicate, and describe the last visit", () => {
+test("visited rows skip favorites, add duplicate check-ins, and describe the last visit", () => {
   const visits: ResolvedVisit[] = [
     {
       key: "room",
@@ -197,6 +209,6 @@ test("visited rows skip favorites, keep the busiest duplicate, and describe the 
     rows.map((row) => row.name),
     ["Bert's Study Lounge", "Floor 2 Spaces"],
   );
-  assert.equal(rows[0]?.meta, "Shapiro Library · 4 check-ins · yesterday");
+  assert.equal(rows[0]?.meta, "Shapiro Library · 5 check-ins · yesterday");
   assert.equal(rows[1]?.meta, "Shapiro Library · 2 check-ins · last week");
 });
