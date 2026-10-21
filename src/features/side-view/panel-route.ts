@@ -20,6 +20,18 @@ export const HOME_ROUTE: PanelRoute = { kind: "home" };
 // example) is left in place when the panel changes.
 const PANEL_PARAMS = ["panel", "b", "rec", "name", "floor", "room", "space", "id"] as const;
 
+// Chip query for the Spaces screen (`?f=quiet,printer`). It is not a panel
+// field: the screen writes it itself. It stays while that screen is still in
+// the stack, including under a space opened from the list, and drops once
+// the screen is gone so the next building does not inherit it.
+const SPACE_FILTER_PARAM = "f";
+
+export function panelSearchForStack(stack: readonly PanelRoute[], current: URLSearchParams): URLSearchParams {
+  const params = new URLSearchParams(current.toString());
+  if (!stack.some((route) => route.kind === "spaces")) params.delete(SPACE_FILTER_PARAM);
+  return params;
+}
+
 const PANEL_KINDS = [
   "home",
   "building",

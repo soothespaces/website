@@ -5,6 +5,7 @@ import { BuildingPanelScreen, SpacePanelScreen, type PanelScreenProps } from "./
 import { HoursScreen } from "./hours/hours-screen";
 import { PhotosScreen } from "./photos/photos-screen";
 import type { PanelRoute } from "./panel-route";
+import { SpacesScreen } from "./spaces/spaces-screen";
 
 export type { PanelScreenProps };
 
@@ -15,8 +16,9 @@ export const panelRegistry: Partial<Record<PanelRoute["kind"], ComponentType<Pan
   space: SpacePanelScreen,
   hours: HoursScreen,
   photos: PhotosScreen,
+  spaces: SpacesScreen,
 };
 
 // These screens draw their own back button and title, and fill the frame so
 // a footer stays visible. The selection panel hides its own header for them.
-export const detailPanelKinds: ReadonlySet<PanelRoute["kind"]> = new Set(["hours", "photos"]);
+export const detailPanelKinds: ReadonlySet<PanelRoute["kind"]> = new Set(["hours", "photos", "spaces"]);
