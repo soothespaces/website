@@ -7,6 +7,7 @@ import {
   bookableRoomNumbers,
   groupByNoise,
   isServiceRoom,
+  loudDotImage,
   noiseFromLabel,
   resolvedNoise,
   type BookableRoomRef,
@@ -14,8 +15,6 @@ import {
   type RoomPoint,
 } from "./floor-noise-rooms.ts";
 import { outerRing, pointInRing, ringCentroid } from "./sheet-coords.ts";
-
-const SHAPIRO = "harold-t-and-vivian-b-shapiro-library";
 
 function space(partial: Partial<FloorSpace> & Pick<FloorSpace, "id" | "name">): FloorSpace {
   return {
@@ -86,7 +85,6 @@ test("a room location beats the floor guess, and an area covers the rooms inside
     [-1, 1],
   ];
   const assigned = assignRoomNoise({
-    building: "somewhere",
     floor: 1,
     spaces: [
       space({ id: "floor", name: "Open floor", floor: 1, noise: "loud" }),
@@ -124,7 +122,6 @@ test("Shapiro floor 2 colors study rooms and leaves service rooms white", () => 
     { roomNumber: null, floor: 1, spaceId: null, title: "1st Floor - BOOTH1 - Individual Soundproof Booth" },
   ];
   const assigned = assignRoomNoise({
-    building: SHAPIRO,
     floor: 2,
     spaces: [
       space({ id: "floor-2", name: "Shapiro Floor 2 Spaces", floor: 2, noise: "conversational" }),
@@ -136,13 +133,22 @@ test("Shapiro floor 2 colors study rooms and leaves service rooms white", () => 
   });
   const grouped = groupByNoise(assigned);
   for (const room of STUDY) assert.equal(assigned.get(room), "conversational", room);
-  for (const room of ["2024", "2026", "2166", "2178", "2178A"]) assert.equal(assigned.has(room), false, room);
+  for (const room of ["2024", "2026", "2166", "2178", "2178A", "2000", "2005", "2036", "2160A", "2160B", "2160C"]) {
+    assert.equal(assigned.has(room), false, room);
+  }
   for (const room of ["2C01", "2S01", "2V01", "2030M", "2036W"]) assert.equal(assigned.has(room), false, room);
-  assert.equal(assigned.get("2000"), "conversational");
-  assert.ok(grouped.conversational.includes("2000"));
+  assert.equal(grouped.conversational.includes("2000"), false);
   assert.deepEqual(bookableRoomNumbers(bookable, 2), STUDY);
   assert.equal(isServiceRoom("2030M"), true);
   assert.equal(isServiceRoom("2002A"), false);
+});
+
+test("loud dots tile without a seam", () => {
+  const { width, data } = loudDotImage("#c8704e");
+  assert.equal(width, 16);
+  const pixel = (x: number, y: number) => data[(y * width + x) * 4];
+  assert.equal(pixel(0, 0), pixel(8, 0));
+  assert.notEqual(pixel(3, 3), pixel(0, 0));
 });
 
 test("light noise tokens are the FloorStyle board colors", () => {

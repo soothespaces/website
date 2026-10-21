@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { FilterSpecification } from "maplibre-gl";
 import { Layer, useMap } from "react-map-gl/maplibre";
-import { FLOOR_STAFF_LAYER } from "./floor-staff";
+import { FLOOR_ROOM_LINES } from "./floor-staff";
 import { BOOKABLE_PATTERN, bookableStripeImage } from "./floor-bookable-pattern";
 
 function roomNumberFilter(rooms: readonly string[]): FilterSpecification {
@@ -64,7 +64,7 @@ export function FloorBookableLayer({
       minzoom={minzoom}
       filter={roomNumberFilter(rooms)}
       paint={{ "fill-pattern": BOOKABLE_PATTERN }}
-      beforeId={FLOOR_STAFF_LAYER}
+      beforeId={FLOOR_ROOM_LINES}
     />
   );
 }

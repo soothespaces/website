@@ -7,7 +7,6 @@ export type LegendRowId =
   | "not-study"
   | "printer"
   | "restroom"
-  | "water"
   | "free"
   | "booked";
 
@@ -32,8 +31,6 @@ export type LegendInput = {
   notStudy: boolean;
   printer: boolean;
   restroom: boolean;
-  /** Water fountains stay off the legend until one is on this floor. */
-  water: boolean;
 };
 
 /** Groups and copy for the floor-plan legend. A row is omitted when it is not on this floor. */
@@ -72,6 +69,5 @@ function amenityRows(input: LegendInput): LegendGroup["rows"] {
   const rows: LegendGroup["rows"] = [];
   if (input.printer) rows.push({ id: "printer", label: "Printer" });
   if (input.restroom) rows.push({ id: "restroom", label: "Restroom" });
-  if (input.water) rows.push({ id: "water", label: "Water fountain" });
   return rows;
 }

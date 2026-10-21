@@ -5,6 +5,8 @@ import type { MapColors } from "../use-map-colors";
 import { staffRoomFilter } from "./floor-staff-rooms";
 
 export const FLOOR_STAFF_LAYER = "floor-plan-staff";
+// Always on the plan, including the rooms map, where staff grey is replaced.
+export const FLOOR_ROOM_LINES = "floor-plan-room-lines";
 
 // Flat grey over staff, office, storage and mechanical rooms. Sits on the
 // floor-plan source, above the white room fill and under the room outlines,
@@ -41,7 +43,7 @@ export function FloorStaffLayer({
       minzoom={minzoom}
       filter={staffRoomFilter(building, floor)}
       paint={{ "fill-color": colors["floor-staff"], "fill-opacity": 1 }}
-      beforeId="floor-plan-room-lines"
+      beforeId={FLOOR_ROOM_LINES}
     />
   );
 }

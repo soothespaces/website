@@ -10,7 +10,6 @@ const empty = {
   notStudy: false,
   printer: false,
   restroom: false,
-  water: false,
 };
 
 test("the legend lists only what this floor draws", () => {
@@ -47,9 +46,8 @@ test("the rooms map replaces noise and rooms with free and booked", () => {
     staff: true,
     printer: true,
     restroom: true,
-    water: true,
   });
   assert.deepEqual(groups[0].rows.map((row) => row.label), ["Free", "Booked"]);
   assert.equal(groups[0].heading, null);
-  assert.deepEqual(groups[1].rows.map((row) => row.label), ["Printer", "Restroom", "Water fountain"]);
+  assert.deepEqual(groups[1].rows.map((row) => row.label), ["Printer", "Restroom"]);
 });

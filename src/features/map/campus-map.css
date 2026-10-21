@@ -65,8 +65,8 @@
 /* Bookable rooms: white 45° stripes over the noise fill (the legend swatch
    uses the low-noise green so the white stripes stay visible). */
 .bookable-swatch {
-  background-color: var(--noise-low);
-  background-image: repeating-linear-gradient(-45deg, transparent 0 3px, #fff 3px 5px);
+  background-color: color-mix(in srgb, var(--noise-conversational) 72%, var(--card));
+  background-image: repeating-linear-gradient(-45deg, transparent 0 3px, #fff 3px 4px, #171717 4px 5px, transparent 5px 8px);
 }
 
 /* Popups: a card in the page's colors, with the tip to match. */

@@ -8,7 +8,7 @@ import type { MapColors } from "../use-map-colors";
 import { FloorBookableLayer } from "./floor-bookable";
 import { FloorNoiseLayer, useFloorColoring } from "./floor-noise";
 import { FloorPrintersLayer } from "./floor-printers";
-import { FloorStaffLayer } from "./floor-staff";
+import { FLOOR_ROOM_LINES, FloorStaffLayer } from "./floor-staff";
 
 // Selecting a building zooms the map to it, at least this far in. Floor
 // plans show from here on.
@@ -51,7 +51,16 @@ function useLabelFont() {
 // structure, rooms on top, then room numbers or names when zoomed in. Sits
 // in SLOTS.floorPlans, over FO's campus detail and under the basemap
 // labels and the overlays.
-export function FloorPlanLayers({ plan, colors }: { plan: FloorPlan | null; colors: MapColors }) {
+export function FloorPlanLayers({
+  plan,
+  colors,
+  availability = false,
+}: {
+  plan: FloorPlan | null;
+  colors: MapColors;
+  // Rooms map paints free and booked instead, so noise and stripes stay off.
+  availability?: boolean;
+}) {
   const font = useLabelFont();
   const coloring = useFloorColoring(plan);
   if (!plan) return null;
@@ -77,7 +86,7 @@ export function FloorPlanLayers({ plan, colors }: { plan: FloorPlan | null; colo
         beforeId={SLOTS.floorPlans}
       />
       <Layer
-        id={`${id}-room-lines`}
+        id={FLOOR_ROOM_LINES}
         type="line"
         minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
         filter={["==", ["get", "layer"], "room"]}
@@ -93,8 +102,12 @@ export function FloorPlanLayers({ plan, colors }: { plan: FloorPlan | null; colo
         building={plan.building}
         floor={plan.floor}
       />
-      <FloorNoiseLayer colors={colors} minzoom={FLOOR_PLAN_MIN_ZOOM - 1} byNoise={coloring.byNoise} />
-      <FloorBookableLayer minzoom={FLOOR_PLAN_MIN_ZOOM - 1} rooms={coloring.bookableRooms} />
+      {availability ? null : (
+        <>
+          <FloorNoiseLayer colors={colors} minzoom={FLOOR_PLAN_MIN_ZOOM - 1} byNoise={coloring.byNoise} />
+          <FloorBookableLayer minzoom={FLOOR_PLAN_MIN_ZOOM - 1} rooms={coloring.bookableRooms} />
+        </>
+      )}
       {font ? (
         <Layer
           id={`${id}-labels`}

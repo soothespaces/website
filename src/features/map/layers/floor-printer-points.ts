@@ -22,7 +22,9 @@ export function printerFacts(printer: Pick<Printer, "color" | "cardReader">): [s
 
 function sheetMatches(floorMap: string | null, sheet: string): boolean {
   if (!floorMap) return true;
-  return floorMap.toLowerCase().includes(sheet.toLowerCase());
+  const file = floorMap.split("/").pop()?.toLowerCase() ?? "";
+  const name = file.replace(/\.[a-z0-9]+$/i, "");
+  return name === sheet.toLowerCase();
 }
 
 function hasPixel(printer: Pick<Printer, "floorMapX" | "floorMapY">): boolean {

@@ -49,7 +49,7 @@ export default function CampusMap({ children }: { children?: ReactNode }) {
           // floor plan registers itself (stripes, printer markers). A 1px
           // stand-in would stick after a theme change, when images are wiped
           // and the layers ask for them again.
-          const owned = new Set(["bookable-stripes", "printer-marker"]);
+          const owned = new Set(["bookable-stripes", "printer-marker", "noise-loud-dots", "room-booked-hatch"]);
           map.touchZoomRotate.disableRotation();
           map.keyboard.disableRotation();
           // Some styles reference sprite images they don't ship (OpenFreeMap's

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { PrinterIcon } from "@/components/ui/icons";
 import { NOISE_BAR_COUNT, NOISE_FILL_CLASS, type NoiseLevel } from "@/components/ui/noise-badge";
@@ -17,6 +17,7 @@ const NOISE_LEVELS = new Set<LegendRowId>(["quiet", "low_noise", "conversational
 // to a Legend button; wider screens keep the groups open.
 export function FloorLegend({ plan }: { plan: FloorPlan }) {
   const [open, setOpen] = useState(false);
+  const panelId = useId();
   const { route } = useMapState();
   const coloring = useFloorColoring(plan);
   const { printers } = usePrinters(plan.building);
@@ -35,7 +36,6 @@ export function FloorLegend({ plan }: { plan: FloorPlan }) {
     notStudy: coloring.otherRooms.length > 0,
     printer: placed > 0,
     restroom: false,
-    water: false,
   });
 
   if (!coloring.loaded || groups.length === 0) return null;
@@ -49,11 +49,12 @@ export function FloorLegend({ plan }: { plan: FloorPlan }) {
         variant="ghost"
         className="w-full justify-start md:hidden"
         aria-expanded={open}
+        aria-controls={panelId}
         onClick={() => setOpen((current) => !current)}
       >
         Legend
       </Button>
-      <div className={open ? "flex flex-col gap-3 px-3 pt-1 pb-3" : "hidden flex-col gap-3 px-3 py-3 md:flex"}>
+      <div id={panelId} className={open ? "flex flex-col gap-3 px-3 pt-1 pb-3" : "hidden flex-col gap-3 px-3 py-3 md:flex"}>
         {groups.map((group) => (
           <div key={group.heading ?? "status"} className="flex flex-col gap-1.5">
             {group.heading ? (
@@ -96,15 +97,16 @@ function Swatch({ id }: { id: LegendRowId }) {
   }
   if (id === "printer") return <MarkerSwatch icon={<PrinterIcon size="sm" />} />;
   if (id === "free") return <span aria-hidden="true" className="size-4 shrink-0 rounded-sm bg-slot-free" />;
-  if (id === "booked") return <span aria-hidden="true" className="slot-booked size-4 shrink-0 rounded-sm bg-destructive" />;
-  return <MarkerSwatch icon={<span className="text-[0.6rem] leading-none">W</span>} />;
+  return <span aria-hidden="true" className="slot-booked size-4 shrink-0 rounded-sm bg-destructive" />;
 }
 
 function NoiseSwatch({ level }: { level: NoiseLevel }) {
   const filled = NOISE_BAR_COUNT[level];
   return (
     <span aria-hidden="true" className="inline-flex items-center gap-1">
-      <span className={`size-4 shrink-0 rounded-sm ${NOISE_FILL_CLASS[level]}`} />
+      <span className="relative size-4 shrink-0 overflow-hidden rounded-sm bg-card">
+        <span className={`absolute inset-0 ${NOISE_FILL_CLASS[level]} opacity-[0.72]`} />
+      </span>
       <span className="inline-flex items-end gap-px">
         {[0, 1, 2, 3].map((index) => (
           <span

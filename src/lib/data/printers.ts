@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import { readAll } from "./read-all";
@@ -77,21 +77,36 @@ export type PrintersState = {
 
 const NO_FLOORS = new Map<number, Printer[]>();
 
+const EMPTY_PRINTERS: PrintersState = { printers: [], byFloor: NO_FLOORS, loaded: false, error: null };
+const printerCache = new Map<string, PrintersState>();
+const printerInflight = new Map<string, Promise<void>>();
+const printerListeners = new Set<() => void>();
+
+function subscribePrinters(listener: () => void) {
+  printerListeners.add(listener);
+  return () => {
+    printerListeners.delete(listener);
+  };
+}
+
+function publishPrinters(key: string, state: PrintersState) {
+  printerCache.set(key, state);
+  printerInflight.delete(key);
+  for (const listener of printerListeners) listener();
+}
+
+// One read per building, shared by the markers and the legend.
 export function usePrinters(buildingSlug: string | null): PrintersState {
-  const [state, setState] = useState<PrintersState & { key: string }>(() => ({
-    key: "",
-    printers: [],
-    byFloor: NO_FLOORS,
-    loaded: false,
-    error: null,
-  }));
+  const cached = useSyncExternalStore(
+    subscribePrinters,
+    () => (buildingSlug ? (printerCache.get(buildingSlug) ?? null) : null),
+    () => null,
+  );
 
   useEffect(() => {
-    if (!getSupabaseEnv() || !buildingSlug) return;
+    if (!getSupabaseEnv() || !buildingSlug || printerCache.has(buildingSlug) || printerInflight.has(buildingSlug)) return;
     const supabase = createClient();
-    let cancelled = false;
-
-    readAll<PrinterRecord>((from, to) =>
+    const pending = readAll<PrinterRecord>((from, to) =>
       supabase
         .from("printers")
         .select(PRINTER_SELECT)
@@ -102,22 +117,17 @@ export function usePrinters(buildingSlug: string | null): PrintersState {
         .range(from, to),
     )
       .then((rows) => {
-        if (cancelled) return;
         const printers = rows.map(toPrinter);
-        setState({ key: buildingSlug, printers, byFloor: groupPrintersByFloor(printers), loaded: true, error: null });
+        publishPrinters(buildingSlug, { printers, byFloor: groupPrintersByFloor(printers), loaded: true, error: null });
       })
       .catch((error: unknown) => {
         console.error("Printers failed to load", error);
-        if (!cancelled) setState({ key: buildingSlug, printers: [], byFloor: NO_FLOORS, loaded: true, error: "Printers failed to load." });
+        publishPrinters(buildingSlug, { printers: [], byFloor: NO_FLOORS, loaded: true, error: "Printers failed to load." });
       });
-
-    return () => {
-      cancelled = true;
-    };
+    printerInflight.set(buildingSlug, pending);
   }, [buildingSlug]);
 
   if (!getSupabaseEnv()) return { printers: [], byFloor: NO_FLOORS, loaded: true, error: "Supabase isn't configured." };
   if (!buildingSlug) return { printers: [], byFloor: NO_FLOORS, loaded: true, error: null };
-  if (state.key !== buildingSlug) return { printers: [], byFloor: NO_FLOORS, loaded: false, error: null };
-  return { printers: state.printers, byFloor: state.byFloor, loaded: state.loaded, error: state.error };
+  return cached ?? EMPTY_PRINTERS;
 }

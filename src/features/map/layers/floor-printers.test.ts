@@ -57,6 +57,13 @@ test("Shapiro room 2000 printers land in that room, and (0, 0) uses the centroid
     centroids,
   );
   assert.deepEqual(otherSheet, { lng: clng, lat: clat });
+
+  const longerSheet = printerPosition(
+    printer({ id: 4, displayName: "Ten", floorMap: "images/maps/ulib/ulib_10.png", floorMapX: 10, floorMapY: 10 }),
+    placement,
+    centroids,
+  );
+  assert.deepEqual(longerSheet, { lng: clng, lat: clat });
 });
 
 test("printer copy and overlapping markers", () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import type { MapLayerMouseEvent } from "maplibre-gl";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { Layer, Popup, Source, useMap } from "react-map-gl/maplibre";
 import { Button } from "@/components/ui/button";
 import { printersOnFloor, usePrinters, type Printer } from "@/lib/data/printers";
@@ -74,10 +74,17 @@ export function FloorPrintersLayer({ plan, rooms }: { plan: FloorPlan; rooms: re
   const selectedId = selection.key === floorKey ? selection.id : null;
   const selected = points.find((point) => point.printer.id === selectedId) ?? null;
   const map = useMap().current?.getMap();
+  const listId = useId();
+  const buttonRefs = useRef(new Map<number, HTMLButtonElement>());
   const choose = useCallback(
     (id: number | null) => setSelection({ key: floorKey, id }),
     [floorKey],
   );
+  const closePopup = useCallback(() => {
+    const id = selection.key === floorKey ? selection.id : null;
+    choose(null);
+    if (id != null) buttonRefs.current.get(id)?.focus();
+  }, [choose, floorKey, selection]);
 
   useEffect(() => {
     if (!map || !map.getLayer(FLOOR_PRINTERS_LAYER)) return;
@@ -124,22 +131,35 @@ export function FloorPrintersLayer({ plan, rooms }: { plan: FloorPlan; rooms: re
           />
         </Source>
       ) : null}
-      <ul className="sr-only">
+      <ul id={listId} className="sr-only focus-within:not-sr-only focus-within:absolute focus-within:bottom-16 focus-within:left-3 focus-within:z-20 focus-within:flex focus-within:flex-col focus-within:gap-1">
         {points.map((point) => (
           <li key={point.printer.id}>
-            <Button variant="ghost" className="sr-only" onClick={() => choose(point.printer.id)}>
+            <Button
+              variant="ghost"
+              className="sr-only focus-visible:not-sr-only focus-visible:bg-card focus-visible:px-3 focus-visible:shadow-[0_0_0_1px_var(--input)]"
+              aria-controls={selectedId === point.printer.id ? `${listId}-popup` : undefined}
+              ref={(node) => {
+                if (node) buttonRefs.current.set(point.printer.id, node);
+                else buttonRefs.current.delete(point.printer.id);
+              }}
+              onClick={() => choose(point.printer.id)}
+            >
               {printerAccessibleName(point.printer)}
             </Button>
           </li>
         ))}
       </ul>
-      {selected ? <PrinterPopup point={selected} onClose={() => choose(null)} /> : null}
+      {selected ? <PrinterPopup id={`${listId}-popup`} point={selected} onClose={closePopup} /> : null}
     </>
   );
 }
 
-function PrinterPopup({ point, onClose }: { point: PrinterPoint; onClose: () => void }) {
+function PrinterPopup({ id, point, onClose }: { id: string; point: PrinterPoint; onClose: () => void }) {
+  const panelRef = useRef<HTMLDivElement>(null);
   const [color, reader] = printerFacts(point.printer);
+  useEffect(() => {
+    panelRef.current?.focus();
+  }, []);
   return (
     <Popup
       longitude={point.lng}
@@ -151,7 +171,7 @@ function PrinterPopup({ point, onClose }: { point: PrinterPoint; onClose: () => 
       className="map-popup"
       maxWidth="16rem"
     >
-      <div className="flex flex-col gap-0.5 text-sm">
+      <div id={id} ref={panelRef} tabIndex={-1} className="flex flex-col gap-0.5 text-sm outline-none">
         <span className="font-semibold">{point.printer.displayName}</span>
         <span>{color}</span>
         <span>{reader}</span>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
-import { Layer } from "react-map-gl/maplibre";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { Layer, useMap } from "react-map-gl/maplibre";
 import type { FilterSpecification } from "maplibre-gl";
 import { CHECK_IN_CONSENSUS_MIN } from "@/lib/data/attributes";
 import {
@@ -15,14 +15,15 @@ import { readAll } from "@/lib/data/read-all";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { Database } from "@/types/supabase";
-import { FLOOR_STAFF_LAYER } from "./floor-staff";
+import { FLOOR_ROOM_LINES } from "./floor-staff";
 import type { FloorPlan } from "../use-floor-index";
 import type { MapColors } from "../use-map-colors";
-import { isStaffRoom } from "./floor-staff-rooms";
 import {
   assignRoomNoise,
   bookableRoomNumbers,
   groupByNoise,
+  LOUD_DOTS,
+  loudDotImage,
   NOISE_FILL_OPACITY,
   NOISE_LEVELS,
   resolvedNoise,
@@ -31,7 +32,8 @@ import {
   type FloorSpace,
   type RoomPoint,
 } from "./floor-noise-rooms";
-import { outerRing, parseArea, ringCentroid } from "./sheet-coords";
+import { geometryCenter } from "./room-match";
+import { parseArea } from "./sheet-coords";
 
 type NoiseToken = "noise-quiet" | "noise-low" | "noise-conversational" | "noise-loud";
 
@@ -102,6 +104,31 @@ function publish(key: string, data: FloorColoring) {
   for (const listener of listeners) listener();
 }
 
+function useLoudDots(color: string) {
+  const map = useMap().current?.getMap();
+  const painted = useRef<string | null>(null);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    if (!map || !color) return;
+    const add = () => {
+      if (map.hasImage(LOUD_DOTS) && painted.current === color) {
+        setReady(true);
+        return;
+      }
+      if (map.hasImage(LOUD_DOTS)) map.removeImage(LOUD_DOTS);
+      map.addImage(LOUD_DOTS, loudDotImage(color));
+      painted.current = color;
+      setReady(true);
+    };
+    add();
+    map.on("styledata", add);
+    return () => {
+      map.off("styledata", add);
+    };
+  }, [map, color]);
+  return ready;
+}
+
 function roomNumberFilter(rooms: readonly string[]): FilterSpecification {
   return [
     "all",
@@ -141,10 +168,10 @@ function roomsFromPlan(features: PlanFeature[]): RoomPoint[] {
     if (feature.properties?.layer !== "room") continue;
     const number = feature.properties.roomNumber;
     if (typeof number !== "string" || !number.trim()) continue;
-    const ring = outerRing(feature.geometry);
-    if (!ring) continue;
-    const [lng, lat] = ringCentroid(ring);
-    rooms.push({ roomNumber: number.trim(), lng, lat });
+    const geometry = feature.geometry;
+    const center = geometry?.type ? geometryCenter({ type: geometry.type, coordinates: geometry.coordinates }) : null;
+    if (!center) continue;
+    rooms.push({ roomNumber: number.trim(), lng: center[0], lat: center[1] });
   }
   return rooms;
 }
@@ -206,19 +233,11 @@ async function loadFloorColoring(plan: FloorPlan): Promise<FloorColoring> {
     floor: row.floor,
     spaceId: row.space_id,
   }));
-  const staffRooms = new Set(
-    features.flatMap((feature) => {
-      const number = feature.properties?.roomNumber;
-      return typeof number === "string" && isStaffRoom(feature.properties ?? {}, plan) ? [number] : [];
-    }),
-  );
   const noiseByRoom = assignRoomNoise({
-    building: plan.building,
     floor: plan.floor,
     spaces,
     bookable,
     rooms,
-    staffRooms,
   });
   const drawn = new Map(rooms.map((room) => [room.roomNumber.toUpperCase(), room.roomNumber]));
   const stripes = bookableRoomNumbers(bookable, plan.floor).map((room) => drawn.get(room.toUpperCase()) ?? room);
@@ -277,6 +296,7 @@ export function FloorNoiseLayer({
   byNoise: Record<NoiseLevel, string[]>;
   source?: string;
 }) {
+  const loudReady = useLoudDots(colors["noise-loud"]);
   if (!source) return null;
   return (
     <>
@@ -291,8 +311,12 @@ export function FloorNoiseLayer({
             source={source}
             minzoom={minzoom}
             filter={roomNumberFilter(rooms)}
-            paint={{ "fill-color": colors[NOISE_TOKEN[level]], "fill-opacity": NOISE_FILL_OPACITY }}
-            beforeId={FLOOR_STAFF_LAYER}
+            paint={
+              level === "loud" && loudReady
+                ? { "fill-pattern": LOUD_DOTS, "fill-opacity": NOISE_FILL_OPACITY }
+                : { "fill-color": colors[NOISE_TOKEN[level]], "fill-opacity": NOISE_FILL_OPACITY }
+            }
+            beforeId={FLOOR_ROOM_LINES}
           />
         );
       })}

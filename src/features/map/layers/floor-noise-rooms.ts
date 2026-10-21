@@ -1,9 +1,36 @@
 import { resolveAttributes, type AttributeSpace } from "@/lib/data/attributes";
 import type { CheckInSummary, NoiseLevel } from "@/lib/data/check-ins";
 import { isStaffRoom } from "./floor-staff-rooms";
+import { normalizeRoomNumber } from "./room-match";
 import { pointInRing, type Ring } from "./sheet-coords";
 
 export const NOISE_LEVELS: NoiseLevel[] = ["quiet", "low_noise", "conversational", "loud"];
+
+export const LOUD_DOTS = "noise-loud-dots";
+
+// Loud is not told by color alone: a darker dot on the fill. The grid is 8px
+// and the tile is 16, so the dots continue across tile edges.
+export function loudDotImage(hex: string): { width: number; height: number; data: Uint8Array } {
+  const size = 16;
+  const color = hex.trim();
+  const channel = (index: number) => parseInt(color.slice(1 + index * 2, 3 + index * 2), 16);
+  const base = [0, 1, 2].map(channel);
+  const mark = base.map((value) => Math.round(value * 0.45));
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const dx = (x % 8) - 3;
+      const dy = (y % 8) - 3;
+      const [r, g, b] = dx * dx + dy * dy <= 2 ? mark : base;
+      const index = (y * size + x) * 4;
+      data[index] = r;
+      data[index + 1] = g;
+      data[index + 2] = b;
+      data[index + 3] = 255;
+    }
+  }
+  return { width: size, height: size, data };
+}
 
 // Solid enough to read as a fill, light enough that room numbers stay clear.
 export const NOISE_FILL_OPACITY = 0.72;
@@ -86,28 +113,30 @@ function bookableNoise(item: BookableRoomRef, spaces: readonly FloorSpace[]): No
  *
  * A space_locations room number wins, then an area that contains the room,
  * then a bookable_items row (its space_id, or the one listed bookable space
- * of that kind). Until locations are tagged, a listed space that names this
- * floor and has no locations of its own colors the non-service rooms here.
- * Staff, corridors, stairs and restrooms stay out of that guess.
+ * of that kind). Rooms with none of those stay white: a floor-wide space
+ * does not paint every polygon on its floor.
  */
 export function assignRoomNoise({
-  building,
   floor,
   spaces,
   bookable,
   rooms,
-  staffRooms,
 }: {
-  building: string;
   floor: number;
   spaces: readonly FloorSpace[];
   bookable: readonly BookableRoomRef[];
   rooms: readonly RoomPoint[];
-  /** Room numbers already known to be staff, including ones named only in roomName. */
-  staffRooms?: ReadonlySet<string>;
 }): Map<string, NoiseLevel> {
-  const canonical = new Map(rooms.map((room) => [room.roomNumber.toUpperCase(), room.roomNumber]));
-  const asDrawn = (room: string) => canonical.get(room.trim().toUpperCase()) ?? room.trim();
+  const canonical = new Map(
+    rooms.flatMap((room) => {
+      const key = normalizeRoomNumber(room.roomNumber);
+      return key ? [[key, room.roomNumber] as const] : [];
+    }),
+  );
+  const asDrawn = (room: string) => {
+    const key = normalizeRoomNumber(room);
+    return (key && canonical.get(key)) || room.trim();
+  };
   const claims = new Map<string, Claim>();
 
   for (const space of spaces) {
@@ -126,18 +155,6 @@ export function assignRoomNoise({
     if (item.floor !== floor || !item.roomNumber) continue;
     const noise = bookableNoise(item, spaces);
     if (noise) claim(claims, asDrawn(item.roomNumber), noise, 1, true);
-  }
-
-  const floorSpaces = spaces.filter((space) => space.listed && space.floor === floor && space.locations.length === 0 && space.noise);
-  const floorNoises = new Set(floorSpaces.map((space) => space.noise));
-  if (floorNoises.size === 1) {
-    const noise = floorSpaces[0].noise!;
-    for (const room of rooms) {
-      if (isServiceRoom(room.roomNumber)) continue;
-      if (staffRooms?.has(room.roomNumber)) continue;
-      if (isStaffRoom({ layer: "room", roomNumber: room.roomNumber }, { building, floor })) continue;
-      claim(claims, room.roomNumber, noise, 0, true);
-    }
   }
 
   const assigned = new Map<string, NoiseLevel>();

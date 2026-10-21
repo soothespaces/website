@@ -41,7 +41,7 @@ export function MapExplorer() {
   const theme = useResolvedTheme();
   const colors = useMapColors();
   const wide = useMediaQuery(WIDE_QUERY);
-  const { data, selection, select, clear, camera, entrance, setEntrance, layers, setLayers, floorPlans, floor } =
+  const { data, selection, select, clear, camera, entrance, setEntrance, layers, setLayers, floorPlans, floor, route } =
     useMapState();
   const { entrances, spots, buildings, buildingsBySlug, spaces, error } = data;
   const map = useMap().current?.getMap();
@@ -216,7 +216,7 @@ export function MapExplorer() {
     <>
       <CampusDetailLayers theme={theme} visible={layers.campus} />
       <BuildingLayers selectedRecordNumber={outlined} colors={colors} />
-      <FloorPlanLayers plan={plan ?? null} colors={colors} />
+      <FloorPlanLayers plan={plan ?? null} colors={colors} availability={route.kind === "rooms-map"} />
       {plan ? <FloorLegend plan={plan} /> : null}
       <CurbRampLayer colors={colors} visible={layers.curbRamps} />
       <EntranceLayer entrances={entrances} colors={colors} visible={layers.entrances} />
