@@ -4,6 +4,7 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { ReactNode } from "react";
 import Map, { GeolocateControl, NavigationControl, ScaleControl } from "react-map-gl/maplibre";
+import { rememberFix } from "@/lib/location/store";
 import { useReducedMotion } from "@/lib/settings/use-reduced-motion";
 import { useResolvedTheme } from "@/lib/use-resolved-theme";
 import {
@@ -59,7 +60,15 @@ export default function CampusMap({ children }: { children?: ReactNode }) {
         style={{ width: "100%", height: "100%" }}
       >
         <NavigationControl position="top-right" showCompass={false} />
-        <GeolocateControl position="top-right" />
+        <GeolocateControl
+          position="top-right"
+          onGeolocate={(event) => {
+            rememberFix(
+              { latitude: event.coords.latitude, longitude: event.coords.longitude },
+              event.coords.accuracy,
+            );
+          }}
+        />
         <ScaleControl position="bottom-left" />
         <LayerSlots />
         {children}

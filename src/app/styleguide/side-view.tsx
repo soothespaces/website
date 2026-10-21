@@ -14,6 +14,9 @@ import { SlotTimeline } from "@/components/ui/slot-timeline";
 import { SpaceTagLine } from "@/components/ui/space-tag-line";
 import { StatTile, StatTileGrid } from "@/components/ui/stat-tile";
 import { spaceTagWords } from "@/features/spaces/space-tags";
+import type { RoomSlot } from "@/lib/data/room-slots";
+import { RoomsList } from "@/features/side-view/rooms/rooms-list";
+import type { RoomSize } from "@/features/side-view/rooms/room-list";
 
 const EIGHT_PM = 20 * 60;
 const MIXED_SLOTS = ["free", "free", "booked", "booked", "free", "free", "free", "free"] as const;
@@ -38,6 +41,7 @@ export function SideViewGallery() {
       <ChartExample />
       <TagExample />
       <DetailExample />
+      <RoomsExample />
     </div>
   );
 }
@@ -213,6 +217,89 @@ function TagExample() {
       <div className="w-[20rem] max-w-full">
         <SpaceTagLine tags={READING_ROOM_TAGS} />
         <SpaceTagLine tags={["Enclosed", "Dim", "CAEN computers", "Printer", "Whiteboards", "Outlets"]} />
+      </div>
+    </Example>
+  );
+}
+
+const EIGHT_PM_DATE = new Date("2026-10-22T00:00:00Z");
+
+function sampleRoom(overrides: Partial<RoomSlot> & Pick<RoomSlot, "id" | "name" | "floor" | "status" | "slots">): RoomSlot {
+  return {
+    roomNumber: overrides.id,
+    capacity: 4,
+    kind: "bookable",
+    bookingUrl: `https://umich.libcal.com/space/${overrides.id}`,
+    ...overrides,
+  };
+}
+
+const SAMPLE_ROOMS: RoomSlot[] = [
+  sampleRoom({
+    id: "booth-1",
+    name: "Booth 1",
+    floor: 1,
+    capacity: 1,
+    status: "Free until 11 PM",
+    slots: ["free", "free", "free", "free", "free", "free", "booked", "booked"],
+  }),
+  sampleRoom({
+    id: "2124",
+    name: "Room 2124",
+    floor: 2,
+    capacity: 6,
+    status: "Free until 10 PM",
+    slots: ["free", "free", "free", "free", "booked", "booked", "booked", "booked"],
+  }),
+  sampleRoom({
+    id: "2126",
+    name: "Room 2126",
+    floor: 2,
+    capacity: 4,
+    status: "Booked until 9:30 PM",
+    slots: ["booked", "booked", "booked", "free", "free", "free", "free", "free"],
+  }),
+  sampleRoom({
+    id: "1400",
+    name: "Room 1400",
+    floor: 1,
+    capacity: 30,
+    kind: "classroom",
+    bookingUrl: undefined,
+    status: "Free until 3 PM",
+    nextCourse: "EECS 281",
+    slots: ["free", "free", "free", "free", "free", "free", "free", "booked"],
+  }),
+  sampleRoom({
+    id: "2200",
+    name: "Room 2200",
+    floor: 2,
+    capacity: 20,
+    kind: "classroom",
+    bookingUrl: undefined,
+    status: "Booked until 4 PM",
+    currentCourse: "EECS 370",
+    slots: ["booked", "booked", "booked", "booked", "booked", "booked", "booked", "booked"],
+  }),
+];
+
+function RoomsExample() {
+  const [size, setSize] = useState<RoomSize>("any");
+  return (
+    <Example title="Rooms">
+      <div className="flex h-[40rem] w-[20rem] max-w-full overflow-hidden rounded-xl border border-border">
+        <RoomsList
+          buildingName="Shapiro Library"
+          rooms={SAMPLE_ROOMS}
+          loaded
+          error={null}
+          size={size}
+          onSizeChange={setSize}
+          now={EIGHT_PM_DATE}
+          onBack={() => {}}
+          planFloors={[1, 2, 3]}
+          onViewFloorPlan={() => {}}
+        />
       </div>
     </Example>
   );
