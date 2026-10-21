@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useSession } from "@/lib/auth/use-session";
+import { onCheckedIn } from "@/lib/data/check-in-events";
 import { addDays, detroitParts, monthName, weekdayOfDate } from "@/lib/detroit";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
@@ -149,6 +150,8 @@ export function useMyCheckInHistory(): MyHistoryState {
       cancelled = true;
     };
   }, [loading, userId, nonce]);
+
+  useEffect(() => onCheckedIn(() => refresh()), [refresh]);
 
   if (!getSupabaseEnv()) return { places: [], loaded: true, signedIn: false, error: "Supabase isn't configured.", refresh };
   if (loading || !userId) return { places: [], loaded: !loading, signedIn: false, error: null, refresh };

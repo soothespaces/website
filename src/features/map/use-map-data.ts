@@ -34,7 +34,13 @@ export type SpaceSpot = {
   spaces: MapSpace[];
 };
 
-export type MapBuilding = { slug: string; name: string; lat: number | null; lng: number | null };
+export type MapBuilding = {
+  slug: string;
+  name: string;
+  shortName: string | null;
+  lat: number | null;
+  lng: number | null;
+};
 
 // Our building for each FO building record number (FO's loc_ObjectNum, also
 // buildings.official_id or mguide's extra.buildingRecordNumber).
@@ -128,10 +134,18 @@ export function useMapData(): MapData {
           .order("name")
           .range(from, to),
       ),
-      readAll<MapBuilding & { official_id: string | null; record: string | null }>((from, to) =>
+      readAll<{
+        slug: string;
+        name: string;
+        short_name: string | null;
+        lat: number | null;
+        lng: number | null;
+        official_id: string | null;
+        record: string | null;
+      }>((from, to) =>
         supabase
           .from("buildings")
-          .select("slug, name, lat, lng, official_id, record:extra->>buildingRecordNumber")
+          .select("slug, name, short_name, lat, lng, official_id, record:extra->>buildingRecordNumber")
           .order("slug")
           .range(from, to),
       ),
@@ -139,8 +153,8 @@ export function useMapData(): MapData {
       .then(([entrances, spaces, rows]) => {
         const buildings: BuildingIndex = new Map();
         const buildingsBySlug: MapData["buildingsBySlug"] = new Map();
-        for (const { slug, name, lat, lng, official_id, record } of rows) {
-          const building = { slug, name, lat, lng };
+        for (const { slug, name, short_name, lat, lng, official_id, record } of rows) {
+          const building = { slug, name, shortName: short_name?.trim() || null, lat, lng };
           for (const id of [official_id, record]) {
             if (id && !buildings.has(id)) buildings.set(id, building);
           }

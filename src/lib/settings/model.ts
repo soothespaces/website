@@ -72,7 +72,7 @@ export const DEFAULT_STUDY: StudyPreferences = {
   when: [],
 };
 
-/** True once the person has chosen something other than "any" / nothing. */
+/** True when study choices should change sort order. "Any" and empty lists do not. */
 export function hasStudyPreferences(study: StudyPreferences): boolean {
   return (
     study.noise !== "any" ||

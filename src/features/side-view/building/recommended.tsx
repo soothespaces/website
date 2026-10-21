@@ -182,7 +182,7 @@ function catalog(
       const more = extra.get(space.slug);
       return {
         ...space,
-        id: more?.id,
+        id: more?.id ?? space.id,
         light_level: more?.lightLevel ?? null,
         floor: more?.floor ?? null,
         capacity: more?.capacity ?? null,

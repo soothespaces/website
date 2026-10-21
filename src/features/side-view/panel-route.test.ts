@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   backRoute,
   panelHref,
+  panelSearchForStack,
   parsePanelRoute,
   planPush,
   pushRoute,
@@ -42,6 +43,20 @@ test("panel routes round-trip through the URL and keep unrelated params", () => 
       assert.equal(parsed.name, route.slug ? undefined : route.name);
     }
   }
+});
+
+test("space filters stay while the spaces screen is in the stack and leave with it", () => {
+  const current = new URLSearchParams("panel=spaces&b=shapiro&f=quiet&people=just-me");
+  const building = { kind: "building" as const, slug: "shapiro" };
+  const spaces = { kind: "spaces" as const, slug: "shapiro" };
+  assert.equal(panelSearchForStack([building, spaces], current).get("f"), "quiet");
+  assert.equal(
+    panelSearchForStack([building, spaces, { kind: "space", id: "reading-room" }], current).get("f"),
+    "quiet",
+  );
+  const left = panelSearchForStack([{ kind: "building", slug: "hatcher" }], current);
+  assert.equal(left.get("f"), null);
+  assert.equal(left.get("people"), "just-me");
 });
 
 test("the hours link matches the shared-link shape", () => {

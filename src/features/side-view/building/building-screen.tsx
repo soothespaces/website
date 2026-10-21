@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckInHereButton } from "@/features/check-in/check-in-here";
 import { FloorSwitcher } from "@/features/map/panel/floor-switcher";
 import { useMapState } from "@/features/map/map-state";
 import type { PanelScreenProps } from "@/features/side-view/builtin-screens";
@@ -15,7 +16,7 @@ import { useBuildingProfile } from "./queries";
 // The building route. The header, tiles, recommendations, study spaces and
 // rooms each live in their own file; this screen is the order they stack in,
 // plus the entrance notes and the floor control the map already followed.
-function BuildingScreen({ route }: PanelScreenProps) {
+export function BuildingPanelScreen({ route }: PanelScreenProps) {
   const { data, floorPlans, floor, setFloor, back, clear, canGoBack, push } = useMapState();
   const slug = route.kind === "building" ? route.slug : null;
   const profile = useBuildingProfile(slug);
@@ -30,7 +31,10 @@ function BuildingScreen({ route }: PanelScreenProps) {
   const entrances = buildingEntrances(data.entrances, slug, recordNumber);
 
   return (
-    <div className="flex flex-col gap-5 px-1 pb-6">
+    <div
+      data-detail-scroll=""
+      className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain px-1 pb-6"
+    >
       <BuildingHeader
         slug={slug}
         name={name}
@@ -45,7 +49,7 @@ function BuildingScreen({ route }: PanelScreenProps) {
           <h2 className="text-2xl break-words">{name}</h2>
           {subtitle ? <p className="text-sm text-muted-foreground">{subtitle}</p> : null}
         </div>
-        {/* "Check in here" (the check-in flow) sits in this row, beside the name. */}
+        {slug ? <CheckInHereButton buildingSlug={slug} buildingName={name} /> : null}
       </div>
       <BuildingTiles slug={slug} />
       <RecommendedSection slug={slug} />
@@ -62,6 +66,3 @@ function BuildingScreen({ route }: PanelScreenProps) {
   );
 }
 
-// The screen draws its own back, heart and close, so the selection panel
-// doesn't add a second row of the same controls.
-export const BuildingPanelScreen = Object.assign(BuildingScreen, { ownsChrome: true });
