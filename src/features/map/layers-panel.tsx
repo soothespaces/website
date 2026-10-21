@@ -3,6 +3,8 @@
 import { Collapsible } from "radix-ui";
 import { useState } from "react";
 import { LayersIcon } from "@/components/ui/icons";
+import { panelRegistry } from "@/features/side-view/registry";
+import { useMapState } from "./map-state";
 
 export type LayerToggles = {
   campus: boolean;
@@ -49,12 +51,17 @@ export function LayersPanel({
   error: string | null;
 }) {
   const [open, setOpen] = useState(false);
+  const { route } = useMapState();
+  // The floating search bar is gone while Home is open, so the button sits higher.
+  const home = route.kind === "home" && Boolean(panelRegistry.home);
 
   return (
     <Collapsible.Root
       open={open}
       onOpenChange={setOpen}
-      className="absolute top-[4.25rem] left-2.5 z-10 rounded-md md:top-2.5 bg-card text-card-foreground shadow-[0_0_0_1px_var(--input)]"
+      className={`absolute left-2.5 z-10 rounded-md bg-card text-card-foreground shadow-[0_0_0_1px_var(--input)] md:top-2.5 ${
+        home ? "top-2.5" : "top-[4.25rem]"
+      }`}
       // Keeps the panel clear of the zoom and locate buttons on the right.
       // A map overlay, not a page column, so it isn't PageWidth.
       style={{ maxWidth: "calc(100% - 5rem)" }}

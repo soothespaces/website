@@ -246,6 +246,13 @@ function RotationList({
     return "drag";
   }
 
+  function cancelPointer(event: ReactPointerEvent<HTMLButtonElement>) {
+    const current = pointer.current;
+    if (!current || event.pointerId !== current.pointerId) return;
+    pointer.current = null;
+    setDrag(null);
+  }
+
   return (
     <ul aria-label="Your rotation" className="flex flex-col">
       {items.map((item, index) => {
@@ -273,7 +280,7 @@ function RotationList({
                 onPointerDown={(event) => onPointerDown(event, item.favorite.id)}
                 onPointerMove={onPointerMove}
                 onPointerUp={finishPointer}
-                onPointerCancel={finishPointer}
+                onPointerCancel={cancelPointer}
                 onMove={(to) => onMove(index, to)}
               />
             ) : null}
@@ -326,13 +333,35 @@ function MoveHandle({
   onPointerDown: (event: ReactPointerEvent<HTMLButtonElement>) => void;
   onPointerMove: (event: ReactPointerEvent<HTMLButtonElement>) => void;
   onPointerUp: (event: ReactPointerEvent<HTMLButtonElement>) => "ignored" | "tap" | "drag";
-  onPointerCancel: (event: ReactPointerEvent<HTMLButtonElement>) => "ignored" | "tap" | "drag";
+  onPointerCancel: (event: ReactPointerEvent<HTMLButtonElement>) => void;
   onMove: (to: number) => void;
 }) {
   const menuId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   // A press focuses the handle. That must not open the buttons until the pointer lifts without dragging.
   const pointerFocusRef = useRef(false);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDocumentPointerDown(event: PointerEvent) {
+      const target = event.target;
+      if (target instanceof Node && rootRef.current?.contains(target)) return;
+      setOpen(false);
+    }
+    function onDocumentKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      setOpen(false);
+    }
+    document.addEventListener("pointerdown", onDocumentPointerDown, true);
+    document.addEventListener("keydown", onDocumentKeyDown, true);
+    return () => {
+      document.removeEventListener("pointerdown", onDocumentPointerDown, true);
+      document.removeEventListener("keydown", onDocumentKeyDown, true);
+    };
+  }, [open]);
 
   function move(delta: number) {
     const to = index + delta;
@@ -342,6 +371,7 @@ function MoveHandle({
 
   return (
     <div
+      ref={rootRef}
       className="flex shrink-0 flex-col items-start"
       onFocus={() => {
         if (!pointerFocusRef.current) setOpen(true);
@@ -367,10 +397,13 @@ function MoveHandle({
         onPointerUp={(event) => {
           const end = onPointerUp(event);
           pointerFocusRef.current = false;
-          if (end === "tap") setOpen(true);
+          if (end === "tap") setOpen((current) => !current);
           if (end === "drag") setOpen(false);
         }}
-        onPointerCancel={onPointerCancel}
+        onPointerCancel={(event) => {
+          onPointerCancel(event);
+          pointerFocusRef.current = false;
+        }}
         onKeyDown={(event) => {
           if (event.key === "ArrowUp") {
             event.preventDefault();
@@ -380,7 +413,7 @@ function MoveHandle({
             move(1);
           } else if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
-            setOpen(true);
+            setOpen((current) => !current);
           }
         }}
       >

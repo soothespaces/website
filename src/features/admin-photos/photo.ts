@@ -53,9 +53,7 @@ export type AdminPhoto = PhotoTags &
     createdAt: string;
   };
 
-export function photoUrl(supabaseUrl: string, pathPrefix: string, width: number) {
-  return `${supabaseUrl}/storage/v1/object/public/${pathPrefix}-${width}.webp`;
-}
+export { photoUrl } from "@/lib/photos/url";
 
 /** The widths a photo is stored at: the kind's widths below its own, then its own. Never upscaled. */
 export function widthsFor(kind: PhotoKind, width: number) {
