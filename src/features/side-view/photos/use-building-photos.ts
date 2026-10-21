@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { readAll } from "@/lib/data/read-all";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
-import type { GalleryPhoto } from "./photo-model";
+import { photoSpace, photosForSpace, type GalleryPhoto, type SpaceRef } from "./photo-model";
 
 type PhotoRecord = {
   id: string;
@@ -26,15 +26,21 @@ type PhotoRecord = {
   lat: number | null;
   lng: number | null;
   created_at: string;
-  uploaded_by: string | null;
 };
 
-type SpaceRecord = { id: string; slug: string; name: string; floor: number | null };
+type SpaceRecord = { id: string; slug: string; name: string; floor: number | null; building_slug: string };
+
+type LocationRecord = {
+  space_id: string;
+  floor: number;
+  room_number: string | null;
+  area: unknown;
+};
 
 const PHOTO_SELECT =
-  "id, building_slug, space_id, path_prefix, widths, width, height, alt, credit, license, source_url, sort_order, is_listed, kind, floor, room_number, lat, lng, created_at, uploaded_by";
+  "id, building_slug, space_id, path_prefix, widths, width, height, alt, credit, license, source_url, sort_order, is_listed, kind, floor, room_number, lat, lng, created_at";
 
-function toGalleryPhoto(record: PhotoRecord, space: SpaceRecord | undefined): GalleryPhoto {
+function toGalleryPhoto(record: PhotoRecord): GalleryPhoto {
   return {
     id: record.id,
     pathPrefix: record.path_prefix,
@@ -52,13 +58,34 @@ function toGalleryPhoto(record: PhotoRecord, space: SpaceRecord | undefined): Ga
     lat: record.lat,
     lng: record.lng,
     spaceId: record.space_id,
-    spaceName: space?.name ?? null,
-    spaceSlug: space?.slug ?? null,
-    spaceFloor: space?.floor ?? null,
+    buildingSlug: record.building_slug,
+    spaceName: null,
+    spaceSlug: null,
     createdAt: record.created_at,
-    uploadedBy: record.uploaded_by,
     isListed: record.is_listed,
   };
+}
+
+function spacesFor(rows: readonly SpaceRecord[], locations: readonly LocationRecord[]): SpaceRef[] {
+  return rows.map((space) => ({
+    id: space.id,
+    slug: space.slug,
+    name: space.name,
+    buildingSlug: space.building_slug,
+    locations: locations
+      .filter((location) => location.space_id === space.id)
+      .map((location) => ({
+        floor: location.floor,
+        roomNumber: location.room_number,
+        area: location.area,
+      })),
+  }));
+}
+
+function placePhoto(photo: GalleryPhoto, spaces: readonly SpaceRef[]): GalleryPhoto {
+  const match = photoSpace(photo, spaces);
+  if (!match) return photo;
+  return { ...photo, spaceName: match.name, spaceSlug: match.slug };
 }
 
 export type BuildingPhotosState = {
@@ -80,56 +107,56 @@ export function useBuildingPhotos(slug: string, spaceSlug?: string): BuildingPho
     let cancelled = false;
 
     async function load() {
-      const [buildingResult, spaces] = await Promise.all([
+      const [buildingResult, spaceRows, buildingPhotos] = await Promise.all([
         supabase.from("buildings").select("name, short_name").eq("slug", slug).maybeSingle(),
         readAll<SpaceRecord>((from, to) =>
-          supabase.from("spaces").select("id, slug, name, floor").eq("building_slug", slug).range(from, to),
+          supabase
+            .from("spaces")
+            .select("id, slug, name, floor, building_slug")
+            .eq("building_slug", slug)
+            .range(from, to),
+        ),
+        readAll<PhotoRecord>((from, to) =>
+          supabase.from("photos").select(PHOTO_SELECT).eq("is_listed", true).eq("building_slug", slug).range(from, to),
         ),
       ]);
       if (buildingResult.error) throw buildingResult.error;
 
-      const byId = new Map(spaces.map((space) => [space.id, space]));
-      const target = spaceSlug ? spaces.find((space) => space.slug === spaceSlug) : undefined;
-      const sets: PhotoRecord[][] = [];
-
-      if (spaceSlug) {
-        if (target) {
-          sets.push(
-            await readAll<PhotoRecord>((from, to) =>
+      const ids = spaceRows.map((space) => space.id);
+      const [locations, spacePhotos] = await Promise.all([
+        ids.length
+          ? readAll<LocationRecord>((from, to) =>
               supabase
-                .from("photos")
-                .select(PHOTO_SELECT)
-                .eq("is_listed", true)
-                .eq("space_id", target.id)
+                .from("space_locations")
+                .select("space_id, floor, room_number, area")
+                .in("space_id", ids)
                 .range(from, to),
-            ),
-          );
-        }
-      } else {
-        sets.push(
-          await readAll<PhotoRecord>((from, to) =>
-            supabase.from("photos").select(PHOTO_SELECT).eq("is_listed", true).eq("building_slug", slug).range(from, to),
-          ),
-        );
-        const spaceIds = spaces.map((space) => space.id);
-        if (spaceIds.length) {
-          sets.push(
-            await readAll<PhotoRecord>((from, to) =>
-              supabase.from("photos").select(PHOTO_SELECT).eq("is_listed", true).in("space_id", spaceIds).range(from, to),
-            ),
-          );
-        }
+            )
+          : Promise.resolve([]),
+        ids.length
+          ? readAll<PhotoRecord>((from, to) =>
+              supabase.from("photos").select(PHOTO_SELECT).eq("is_listed", true).in("space_id", ids).range(from, to),
+            )
+          : Promise.resolve([]),
+      ]);
+
+      const spaces = spacesFor(spaceRows, locations);
+      const rows = new Map<string, GalleryPhoto>();
+      for (const row of [...buildingPhotos, ...spacePhotos]) {
+        if (!row.is_listed) continue;
+        const photo = placePhoto(toGalleryPhoto(row), spaces);
+        rows.set(photo.id, photo);
+      }
+      let photos = [...rows.values()];
+      if (spaceSlug) {
+        const space = spaces.find((item) => item.slug === spaceSlug);
+        photos = space ? photosForSpace(photos, space, spaces) : [];
       }
 
-      const photos = new Map<string, GalleryPhoto>();
-      for (const row of sets.flat()) {
-        if (!row.is_listed) continue;
-        photos.set(row.id, toGalleryPhoto(row, row.space_id ? byId.get(row.space_id) : undefined));
-      }
       const building = buildingResult.data;
       return {
         buildingName: building?.short_name?.trim() || building?.name || "",
-        photos: [...photos.values()],
+        photos,
       };
     }
 
