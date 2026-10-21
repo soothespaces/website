@@ -34,7 +34,7 @@ export function MapSheet() {
       {...handlers}
       style={offset ? { transform: `translateY(${Math.max(offset, -80)}px)`, transition: "none" } : undefined}
       className={`absolute inset-x-0 bottom-0 z-20 flex min-h-0 flex-col rounded-t-2xl bg-card text-card-foreground shadow-[0_0_0_1px_var(--border),0_-4px_16px_rgb(0_0_0/0.12)] transition-[transform,max-height] duration-200 ease-out motion-reduce:transition-none ${
-        expanded ? "top-2.5 overflow-hidden" : "max-h-[45%] overflow-y-auto overscroll-contain"
+        expanded ? "top-2.5" : "max-h-[45%]"
       }`}
     >
       <Button

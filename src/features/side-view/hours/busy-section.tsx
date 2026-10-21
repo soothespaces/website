@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { BusynessChart } from "@/components/ui/busyness-chart";
 import { Label } from "@/components/ui/field";
 import { Select } from "@/components/ui/select";
@@ -26,6 +26,7 @@ export function BusySection({ buildingSlug, now }: { buildingSlug: string; now?:
 
 function BusyDays({ times, now }: { times: PopularTimes; now: Date }) {
   const dayId = useId();
+  const sectionRef = useRef<HTMLElement>(null);
   const parts = detroitParts(now);
   const today = String(parts.weekday);
   const [choice, setChoice] = useState(today);
@@ -38,8 +39,22 @@ function BusyDays({ times, now }: { times: PopularTimes; now: Date }) {
   const values = chartValues(day);
   const highlighted = highlightHour(dayIndex, parts.weekday, parts.hour);
 
+  // The building panel's busyness tile opens this screen with #busyness.
+  // replaceState does not fire hashchange, so check once the section exists.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const scroll = () => {
+      if (window.location.hash !== "#busyness") return;
+      section.scrollIntoView({ block: "start" });
+    };
+    scroll();
+    const timer = window.setTimeout(scroll, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   return (
-    <section className="flex flex-col gap-3" aria-labelledby={`${dayId}-heading`}>
+    <section id="busyness" ref={sectionRef} className="flex flex-col gap-3" aria-labelledby={`${dayId}-heading`}>
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <h2 id={`${dayId}-heading`} className="text-base">
           How busy it gets

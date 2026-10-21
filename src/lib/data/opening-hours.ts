@@ -41,10 +41,10 @@ export type OpeningHourRow = {
   opens: string | null;
   closes: string | null;
   access: string;
-  /** Period name, e.g. "Fall and winter semester hours". */
-  label: string | null;
-  /** `um_library`, `google`, or another loader id. */
-  source: string;
+  /** Period name, e.g. "Fall and winter semester hours". Optional so callers that only need intervals can omit it. */
+  label?: string | null;
+  /** `um_library`, `google`, or another loader id. Optional for the same reason. */
+  source?: string;
 };
 
 /** One dated period that supplies at least one day on the Hours week list. */
@@ -129,7 +129,7 @@ export function intervalsOn(rows: readonly OpeningHourRow[], date: string): Hour
 }
 
 function periodKey(row: OpeningHourRow): string {
-  return `${row.label ?? ""}\0${row.validFrom}\0${row.validUntil}\0${row.source}`;
+  return `${row.label ?? ""}\0${row.validFrom}\0${row.validUntil}\0${row.source ?? ""}`;
 }
 
 /** Distinct periods for Sunday through Saturday of the coming week, list order. */
@@ -144,10 +144,10 @@ export function periodsForWeek(rows: readonly OpeningHourRow[], date: string): H
       if (seen.has(key)) continue;
       seen.add(key);
       periods.push({
-        label: row.label,
+        label: row.label ?? null,
         validFrom: row.validFrom,
         validUntil: row.validUntil,
-        source: row.source,
+        source: row.source ?? "",
       });
     }
   }

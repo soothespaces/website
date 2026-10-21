@@ -25,13 +25,9 @@ test("ignores a missing first hour when a later hour is the peak", () => {
   assert.equal(busynessChartLabel(values, 20), "Busiest around 3 PM. Highlighted hour: 8 PM.");
 });
 
-test("labels the axis the way the Hours board does", () => {
-  assert.equal(busynessAxisLabel(0), "12 AM");
-  assert.equal(busynessAxisLabel(6), "6 AM");
-  assert.equal(busynessAxisLabel(12), "12 PM");
-  assert.equal(busynessAxisLabel(18), "6 PM");
-  assert.equal(busynessAxisLabel(23), "11 PM");
-  assert.equal(busynessAxisLabel(3), null);
+test("labels the axis every three hours", () => {
+  assert.equal(busynessAxisLabel(0), "12a");
+  assert.equal(busynessAxisLabel(12), "12p");
   assert.equal(busynessAxisLabel(20), null);
   assert.equal(formatHour(0), "12 AM");
   assert.equal(formatHour(20), "8 PM");

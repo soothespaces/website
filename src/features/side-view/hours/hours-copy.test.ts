@@ -78,18 +78,29 @@ test("a week that crosses a break names each period, then the source", () => {
   );
 });
 
-test("Google hours name Google Maps, and a missing label is just the dates", () => {
+test("Google hours omit the cache window, and a one-day range is a single date", () => {
   assert.equal(
     hoursSourceNote([
       { label: "Regular hours (Google Maps)", validFrom: "2026-10-09", validUntil: "2027-02-06", source: "google" },
     ]),
-    "Regular hours (Google Maps), Oct 9 – Feb 6. From Google Maps.",
+    "Regular hours (Google Maps). From Google Maps.",
   );
   assert.equal(
     hoursSourceNote([{ label: null, validFrom: "2026-08-30", validUntil: "2027-05-08", source: "um_library" }]),
     "Aug 30 – May 8. From the U-M Library.",
   );
   assert.equal(hoursSourceNote([]), null);
+});
+
+test("periods are named in date order, and a single day is not a range", () => {
+  assert.equal(
+    hoursSourceNote([
+      { label: "Winter break hours", validFrom: "2026-12-25", validUntil: "2027-01-03", source: "um_library" },
+      { label: "Fall and winter semester hours", validFrom: "2026-08-30", validUntil: "2027-05-08", source: "um_library" },
+      { label: "Intersession", validFrom: "2026-12-24", validUntil: "2026-12-24", source: "um_library" },
+    ]),
+    "Fall and winter semester hours, Aug 30 – May 8. Intersession, Dec 24. Winter break hours, Dec 25 – Jan 3. From the U-M Library.",
+  );
 });
 
 test("status lines keep the open-until wording and spell out the next close", () => {

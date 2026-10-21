@@ -1,13 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { DetailScreen } from "@/components/ui/detail-screen";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useMapState } from "@/features/map/map-state";
 import { cx } from "@/lib/cx";
 import { nextClose, openStatus, useOpeningHours, weekRows, type WeekRow } from "@/lib/data/opening-hours";
-import { createClient } from "@/lib/supabase/client";
-import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { PanelScreenProps } from "../builtin-screens";
 import { BusySection } from "./busy-section";
 import { hoursSourceNote, nextCloseLine, statusHeadline, weekDayLabel } from "./hours-copy";
@@ -25,8 +22,6 @@ function HoursBody({ slug, onBack }: { slug: string; onBack: () => void }) {
   const rows = weekRows(hours);
   const note = hoursSourceNote(hours?.periods ?? []);
   const status = openStatus(hours, now);
-  const close = nextCloseLine(nextClose(hours, now));
-
   let headline: string | null = null;
   let headlineClass = "text-xl font-semibold text-primary";
   let message: string | null = null;
@@ -41,9 +36,12 @@ function HoursBody({ slug, onBack }: { slug: string; onBack: () => void }) {
   } else {
     headline = statusHeadline(status);
   }
+  // "Open until 7 PM" already names the close. The second line is only for a
+  // 24-hour day, where the headline does not say when it finally closes.
+  const close = headline === "Open 24 hours today" ? nextCloseLine(nextClose(hours, now)) : null;
 
   return (
-    <DetailScreen title="Hours" subtitle={building} backTo={building} onBack={onBack} className="h-full min-h-0">
+    <DetailScreen title="Hours" subtitle={building} backTo={building} onBack={onBack} className="min-h-0 flex-1">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1" aria-live="polite">
           {message ? <p className="text-sm text-muted-foreground">{message}</p> : null}
@@ -74,39 +72,20 @@ function WeekList({ rows }: { rows: WeekRow[] }) {
             row.today && "rounded-lg border-transparent bg-primary/10 font-semibold",
           )}
         >
-          <dt aria-current={row.today ? "date" : undefined}>{weekDayLabel(row.day, row.today)}</dt>
-          <dd className="text-right whitespace-nowrap">{row.hours}</dd>
+          <dt className="shrink-0" aria-current={row.today ? "date" : undefined}>
+            {weekDayLabel(row.day, row.today)}
+          </dt>
+          <dd className="min-w-0 text-right">{row.hours}</dd>
         </div>
       ))}
     </dl>
   );
 }
 
-// Prefer the short name ("Shapiro Library") once it loads. The map's name
-// is the long official one, which is what we show until then.
+// The map already loaded every building, including short_name. Reading it
+// here avoids a second buildings query when the building panel has the same row.
 function useBuildingLabel(slug: string): string {
   const { data } = useMapState();
-  const fallback = data.buildingsBySlug.get(slug)?.name || "Building";
-  const [short, setShort] = useState<{ slug: string; name: string } | null>(null);
-
-  useEffect(() => {
-    if (!getSupabaseEnv()) return;
-    const supabase = createClient();
-    let cancelled = false;
-    supabase
-      .from("buildings")
-      .select("short_name, name")
-      .eq("slug", slug)
-      .maybeSingle()
-      .then(({ data: row, error }) => {
-        if (cancelled || error || !row) return;
-        const name = row.short_name?.trim() || row.name;
-        if (name) setShort({ slug, name });
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [slug]);
-
-  return short?.slug === slug ? short.name : fallback;
+  const known = data.buildingsBySlug.get(slug);
+  return known?.shortName || known?.name || "Building";
 }

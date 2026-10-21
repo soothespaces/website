@@ -14,3 +14,8 @@ export const panelRegistry: Partial<Record<PanelRoute["kind"], ComponentType<Pan
   space: SpacePanelScreen,
   hours: HoursScreen,
 };
+
+// Screens that draw their own back button and title. The selection panel
+// hides its header for these and, when the frame has a fixed height, lets
+// them fill it. Other detail screens add their kind here.
+export const detailPanelKinds: ReadonlySet<PanelRoute["kind"]> = new Set(["hours"]);

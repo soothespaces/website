@@ -3,13 +3,15 @@ export const SHAPIRO_TUESDAY_BUSYNESS = [
   35, 24, 16, 15, 13, 13, 13, 19, 27, 42, 54, 66, 73, 82, 92, 95, 100, 95, 88, 79, 73, 70, 68, 61,
 ] as const;
 
-// The Hours board labels noon and the ends of the day, not every three hours.
 const AXIS: Record<number, string> = {
-  0: "12 AM",
-  6: "6 AM",
-  12: "12 PM",
-  18: "6 PM",
-  23: "11 PM",
+  0: "12a",
+  3: "3a",
+  6: "6a",
+  9: "9a",
+  12: "12p",
+  15: "3p",
+  18: "6p",
+  21: "9p",
 };
 
 export function busynessAxisLabel(hour: number) {

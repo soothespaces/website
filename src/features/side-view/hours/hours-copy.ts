@@ -36,19 +36,48 @@ function creditFor(source: string): string {
   return SOURCE_CREDIT[source] ?? source;
 }
 
+function periodRange(period: HoursSourcePeriod): string | null {
+  // Google's valid_from/valid_until is the cache window, not a real term.
+  if (period.source === "google") return null;
+  const start = formatPeriodDate(period.validFrom);
+  if (period.validFrom === period.validUntil) return start;
+  return `${start} – ${formatPeriodDate(period.validUntil)}`;
+}
+
+function periodLine(period: HoursSourcePeriod): string {
+  const range = periodRange(period);
+  if (period.label && range) return `${period.label}, ${range}.`;
+  if (period.label) return `${period.label}.`;
+  if (range) return `${range}.`;
+  return "";
+}
+
 /**
  * "Fall and winter semester hours, Aug 30 – May 8. From the U-M Library."
+ * Periods are named in date order. A one-day range is a single date.
  * Several periods share one "From" line when they share a source.
  */
 export function hoursSourceNote(periods: readonly HoursSourcePeriod[]): string | null {
   if (!periods.length) return null;
-  const lines = periods.map((period) => {
-    const range = `${formatPeriodDate(period.validFrom)} – ${formatPeriodDate(period.validUntil)}`;
-    return `${period.label ? `${period.label}, ${range}` : range}.`;
-  });
-  const sources = [...new Set(periods.map((period) => period.source))];
+  const ordered = [...periods].sort(
+    (a, b) =>
+      a.validFrom.localeCompare(b.validFrom) ||
+      a.validUntil.localeCompare(b.validUntil) ||
+      (a.label ?? "").localeCompare(b.label ?? ""),
+  );
+  const lines = ordered.map(periodLine).filter((line) => line.length > 0);
+  if (!lines.length) return null;
+  const sources = [...new Set(ordered.map((period) => period.source).filter((source) => source.length > 0))];
+  if (sources.length === 0) return lines.join(" ");
   if (sources.length === 1) return `${lines.join(" ")} From ${creditFor(sources[0]!)}.`;
-  return periods.map((period, index) => `${lines[index]} From ${creditFor(period.source)}.`).join(" ");
+  return ordered
+    .map((period) => {
+      const line = periodLine(period);
+      if (!line) return "";
+      return period.source ? `${line} From ${creditFor(period.source)}.` : line;
+    })
+    .filter((line) => line.length > 0)
+    .join(" ");
 }
 
 /** The accent headline. "Open 24 hours" gains "today"; other statuses pass through. */
