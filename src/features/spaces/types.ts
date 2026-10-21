@@ -22,6 +22,7 @@ export type SpaceSummary = Pick<
 };
 
 // The PostgREST select for a SpaceSummary. Home uses id, light, photos and
-// the building's short name; lists only read the fields they already did.
+// the building's short name. Source and edited fields stay off this query;
+// the dim chip reads the stored light level.
 export const SPACE_SUMMARY_SELECT =
-  "id, slug, name, summary, floor_label, noise_level, light_level, features, capacity, lat, lng, image_url, image_alt, source, edited_fields, building:buildings(slug, name, short_name, lat, lng)";
+  "id, slug, name, summary, floor_label, noise_level, light_level, features, capacity, lat, lng, image_url, image_alt, building:buildings(slug, name, short_name, lat, lng)";

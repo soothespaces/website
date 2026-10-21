@@ -7,12 +7,12 @@ import { NoiseBadge } from "@/components/ui/noise-badge";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useMapState } from "@/features/map/map-state";
 import type { Coordinates } from "@/lib/location";
+import { useLocation } from "@/lib/location/use-location";
 import { useStudyPreferences } from "@/lib/settings/settings-provider";
 import {
   buildingLabel,
   orderRecommended,
   placeMeta,
-  selectedGroupSize,
   spaceMeters,
   walkLabel,
   type HomeSpace,
@@ -22,12 +22,13 @@ import {
 const SHOWN = 3;
 
 export function Recommended({ spaces }: { spaces: HomeSpace[] }) {
-  const { origin, groupSize, filters, push, select } = useMapState();
+  const { groupSize, filters, push, select } = useMapState();
+  const { position } = useLocation();
   const { study } = useStudyPreferences();
   const picks = orderRecommended(spaces, {
     study,
-    groupSize: selectedGroupSize(groupSize),
-    origin,
+    groupSize,
+    origin: position,
     filters,
   }).slice(0, SHOWN);
   const listKey = picks.map((pick) => pick.space.slug).join("|");
@@ -39,7 +40,7 @@ export function Recommended({ spaces }: { spaces: HomeSpace[] }) {
         <RecommendationCard
           key={listKey}
           picks={picks}
-          origin={origin}
+          origin={position}
           onOpen={(slug) => select({ kind: "space", slug })}
         />
       ) : (

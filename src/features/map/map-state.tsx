@@ -15,7 +15,6 @@ import {
 import { useSearchParams } from "next/navigation";
 import { type SpaceSearch, useSpaceSearch } from "@/features/spaces";
 import { HOME_ROUTE, stackForRoute, type PanelRoute } from "@/features/side-view/panel-route";
-import type { Coordinates } from "@/lib/location";
 import { EMPTY_SPACE_FILTERS, type SpaceFilters } from "./space-filters";
 import {
   historyStateWithoutNextKeys,
@@ -81,9 +80,6 @@ type MapState = {
   // other map filter that sets the same flags.
   filters: SpaceFilters;
   setFilters: (filters: SpaceFilters) => void;
-  // Set when the map's location control gets a fix. Null until then.
-  origin: Coordinates | null;
-  setOrigin: (origin: Coordinates | null) => void;
 };
 
 const MapStateContext = createContext<MapState | null>(null);
@@ -256,7 +252,6 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
   const [floorChoice, setFloorChoice] = useState<{ building: string; floor: number | null } | null>(null);
   const [userMoved, setUserMoved] = useState(false);
   const [filters, setFilters] = useState<SpaceFilters>(EMPTY_SPACE_FILTERS);
-  const [origin, setOriginState] = useState<Coordinates | null>(null);
   // The URL is the stored value, so a reload keeps the choice.
   const groupSize = useSyncExternalStore(subscribeToGroupSizeUrl, groupSizeFromLocation, serverGroupSize);
 
@@ -335,14 +330,6 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
     [buildingSlug],
   );
 
-  const setOrigin = useCallback((next: Coordinates | null) => {
-    setOriginState((current) => {
-      if (next == null) return current == null ? current : null;
-      if (current && current.latitude === next.latitude && current.longitude === next.longitude) return current;
-      return next;
-    });
-  }, []);
-
   // replaceState updates the address bar before this returns, so a second
   // choice in the same turn sees the first. App history keys (the panel
   // stack) are passed through; Next's own keys are left for its patch to copy.
@@ -397,8 +384,6 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
       setGroupSize,
       filters,
       setFilters,
-      origin,
-      setOrigin,
     }),
     [
       data,
@@ -425,8 +410,6 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
       groupSize,
       setGroupSize,
       filters,
-      origin,
-      setOrigin,
     ],
   );
 

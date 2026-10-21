@@ -63,6 +63,18 @@ export type Settings = {
   study: StudyPreferences;
 };
 
+/** True when the visitor chose something other than "any" or an empty list. */
+export function hasStudyPreferences(study: StudyPreferences): boolean {
+  return (
+    study.noise !== "any" ||
+    study.setting !== "any" ||
+    study.brightness !== "any" ||
+    study.daylight !== "any" ||
+    study.niceToHave.length > 0 ||
+    study.when.length > 0
+  );
+}
+
 export const DEFAULT_STUDY: StudyPreferences = {
   noise: "any",
   setting: "any",

@@ -33,7 +33,8 @@ export function HomeScreen({ density }: PanelScreenProps) {
 
   return (
     <div className="flex flex-col gap-4 px-1 pb-3">
-      <div className="sticky top-0 z-10 -mx-1 border-b border-border bg-card px-2 py-2 md:bg-background">
+      {/* Wide screens use the dock's field, which stays put while typing. */}
+      <div className="sticky top-0 z-10 -mx-1 border-b border-border bg-card px-2 py-2 md:hidden">
         <SpaceSearchField value={search.query} onChange={search.setQuery} />
       </div>
       {showList ? (

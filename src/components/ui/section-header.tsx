@@ -30,7 +30,7 @@ export function SectionHeader({
 
 function SectionActionLink({ action }: { action: SectionAction }) {
   const className = "text-sm font-medium text-primary underline underline-offset-2";
-  if ("href" in action && action.href) {
+  if (action.href != null) {
     return (
       <Link href={action.href} className={className}>
         {action.label}

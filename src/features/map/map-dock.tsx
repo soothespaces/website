@@ -16,18 +16,16 @@ export function MapDock() {
   // Home stays the search results until its screen registers. The panel
   // scrolls inside itself so a covered screen keeps its place.
   const showResults = route.kind === "home" && !panelRegistry.home;
-  // The home screen owns the search field. Other screens keep it pinned here.
-  const homeOpen = route.kind === "home" && Boolean(panelRegistry.home);
   return (
     <aside
       aria-label="Study spaces"
       className="hidden w-80 shrink-0 flex-col border-r border-border bg-background md:flex lg:w-96"
     >
-      {homeOpen ? null : (
-        <div className="border-b border-border p-3">
-          <SpaceSearchField value={search.query} onChange={search.setQuery} />
-        </div>
-      )}
+      {/* Stays mounted on every route. Home hides its own copy from `md` up,
+          so typing here does not swap the focused field. */}
+      <div className="border-b border-border p-3">
+        <SpaceSearchField value={search.query} onChange={search.setQuery} />
+      </div>
       {/* Rendered only on wide screens, so the phone sheet and this never
           both hold the panel (and its ids). */}
       {wide ? (

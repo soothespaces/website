@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import {
   distanceToBuildingMeters,
   findNearestBuilding,
@@ -15,16 +15,41 @@ import {
   type OneShotPositionResult,
 } from "./index";
 
+// One fix for every caller. The map's locate button and `request()` both write it,
+// so Open now re-sorts whichever one obtained the position. Nothing here asks
+// for a fix on its own.
+let sharedPosition: Coordinates | null = null;
+const positionListeners = new Set<() => void>();
+
+function subscribePosition(listener: () => void) {
+  positionListeners.add(listener);
+  return () => positionListeners.delete(listener);
+}
+
+function readPosition() {
+  return sharedPosition;
+}
+
+function serverPosition() {
+  return null;
+}
+
+export function rememberPosition(next: Coordinates | null) {
+  if (sharedPosition?.latitude === next?.latitude && sharedPosition?.longitude === next?.longitude) return;
+  sharedPosition = next;
+  for (const listener of positionListeners) listener();
+}
+
 /**
  * Location permission for check-in (F3.6 / SOS-115).
  *
  * Reading `permission` on mount uses the Permissions API only. `request()`
  * is the one call that may show the browser prompt, and only after the
- * pre-prompt button. The fix stays in component state and is never uploaded.
+ * pre-prompt button. The fix stays in memory and is never uploaded.
  */
 export function useLocation() {
   const [permission, setPermission] = useState<HookLocationPermission>("unknown");
-  const [position, setPosition] = useState<Coordinates | null>(null);
+  const position = useSyncExternalStore(subscribePosition, readPosition, serverPosition);
 
   useEffect(() => {
     let cancelled = false;
@@ -39,7 +64,7 @@ export function useLocation() {
   const request = useCallback(async (): Promise<OneShotPositionResult> => {
     const result = await requestOneShotPosition();
     setPermission(toHookPermission(result.status));
-    if (result.coords) setPosition(result.coords);
+    if (result.coords) rememberPosition(result.coords);
     return result;
   }, []);
 

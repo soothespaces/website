@@ -4,14 +4,16 @@ import { Button } from "@/components/ui/button";
 import { NoiseBadge } from "@/components/ui/noise-badge";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useMapState } from "@/features/map/map-state";
+import { useLocation } from "@/lib/location/use-location";
 import { buildingLabel, orderOpenNow, placeMeta, type HomeSpace } from "./places";
 
 const SHOWN = 3;
 
 export function OpenNearby({ spaces }: { spaces: HomeSpace[] }) {
-  const { origin, select } = useMapState();
-  const rows = orderOpenNow(spaces, origin).slice(0, SHOWN);
-  const title = origin ? "Open now nearby" : "Open now";
+  const { select } = useMapState();
+  const { position } = useLocation();
+  const rows = orderOpenNow(spaces, position).slice(0, SHOWN);
+  const title = position ? "Open now nearby" : "Open now";
 
   return (
     <section className="flex flex-col gap-1">

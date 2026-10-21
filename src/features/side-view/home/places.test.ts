@@ -88,11 +88,13 @@ test("walk time is hidden without a distance and uses minutes otherwise", () => 
 });
 
 test("open late means open at 11 PM tonight or later", () => {
+  const untilTen = hours([{ opens: 8 * 60, closes: 22 * 60, access: "public" }]);
   const untilEleven = hours([{ opens: 8 * 60, closes: 23 * 60, access: "public" }]);
   const throughEleven = hours([{ opens: 8 * 60, closes: 23 * 60 + 1, access: "public" }]);
   const allDay = hours([{ opens: 0, closes: 1440, access: "public" }]);
   const overnight = hours([{ opens: 10 * 60, closes: 26 * 60, access: "public" }]);
-  assert.equal(isOpenLateTonight(untilEleven, NOW), false);
+  assert.equal(isOpenLateTonight(untilTen, NOW), false);
+  assert.equal(isOpenLateTonight(untilEleven, NOW), true);
   assert.equal(isOpenLateTonight(throughEleven, NOW), true);
   assert.equal(isOpenLateTonight(allDay, NOW), true);
   assert.equal(isOpenLateTonight(overnight, NOW), true);
@@ -217,6 +219,17 @@ test("4+ re-sorts recommended without dropping a space, and preferences change t
   });
   const closed = place({ slug: "closed", name: "Closed", noise_level: "quiet", capacity: 6, open: false });
 
+  const noSize = place({ slug: "solo-seat", name: "Alpha Seat", noise_level: "quiet", capacity: 0, open: true });
+  const anySeat = place({ slug: "any-seat", name: "Bravo Seat", noise_level: "loud", capacity: 1, open: true });
+  assert.equal(
+    orderRecommended([noSize, anySeat], { study: DEFAULT_STUDY, groupSize: null, origin: null })[0]?.space.slug,
+    "solo-seat",
+  );
+  assert.equal(
+    orderRecommended([noSize, anySeat], { study: DEFAULT_STUDY, groupSize: "just_me", origin: null })[0]?.space.slug,
+    "any-seat",
+  );
+
   const solo = orderRecommended([room, closed, carrel], { study: DEFAULT_STUDY, groupSize: "just_me", origin: null });
   assert.deepEqual(
     solo.map((pick) => pick.space.slug),
@@ -237,6 +250,10 @@ test("4+ re-sorts recommended without dropping a space, and preferences change t
   const preferred = orderRecommended([carrel, room], { study: loudStudy, groupSize: "just_me", origin: null });
   assert.equal(preferred[0]?.space.slug, "room");
   assert.equal(preferred[0]?.matchesLine, "Matches: conversational · fits your group");
+
+  const unset = orderRecommended([carrel, room], { study: loudStudy, groupSize: null, origin: null });
+  assert.equal(unset[0]?.space.slug, "room");
+  assert.equal(unset[0]?.matchesLine, "Matches: conversational");
 
   const quietStudy: StudyPreferences = {
     ...DEFAULT_STUDY,

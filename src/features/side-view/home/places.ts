@@ -7,9 +7,11 @@ import {
   type OpeningHours,
 } from "@/lib/data/opening-hours";
 import { distanceToBuildingMeters, type GeoPoint } from "@/lib/location";
-import { rankSpaces, type GroupSize } from "@/lib/ranking";
+import { rankSpaces, supportsGroupSize, toRankableSpace, type GroupSize } from "@/lib/ranking";
 import { detroitParts } from "@/lib/detroit";
-import type { StudyPreferences } from "@/lib/settings/model";
+import { hasStudyPreferences, type StudyPreferences } from "@/lib/settings/model";
+
+export { hasStudyPreferences };
 import type { SpaceSummary } from "@/features/spaces";
 import { EMPTY_SPACE_FILTERS, type SpaceFilters } from "@/features/map/space-filters";
 
@@ -47,17 +49,6 @@ const NOISE_RANK: Record<NonNullable<SpaceSummary["noise_level"]>, number> = {
 
 export function selectedGroupSize(groupSize: GroupSize | null): GroupSize {
   return groupSize ?? "just_me";
-}
-
-export function hasStudyPreferences(study: StudyPreferences): boolean {
-  return (
-    study.noise !== "any" ||
-    study.setting !== "any" ||
-    study.brightness !== "any" ||
-    study.daylight !== "any" ||
-    study.niceToHave.length > 0 ||
-    study.when.length > 0
-  );
 }
 
 export function browseAllLabel(count: number | null): string {
@@ -121,7 +112,7 @@ export function isOpenLateTonight(hours: OpeningHours | null, now: Date): boolea
   const today = detroitParts(now).date;
   const day = hours.byDate.find((entry) => entry.date === today);
   if (!day) return false;
-  return day.intervals.some((interval) => interval.opens < 1440 && interval.closes > ELEVEN_PM);
+  return day.intervals.some((interval) => interval.opens < 1440 && interval.closes >= ELEVEN_PM);
 }
 
 export function isDimLighting(space: SpaceSummary): boolean {
@@ -175,16 +166,7 @@ export function matchesFilters(space: HomeSpace, filters: SpaceFilters): boolean
 }
 
 function fitsGroup(space: HomeSpace, groupSize: GroupSize): boolean {
-  if (space.capacity == null && space.features.includes("group_rooms")) return true;
-  if (typeof space.capacity === "number") {
-    if (groupSize === "just_me") return space.capacity >= 1;
-    if (groupSize === "2_3") return space.capacity >= 2;
-    return space.capacity >= 4;
-  }
-  const bookable = space.bookable || space.features.includes("bookable");
-  if (groupSize === "just_me") return space.noise_level === "quiet" || space.noise_level === "low_noise";
-  if (groupSize === "2_3") return space.noise_level === "conversational" || space.noise_level === "loud" || bookable;
-  return space.noise_level === "loud" || bookable;
+  return supportsGroupSize(toRankableSpace({ ...space, bookable: space.bookable }), groupSize);
 }
 
 function noiseRank(level: SpaceSummary["noise_level"]): number {
@@ -203,11 +185,13 @@ function compareDistance(a: HomeSpace, b: HomeSpace, origin: GeoPoint | null): n
  * No study preferences: open now, then a group-size fit, then distance, then
  * typical quiet. Group size reorders; it does not drop a space.
  */
-function compareFallback(a: HomeSpace, b: HomeSpace, groupSize: GroupSize, origin: GeoPoint | null): number {
+function compareFallback(a: HomeSpace, b: HomeSpace, groupSize: GroupSize | null, origin: GeoPoint | null): number {
   if (a.open !== b.open) return a.open ? -1 : 1;
-  const fitA = fitsGroup(a, groupSize);
-  const fitB = fitsGroup(b, groupSize);
-  if (fitA !== fitB) return fitA ? -1 : 1;
+  if (groupSize) {
+    const fitA = fitsGroup(a, groupSize);
+    const fitB = fitsGroup(b, groupSize);
+    if (fitA !== fitB) return fitA ? -1 : 1;
+  }
   const distance = compareDistance(a, b, origin);
   if (distance !== 0) return distance;
   const noise = noiseRank(a.noise_level) - noiseRank(b.noise_level);
@@ -219,7 +203,8 @@ export function orderRecommended(
   spaces: readonly HomeSpace[],
   options: {
     study: StudyPreferences;
-    groupSize: GroupSize;
+    /** Null until the visitor picks a size. The default chip is not a ranking choice. */
+    groupSize: GroupSize | null;
     origin: GeoPoint | null;
     filters?: SpaceFilters;
   },
@@ -239,7 +224,7 @@ export function orderRecommended(
     })),
     {
       preferences: options.study,
-      groupSize: options.groupSize,
+      groupSize: options.groupSize ?? undefined,
       origin: options.origin,
       chips: {
         quiet: filters.quiet,
