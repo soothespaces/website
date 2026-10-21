@@ -11,7 +11,15 @@ import { busySummary, chartValues, highlightHour } from "./busy-copy";
 
 // Under the week list. Hidden when the building has no popular times, so a
 // building without a curve does not show an empty chart.
-export function BusySection({ buildingSlug, now }: { buildingSlug: string; now?: Date }) {
+export function BusySection({
+  buildingSlug,
+  now,
+  focus = false,
+}: {
+  buildingSlug: string;
+  now?: Date;
+  focus?: boolean;
+}) {
   const clock = now ?? new Date();
   const { times, loaded, error } = usePopularTimes(buildingSlug);
   if (!loaded || !times) {
@@ -21,10 +29,10 @@ export function BusySection({ buildingSlug, now }: { buildingSlug: string; now?:
     }
     return null;
   }
-  return <BusyDays times={times} now={clock} />;
+  return <BusyDays times={times} now={clock} focus={focus} />;
 }
 
-function BusyDays({ times, now }: { times: PopularTimes; now: Date }) {
+function BusyDays({ times, now, focus }: { times: PopularTimes; now: Date; focus: boolean }) {
   const dayId = useId();
   const sectionRef = useRef<HTMLElement>(null);
   const parts = detroitParts(now);
@@ -39,19 +47,16 @@ function BusyDays({ times, now }: { times: PopularTimes; now: Date }) {
   const values = chartValues(day);
   const highlighted = highlightHour(dayIndex, parts.weekday, parts.hour);
 
-  // The building panel's busyness tile opens this screen with #busyness.
-  // replaceState does not fire hashchange, so check once the section exists.
+  // The building's busyness tile opens this screen with focus "chart".
+  // Scroll once the section exists, then again after the panel lays out.
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section) return;
-    const scroll = () => {
-      if (window.location.hash !== "#busyness") return;
-      section.scrollIntoView({ block: "start" });
-    };
+    if (!section || !focus) return;
+    const scroll = () => section.scrollIntoView({ block: "start" });
     scroll();
     const timer = window.setTimeout(scroll, 0);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [focus]);
 
   return (
     <section id="busyness" ref={sectionRef} className="flex flex-col gap-3" aria-labelledby={`${dayId}-heading`}>

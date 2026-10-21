@@ -52,8 +52,8 @@ function writeHistory(mode: "push" | "replace", stack: PanelRoute[]) {
     panelSearchForStack(stack, new URLSearchParams(window.location.search)),
   );
   const here = `${window.location.pathname}${window.location.search}`;
-  // A detail link can carry a scroll target (`#busyness`). Keep it when this
-  // write is only syncing the panel stack, and drop it when the route changes.
+  // Keep the URL hash when this write only syncs the panel stack, and drop it
+  // when the route changes.
   const hash = bare === here ? window.location.hash : "";
   const href = `${bare}${hash}`;
   const current = `${here}${window.location.hash}`;

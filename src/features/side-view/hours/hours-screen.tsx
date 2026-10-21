@@ -12,10 +12,10 @@ import { hoursSourceNote, nextCloseLine, statusHeadline, weekDayLabel } from "./
 export function HoursScreen({ route }: PanelScreenProps) {
   const { back } = useMapState();
   if (route.kind !== "hours") return null;
-  return <HoursBody slug={route.slug} onBack={back} />;
+  return <HoursBody slug={route.slug} focusChart={route.focus === "chart"} onBack={back} />;
 }
 
-function HoursBody({ slug, onBack }: { slug: string; onBack: () => void }) {
+function HoursBody({ slug, focusChart, onBack }: { slug: string; focusChart: boolean; onBack: () => void }) {
   const now = new Date();
   const building = useBuildingLabel(slug);
   const { hours, loaded, error } = useOpeningHours({ buildingSlug: slug });
@@ -55,7 +55,7 @@ function HoursBody({ slug, onBack }: { slug: string; onBack: () => void }) {
             {note ? <p className="text-sm text-muted-foreground">{note}</p> : null}
           </section>
         ) : null}
-        <BusySection buildingSlug={slug} now={now} />
+        <BusySection buildingSlug={slug} now={now} focus={focusChart} />
       </div>
     </DetailScreen>
   );

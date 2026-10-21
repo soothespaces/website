@@ -5,9 +5,9 @@
 export type PanelRoute =
   | { kind: "home" }
   | { kind: "building"; slug: string | null; recordNumber?: string | null; name?: string }
-  | { kind: "hours"; slug: string }
+  | { kind: "hours"; slug: string; focus?: "chart" }
   | { kind: "spaces"; slug: string }
-  | { kind: "rooms"; slug: string }
+  | { kind: "rooms"; slug: string; roomId?: string }
   | { kind: "rooms-map"; slug: string; floor: number; roomId?: string }
   | { kind: "photos"; slug: string; spaceId?: string }
   | { kind: "space"; id: string }
@@ -18,7 +18,7 @@ export const HOME_ROUTE: PanelRoute = { kind: "home" };
 
 // Query keys this stack owns. Anything else (a future `people` param, for
 // example) is left in place when the panel changes.
-const PANEL_PARAMS = ["panel", "b", "rec", "name", "floor", "room", "space", "id"] as const;
+const PANEL_PARAMS = ["panel", "b", "rec", "name", "floor", "room", "space", "id", "focus"] as const;
 
 // Chip query for the Spaces screen (`?f=quiet,printer`). It is not a panel
 // field: the screen writes it itself. It stays while that screen is still in
@@ -79,9 +79,11 @@ export function panelRouteKey(route: PanelRoute): string {
     case "building":
       return `building:${buildingKey(route)}`;
     case "hours":
+      return route.focus ? `hours:${route.slug}:${route.focus}` : `hours:${route.slug}`;
     case "spaces":
+      return `spaces:${route.slug}`;
     case "rooms":
-      return `${route.kind}:${route.slug}`;
+      return route.roomId ? `rooms:${route.slug}:${route.roomId}` : `rooms:${route.slug}`;
     case "rooms-map":
       return `rooms-map:${route.slug}:${route.floor}:${route.roomId ?? ""}`;
     case "photos":
@@ -112,11 +114,20 @@ export function normalizePanelRoute(value: unknown): PanelRoute | null {
       const id = slugOf(value.id);
       return id ? { kind: "space", id } : null;
     }
-    case "hours":
-    case "spaces":
+    case "hours": {
+      const slug = slugOf(value.slug);
+      if (!slug) return null;
+      return value.focus === "chart" ? { kind: "hours", slug, focus: "chart" } : { kind: "hours", slug };
+    }
+    case "spaces": {
+      const slug = slugOf(value.slug);
+      return slug ? { kind: "spaces", slug } : null;
+    }
     case "rooms": {
       const slug = slugOf(value.slug);
-      return slug ? { kind: value.kind, slug } : null;
+      if (!slug) return null;
+      const roomId = slugOf(value.roomId);
+      return roomId ? { kind: "rooms", slug, roomId } : { kind: "rooms", slug };
     }
     case "rooms-map": {
       const slug = slugOf(value.slug);
@@ -163,10 +174,18 @@ export function serializePanelRoute(route: PanelRoute, current: URLSearchParams)
       if (!route.slug && route.name) params.set("name", route.name);
       break;
     case "hours":
-    case "spaces":
-    case "rooms":
-      params.set("panel", route.kind);
+      params.set("panel", "hours");
       params.set("b", route.slug);
+      if (route.focus) params.set("focus", route.focus);
+      break;
+    case "spaces":
+      params.set("panel", "spaces");
+      params.set("b", route.slug);
+      break;
+    case "rooms":
+      params.set("panel", "rooms");
+      params.set("b", route.slug);
+      if (route.roomId) params.set("room", route.roomId);
       break;
     case "rooms-map":
       params.set("panel", "rooms-map");
@@ -217,9 +236,15 @@ export function parsePanelRoute(params: URLSearchParams): PanelRoute {
       };
     }
     case "hours":
+      if (!slug) return HOME_ROUTE;
+      return params.get("focus") === "chart" ? { kind: "hours", slug, focus: "chart" } : { kind: "hours", slug };
     case "spaces":
-    case "rooms":
-      return slug ? { kind: panel, slug } : HOME_ROUTE;
+      return slug ? { kind: "spaces", slug } : HOME_ROUTE;
+    case "rooms": {
+      if (!slug) return HOME_ROUTE;
+      const roomId = slugOf(params.get("room"));
+      return roomId ? { kind: "rooms", slug, roomId } : { kind: "rooms", slug };
+    }
     case "rooms-map": {
       if (!slug) return HOME_ROUTE;
       const floor = floorOf(params.get("floor"));
