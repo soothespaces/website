@@ -34,8 +34,9 @@ export function BuildingHeader({
   const target = slug ? ({ kind: "building", buildingSlug: slug } as const) : null;
   const pressed = target ? favorites.isFavorite(target) : false;
   const photos = useBuildingPhotos(slug);
-  const listed = photos.data.filter((photo) => photo.kind !== "panorama");
-  const frames = (listed.length > 0 ? listed : photos.data).slice(0, 3);
+  // Panoramas are 2:1 equirectangular images. A flat tile would crop them
+  // into a nonsense picture, so they wait for the gallery.
+  const frames = photos.data.filter((photo) => photo.kind !== "panorama");
 
   return (
     <div className="flex flex-col gap-3">
@@ -65,7 +66,7 @@ export function BuildingHeader({
         </div>
       </div>
       {photos.ready && frames.length > 0 ? (
-        <PhotoMosaic photos={frames} total={photos.data.length} onOpen={onOpenPhotos} />
+        <PhotoMosaic photos={frames.slice(0, 3)} total={frames.length} onOpen={onOpenPhotos} />
       ) : null}
     </div>
   );

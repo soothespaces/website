@@ -11,9 +11,9 @@ import type { SpaceSummary } from "@/features/spaces";
 import { loginHref, loginHrefFor } from "@/lib/auth/paths";
 import { useSession } from "@/lib/auth/use-session";
 import { rankSpaces } from "@/lib/ranking";
+import { hasStudyPreferences } from "@/lib/settings/model";
 import { useStudyPreferences } from "@/lib/settings/settings-provider";
 import { getSupabaseEnv } from "@/lib/supabase/env";
-import { hasStudyPreferences } from "./copy";
 import { photoSources } from "./photos";
 import { useBuildingPhotos, useSpaceDetails, type ListedPhoto } from "./queries";
 

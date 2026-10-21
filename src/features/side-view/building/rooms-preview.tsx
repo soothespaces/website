@@ -1,20 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useMapState } from "@/features/map/map-state";
 import { useRoomSlots } from "@/lib/data/room-slots";
 import { cx } from "@/lib/cx";
 import { roomMeta, roomName, seeAllRooms } from "./copy";
-import { replaceHash } from "./navigate";
 import { rankPreview } from "./preview";
 
 // Two bookable rooms that free up soonest, longest stretch first. No
 // bookable items means no section. A LibCal miss keeps the rows and says so.
+// `roomId` is how the Rooms screen scrolls a row into view.
 export function RoomsPreview({ slug }: { slug: string | null }) {
   const { push } = useMapState();
-  const [from] = useState(() => new Date());
+  const [from, setFrom] = useState(() => new Date());
+  useEffect(() => {
+    const id = window.setInterval(() => setFrom(new Date()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
   const slots = useRoomSlots(slug, from);
   const bookable = slots.rooms.filter((room) => room.kind === "bookable");
   const rows = rankPreview(bookable, from).slice(0, 2);
@@ -24,11 +28,7 @@ export function RoomsPreview({ slug }: { slug: string | null }) {
   if (bookable.length === 0) return null;
 
   const openList = () => push({ kind: "rooms", slug });
-  const openRoom = (roomNumber: string | null, id: string) => {
-    push({ kind: "rooms", slug });
-    const token = roomNumber && /^[\w.-]+$/.test(roomNumber) ? roomNumber : id;
-    replaceHash(`room-${token}`);
-  };
+  const openRoom = (roomId: string) => push({ kind: "rooms", slug, roomId });
 
   return (
     <section className="flex flex-col gap-3">
@@ -41,7 +41,7 @@ export function RoomsPreview({ slug }: { slug: string | null }) {
             <li key={room.id}>
               <Button
                 variant="ghost"
-                onClick={() => openRoom(room.roomNumber, room.id)}
+                onClick={() => openRoom(room.roomNumber ?? room.id)}
                 className="h-auto w-full flex-col items-start gap-0.5 whitespace-normal rounded-xl border border-border p-3 text-left font-normal hover:bg-accent"
               >
                 <span className="text-sm font-semibold">{roomName(room.name, room.roomNumber)}</span>

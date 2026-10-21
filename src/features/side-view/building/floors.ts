@@ -1,6 +1,6 @@
-// "5" and "B to 4": every floor we can see on plans, space labels and room
-// rows. Basement is 0. A building with only `buildings.floors` still gets a
-// count, and no range, rather than a dash.
+// "8" and "2 to 6": `buildings.floors` is the count whenever we have it.
+// Plans, space labels and bookable rooms only draw the range. Basement is 0.
+// A building with a count and nothing else still gets the number, and no range.
 
 export function floorsInLabel(label: string | null | undefined): number[] {
   if (!label) return [];
@@ -27,14 +27,18 @@ export function collectFloors(input: {
   planFloors: readonly number[];
   labels: readonly (string | null | undefined)[];
   extraFloors?: readonly number[];
+  /** `buildings.floors`. Wins over the number of floors we happened to find. */
   recordedCount?: number | null;
 }): { value: string; detail?: string } | null {
-  const tile = floorTile([
+  const seen = floorTile([
     ...input.planFloors,
     ...input.labels.flatMap((label) => floorsInLabel(label)),
     ...(input.extraFloors ?? []),
   ]);
-  if (tile) return tile;
-  if (input.recordedCount != null && input.recordedCount > 0) return { value: String(input.recordedCount) };
-  return null;
+  const recorded = input.recordedCount != null && input.recordedCount > 0 ? String(input.recordedCount) : null;
+  if (!seen && !recorded) return null;
+  return {
+    value: recorded ?? seen!.value,
+    ...(seen ? { detail: seen.detail } : {}),
+  };
 }

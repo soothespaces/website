@@ -182,7 +182,12 @@ async function fetchDetails(slug: string): Promise<SpaceDetail[]> {
 
 async function fetchFloors(slug: string): Promise<number[]> {
   const supabase = createClient();
-  const { data, error } = await supabase.from("bookable_items").select("floor").eq("building_slug", slug).eq("is_listed", true);
+  const { data, error } = await supabase
+    .from("bookable_items")
+    .select("floor")
+    .eq("building_slug", slug)
+    .eq("is_listed", true)
+    .eq("kind", "space");
   if (error) throw error;
   return (data ?? []).flatMap((row) => (row.floor == null ? [] : [row.floor]));
 }

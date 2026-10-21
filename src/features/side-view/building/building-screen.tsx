@@ -40,9 +40,12 @@ function BuildingScreen({ route }: PanelScreenProps) {
           if (slug) push({ kind: "photos", slug });
         }}
       />
-      <div className="px-1">
-        <h2 className="text-2xl break-words">{name}</h2>
-        {subtitle ? <p className="text-sm text-muted-foreground">{subtitle}</p> : null}
+      <div className="flex items-start justify-between gap-3 px-1">
+        <div className="min-w-0">
+          <h2 className="text-2xl break-words">{name}</h2>
+          {subtitle ? <p className="text-sm text-muted-foreground">{subtitle}</p> : null}
+        </div>
+        {/* "Check in here" (the check-in flow) sits in this row, beside the name. */}
       </div>
       <BuildingTiles slug={slug} />
       <RecommendedSection slug={slug} />

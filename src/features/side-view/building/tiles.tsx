@@ -7,7 +7,6 @@ import { isOpenNow, nextClose, openStatus, useOpeningHours } from "@/lib/data/op
 import { busynessWord, usePopularTimes, usualFor } from "@/lib/data/popular-times";
 import { detroitParts } from "@/lib/detroit";
 import { collectFloors } from "./floors";
-import { replaceHash } from "./navigate";
 import { useBookableFloors, useBuildingProfile } from "./queries";
 
 // Hours, floors, and busyness. A tile with nothing behind it is left out
@@ -40,10 +39,7 @@ export function BuildingTiles({ slug }: { slug: string | null }) {
   if (!slug || (!status && !word && !floors)) return null;
 
   const openHours = () => push({ kind: "hours", slug });
-  const openChart = () => {
-    push({ kind: "hours", slug });
-    replaceHash("busyness");
-  };
+  const openChart = () => push({ kind: "hours", slug, focus: "chart" });
 
   return (
     <StatTileGrid>

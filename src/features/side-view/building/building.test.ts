@@ -4,7 +4,6 @@ import {
   buildingSubtitle,
   displayAddress,
   entranceSummary,
-  hasStudyPreferences,
   isGooglePhoto,
   photoCount,
   roomName,
@@ -13,7 +12,7 @@ import {
 import { collectFloors } from "./floors.ts";
 import { rankPreview } from "./preview.ts";
 import { loginHrefFor } from "../../../lib/auth/paths.ts";
-import { DEFAULT_STUDY } from "../../../lib/settings/model.ts";
+import { DEFAULT_STUDY, hasStudyPreferences } from "../../../lib/settings/model.ts";
 
 test("sign-in comes back to the open building", () => {
   assert.equal(
@@ -23,11 +22,24 @@ test("sign-in comes back to the open building", () => {
   assert.equal(loginHrefFor("/map", ""), "/login?next=%2Fmap");
 });
 
-test("floor tile counts basement through 4", () => {
+test("floor count comes from the building, and the range from floors we can see", () => {
+  assert.deepEqual(
+    collectFloors({
+      planFloors: [2, 3, 4, 6],
+      labels: [],
+      recordedCount: 8,
+    }),
+    { value: "8", detail: "2 to 6" },
+  );
+  assert.deepEqual(collectFloors({ planFloors: [2], labels: [], recordedCount: 4 }), { value: "4", detail: "2" });
+  assert.deepEqual(
+    collectFloors({ planFloors: [3, 4], labels: [], recordedCount: 6 }),
+    { value: "6", detail: "3 to 4" },
+  );
   assert.deepEqual(
     collectFloors({
       planFloors: [1, 2, 3],
-      labels: ["Basement", "Floor 4", "Floors 1 and 3"],
+      labels: ["Basement", "Floor 4"],
     }),
     { value: "5", detail: "B to 4" },
   );

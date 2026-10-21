@@ -1,5 +1,3 @@
-import type { StudyPreferences } from "@/lib/settings/model";
-
 const DIRECTION = /^(?:[NSEW]|NE|NW|SE|SW)\.?$/i;
 
 /** "919 S. UNIVERSITY AVE" is stored in capitals. The board shows title case. */
@@ -63,17 +61,6 @@ export function roomName(title: string, roomNumber: string | null): string {
   const embedded = bare.match(/\b(\d{3,5}[A-Z]?)\b/);
   if (embedded && /room|floor/i.test(bare)) return `Room ${embedded[1]}`;
   return bare || "Room";
-}
-
-export function hasStudyPreferences(study: StudyPreferences): boolean {
-  return (
-    study.noise !== "any" ||
-    study.setting !== "any" ||
-    study.brightness !== "any" ||
-    study.daylight !== "any" ||
-    study.niceToHave.length > 0 ||
-    study.when.length > 0
-  );
 }
 
 export function isGooglePhoto(photo: { sourceUrl?: string | null; license?: string | null; credit?: string | null }): boolean {

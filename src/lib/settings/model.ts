@@ -72,6 +72,18 @@ export const DEFAULT_STUDY: StudyPreferences = {
   when: [],
 };
 
+/** True once the person has chosen something other than "any" / nothing. */
+export function hasStudyPreferences(study: StudyPreferences): boolean {
+  return (
+    study.noise !== "any" ||
+    study.setting !== "any" ||
+    study.brightness !== "any" ||
+    study.daylight !== "any" ||
+    study.niceToHave.length > 0 ||
+    study.when.length > 0
+  );
+}
+
 export const DEFAULT_SETTINGS: Settings = {
   theme: "system",
   contrast: "system",
