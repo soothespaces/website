@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { CheckInHereButton } from "@/features/check-in/check-in-here";
 import { SpaceList, type SpaceListDensity } from "@/features/spaces";
 import { type MapSelection, useMapState } from "../map-state";
 import { FloorSwitcher } from "./floor-switcher";
@@ -24,15 +25,18 @@ export function BuildingPanel({ building, density }: { building: BuildingSelecti
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-0.5 px-3">
-        <h2 className="text-lg">{building.name}</h2>
-        {doors && data.entrances.length ? (
-          <p className="text-sm text-muted-foreground">
-            {doors.accessible
-              ? `${doors.accessible} accessible ${doors.accessible === 1 ? "entrance" : "entrances"}, ${doors.automatic} automatic`
-              : "No accessible entrances on record"}
-          </p>
-        ) : null}
+      <div className="flex items-start justify-between gap-3 px-3">
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <h2 className="text-lg">{building.name}</h2>
+          {doors && data.entrances.length ? (
+            <p className="text-sm text-muted-foreground">
+              {doors.accessible
+                ? `${doors.accessible} accessible ${doors.accessible === 1 ? "entrance" : "entrances"}, ${doors.automatic} automatic`
+                : "No accessible entrances on record"}
+            </p>
+          ) : null}
+        </div>
+        {building.slug ? <CheckInHereButton buildingSlug={building.slug} buildingName={building.name} /> : null}
       </div>
       {floors?.length ? (
         <div className="px-3">

@@ -88,24 +88,14 @@ export function SpaceHeading({
   hoursTarget: { buildingSlug: string | null; spaceId: string | null } | null;
 }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const askedForFix = useRef(false);
   const { data, push } = useMapState();
   const hours = useOpeningHours(hoursTarget);
-  const { permission, position, request, distanceTo } = useLocation();
+  const { distanceTo } = useLocation();
   const point = walkPoint({ lat, lng }, building);
-  const walkKey = point ? `${point.lat},${point.lng}` : "";
 
   useEffect(() => {
     titleRef.current?.focus({ focusVisible: true });
   }, [name]);
-
-  // Permission was already granted, so this read does not prompt. Without it
-  // the hook's position stays empty and the walk time never appears.
-  useEffect(() => {
-    if (!walkKey || askedForFix.current || permission !== "granted" || position) return;
-    askedForFix.current = true;
-    void request();
-  }, [walkKey, permission, position, request]);
 
   const status = spaceOpenStatus(hours.loaded ? openStatus(hours.hours, new Date()) : null);
   const walk = walkTimeLabel(point ? distanceTo(point.lat, point.lng) : null);

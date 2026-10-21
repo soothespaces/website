@@ -17,6 +17,9 @@ type ToastInput = {
   description?: string;
   /** Milliseconds; default 5000. */
   duration?: number;
+  /** "status" is polite. The default announcement is an alert. */
+  announce?: "status" | "alert";
+  action?: { label: string; onClick: () => void };
 };
 
 type ToastItem = ToastInput & { id: number; open: boolean };
@@ -54,15 +57,23 @@ export function Toaster({ children }: { children: ReactNode }) {
             key={toast.id}
             open={toast.open}
             duration={toast.duration ?? 5000}
+            type={toast.announce === "status" ? "background" : "foreground"}
             onOpenChange={(open) => (open ? null : close(toast.id))}
             className="relative flex items-start gap-3 rounded-lg border border-border bg-popover p-4 pr-12 text-popover-foreground shadow-lg data-[state=open]:animate-pop-in data-[state=closed]:animate-fade-out data-[swipe=end]:animate-fade-out"
           >
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col items-start gap-2">
               <ToastPrimitive.Title className="font-medium">{toast.title}</ToastPrimitive.Title>
               {toast.description ? (
                 <ToastPrimitive.Description className="text-sm text-muted-foreground">
                   {toast.description}
                 </ToastPrimitive.Description>
+              ) : null}
+              {toast.action ? (
+                <ToastPrimitive.Action altText={toast.action.label} asChild>
+                  <Button size="sm" variant="outline" onClick={toast.action.onClick}>
+                    {toast.action.label}
+                  </Button>
+                </ToastPrimitive.Action>
               ) : null}
             </div>
             <ToastPrimitive.Close asChild>

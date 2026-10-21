@@ -147,7 +147,8 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
       aria-labelledby={titleId}
       aria-busy={!detail.loaded}
       onKeyDown={onKeyDown}
-      className="flex min-w-0 flex-col gap-5 px-1 pb-2"
+      data-detail-scroll=""
+      className="flex min-h-0 min-w-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain px-1 pb-2"
     >
       <SpaceToolbar
         name={name}

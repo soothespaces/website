@@ -1,23 +1,15 @@
 "use client";
 
-import { useId } from "react";
 import { Button } from "@/components/ui/button";
+import { useCheckIn } from "@/features/check-in/check-in-context";
 
-type OpenCheckIn = { spaceSlug?: string; spaceId?: string };
-
-// #50 owns the real provider and replaces this file with `useCheckIn()`.
-// Until that lands, the card still takes the space the sheet will open on,
-// and a missing provider makes the click a no-op instead of a crash.
-function useCheckIn(): { openCheckIn: (options?: OpenCheckIn) => void } | null {
-  return null;
-}
-
+// The tinted card under "What it's like" on Space detail (G4 / SOS-149).
+// Signed-out visitors still see it; the sheet asks them to sign in.
 export function CheckInCard({ spaceSlug, spaceId }: { spaceSlug?: string; spaceId?: string }) {
-  const labelId = useId();
   const checkIn = useCheckIn();
   return (
-    <section className="flex flex-col gap-3 rounded-xl bg-primary/10 p-4" aria-labelledby={labelId}>
-      <p id={labelId}>Here now? Tell people what it&apos;s like.</p>
+    <section className="flex flex-col gap-3 rounded-xl bg-primary/10 p-4" aria-label="Check in">
+      <p>Here now? Tell people what it&apos;s like.</p>
       <Button
         onClick={() =>
           checkIn?.openCheckIn({
