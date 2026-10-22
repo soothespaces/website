@@ -82,7 +82,7 @@ export function StudyBuildingLayers({
         minzoom={12}
         filter={recordFilter(records)}
         paint={{ "fill-color": color as unknown as ExpressionSpecification, "fill-opacity": 0.9 }}
-        beforeId={SLOTS.floorPlans}
+        beforeId={SLOTS.buildingColors}
       />
       <Layer
         id="not-study-buildings"
@@ -91,7 +91,7 @@ export function StudyBuildingLayers({
         minzoom={12}
         filter={notStudyFilter(records, crossed) as unknown as FilterSpecification}
         paint={{ "fill-pattern": NOT_STUDY_PATTERN }}
-        beforeId={SLOTS.floorPlans}
+        beforeId={SLOTS.buildingColors}
       />
     </>
   );
