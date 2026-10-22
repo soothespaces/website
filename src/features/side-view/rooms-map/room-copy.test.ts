@@ -73,6 +73,7 @@ test("spring forward disables the half hours the clocks skip", () => {
   assert.equal(new Set(labels).size, labels.length);
   assert.equal(slots[labels.indexOf("2 AM")]?.startsAt, null);
   assert.equal(slots[labels.indexOf("2:30 AM")]?.startsAt, null);
+  assert.equal(slots[labels.indexOf("1:30 AM")]?.endsAt, "2027-03-14T07:00:00.000Z");
   const saved = slots.filter((slot) => slot.startsAt && slot.endsAt);
   assert.equal(new Set(saved.map((slot) => slot.startsAt)).size, saved.length);
   for (const slot of saved) {

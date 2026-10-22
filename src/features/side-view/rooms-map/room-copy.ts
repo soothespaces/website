@@ -69,7 +69,9 @@ export function detroitSlots(from: Date, count = SLOT_COUNT): DetroitSlot[] {
   const start = slotWindowStart(from);
   return Array.from({ length: count }, (_, index) => {
     const starts = resolveDetroit(parts.date, start + index * 30);
-    const ends = resolveDetroit(parts.date, start + (index + 1) * 30);
+    // 1:30 AM on a spring-forward night ends at 3:00, the next clock time that occurs.
+    const ends =
+      resolveDetroit(parts.date, start + (index + 1) * 30) ?? (starts ? new Date(starts.getTime() + 30 * 60_000) : null);
     if (!starts || !ends || ends.getTime() <= starts.getTime()) return { startsAt: null, endsAt: null };
     return { startsAt: starts.toISOString(), endsAt: ends.toISOString() };
   });
