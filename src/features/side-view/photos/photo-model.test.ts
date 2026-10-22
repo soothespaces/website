@@ -10,6 +10,7 @@ import {
   photoSpace,
   photoSrcSet,
   photosForSpace,
+  swipeDirection,
   widthAtLeast,
   widthThatFits,
   type GalleryPhoto,
@@ -138,6 +139,13 @@ test("a photo belongs to a space by id, room number, or spot", () => {
     photosForSpace([upload, photo({ id: "other", roomNumber: "9999" })], reading, spaces).map((item) => item.id),
     ["upload"],
   );
+});
+
+test("a sideways swipe changes photos and a short drag does not", () => {
+  assert.equal(swipeDirection(-80, 10), "next");
+  assert.equal(swipeDirection(80, 10), "prev");
+  assert.equal(swipeDirection(-20, 0), null);
+  assert.equal(swipeDirection(-40, 80), null);
 });
 
 test("space photos come before building photos, then by saved order", () => {
