@@ -5,9 +5,18 @@ import { Chip, ChipGroup } from "@/components/ui/chip-group";
 import { DetailScreen } from "@/components/ui/detail-screen";
 import { EmptyState, Skeleton } from "@/components/ui/feedback";
 import { useMapState } from "@/features/map/map-state";
+import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { PanelScreenProps } from "../registry";
 import { PhotoGrid } from "./photo-grid";
-import { classifyPhoto, filterPhotos, orderPhotos, photoCountLabel, type ClassifiedPhoto, type PhotoFilter } from "./photo-model";
+import { PhotoViewer } from "./photo-viewer";
+import {
+  classifyPhoto,
+  filterPhotos,
+  orderPhotos,
+  photoCountLabel,
+  type ClassifiedPhoto,
+  type PhotoFilter,
+} from "./photo-model";
 import { useBuildingPhotos } from "./use-building-photos";
 
 const FILTERS: { value: PhotoFilter; label: string }[] = [
@@ -25,6 +34,7 @@ function isFilter(value: string): value is PhotoFilter {
 export function PhotosScreen({ route }: PanelScreenProps) {
   const { back, stack, data } = useMapState();
   const [filter, setFilter] = useState<PhotoFilter>("all");
+  const [openId, setOpenId] = useState<string | null>(null);
   const slug = route.kind === "photos" ? route.slug : "";
   const spaceSlug = route.kind === "photos" ? route.spaceId : undefined;
   const loadedPhotos = useBuildingPhotos(slug, spaceSlug);
@@ -32,6 +42,8 @@ export function PhotosScreen({ route }: PanelScreenProps) {
   const classified = useMemo(() => loadedPhotos.photos.map(classifyPhoto), [loadedPhotos.photos]);
   const allowed = useMemo(() => filterPhotos(classified, "all"), [classified]);
   const shown = useMemo(() => orderPhotos(filterPhotos(classified, filter)), [classified, filter]);
+  const openIndex = shown.findIndex((photo) => photo.id === openId);
+  const supabaseUrl = getSupabaseEnv()?.url;
 
   if (route.kind !== "photos") return null;
 
@@ -64,8 +76,29 @@ export function PhotosScreen({ route }: PanelScreenProps) {
             </Chip>
           ))}
         </ChipGroup>
-        <PhotoBody loaded={loadedPhotos.loaded} error={loadedPhotos.error} filter={filter} photos={shown} />
+        <PhotoBody
+          loaded={loadedPhotos.loaded}
+          error={loadedPhotos.error}
+          filter={filter}
+          photos={shown}
+          onOpen={setOpenId}
+        />
       </div>
+      {supabaseUrl ? (
+        <PhotoViewer
+          photos={shown}
+          index={openIndex < 0 ? 0 : openIndex}
+          open={openIndex >= 0}
+          supabaseUrl={supabaseUrl}
+          onOpenChange={(next) => {
+            if (!next) setOpenId(null);
+          }}
+          onIndexChange={(next) => {
+            const photo = shown[next];
+            if (photo) setOpenId(photo.id);
+          }}
+        />
+      ) : null}
     </DetailScreen>
   );
 }
@@ -75,11 +108,13 @@ function PhotoBody({
   error,
   filter,
   photos,
+  onOpen,
 }: {
   loaded: boolean;
   error: string | null;
   filter: PhotoFilter;
   photos: ClassifiedPhoto[];
+  onOpen: (id: string) => void;
 }) {
   if (!loaded) {
     return (
@@ -109,5 +144,5 @@ function PhotoBody({
     return <EmptyState title={description} />;
   }
 
-  return <PhotoGrid photos={photos} />;
+  return <PhotoGrid photos={photos} onOpen={onOpen} />;
 }

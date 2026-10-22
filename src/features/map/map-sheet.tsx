@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { panelRegistry, tallSheetKinds } from "@/features/side-view/registry";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { WIDE_QUERY } from "./map-layout-config";
 import { useMapState } from "./map-state";
@@ -15,11 +16,13 @@ export function MapSheet() {
   const wide = useMediaQuery(WIDE_QUERY);
   const { route, clear } = useMapState();
   const home = route.kind === "home";
-  const [expanded, setExpanded] = useState(false);
+  const tall = tallSheetKinds.has(route.kind) && Boolean(panelRegistry[route.kind]);
+  const [expanded, setExpanded] = useState(tall);
   const [seen, setSeen] = useState(route.kind);
   if (seen !== route.kind) {
     setSeen(route.kind);
-    setExpanded(false);
+    // Preferences and Your spots open tall. Other screens open at the peek.
+    setExpanded(tall);
   }
   const { drag, handlers } = useSwipeToDismiss({
     directions: expanded ? ["down"] : home ? ["up"] : ["down", "up"],

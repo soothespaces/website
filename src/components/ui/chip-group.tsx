@@ -13,6 +13,8 @@ type ChipGroupBase = {
   label: string;
   /** Hide the label visually. It stays the group's accessible name. */
   labelHidden?: boolean;
+  /** Muted words after the label, such as "pick any". */
+  hint?: string;
   children: ReactNode;
   className?: string;
   /** Extra classes for the chip row. `flex-nowrap overflow-x-auto` scrolls instead of wrapping. */
@@ -27,10 +29,17 @@ type ChipGroupProps = ChipGroupBase &
 
 export function ChipGroup(props: ChipGroupProps) {
   const labelId = useId();
+  const hintId = useId();
   const groupClass = cx("flex flex-wrap gap-2", props.groupClassName);
+  const describedBy = props.hint ? hintId : undefined;
   const label = (
-    <span id={labelId} className={props.labelHidden ? "sr-only" : "text-sm font-medium"}>
-      {props.label}
+    <span className={props.labelHidden ? "sr-only" : "flex flex-wrap items-baseline gap-2 text-sm font-medium"}>
+      <span id={labelId}>{props.label}</span>
+      {props.hint ? (
+        <span id={hintId} className="font-normal text-muted-foreground">
+          {props.hint}
+        </span>
+      ) : null}
     </span>
   );
   return (
@@ -44,6 +53,7 @@ export function ChipGroup(props: ChipGroupProps) {
             if (value) props.onValueChange(value);
           }}
           aria-labelledby={labelId}
+          aria-describedby={describedBy}
           className={groupClass}
         >
           {props.children}
@@ -54,6 +64,7 @@ export function ChipGroup(props: ChipGroupProps) {
           value={props.value}
           onValueChange={props.onValueChange}
           aria-labelledby={labelId}
+          aria-describedby={describedBy}
           className={groupClass}
         >
           {props.children}

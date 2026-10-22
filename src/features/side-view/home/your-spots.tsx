@@ -5,13 +5,24 @@ import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useMapState } from "@/features/map/map-state";
 import type { MapData } from "@/features/map/use-map-data";
+import { useSession } from "@/lib/auth/use-session";
 import { useFavorites, type Favorite } from "@/lib/data/favorites";
 
-// Signed out, or signed in with nothing saved: the row is absent.
+// Signed in with nothing saved: the row is absent. Signed out still gets
+// See all, so My spots (and its sign-in prompt) opens from Home.
 export function YourSpots() {
+  const { loading } = useSession();
   const { data, push, select } = useMapState();
   const { favorites, signedIn, loaded } = useFavorites();
-  if (!signedIn || !loaded) return null;
+  if (loading) return null;
+  if (!signedIn) {
+    return (
+      <section className="flex flex-col gap-2">
+        <SectionHeader title="Your spots" action={{ label: "See all", onClick: () => push({ kind: "my-spots" }) }} />
+      </section>
+    );
+  }
+  if (!loaded) return null;
 
   const spots = favorites.flatMap((favorite) => {
     const spot = spotFor(favorite, data);

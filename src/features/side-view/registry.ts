@@ -5,8 +5,10 @@ import type { PanelScreenProps } from "./builtin-screens";
 import { BuildingPanelScreen } from "./building/building-screen";
 import { HomeScreen } from "./home/home-screen";
 import { HoursScreen } from "./hours/hours-screen";
+import { MySpotsScreen } from "./my-spots/my-spots-screen";
 import { PhotosScreen } from "./photos/photos-screen";
 import type { PanelRoute } from "./panel-route";
+import { PreferencesScreen } from "./preferences/preferences-screen";
 import { RoomsScreen } from "./rooms/rooms-screen";
 import { SpaceScreen } from "./space/space-screen";
 import { SpacesScreen } from "./spaces/spaces-screen";
@@ -23,6 +25,8 @@ export const panelRegistry: Partial<Record<PanelRoute["kind"], ComponentType<Pan
   photos: PhotosScreen,
   spaces: SpacesScreen,
   rooms: RoomsScreen,
+  "my-spots": MySpotsScreen,
+  preferences: PreferencesScreen,
 };
 
 // These screens draw their own back button and title (Home needs none), and
@@ -36,4 +40,10 @@ export const detailPanelKinds: ReadonlySet<PanelRoute["kind"]> = new Set([
   "spaces",
   "space",
   "rooms",
+  "my-spots",
+  "preferences",
 ]);
+
+// Detail screens that open the phone sheet tall, because their footer needs
+// the room. The rest open at the peek so the map stays in view.
+export const tallSheetKinds: ReadonlySet<PanelRoute["kind"]> = new Set(["preferences", "my-spots"]);

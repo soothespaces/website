@@ -55,6 +55,8 @@
   --animate-sheet-in-right: sheet-in-right 200ms ease-out;
   --animate-sheet-out-right: sheet-out-right 150ms ease-in;
   --animate-heart-in: heart-in 280ms ease-out;
+  --animate-photo-next: photo-next 200ms ease-out;
+  --animate-photo-prev: photo-prev 200ms ease-out;
 
   @keyframes fade-in {
     from {
@@ -107,6 +109,18 @@
     }
     100% {
       transform: scale(1);
+    }
+  }
+  @keyframes photo-next {
+    from {
+      opacity: 0;
+      transform: translateX(1.25rem);
+    }
+  }
+  @keyframes photo-prev {
+    from {
+      opacity: 0;
+      transform: translateX(-1.25rem);
     }
   }
 }
