@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useMapState } from "@/features/map/map-state";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { Database } from "@/types/supabase";
@@ -32,20 +33,6 @@ export type DirectoryRoom = {
   buildingSlug: string | null;
 };
 
-type SpaceRecord = {
-  id: string;
-  slug: string;
-  name: string;
-  building_slug: string;
-  floor_label: string | null;
-  noise_level: Noise | null;
-  light_level: Light | null;
-  features: Feature[];
-  capacity: number | null;
-  lat: number | null;
-  lng: number | null;
-};
-
 type RoomRecord = {
   id: string;
   name: string | null;
@@ -53,9 +40,6 @@ type RoomRecord = {
   space_id: string | null;
   floor_plans: { building_slug: string } | { building_slug: string }[] | null;
 };
-
-const SPACE_SELECT =
-  "id, slug, name, building_slug, floor_label, noise_level, light_level, features, capacity, lat, lng";
 
 export type SpotDirectory = {
   spaces: Map<string, DirectorySpace>;
@@ -65,57 +49,13 @@ export type SpotDirectory = {
   error: string | null;
 };
 
-const EMPTY_SPACES = new Map<string, DirectorySpace>();
 const EMPTY_ROOMS = new Map<string, DirectoryRoom>();
-
-let spacesSnapshot: { spaces: Map<string, DirectorySpace>; error: string | null } | null = null;
-let spacesPromise: Promise<{ spaces: Map<string, DirectorySpace>; error: string | null }> | null = null;
 const roomCache = new Map<string, Map<string, DirectoryRoom>>();
-
-function toSpace(record: SpaceRecord): DirectorySpace {
-  return {
-    id: record.id,
-    slug: record.slug,
-    name: record.name,
-    buildingSlug: record.building_slug,
-    floorLabel: record.floor_label,
-    noiseLevel: record.noise_level,
-    lightLevel: record.light_level,
-    features: record.features ?? [],
-    capacity: record.capacity,
-    lat: record.lat,
-    lng: record.lng,
-  };
-}
 
 function buildingSlugOf(floorPlans: RoomRecord["floor_plans"]): string | null {
   if (!floorPlans) return null;
   if (Array.isArray(floorPlans)) return floorPlans[0]?.building_slug ?? null;
   return floorPlans.building_slug;
-}
-
-function loadSpaces() {
-  if (spacesSnapshot) return Promise.resolve(spacesSnapshot);
-  if (spacesPromise) return spacesPromise;
-  if (!getSupabaseEnv()) {
-    spacesSnapshot = { spaces: EMPTY_SPACES, error: null };
-    return Promise.resolve(spacesSnapshot);
-  }
-  const supabase = createClient();
-  spacesPromise = readAll<SpaceRecord>((from, to) =>
-    supabase.from("spaces").select(SPACE_SELECT).eq("is_listed", true).order("name").range(from, to),
-  )
-    .then((rows) => {
-      const spaces = new Map(rows.map((row) => [row.id, toSpace(row)]));
-      spacesSnapshot = { spaces, error: null };
-      return spacesSnapshot;
-    })
-    .catch((error: unknown) => {
-      console.error("Study spaces failed to load", error);
-      spacesPromise = null;
-      return { spaces: EMPTY_SPACES, error: "Study spaces failed to load." };
-    });
-  return spacesPromise;
 }
 
 async function loadRooms(ids: readonly string[]): Promise<Map<string, DirectoryRoom>> {
@@ -146,30 +86,35 @@ async function loadRooms(ids: readonly string[]): Promise<Map<string, DirectoryR
   return rooms;
 }
 
-/** Listed spaces, plus the room zones a check-in history mentions. Shared across the screen. */
+/** Map spaces, plus the room zones a check-in history mentions. */
 export function useSpotDirectory(roomIds: readonly string[]): SpotDirectory {
+  const { data } = useMapState();
   const roomKey = [...roomIds].sort().join(",");
-  const [spaces, setSpaces] = useState<Map<string, DirectorySpace>>(spacesSnapshot?.spaces ?? EMPTY_SPACES);
-  const [spacesLoaded, setSpacesLoaded] = useState(spacesSnapshot != null || !getSupabaseEnv());
+  const spaces = useMemo(() => {
+    const next = new Map<string, DirectorySpace>();
+    for (const space of data.spaces) {
+      next.set(space.id, {
+        id: space.id,
+        slug: space.slug,
+        name: space.name,
+        buildingSlug: space.building?.slug ?? "",
+        floorLabel: space.floor_label,
+        noiseLevel: space.noise_level,
+        lightLevel: space.light_level ?? null,
+        features: space.features ?? [],
+        capacity: space.capacity ?? null,
+        lat: space.lat,
+        lng: space.lng,
+      });
+    }
+    return next;
+  }, [data.spaces]);
   const [roomState, setRoomState] = useState<{ key: string; rooms: Map<string, DirectoryRoom> }>({
     key: "",
     rooms: EMPTY_ROOMS,
   });
-  const [error, setError] = useState<string | null>(spacesSnapshot?.error ?? null);
+  const [error, setError] = useState<string | null>(null);
   const roomsCached = !roomKey || roomCache.has(roomKey);
-
-  useEffect(() => {
-    let cancelled = false;
-    loadSpaces().then((result) => {
-      if (cancelled) return;
-      setSpaces(result.spaces);
-      setError(result.error);
-      setSpacesLoaded(true);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     if (!roomKey || roomCache.has(roomKey)) return;
@@ -193,7 +138,7 @@ export function useSpotDirectory(roomIds: readonly string[]): SpotDirectory {
   return {
     spaces,
     rooms: roomsCached ? (roomCache.get(roomKey) ?? EMPTY_ROOMS) : roomState.key === roomKey ? roomState.rooms : EMPTY_ROOMS,
-    spacesLoaded,
+    spacesLoaded: data.loaded,
     roomsLoaded: roomsCached || roomState.key === roomKey,
     error,
   };

@@ -12,24 +12,11 @@ import { useSession } from "@/lib/auth/use-session";
 import { useMyCheckInHistory } from "@/lib/data/my-history";
 import { useMapState } from "@/features/map/map-state";
 import type { PanelScreenProps } from "@/features/side-view/builtin-screens";
-import { panelHref, type PanelRoute } from "@/features/side-view/panel-route";
+import { PANEL_KIND_TITLES, panelHref, type PanelRoute } from "@/features/side-view/panel-route";
 import { MonthCard } from "./month-card";
 import { Rotation } from "./rotation";
 import { useNow } from "./use-now";
 import { Visited } from "./visited";
-
-const TITLES: Record<PanelRoute["kind"], string> = {
-  home: "Home",
-  building: "Building",
-  hours: "Hours",
-  spaces: "Spaces",
-  rooms: "Rooms",
-  "rooms-map": "Rooms map",
-  photos: "Photos",
-  space: "Space",
-  preferences: "Preferences",
-  "my-spots": "Your spots",
-};
 
 // J1. The Your spots screen. J2 to J5 fill the sections below the title.
 export function MySpotsScreen({ route }: PanelScreenProps) {
@@ -63,7 +50,7 @@ function previousTitle(stack: PanelRoute[], data: ReturnType<typeof useMapState>
   if (previous.kind === "space") {
     return data.spaces.find((space) => space.slug === previous.id)?.name || "Space";
   }
-  return TITLES[previous.kind];
+  return PANEL_KIND_TITLES[previous.kind];
 }
 
 function Loading() {

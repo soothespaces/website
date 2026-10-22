@@ -344,7 +344,9 @@ function MoveHandle({
 
   useEffect(() => {
     if (!open) return;
-    function onDocumentPointerDown(event: PointerEvent) {
+    // Click, not pointerdown. Closing on press removes this row before the
+    // browser hit-tests the click, so a tap below can land on the wrong handle.
+    function onDocumentClick(event: MouseEvent) {
       const target = event.target;
       if (target instanceof Node && rootRef.current?.contains(target)) return;
       setOpen(false);
@@ -355,10 +357,10 @@ function MoveHandle({
       event.stopPropagation();
       setOpen(false);
     }
-    document.addEventListener("pointerdown", onDocumentPointerDown, true);
+    document.addEventListener("click", onDocumentClick, true);
     document.addEventListener("keydown", onDocumentKeyDown, true);
     return () => {
-      document.removeEventListener("pointerdown", onDocumentPointerDown, true);
+      document.removeEventListener("click", onDocumentClick, true);
       document.removeEventListener("keydown", onDocumentKeyDown, true);
     };
   }, [open]);
@@ -463,14 +465,15 @@ function toRotationItem(
 ): RotationItem | null {
   if (favorite.spaceId) {
     const space = spaces.get(favorite.spaceId);
-    const building = space ? buildings.get(space.buildingSlug) : undefined;
+    const buildingSlug = space?.buildingSlug || null;
+    const building = buildingSlug ? buildings.get(buildingSlug) : undefined;
     const name = space?.name ?? "Saved spot";
     return {
       favorite,
       name,
       place: building?.name ?? null,
       wholeBuilding: false,
-      buildingSlug: space?.buildingSlug ?? null,
+      buildingSlug,
       spaceId: favorite.spaceId,
       slug: space?.slug ?? null,
       target: { kind: "space", spaceId: favorite.spaceId },
@@ -478,7 +481,7 @@ function toRotationItem(
         id: favorite.spaceId,
         name,
         slug: space?.slug,
-        building_slug: space?.buildingSlug,
+        building_slug: buildingSlug ?? undefined,
         floor_label: space?.floorLabel,
         noise_level: space?.noiseLevel,
         light_level: space?.lightLevel,
