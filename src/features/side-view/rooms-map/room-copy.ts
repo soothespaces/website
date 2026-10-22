@@ -31,8 +31,13 @@ export function windowLabel(minutes: number): string {
   return "Today";
 }
 
-/** A Detroit wall-clock time. Minutes may run past midnight into the next date. */
-export function resolveDetroit(date: string, minutes: number): Date {
+export type DetroitSlot = {
+  /** Null when this wall-clock half hour does not exist, such as 2:00 AM on a spring-forward night. */
+  startsAt: string | null;
+  endsAt: string | null;
+};
+
+function wallClock(date: string, minutes: number): { day: string; minute: number } {
   let day = date;
   let minute = minutes;
   while (minute >= 1440) {
@@ -43,20 +48,31 @@ export function resolveDetroit(date: string, minutes: number): Date {
     minute += 1440;
     day = addDays(day, -1);
   }
-  return detroitInstant(day, minute);
+  return { day, minute };
+}
+
+/** A Detroit wall-clock time, or null when that clock time does not occur. */
+export function resolveDetroit(date: string, minutes: number): Date | null {
+  const wall = wallClock(date, minutes);
+  const instant = detroitInstant(wall.day, wall.minute);
+  const got = detroitParts(instant);
+  if (got.date !== wall.day || got.minutes !== wall.minute) return null;
+  return instant;
 }
 
 /**
- * The same half hours `slotsFor` indexes: wall-clock `start + i*30`, not
- * thirty real minutes. A daylight-saving jump stays in its own cell.
+ * The same half hours `slotsFor` indexes: wall-clock `start + i*30`.
+ * A half hour the clocks skip has no instant, so it cannot be booked.
  */
-export function detroitSlots(from: Date, count = SLOT_COUNT): { startsAt: string; endsAt: string }[] {
+export function detroitSlots(from: Date, count = SLOT_COUNT): DetroitSlot[] {
   const parts = detroitParts(from);
   const start = slotWindowStart(from);
-  return Array.from({ length: count }, (_, index) => ({
-    startsAt: resolveDetroit(parts.date, start + index * 30).toISOString(),
-    endsAt: resolveDetroit(parts.date, start + (index + 1) * 30).toISOString(),
-  }));
+  return Array.from({ length: count }, (_, index) => {
+    const starts = resolveDetroit(parts.date, start + index * 30);
+    const ends = resolveDetroit(parts.date, start + (index + 1) * 30);
+    if (!starts || !ends || ends.getTime() <= starts.getTime()) return { startsAt: null, endsAt: null };
+    return { startsAt: starts.toISOString(), endsAt: ends.toISOString() };
+  });
 }
 
 /** Room number for a booking. Booths print the number in the title, not the field. */

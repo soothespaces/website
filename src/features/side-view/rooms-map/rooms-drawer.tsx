@@ -38,8 +38,8 @@ function TimeTicks({ start }: { start: number }) {
   );
 }
 
-function freeStart(room: RoomSlot, times: readonly { startsAt: string }[]): string | null {
-  const index = room.slots?.findIndex((slot) => slot === "free") ?? -1;
+function freeStart(room: RoomSlot, times: readonly { startsAt: string | null }[]): string | null {
+  const index = room.slots?.findIndex((slot, i) => slot === "free" && times[i]?.startsAt) ?? -1;
   return index >= 0 ? (times[index]?.startsAt ?? null) : null;
 }
 
@@ -54,7 +54,7 @@ function RoomMapRow({
 }: {
   room: RoomSlot;
   start: number;
-  times: readonly { startsAt: string }[];
+  times: readonly { startsAt: string | null }[];
   selected: boolean;
   selectedStart: string | null;
   onSelect: () => void;
@@ -147,7 +147,7 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
                 rel="noopener noreferrer"
                 onClick={() => {
                   const roomNumber = bookingRoomNumber(selected);
-                  if (!roomNumber || !chosenSlot) return;
+                  if (!roomNumber || !chosenSlot?.startsAt || !chosenSlot.endsAt) return;
                   rememberBooking({
                     buildingSlug: route.slug,
                     roomNumber,

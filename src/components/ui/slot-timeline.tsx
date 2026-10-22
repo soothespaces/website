@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { cx } from "@/lib/cx";
-import { detroitParts } from "@/lib/detroit";
 import { formatClock, hourTicks, summarizeSlots, type SlotState } from "./slot-times";
 
 export function SlotTimeline({
@@ -27,7 +26,7 @@ export function SlotTimeline({
    * Booked slots are disabled. `starts` are the slot start instants.
    */
   selectable?: boolean;
-  starts?: readonly string[];
+  starts?: readonly (string | null)[];
   selectedStart?: string | null;
   onSelectStart?: (startsAt: string) => void;
 }) {
@@ -40,7 +39,7 @@ export function SlotTimeline({
   const ticks = showTicks ? hourTicks(start, slots.length, slotMinutes) : [];
   const span = Math.max(slots.length * slotMinutes, 1);
   const freeIndexes = slots.flatMap((slot, index) => (slot === "free" && starts?.[index] ? [index] : []));
-  const selectedIndex = starts?.findIndex((value) => value === selectedStart) ?? -1;
+  const selectedIndex = selectedStart ? (starts?.findIndex((value) => value === selectedStart) ?? -1) : -1;
   const tabIndex = selectedIndex >= 0 && slots[selectedIndex] === "free" ? selectedIndex : (freeIndexes[0] ?? -1);
 
   function move(from: number, direction: 1 | -1) {
@@ -83,11 +82,12 @@ export function SlotTimeline({
         >
           {slots.map((slot, index) => {
             const at = starts?.[index];
-            const label = at ? formatClock(detroitParts(new Date(at)).minutes) : formatClock(start + index * slotMinutes);
+            const label = formatClock(start + index * slotMinutes);
             const free = slot === "free" && !!at;
+            const state = !at ? "unavailable" : free ? "free" : "booked";
             return (
               <Button
-                key={at ?? index}
+                key={start + index * slotMinutes}
                 ref={(node) => {
                   buttons.current[index] = node;
                 }}
@@ -97,7 +97,7 @@ export function SlotTimeline({
                 aria-disabled={free ? undefined : true}
                 disabled={!free}
                 tabIndex={index === tabIndex ? 0 : -1}
-                aria-label={`${label}, ${free ? "free" : "booked"}`}
+                aria-label={`${label}, ${state}`}
                 onClick={() => {
                   if (free && at) onSelectStart?.(at);
                 }}

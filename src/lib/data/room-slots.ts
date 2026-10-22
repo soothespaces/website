@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { daysBetween, detroitParts, formatClock } from "@/lib/detroit";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
@@ -432,23 +432,19 @@ export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlots
     };
   }, [buildingSlug, fromMinute, requestKey]);
 
+  const staleMinute =
+    buildingSlug && state.key.startsWith(`${buildingSlug}\n`) ? Number(state.key.slice(buildingSlug.length + 1)) : null;
+  const asOfMs = !buildingSlug ? null : state.key === requestKey ? fromMinute * 60_000 : staleMinute;
+  const asOf = useMemo(() => (asOfMs == null || !Number.isFinite(asOfMs) ? null : new Date(asOfMs)), [asOfMs]);
+
   if (!getSupabaseEnv()) return { rooms: [], loaded: true, error: "Supabase isn't configured.", asOf: null };
   if (!buildingSlug) return { rooms: [], loaded: true, error: null, asOf: null };
-  const requestedAt = new Date(fromMinute * 60_000);
   // The start minute rolls over every half hour. Keep showing the same
   // building's rooms while that refetch runs instead of flashing a skeleton.
   if (state.key !== requestKey) {
     const sameBuilding = state.key.startsWith(`${buildingSlug}\n`);
-    if (sameBuilding) {
-      const minute = Number(state.key.slice(buildingSlug.length + 1));
-      return {
-        rooms: state.rooms,
-        loaded: true,
-        error: state.error,
-        asOf: Number.isFinite(minute) ? new Date(minute * 60_000) : null,
-      };
-    }
+    if (sameBuilding) return { rooms: state.rooms, loaded: true, error: state.error, asOf };
     return { rooms: [], loaded: false, error: null, asOf: null };
   }
-  return { rooms: state.rooms, loaded: state.loaded, error: state.error, asOf: requestedAt };
+  return { rooms: state.rooms, loaded: state.loaded, error: state.error, asOf };
 }

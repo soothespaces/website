@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { detroitParts, formatClock } from "@/lib/detroit.ts";
-import { buildRoomSlots } from "@/lib/data/room-slots.ts";
+import { buildRoomSlots, slotWindowStart } from "@/lib/data/room-slots.ts";
 import { bookingRoomNumber, detroitSlots, roomAccessibleName, roomFooter, roomTitle, seatPhrase, windowLabel } from "./room-copy.ts";
 
 test("room labels use the number, and the footer keeps the status", () => {
@@ -62,6 +62,22 @@ test("slot instants follow the wall-clock half hours the room slots use", () => 
     bookedLabels(new Date("2027-03-14T06:40:00Z"), [{ start: "2027-03-14 03:00:00", end: "2027-03-14 04:00:00" }]),
     ["3 AM", "3:30 AM"],
   );
+});
+
+test("spring forward disables the half hours the clocks skip", () => {
+  // 1:10 AM EST on 2027-03-14, before the jump from 2:00 AM to 3:00 AM.
+  const from = new Date("2027-03-14T06:10:00Z");
+  const slots = detroitSlots(from, 8);
+  const start = slotWindowStart(from);
+  const labels = slots.map((_, index) => formatClock(start + index * 30));
+  assert.equal(new Set(labels).size, labels.length);
+  assert.equal(slots[labels.indexOf("2 AM")]?.startsAt, null);
+  assert.equal(slots[labels.indexOf("2:30 AM")]?.startsAt, null);
+  const saved = slots.filter((slot) => slot.startsAt && slot.endsAt);
+  assert.equal(new Set(saved.map((slot) => slot.startsAt)).size, saved.length);
+  for (const slot of saved) {
+    assert.ok(Date.parse(slot.endsAt!) > Date.parse(slot.startsAt!));
+  }
 });
 
 test("the window label follows the time of day", () => {
