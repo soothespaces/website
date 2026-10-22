@@ -40,3 +40,7 @@ export const detailPanelKinds: ReadonlySet<PanelRoute["kind"]> = new Set([
   "rooms",
   "preferences",
 ]);
+
+// Detail screens that open the phone sheet tall, because their footer needs
+// the room. The rest open at the peek so the map stays in view.
+export const tallSheetKinds: ReadonlySet<PanelRoute["kind"]> = new Set(["preferences"]);

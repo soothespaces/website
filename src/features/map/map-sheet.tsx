@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { detailPanelKinds, panelRegistry } from "@/features/side-view/registry";
+import { panelRegistry, tallSheetKinds } from "@/features/side-view/registry";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { WIDE_QUERY } from "./map-layout-config";
 import { useMapState } from "./map-state";
@@ -16,12 +16,12 @@ export function MapSheet() {
   const wide = useMediaQuery(WIDE_QUERY);
   const { route, clear } = useMapState();
   const home = route.kind === "home";
-  const tall = route.kind !== "home" && detailPanelKinds.has(route.kind) && Boolean(panelRegistry[route.kind]);
+  const tall = tallSheetKinds.has(route.kind) && Boolean(panelRegistry[route.kind]);
   const [expanded, setExpanded] = useState(tall);
   const [seen, setSeen] = useState(route.kind);
   if (seen !== route.kind) {
     setSeen(route.kind);
-    // Detail screens open tall so a footer has room. Home keeps the short sheet.
+    // Preferences opens tall so its footer has room. Other screens open at the peek.
     setExpanded(tall);
   }
   const { drag, handlers } = useSwipeToDismiss({
