@@ -264,7 +264,7 @@ export function MapExplorer() {
         recordNumber={plan ? selectedBuilding?.recordNumber ?? null : null}
       />
       {route.kind === "rooms-map" && plan ? <RoomAvailabilityPin geojson={plan.geojson} /> : null}
-      {plan && route.kind !== "rooms-map" ? <FloorLegend plan={plan} /> : null}
+      {plan ? <FloorLegend plan={plan} /> : null}
       {!plan && data.loaded ? <StudyLegend /> : null}
       <CurbRampLayer colors={colors} visible={layers.curbRamps} />
       <EntranceLayer entrances={entrances} colors={colors} visible={layers.entrances} />
