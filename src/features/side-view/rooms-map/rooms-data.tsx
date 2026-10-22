@@ -35,10 +35,12 @@ export function RoomsDataProvider({ buildingSlug, children }: { buildingSlug: st
     return () => clearInterval(id);
   }, []);
   const slots = useRoomSlots(buildingSlug, from);
-  const start = slotWindowStart(from);
+  // While a new half hour is loading, keep the window the rooms were built for.
+  const shownFrom = slots.asOf ?? from;
+  const start = slotWindowStart(shownFrom);
   const value = useMemo<RoomsData>(
-    () => ({ from, start, rooms: slots.rooms, loaded: slots.loaded, error: slots.error }),
-    [from, start, slots.rooms, slots.loaded, slots.error],
+    () => ({ from: shownFrom, start, rooms: slots.rooms, loaded: slots.loaded, error: slots.error }),
+    [shownFrom, start, slots.rooms, slots.loaded, slots.error],
   );
   return <RoomsDataContext value={value}>{children}</RoomsDataContext>;
 }

@@ -31,42 +31,38 @@ export function windowLabel(minutes: number): string {
   return "Today";
 }
 
-export { slotWindowStart };
-
-/** A Detroit wall-clock time. A skipped hour (spring forward) moves to the next one that exists. */
+/** A Detroit wall-clock time. Minutes may run past midnight into the next date. */
 export function resolveDetroit(date: string, minutes: number): Date {
   let day = date;
   let minute = minutes;
-  for (let attempt = 0; attempt < 6; attempt++) {
-    while (minute >= 1440) {
-      minute -= 1440;
-      day = addDays(day, 1);
-    }
-    while (minute < 0) {
-      minute += 1440;
-      day = addDays(day, -1);
-    }
-    const instant = detroitInstant(day, minute);
-    const got = detroitParts(instant);
-    if (got.date === day && got.minutes === minute) return instant;
-    minute += 30;
+  while (minute >= 1440) {
+    minute -= 1440;
+    day = addDays(day, 1);
   }
-  return detroitInstant(date, minutes);
+  while (minute < 0) {
+    minute += 1440;
+    day = addDays(day, -1);
+  }
+  return detroitInstant(day, minute);
 }
 
 /**
- * Eight half hours starting at `from`, as real instants. Each slot ends 30
- * minutes later, so a daylight-saving jump is a real half hour rather than
- * a wall-clock time that does not exist.
+ * The same half hours `slotsFor` indexes: wall-clock `start + i*30`, not
+ * thirty real minutes. A daylight-saving jump stays in its own cell.
  */
 export function detroitSlots(from: Date, count = SLOT_COUNT): { startsAt: string; endsAt: string }[] {
   const parts = detroitParts(from);
-  let cursor = resolveDetroit(parts.date, slotWindowStart(from));
-  const slots: { startsAt: string; endsAt: string }[] = [];
-  for (let index = 0; index < count; index++) {
-    const end = new Date(cursor.getTime() + 30 * 60_000);
-    slots.push({ startsAt: cursor.toISOString(), endsAt: end.toISOString() });
-    cursor = end;
-  }
-  return slots;
+  const start = slotWindowStart(from);
+  return Array.from({ length: count }, (_, index) => ({
+    startsAt: resolveDetroit(parts.date, start + index * 30).toISOString(),
+    endsAt: resolveDetroit(parts.date, start + (index + 1) * 30).toISOString(),
+  }));
+}
+
+/** Room number for a booking. Booths print the number in the title, not the field. */
+export function bookingRoomNumber(room: { name: string; roomNumber: string | null }): string | null {
+  const number = room.roomNumber?.trim();
+  if (number) return number;
+  const booth = room.name.match(/\bBOOTH\s*(\d+)\b/i);
+  return booth ? `BOOTH${booth[1]}` : null;
 }

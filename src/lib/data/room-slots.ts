@@ -288,6 +288,8 @@ export type RoomSlotsState = {
   rooms: RoomSlot[];
   loaded: boolean;
   error: string | null;
+  /** Instant these rooms were built for. Stays on the previous window during a refetch. */
+  asOf: Date | null;
 };
 
 type BookableRecord = {
@@ -322,7 +324,7 @@ type ClassroomRecord = {
 export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlotsState {
   const fromMinute = Math.floor(from.getTime() / 60_000);
   const requestKey = `${buildingSlug ?? ""}\n${fromMinute}`;
-  const [state, setState] = useState<RoomSlotsState & { key: string }>(() => ({
+  const [state, setState] = useState<{ key: string; rooms: RoomSlot[]; loaded: boolean; error: string | null }>(() => ({
     key: "",
     rooms: [],
     loaded: false,
@@ -430,14 +432,23 @@ export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlots
     };
   }, [buildingSlug, fromMinute, requestKey]);
 
-  if (!getSupabaseEnv()) return { rooms: [], loaded: true, error: "Supabase isn't configured." };
-  if (!buildingSlug) return { rooms: [], loaded: true, error: null };
+  if (!getSupabaseEnv()) return { rooms: [], loaded: true, error: "Supabase isn't configured.", asOf: null };
+  if (!buildingSlug) return { rooms: [], loaded: true, error: null, asOf: null };
+  const requestedAt = new Date(fromMinute * 60_000);
   // The start minute rolls over every half hour. Keep showing the same
   // building's rooms while that refetch runs instead of flashing a skeleton.
   if (state.key !== requestKey) {
     const sameBuilding = state.key.startsWith(`${buildingSlug}\n`);
-    if (sameBuilding) return { rooms: state.rooms, loaded: true, error: state.error };
-    return { rooms: [], loaded: false, error: null };
+    if (sameBuilding) {
+      const minute = Number(state.key.slice(buildingSlug.length + 1));
+      return {
+        rooms: state.rooms,
+        loaded: true,
+        error: state.error,
+        asOf: Number.isFinite(minute) ? new Date(minute * 60_000) : null,
+      };
+    }
+    return { rooms: [], loaded: false, error: null, asOf: null };
   }
-  return { rooms: state.rooms, loaded: state.loaded, error: state.error };
+  return { rooms: state.rooms, loaded: state.loaded, error: state.error, asOf: requestedAt };
 }

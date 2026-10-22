@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { detroitSlots, roomAccessibleName, roomFooter, roomTitle, seatPhrase, windowLabel } from "./room-copy.ts";
+import { detroitParts, formatClock } from "@/lib/detroit.ts";
+import { buildRoomSlots } from "@/lib/data/room-slots.ts";
+import { bookingRoomNumber, detroitSlots, roomAccessibleName, roomFooter, roomTitle, seatPhrase, windowLabel } from "./room-copy.ts";
 
 test("room labels use the number, and the footer keeps the status", () => {
   const room = {
@@ -11,6 +13,8 @@ test("room labels use the number, and the footer keeps the status", () => {
   };
   assert.equal(roomTitle(room), "Room 2124");
   assert.equal(roomTitle({ name: "1st Floor - BOOTH1 - Individual Soundproof Booth", roomNumber: null }), "Booth 1");
+  assert.equal(bookingRoomNumber({ name: "1st Floor - BOOTH1 - Individual Soundproof Booth", roomNumber: null }), "BOOTH1");
+  assert.equal(bookingRoomNumber({ name: "Room", roomNumber: "2124" }), "2124");
   assert.equal(seatPhrase(1), "1 seat");
   assert.equal(seatPhrase(9), "9 seats");
   assert.equal(seatPhrase(null), null);
@@ -19,20 +23,45 @@ test("room labels use the number, and the footer keeps the status", () => {
   assert.equal(roomFooter({ ...room, capacity: null }), "Room 2124 · Free until 10 PM");
 });
 
-test("slots are real half hours, including across the spring-forward gap", () => {
-  // 8:10 PM EDT on Oct 21. The first slot is 8:00–8:30 PM.
+function bookedLabels(from: Date, booked: { start: string; end: string }[]) {
+  const rooms = buildRoomSlots({
+    from,
+    bookable: [
+      {
+        instance: "umich.libcal.com",
+        libcalItemId: 1,
+        name: "2nd Floor - 2124 - Study Room",
+        roomNumber: "2124",
+        floor: 2,
+        capacity: 4,
+        bookingUrl: "https://umich.libcal.com/space/1",
+      },
+    ],
+    availability: { items: [{ libcalItemId: 1, booked }] },
+    classrooms: [],
+  });
+  const slots = rooms[0]?.slots ?? [];
+  return detroitSlots(from, slots.length)
+    .filter((_, index) => slots[index] === "booked")
+    .map((slot) => formatClock(detroitParts(new Date(slot.startsAt)).minutes));
+}
+
+test("slot instants follow the wall-clock half hours the room slots use", () => {
   const evening = detroitSlots(new Date("2026-10-22T00:10:00Z"), 3);
   assert.equal(evening[0]?.startsAt, "2026-10-22T00:00:00.000Z");
   assert.equal(evening[0]?.endsAt, "2026-10-22T00:30:00.000Z");
   assert.equal(evening[2]?.startsAt, "2026-10-22T01:00:00.000Z");
 
-  // 1:10 AM EST on March 8, 2026. Clocks jump from 2:00 AM to 3:00 AM, so the
-  // 1:30 slot ends at 3:00 AM rather than a 2:00 AM that does not exist.
-  const jump = detroitSlots(new Date("2026-03-08T06:10:00Z"), 2);
-  assert.equal(jump[0]?.startsAt, "2026-03-08T06:00:00.000Z");
-  assert.equal(jump[0]?.endsAt, "2026-03-08T06:30:00.000Z");
-  assert.equal(jump[1]?.startsAt, "2026-03-08T06:30:00.000Z");
-  assert.equal(jump[1]?.endsAt, "2026-03-08T07:00:00.000Z");
+  // Fall back, 12:40 AM, booking 2:00–3:00. The 2:00 cells stay booked.
+  assert.deepEqual(
+    bookedLabels(new Date("2026-11-01T04:40:00Z"), [{ start: "2026-11-01 02:00:00", end: "2026-11-01 03:00:00" }]),
+    ["2 AM", "2:30 AM"],
+  );
+  // Spring forward, 1:40 AM, booking 3:00–4:00. The 3:00 cells stay booked.
+  assert.deepEqual(
+    bookedLabels(new Date("2027-03-14T06:40:00Z"), [{ start: "2027-03-14 03:00:00", end: "2027-03-14 04:00:00" }]),
+    ["3 AM", "3:30 AM"],
+  );
 });
 
 test("the window label follows the time of day", () => {

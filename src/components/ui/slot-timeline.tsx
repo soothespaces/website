@@ -64,9 +64,21 @@ export function SlotTimeline({
           aria-label="Time"
           className="flex flex-wrap gap-1"
           onKeyDown={(event) => {
-            if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+            if (event.key === "Home" || event.key === "End") {
+              event.preventDefault();
+              const next = event.key === "Home" ? freeIndexes[0] : freeIndexes.at(-1);
+              const at = next == null ? undefined : starts?.[next];
+              if (next == null || !at) return;
+              onSelectStart?.(at);
+              buttons.current[next]?.focus();
+              return;
+            }
+            if (event.key !== "ArrowRight" && event.key !== "ArrowLeft" && event.key !== "ArrowDown" && event.key !== "ArrowUp") {
+              return;
+            }
             event.preventDefault();
-            move(tabIndex, event.key === "ArrowRight" ? 1 : -1);
+            const forward = event.key === "ArrowRight" || event.key === "ArrowDown";
+            move(tabIndex, forward ? 1 : -1);
           }}
         >
           {slots.map((slot, index) => {

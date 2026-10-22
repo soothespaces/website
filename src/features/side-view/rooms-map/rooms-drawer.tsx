@@ -14,7 +14,7 @@ import { useReducedMotion } from "@/lib/settings/use-reduced-motion";
 import { cx } from "@/lib/cx";
 import { SLOT_COUNT, SLOT_MINUTES, type RoomSlot } from "@/lib/data/room-slots";
 import { useRoomsData } from "./rooms-data";
-import { detroitSlots, roomAccessibleName, roomFooter, roomTitle, windowLabel } from "./room-copy";
+import { bookingRoomNumber, detroitSlots, roomAccessibleName, roomFooter, roomTitle, windowLabel } from "./room-copy";
 import { detroitParts } from "@/lib/detroit";
 
 const rowGrid = "grid grid-cols-[minmax(0,1fr)_minmax(7.5rem,46%)] items-center gap-x-3";
@@ -146,10 +146,11 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => {
-                  if (!selected.roomNumber || !chosenSlot) return;
+                  const roomNumber = bookingRoomNumber(selected);
+                  if (!roomNumber || !chosenSlot) return;
                   rememberBooking({
                     buildingSlug: route.slug,
-                    roomNumber: selected.roomNumber,
+                    roomNumber,
                     spaceId: selected.spaceId ?? null,
                     startsAt: chosenSlot.startsAt,
                     endsAt: chosenSlot.endsAt,
