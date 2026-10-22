@@ -458,3 +458,26 @@
     --noise-loud: #ffc9b6;
   }
 }
+
+/* Building footprints, by how many listed study spaces they have.
+   More spaces are darker on a light map and lighter on a dark map. */
+:root {
+  --study-1: #d7f0e0;
+  --study-2: #8dcea8;
+  --study-5: #3c9a66;
+  --study-10: #1c5c3a;
+}
+:root[data-theme="dark"] {
+  --study-1: #1c4030;
+  --study-2: #2f7a50;
+  --study-5: #7dcca0;
+  --study-10: #d7f5e4;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --study-1: #1c4030;
+    --study-2: #2f7a50;
+    --study-5: #7dcca0;
+    --study-10: #d7f5e4;
+  }
+}

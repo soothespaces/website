@@ -58,6 +58,7 @@ export default function CampusMap({ children }: { children?: ReactNode }) {
             "noise-bars-3",
             "noise-bars-4",
             "room-booked-hatch",
+            "not-study-cross",
           ]);
           map.touchZoomRotate.disableRotation();
           map.keyboard.disableRotation();

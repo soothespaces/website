@@ -17,6 +17,10 @@ const TOKENS = [
   "noise-conversational",
   "noise-loud",
   "noise-fill-opacity",
+  "study-1",
+  "study-2",
+  "study-5",
+  "study-10",
 ] as const;
 export type MapColors = Record<(typeof TOKENS)[number], string>;
 
