@@ -224,7 +224,12 @@ export function MapExplorer() {
         colors={colors}
         show={data.loaded}
       />
-      <FloorPlanLayers plan={plan ?? null} colors={colors} availability={route.kind === "rooms-map"} />
+      <FloorPlanLayers
+        plan={plan ?? null}
+        colors={colors}
+        availability={route.kind === "rooms-map"}
+        recordNumber={plan ? selectedBuilding?.recordNumber ?? null : null}
+      />
       {plan ? <FloorLegend plan={plan} /> : null}
       {!plan && data.loaded ? <StudyLegend /> : null}
       <CurbRampLayer colors={colors} visible={layers.curbRamps} />

@@ -10,6 +10,7 @@ import { FloorNoiseGlyphLayer, FloorNoiseLayer, useFloorColoring } from "./floor
 import { FloorPrintersLayer } from "./floor-printers";
 import { FLOOR_ROOM_LINES } from "./floor-layer-ids";
 import { FloorStaffLayer } from "./floor-staff";
+import { FO_BUILDINGS_SOURCE } from "./campus-detail";
 
 // Selecting a building zooms the map to it, at least this far in. Floor
 // plans show from here on.
@@ -61,11 +62,15 @@ export function FloorPlanLayers({
   plan,
   colors,
   availability = false,
+  recordNumber = null,
 }: {
   plan: FloorPlan | null;
   colors: MapColors;
   // Rooms map paints free and booked instead, so noise and stripes stay off.
   availability?: boolean;
+  // The footprint under this plan. Covered so the study-space color does not
+  // show through courtyards and the gaps between rooms.
+  recordNumber?: string | null;
 }) {
   const font = useLabelFont();
   const coloring = useFloorColoring(plan);
@@ -88,7 +93,7 @@ export function FloorPlanLayers({
         type="fill"
         minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
         filter={["==", ["get", "layer"], "room"]}
-        paint={{ "fill-color": colors.card, "fill-opacity": 0.92 }}
+        paint={{ "fill-color": colors.card, "fill-opacity": 1 }}
         beforeId={SLOTS.floorPlans}
       />
       <Layer
@@ -141,6 +146,17 @@ export function FloorPlanLayers({
         />
       ) : null}
     </Source>
+      {recordNumber ? (
+        <Layer
+          id="floor-plan-plate"
+          type="fill"
+          source={FO_BUILDINGS_SOURCE}
+          minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
+          filter={["==", ["get", "loc_ObjectNum"], recordNumber]}
+          paint={{ "fill-color": colors.card, "fill-opacity": 1 }}
+          beforeId={`${id}-structure`}
+        />
+      ) : null}
     <FloorPrintersLayer plan={plan} rooms={coloring.rooms} />
     </>
   );
