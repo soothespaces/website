@@ -16,6 +16,19 @@ export type PanelRoute =
 
 export const HOME_ROUTE: PanelRoute = { kind: "home" };
 
+export const PANEL_KIND_TITLES: Record<PanelRoute["kind"], string> = {
+  home: "Home",
+  building: "Building",
+  hours: "Hours",
+  spaces: "Spaces",
+  rooms: "Rooms",
+  "rooms-map": "Rooms map",
+  photos: "Photos",
+  space: "Space",
+  preferences: "Preferences",
+  "my-spots": "Your spots",
+};
+
 // Query keys this stack owns. Anything else (a future `people` param, for
 // example) is left in place when the panel changes.
 const PANEL_PARAMS = ["panel", "b", "rec", "name", "floor", "room", "space", "id", "focus"] as const;

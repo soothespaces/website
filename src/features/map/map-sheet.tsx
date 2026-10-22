@@ -21,7 +21,7 @@ export function MapSheet() {
   const [seen, setSeen] = useState(route.kind);
   if (seen !== route.kind) {
     setSeen(route.kind);
-    // Preferences opens tall so its footer has room. Other screens open at the peek.
+    // Preferences and Your spots open tall. Other screens open at the peek.
     setExpanded(tall);
   }
   const { drag, handlers } = useSwipeToDismiss({

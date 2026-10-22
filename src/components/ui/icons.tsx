@@ -7,6 +7,7 @@ import {
   ChevronRightIcon as ChevronRightGlyph,
   ChevronUpIcon as ChevronUpGlyph,
   Cross2Icon as CrossGlyph,
+  DragHandleDots2Icon as DragHandleGlyph,
   DrawingPinIcon as PinGlyph,
   EnterIcon as EnterGlyph,
   ExclamationTriangleIcon as WarningGlyph,
@@ -85,6 +86,7 @@ export const ChevronLeftIcon = icon("ChevronLeftIcon", ChevronLeftGlyph);
 export const ChevronRightIcon = icon("ChevronRightIcon", ChevronRightGlyph);
 export const ChevronUpIcon = icon("ChevronUpIcon", ChevronUpGlyph);
 export const CloseIcon = icon("CloseIcon", CrossGlyph);
+export const DragHandleIcon = icon("DragHandleIcon", DragHandleGlyph);
 export const EnterIcon = icon("EnterIcon", EnterGlyph);
 export const ExternalLinkIcon = icon("ExternalLinkIcon", ExternalLinkGlyph);
 export const FilterIcon = icon("FilterIcon", FilterGlyph);
