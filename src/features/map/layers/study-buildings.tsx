@@ -7,7 +7,14 @@ import type { MapColors } from "../use-map-colors";
 import { SLOTS } from "../slots";
 import { FO_BUILDINGS_SOURCE } from "./campus-detail";
 import { NOT_STUDY_PATTERN, notStudyCrossImage } from "./not-study-pattern";
-import { notStudyFilter, notStudyRecords, studyColorExpression, studyCountsByRecord, type StudyStep } from "./study-building-counts";
+import {
+  notStudyFilter,
+  notStudyRecords,
+  studyColorExpression,
+  studyCountsByRecord,
+  studyFilter,
+  type StudyStep,
+} from "./study-building-counts";
 
 // Same zoom the campus building footprints appear. No max zoom: the floor
 // plan is drawn above this, so zooming into a floor covers it instead of
@@ -43,10 +50,6 @@ function useNotStudyCross(foreground: string) {
   return ready;
 }
 
-function recordFilter(records: readonly string[]): FilterSpecification {
-  return ["in", ["get", "loc_ObjectNum"], ["literal", [...records]]] as unknown as FilterSpecification;
-}
-
 // Buildings with listed study spaces are colored by how many they have.
 // A cross is for hospitals, athletic buildings, and parking structures,
 // including the ones the campus map labels PARK that are missing from the
@@ -80,8 +83,21 @@ export function StudyBuildingLayers({
         type="fill"
         source={FO_BUILDINGS_SOURCE}
         minzoom={12}
-        filter={recordFilter(records)}
+        filter={studyFilter(records) as unknown as FilterSpecification}
         paint={{ "fill-color": color as unknown as ExpressionSpecification, "fill-opacity": 0.9 }}
+        beforeId={SLOTS.buildingColors}
+      />
+      {/* The lighter steps are close to a plain footprint, a lawn, or a
+          sidewalk (about 1:1), so the edge in the text color is what marks a
+          study building at 3:1 or better. */}
+      <Layer
+        id="study-buildings-outline"
+        type="line"
+        source={FO_BUILDINGS_SOURCE}
+        minzoom={12}
+        filter={studyFilter(records) as unknown as FilterSpecification}
+        layout={{ "line-join": "round" }}
+        paint={{ "line-color": colors.foreground, "line-width": 1.5 }}
         beforeId={SLOTS.buildingColors}
       />
       <Layer

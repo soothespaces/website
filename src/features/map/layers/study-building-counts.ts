@@ -56,14 +56,27 @@ export function studyColorExpression(counts: ReadonlyMap<string, number>, colors
 
 // Footprints the campus map already marks as a parking structure. Many of
 // these, including Fletcher St. and Thayer St., are not in the buildings table.
-export const PARKING_FOOTPRINT_TYPES = ["PARK", "PARKU"] as const;
+export const PARKING_FOOTPRINT_TYPES = ["PARK"] as const;
+
+// Underground parts of a building. FO draws them as an outline only, because
+// what is on top is a lawn, a plaza, or another building: the Palmer Dr.
+// structure runs under the Undergraduate Science Building, and the Law
+// Library's addition is under the Law Quad. Neither color nor cross belongs
+// on top of those.
+export const UNDERGROUND_FOOTPRINT_TYPES = ["BLDGU", "PARKU"] as const;
+
+const aboveGround = ["!", ["in", ["get", "Building_Type"], ["literal", [...UNDERGROUND_FOOTPRINT_TYPES]]]];
+
+export function studyFilter(studyIds: readonly string[]) {
+  return ["all", aboveGround, ["in", ["get", "loc_ObjectNum"], ["literal", [...studyIds]]]];
+}
 
 export function notStudyFilter(studyIds: readonly string[], otherIds: readonly string[]) {
   const parking = ["in", ["get", "Building_Type"], ["literal", [...PARKING_FOOTPRINT_TYPES]]];
   const marked = otherIds.length > 0 ? ["in", ["get", "loc_ObjectNum"], ["literal", [...otherIds]]] : null;
   const either = marked ? ["any", parking, marked] : parking;
-  if (studyIds.length === 0) return either;
-  return ["all", ["!", ["in", ["get", "loc_ObjectNum"], ["literal", [...studyIds]]]], either];
+  if (studyIds.length === 0) return ["all", aboveGround, either];
+  return ["all", aboveGround, ["!", ["in", ["get", "loc_ObjectNum"], ["literal", [...studyIds]]]], either];
 }
 
 export function notStudyRecords(
