@@ -16,6 +16,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { Database } from "@/types/supabase";
 import { FLOOR_ROOM_LINES } from "./floor-layer-ids";
+import { SLOTS } from "../slots";
 import type { FloorPlan } from "../use-floor-index";
 import type { MapColors } from "../use-map-colors";
 import {
@@ -24,6 +25,7 @@ import {
   groupByNoise,
   labelRank,
   NOISE_BAR_IMAGES,
+  NOISE_GLYPH_LAYOUT,
   NOISE_FILL_OPACITY,
   NOISE_LEVELS,
   noiseBarImage,
@@ -381,10 +383,8 @@ export function FloorNoiseLayer({
   );
 }
 
-// The 4-bar glyph for each filled room. It hangs from its top edge, just
-// under the centered room number. icon-size stays constant: an interpolation
-// makes MapLibre reserve the next zoom's box, which hides glyphs at zoom 19.
-// The number is a higher layer, so it paints over the glyph where they meet.
+// The 4-bar glyph for each filled room, laid out by NOISE_GLYPH_LAYOUT.
+// It stays inside its room, so it can sit above the room outlines.
 export function FloorNoiseGlyphLayer({
   colors,
   minzoom,
@@ -403,15 +403,11 @@ export function FloorNoiseGlyphLayer({
       source={source}
       minzoom={minzoom}
       filter={["has", "noiseBars"]}
-      layout={{
-        "icon-image": ["concat", "noise-bars-", ["to-string", ["get", "noiseBars"]]],
-        "icon-size": 0.22,
-        "icon-offset": [0, 12],
-        "icon-padding": 0,
-        "icon-allow-overlap": false,
-        "icon-anchor": "top",
-      }}
-      beforeId={FLOOR_ROOM_LINES}
+      layout={NOISE_GLYPH_LAYOUT}
+      // Top of the floor band, over the room lines. The noise fills and
+      // stripes load later and go under the room lines, so a glyph placed
+      // there too ended up under them, hidden by the fill.
+      beforeId={SLOTS.floorPlans}
     />
   );
 }

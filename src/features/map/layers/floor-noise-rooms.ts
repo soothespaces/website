@@ -1,3 +1,4 @@
+import type { SymbolLayerSpecification } from "maplibre-gl";
 import { resolveAttributes, type AttributeSpace } from "@/lib/data/attributes";
 import type { CheckInSummary, NoiseLevel } from "@/lib/data/check-ins";
 import { isStaffRoom } from "./floor-staff-rooms";
@@ -14,6 +15,22 @@ export const NOISE_BARS: Record<NoiseLevel, number> = {
   conversational: 3,
   loud: 4,
 };
+
+// The glyph hangs from its top edge, just under the centered room number.
+// The number is placed first (its layer is higher) and its collision box
+// reaches below the glyph's top, so a glyph that respected collisions would
+// never show. It overlaps instead, the number paints over it where they meet,
+// and it never pushes a number out. icon-size stays constant: an
+// interpolation makes MapLibre reserve the next zoom's larger box.
+export const NOISE_GLYPH_LAYOUT = {
+  "icon-image": ["concat", "noise-bars-", ["to-string", ["get", "noiseBars"]]],
+  "icon-size": 0.22,
+  "icon-offset": [0, 12],
+  "icon-padding": 0,
+  "icon-allow-overlap": true,
+  "icon-ignore-placement": true,
+  "icon-anchor": "top",
+} satisfies SymbolLayerSpecification["layout"];
 
 // The glyph reads noiseBars off the same features as the fill. Untagged rooms
 // keep their properties, so they stay white and get no icon.

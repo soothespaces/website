@@ -8,6 +8,7 @@ import {
   groupByNoise,
   isServiceRoom,
   labelRank,
+  NOISE_GLYPH_LAYOUT,
   noiseBarImage,
   noiseFromLabel,
   resolvedNoise,
@@ -215,4 +216,13 @@ test("noise bar images sit on a card plate", () => {
   assert.deepEqual(pixel(loud, 41, 20), [255, 255, 255, 255]);
   assert.deepEqual(pixel(loud, 20, 8), [0, 0, 0, 255]);
   assert.deepEqual(pixel(quiet, 0, 0), [0, 0, 0, 0]);
+});
+
+test("the noise glyph is drawn under its room number instead of giving way to it", () => {
+  // The number's collision box covers the glyph's top edge. A glyph that
+  // collided with it was hidden in every tagged room at zoom 19.
+  assert.equal(NOISE_GLYPH_LAYOUT["icon-allow-overlap"], true);
+  assert.equal(NOISE_GLYPH_LAYOUT["icon-ignore-placement"], true);
+  assert.equal(typeof NOISE_GLYPH_LAYOUT["icon-size"], "number");
+  assert.equal(NOISE_GLYPH_LAYOUT["icon-anchor"], "top");
 });
