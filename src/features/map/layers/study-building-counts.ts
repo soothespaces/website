@@ -1,5 +1,9 @@
+// Hospitals, parking structures, and athletic buildings. A classroom building
+// with no row in the study-space list is still a place people study.
+export const NOT_STUDY_CATEGORIES = new Set(["Medical", "Parking", "Athletic"]);
+
 // How many listed study spaces a building has, joined to FO's footprint
-// record number (loc_ObjectNum). Zero means it is not a place to study.
+// record number (loc_ObjectNum).
 export type StudyStep = "study-1" | "study-2" | "study-5" | "study-10";
 
 export const STUDY_STEP_LABEL: Record<StudyStep, string> = {
@@ -48,4 +52,17 @@ export function studyColorExpression(counts: ReadonlyMap<string, number>, colors
   if (expression.length === 2) return null;
   expression.push(colors["study-1"]);
   return expression;
+}
+
+export function notStudyRecords(
+  buildingsBySlug: ReadonlyMap<string, { recordNumber: string | null; category: string | null }>,
+  studyRecords: { has(record: string): boolean },
+): string[] {
+  const records: string[] = [];
+  for (const building of buildingsBySlug.values()) {
+    if (!building.recordNumber || studyRecords.has(building.recordNumber)) continue;
+    if (!NOT_STUDY_CATEGORIES.has(building.category ?? "")) continue;
+    records.push(building.recordNumber);
+  }
+  return records;
 }

@@ -11,7 +11,6 @@ import { CampusDetailLayers, FO_BUILDINGS_SOURCE } from "./layers/campus-detail"
 import { FloorLegend } from "./floor-legend";
 import { StudyLegend } from "./study-legend";
 import { StudyBuildingLayers } from "./layers/study-buildings";
-import { useMapZoom } from "./use-map-zoom";
 import { FLOOR_PRINTERS_LAYER } from "./layers/floor-printer-points";
 import { FLOOR_PLAN_MIN_ZOOM, FloorPlanLayers } from "./layers/floor-plans";
 import { SpacePins } from "./layers/space-pins";
@@ -48,7 +47,6 @@ export function MapExplorer() {
     useMapState();
   const { entrances, spots, buildings, buildingsBySlug, spaces, error } = data;
   const map = useMap().current?.getMap();
-  const zoom = useMapZoom();
   const selectedBuilding = useSelectedBuilding();
 
   const entrancesById = useMemo(() => new Map(entrances.map((e) => [e.id, e])), [entrances]);
@@ -224,11 +222,11 @@ export function MapExplorer() {
         spaces={spaces}
         buildingsBySlug={buildingsBySlug}
         colors={colors}
-        show={data.loaded && !plan && zoom >= 14 && zoom < 16}
+        show={data.loaded}
       />
       <FloorPlanLayers plan={plan ?? null} colors={colors} availability={route.kind === "rooms-map"} />
       {plan ? <FloorLegend plan={plan} /> : null}
-      {!plan && data.loaded && zoom >= 14 && zoom < 16 ? <StudyLegend /> : null}
+      {!plan && data.loaded ? <StudyLegend /> : null}
       <CurbRampLayer colors={colors} visible={layers.curbRamps} />
       <EntranceLayer entrances={entrances} colors={colors} visible={layers.entrances} />
       {layers.spaces ? <SpacePins spots={spots} selectedKey={selectedSpotKey} onSelect={onSelectSpot} /> : null}

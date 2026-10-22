@@ -4,15 +4,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { ExpressionSpecification, FilterSpecification } from "maplibre-gl";
 import { Layer, useMap } from "react-map-gl/maplibre";
 import type { MapColors } from "../use-map-colors";
+import { SLOTS } from "../slots";
 import { FO_BUILDINGS_SOURCE } from "./campus-detail";
 import { NOT_STUDY_PATTERN, notStudyCrossImage } from "./not-study-pattern";
-import { studyColorExpression, studyCountsByRecord, type StudyStep } from "./study-building-counts";
+import { notStudyRecords, studyColorExpression, studyCountsByRecord, type StudyStep } from "./study-building-counts";
 
-// Above footprints, under the selected building's outline. Hidden once a
-// floor plan is the thing on screen.
-const MIN_ZOOM = 14;
-const MAX_ZOOM = 16;
-const OUTLINE = "building-selected-outline";
+// Same zoom the campus building footprints appear. No max zoom: the floor
+// plan is drawn above this, so zooming into a floor covers it instead of
+// the color popping off.
 
 function useNotStudyCross(foreground: string) {
   const map = useMap().current?.getMap();
@@ -49,7 +48,8 @@ function recordFilter(records: readonly string[]): FilterSpecification {
 }
 
 // Buildings with listed study spaces are colored by how many they have.
-// Everything else, including hospitals, gets a cross: it is not a place to study.
+// A cross is only for hospitals, parking structures, and athletic buildings.
+// Classroom buildings stay unmarked when they have no listed space yet.
 export function StudyBuildingLayers({
   spaces,
   buildingsBySlug,
@@ -57,45 +57,45 @@ export function StudyBuildingLayers({
   show,
 }: {
   spaces: readonly { building: { slug: string } | null }[];
-  buildingsBySlug: ReadonlyMap<string, { recordNumber: string | null }>;
+  buildingsBySlug: ReadonlyMap<string, { recordNumber: string | null; category: string | null }>;
   colors: MapColors;
   show: boolean;
 }) {
   const ready = useNotStudyCross(colors.foreground);
   const counts = useMemo(() => studyCountsByRecord(spaces, buildingsBySlug), [spaces, buildingsBySlug]);
-  const records = [...counts.keys()];
+  const records = useMemo(() => [...counts.keys()], [counts]);
+  const crossed = useMemo(() => notStudyRecords(buildingsBySlug, counts), [buildingsBySlug, counts]);
   const color = studyColorExpression(counts, {
     "study-1": colors["study-1"],
     "study-2": colors["study-2"],
     "study-5": colors["study-5"],
     "study-10": colors["study-10"],
   });
-  if (!show || !ready || records.length === 0 || !color) return null;
+  if (!show || !ready || !color) return null;
   return (
     <>
       <Layer
         id="study-buildings"
         type="fill"
         source={FO_BUILDINGS_SOURCE}
-        minzoom={MIN_ZOOM}
-        maxzoom={MAX_ZOOM}
+        minzoom={12}
         filter={recordFilter(records)}
         paint={{ "fill-color": color as unknown as ExpressionSpecification, "fill-opacity": 0.9 }}
-        beforeId={OUTLINE}
+        beforeId={SLOTS.floorPlans}
       />
-      <Layer
-        id="not-study-buildings"
-        type="fill"
-        source={FO_BUILDINGS_SOURCE}
-        minzoom={MIN_ZOOM}
-        maxzoom={MAX_ZOOM}
-        filter={["!", recordFilter(records)] as unknown as FilterSpecification}
-        paint={{ "fill-pattern": NOT_STUDY_PATTERN }}
-        beforeId={OUTLINE}
-      />
+      {crossed.length > 0 ? (
+        <Layer
+          id="not-study-buildings"
+          type="fill"
+          source={FO_BUILDINGS_SOURCE}
+          minzoom={12}
+          filter={recordFilter(crossed)}
+          paint={{ "fill-pattern": NOT_STUDY_PATTERN }}
+          beforeId={SLOTS.floorPlans}
+        />
+      ) : null}
     </>
   );
 }
 
-export const STUDY_BUILDING_ZOOM = { min: MIN_ZOOM, max: MAX_ZOOM };
 export type { StudyStep };

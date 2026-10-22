@@ -4,8 +4,8 @@ import { STUDY_STEP_LABEL, type StudyStep } from "./layers/study-building-counts
 
 const STEPS: StudyStep[] = ["study-1", "study-2", "study-5", "study-10"];
 
-// Shown while building footprints are colored. The floor-plan legend takes
-// this corner once a floor is open.
+// Shown on the campus view. The floor-plan legend takes this corner once a
+// floor is open. It does not follow the zoom, so it doesn't pop in and out.
 export function StudyLegend() {
   return (
     <section

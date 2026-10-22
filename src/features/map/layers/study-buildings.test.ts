@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { notStudyCrossImage } from "./not-study-pattern.ts";
-import { studyColorExpression, studyCountsByRecord, studyStep } from "./study-building-counts.ts";
+import { notStudyRecords, studyColorExpression, studyCountsByRecord, studyStep } from "./study-building-counts.ts";
 
 test("study space counts join to the building footprint id", () => {
   const buildings = new Map([
@@ -36,6 +36,19 @@ test("the color steps follow how many study spaces a building has", () => {
     "study-10": "#aaaaaa",
   });
   assert.deepEqual(expression, ["match", ["get", "loc_ObjectNum"], "1000227", "#aaaaaa", "#111111"]);
+});
+
+test("the cross is only for hospitals, parking, and athletic buildings", () => {
+  const buildings = new Map([
+    ["angell-hall", { recordNumber: "1", category: "Academic" }],
+    ["cccb", { recordNumber: "1005451", category: "Academic" }],
+    ["hospital", { recordNumber: "1000316", category: "Medical" }],
+    ["garage", { recordNumber: "1000257", category: "Parking" }],
+    ["stadium", { recordNumber: "1000099", category: "Athletic" }],
+    ["shapiro", { recordNumber: "1000227", category: "Library/Museum" }],
+  ]);
+  const crossed = notStudyRecords(buildings, new Set(["1000227"]));
+  assert.deepEqual(crossed.sort(), ["1000099", "1000257", "1000316"]);
 });
 
 test("the not-a-study cross is an X that repeats every period", () => {

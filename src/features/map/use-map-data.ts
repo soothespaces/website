@@ -41,6 +41,7 @@ export type MapBuilding = {
   shortName: string | null;
   lat: number | null;
   lng: number | null;
+  category: string | null;
 };
 
 // Our building for each FO building record number (FO's loc_ObjectNum, also
@@ -143,10 +144,11 @@ export function useMapData(): MapData {
         lng: number | null;
         official_id: string | null;
         record: string | null;
+        category: string | null;
       }>((from, to) =>
         supabase
           .from("buildings")
-          .select("slug, name, short_name, lat, lng, official_id, record:extra->>buildingRecordNumber")
+          .select("slug, name, short_name, lat, lng, official_id, category, record:extra->>buildingRecordNumber")
           .order("slug")
           .range(from, to),
       ),
@@ -154,8 +156,8 @@ export function useMapData(): MapData {
       .then(([entrances, spaces, rows]) => {
         const buildings: BuildingIndex = new Map();
         const buildingsBySlug: MapData["buildingsBySlug"] = new Map();
-        for (const { slug, name, short_name, lat, lng, official_id, record } of rows) {
-          const building = { slug, name, shortName: short_name?.trim() || null, lat, lng };
+        for (const { slug, name, short_name, lat, lng, official_id, record, category } of rows) {
+          const building = { slug, name, shortName: short_name?.trim() || null, lat, lng, category };
           for (const id of [official_id, record]) {
             if (id && !buildings.has(id)) buildings.set(id, building);
           }
