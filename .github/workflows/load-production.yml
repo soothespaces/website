@@ -30,6 +30,7 @@ on:
           - spaces
           - opening_hours
           - bookable_items
+          - space_locations
           - building_entrances
           - google
           - all
@@ -76,6 +77,8 @@ jobs:
             union all select 'spaces', count(*) from public.spaces
             union all select 'opening_hours', count(*) from public.opening_hours
             union all select 'bookable_items', count(*) from public.bookable_items
+            union all select 'bookable_items linked to a space', count(*) from public.bookable_items where space_id is not null
+            union all select 'space_locations', count(*) from public.space_locations
             union all select 'building_entrances', count(*) from public.building_entrances
             union all select 'google_places', count(*) from public.google_places
             union all select 'classroom_meetings', count(*) from public.classroom_meetings

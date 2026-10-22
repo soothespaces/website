@@ -248,13 +248,15 @@ const librarySpaces = library.map((s) => {
   const floorLabel = s.title.match(/\b(Basement|Floors? \d+(?: and \d+)?)\b/)?.[1] ?? null;
   const noise = NOISE.has(s.noiseLevel) ? s.noiseLevel : null;
   const spaceFeatures = (s.spaceFeatures ?? []).filter((f) => FEATURES.has(f));
+  const slug = s.slug.split("/").filter(Boolean).pop();
+  if (floorLabel && slug in overrides.spaceFloors) fail(`spaceFloors: ${slug} already has a floor in its title`);
   return {
-    slug: s.slug.split("/").filter(Boolean).pop(),
+    slug,
     building_slug: buildingSlug,
     name: clean(s.title),
     summary: clean(s.bodySummary),
     description: descriptionBySlug.get(s.slug) ?? null,
-    floor: parseFloor(floorLabel),
+    floor: parseFloor(floorLabel) ?? overrides.spaceFloors[slug] ?? null,
     floor_label: floorLabel,
     noise_level: noise,
     features: spaceFeatures,
@@ -304,12 +306,17 @@ for (const s of spaces) {
 for (const slug of unlisted) {
   if (!mguideSpaces.some((s) => s.slug === slug)) fail(`Unknown unlisted slug ${slug}`);
 }
+const listedSpaceSlugs = new Set(spaces.filter((s) => s.is_listed).map((s) => s.slug));
+for (const slug of [...Object.keys(overrides.spaceFloors), ...Object.keys(overrides.spaceRooms)]) {
+  if (!librarySpaces.some((s) => s.slug === slug)) fail(`Unknown Library space ${slug} in overrides`);
+}
 
 // ---------------------------------------------------------------- bookable items
 
 // Room number and floor from a LibCal title. The formats differ per location:
 //   "2nd Floor - 2122 - Study Room (Capacity 5)"   Shapiro
-//   "Carrel 3-01 (3001) (Capacity 1)", "4S - 50"    Hatcher carrels (no room)
+//   "Carrel 3-01 (3001) (Capacity 1)"               Hatcher carrel, room 3001
+//   "4S - 50"                                       Hatcher donor carrel (no room)
 //   "Hatcher 212A", "DC 2344", "GGBL 2502 - ...",   building code + room
 //   "NCRC 028-G129 Seat 06", "2407 Mason Hall", "1133B"
 const libcalPlace = (title) => {
@@ -320,6 +327,8 @@ const libcalPlace = (title) => {
   };
   let m = text.match(/^(\d)(?:st|nd|rd|th) Floor - (\S+)/);
   if (m) return { floor: Number(m[1]), room_number: /^\d/.test(m[2]) ? m[2] : null };
+  m = text.match(/^Carrel (\d)-\d+ \((\d{4})\)$/);
+  if (m) return { floor: Number(m[1]), room_number: m[2] };
   m = text.match(/^Carrel (\d)-/) ?? text.match(/^(\d)S - \d+$/);
   if (m) return { floor: Number(m[1]), room_number: null };
   m = text.match(/^NCRC \d+-(G?\d+)\b/);
@@ -345,6 +354,15 @@ for (const page of libcalPages) {
 }
 
 const unlistedGroupings = new Set(overrides.unlistedLibcalGroupings);
+const libcalSpaceUsed = new Set();
+const libcalSpace = (lid, grouping, title) => {
+  const rule = overrides.libcalSpaces.find(
+    (r) => r.lid === String(lid) && r.grouping === grouping && (!r.title || new RegExp(r.title).test(title)),
+  );
+  if (!rule) return null;
+  libcalSpaceUsed.add(rule);
+  return rule.space;
+};
 const bookableByKey = new Map();
 for (const page of libcalPages) {
   for (const item of page.items) {
@@ -365,6 +383,7 @@ for (const page of libcalPages) {
       location_name: locationByLid.get(`${page.instance}/${item.lid}`) ?? null,
       grouping,
       building_slug: buildingSlug,
+      space_slug: libcalSpace(item.lid, grouping, item.title),
       ...libcalPlace(item.title),
       capacity: number(item.capacity) > 0 ? number(item.capacity) : null,
       booking_url: `https://${page.instance}${item.url}`,
@@ -387,6 +406,40 @@ for (const grouping of unlistedGroupings) {
     fail(`Unknown unlisted LibCal grouping ${grouping}`);
   }
 }
+for (const rule of overrides.libcalSpaces) {
+  if (!libcalSpaceUsed.has(rule)) fail(`libcalSpaces rule matches no item: ${JSON.stringify(rule)}`);
+  if (!listedSpaceSlugs.has(rule.space)) fail(`libcalSpaces: ${rule.space} isn't a listed space`);
+}
+for (const item of bookableItems) {
+  const space = item.space_slug && spaces.find((s) => s.slug === item.space_slug);
+  if (space && space.building_slug !== item.building_slug) {
+    fail(`LibCal item ${item.title} is in ${item.building_slug}, its space ${space.slug} in ${space.building_slug}`);
+  }
+}
+
+// ---------------------------------------------------------------- space locations
+
+// The rooms each space is in: its LibCal items' rooms, plus spaceRooms. Open
+// areas need an outline drawn in /admin/spaces, so they aren't seeded.
+const spaceLocationKeys = new Set();
+const spaceLocations = [
+  ...bookableItems
+    .filter((item) => item.space_slug && item.room_number && item.floor !== null)
+    .map((item) => ({ space_slug: item.space_slug, floor: item.floor, room_number: item.room_number })),
+  ...Object.entries(overrides.spaceRooms).flatMap(([slug, rooms]) =>
+    rooms.map((r) => ({ space_slug: slug, floor: r.floor, room_number: r.room })),
+  ),
+]
+  .filter((l) => {
+    const key = `${l.space_slug}/${l.floor}/${l.room_number}`;
+    if (spaceLocationKeys.has(key)) return false;
+    spaceLocationKeys.add(key);
+    return true;
+  })
+  .sort(
+    (a, b) =>
+      a.space_slug.localeCompare(b.space_slug) || a.floor - b.floor || a.room_number.localeCompare(b.room_number),
+  );
 
 // ---------------------------------------------------------------- opening hours
 
@@ -847,7 +900,7 @@ const SPACE_COLUMNS = [
 const BOOKABLE_COLUMNS = [
   "instance", "libcal_item_id", "lid", "kind", "title", "location_name",
   "grouping", "building_slug", "floor", "room_number", "capacity", "booking_url",
-  "thumbnail_url", "is_listed",
+  "thumbnail_url", "is_listed", "space_id",
 ];
 
 const buildingValues = (b) =>
@@ -1000,7 +1053,24 @@ const printersSql = [
   printers.map((r) => `  (${PRINTER_COLUMNS.map((c) => sql(r[c])).join(", ")})`).join(",\n") + ";",
 ].join("\n");
 
-const bookableValues = (item) => BOOKABLE_COLUMNS.map((c) => sql(item[c])).join(", ");
+const spaceId = (slug) => (slug ? `(select id from public.spaces where slug = ${sql(slug)})` : "null");
+const bookableValues = (item) =>
+  BOOKABLE_COLUMNS.map((c) => (c === "space_id" ? spaceId(item.space_slug) : sql(item[c]))).join(", ");
+
+// Seeded rows are marked created_by 'seed' and replaced on every run. A space
+// with any location an admin added in /admin/spaces gets no seeded rows.
+const spaceLocationsSql = [
+  "delete from public.space_locations where created_by = 'seed';",
+  "insert into public.space_locations (space_id, floor, room_number, created_by)",
+  "select s.id, v.floor, v.room_number, 'seed'",
+  "from (values",
+  spaceLocations
+    .map((l) => `  (${sql(l.space_slug)}, ${sql(l.floor)}::smallint, ${sql(l.room_number)})`)
+    .join(",\n"),
+  ") as v (space_slug, floor, room_number)",
+  "join public.spaces s on s.slug = v.space_slug",
+  "where not exists (select 1 from public.space_locations l where l.space_id = s.id);",
+].join("\n");
 
 // With `keepEdited`, columns an admin changed in /admin/spaces (listed in the
 // row's edited_fields) keep their value; everything else takes the snapshot's.
@@ -1027,7 +1097,8 @@ const header = `-- Generated by scripts/seed/build.mjs from scripts/seed/raw/ an
 -- hand: change overrides.json or re-fetch, then rebuild.
 --
 -- ${buildings.length} buildings (${buildings.filter((b) => b.footprint).length} with footprints), ${spaces.length} spaces (${listedCount} listed),
--- ${bookableItems.length} LibCal bookable items (${listedBookable} listed), ${openingHours.length} Library opening-hours rows,
+-- ${bookableItems.length} LibCal bookable items (${listedBookable} listed, ${bookableItems.filter((item) => item.space_slug).length} linked to a space), ${spaceLocations.length} space locations,
+-- ${openingHours.length} Library opening-hours rows,
 -- ${entrances.length} building entrances (${linkedEntrances} linked to a building).
 -- ${googleRows.length} Google places (scripts/serpapi/raw/places/), ${googleHours.length} Google opening-hours rows, ${popularTimes.length} popular-times rows.
 -- ${classroomMeetings.length} class meetings in ${classroomRooms} classrooms (${linkedClassroomRooms} linked to a building, ${skippedMeetings} zero-length meetings skipped).
@@ -1046,6 +1117,7 @@ const sections = [
     "bookable_items",
     upsert("bookable_items", BOOKABLE_COLUMNS, bookableItems, bookableValues, "instance, libcal_item_id"),
   ],
+  ["space_locations", spaceLocationsSql],
   ["building_entrances", entrancesSql],
   ["google", googleSql],
   ["classroom_meetings", classroomSql],
