@@ -434,7 +434,8 @@ export function useRoomSlots(buildingSlug: string | null, from: Date): RoomSlots
 
   const staleMinute =
     buildingSlug && state.key.startsWith(`${buildingSlug}\n`) ? Number(state.key.slice(buildingSlug.length + 1)) : null;
-  const asOfMs = !buildingSlug ? null : state.key === requestKey ? fromMinute * 60_000 : staleMinute;
+  const shownMinute = !buildingSlug ? null : state.key === requestKey ? fromMinute : staleMinute;
+  const asOfMs = shownMinute == null ? null : shownMinute * 60_000;
   const asOf = useMemo(() => (asOfMs == null || !Number.isFinite(asOfMs) ? null : new Date(asOfMs)), [asOfMs]);
 
   if (!getSupabaseEnv()) return { rooms: [], loaded: true, error: "Supabase isn't configured.", asOf: null };
