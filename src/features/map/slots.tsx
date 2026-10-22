@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Layer, useMap } from "react-map-gl/maplibre";
+import { floorPlanBeforeId } from "./layer-order";
 
 // Named positions in the layer stack. Each slot is an invisible layer;
 // features add their layers with beforeId={SLOTS.x}, which puts them just
@@ -10,7 +11,7 @@ import { Layer, useMap } from "react-map-gl/maplibre";
 //
 //   basemap land, roads, buildings
 //   campusDetail   FO's campus basemap (lawns, sidewalks, buildings, trees)
-//   floorPlans     floor-plan images and room zones (WP5)
+//   floorPlans     floor-plan images and room zones, above building footprints
 //   basemap labels
 //   overlays       entrances, curb ramps, the selected building's outline
 //
@@ -36,14 +37,18 @@ export function LayerSlots() {
     };
   }, [map]);
 
-  // The lower slots go under the basemap's first label layer. Each style
-  // names its layers differently, so it's looked up from the current one.
-  const firstLabel = map?.getLayersOrder().find((id) => map.getLayer(id)?.type === "symbol");
+  // Campus detail stays under the first symbol so it doesn't cover labels.
+  // The floor plan goes above the highest basemap fill or line. The dark
+  // style paints building footprints after its first symbol, and that
+  // footprint was covering the rooms.
+  const order = map?.getLayersOrder().map((id) => ({ id, type: map.getLayer(id)?.type ?? "" })) ?? [];
+  const firstLabel = order.find((layer) => layer.type === "symbol")?.id;
+  const floorPlanAnchor = floorPlanBeforeId(order);
 
   return (
     <>
       <Layer id={SLOTS.campusDetail} type="background" layout={{ visibility: "none" }} beforeId={firstLabel} />
-      <Layer id={SLOTS.floorPlans} type="background" layout={{ visibility: "none" }} beforeId={firstLabel} />
+      <Layer id={SLOTS.floorPlans} type="background" layout={{ visibility: "none" }} beforeId={floorPlanAnchor} />
       <Layer id={SLOTS.overlays} type="background" layout={{ visibility: "none" }} />
     </>
   );

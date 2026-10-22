@@ -97,8 +97,8 @@ export function FloorPlanLayers({
         minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
         filter={["==", ["get", "layer"], "room"]}
         paint={{
-          "line-color": colors["muted-foreground"],
-          "line-width": ["interpolate", ["linear"], ["zoom"], 16, 0.5, 19, 1.25],
+          "line-color": colors.foreground,
+          "line-width": ["interpolate", ["linear"], ["zoom"], 16, 1, 19, 1.75],
         }}
         beforeId={SLOTS.floorPlans}
       />
