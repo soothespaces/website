@@ -15,6 +15,15 @@ const TOKENS = [
   "destructive",
   "destructive-foreground",
   "slot-free",
+  "noise-quiet",
+  "noise-low",
+  "noise-conversational",
+  "noise-loud",
+  "noise-fill-opacity",
+  "study-1",
+  "study-2",
+  "study-5",
+  "study-10",
 ] as const;
 export type MapColors = Record<(typeof TOKENS)[number], string>;
 
@@ -44,6 +53,8 @@ export function useMapColors(): MapColors {
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, () => "");
   return useMemo(() => {
     const values = snapshot.split("|");
-    return Object.fromEntries(TOKENS.map((token, i) => [token, values[i] || "#000000"])) as MapColors;
+    return Object.fromEntries(
+      TOKENS.map((token, i) => [token, values[i] || (token === "noise-fill-opacity" ? "72%" : "#000000")]),
+    ) as MapColors;
   }, [snapshot]);
 }

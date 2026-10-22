@@ -5,8 +5,13 @@ import { Layer, Source, useMap } from "react-map-gl/maplibre";
 import { SLOTS } from "../slots";
 import type { FloorPlan } from "../use-floor-index";
 import type { MapColors } from "../use-map-colors";
-import { FLOOR_ROOM_LINES, FloorRoomAvailability } from "./floor-room-availability";
+import { FloorBookableLayer } from "./floor-bookable";
+import { FloorNoiseGlyphLayer, FloorNoiseLayer, useFloorColoring } from "./floor-noise";
+import { FloorPrintersLayer } from "./floor-printers";
+import { FLOOR_ROOM_LINES } from "./floor-layer-ids";
+import { FloorRoomAvailability } from "./floor-room-availability";
 import { FloorStaffLayer } from "./floor-staff";
+import { FO_BUILDINGS_SOURCE } from "./campus-detail";
 
 // Selecting a building zooms the map to it, at least this far in. Floor
 // plans show from here on.
@@ -14,6 +19,11 @@ export const FLOOR_PLAN_MIN_ZOOM = 17;
 
 // Room numbers only fit once rooms are a few pixels across.
 const LABEL_MIN_ZOOM = 18;
+
+// The campus map stops at zoom 19. Shapiro's shortest study room is about
+// 25px tall there, so the glyph has to be small enough to sit under the
+// room number without leaving the room.
+const NOISE_GLYPH_MIN_ZOOM = 19;
 
 // The font of the basemap's own labels. Glyphs come from the style's font
 // server, which only has the fonts its style uses, and each style names
@@ -53,19 +63,25 @@ export function FloorPlanLayers({
   plan,
   colors,
   availability = false,
+  recordNumber = null,
 }: {
   plan: FloorPlan | null;
   colors: MapColors;
-  // Rooms map: free grey and booked red, with staff grey and noise fills off
-  // so those two states stay readable. Leaving the route paints the normal plan.
+  // Rooms map: free grey and booked red, with staff grey, noise, and stripes
+  // off so those two states stay readable. Leaving the route paints the normal plan.
   availability?: boolean;
+  // The footprint under this plan. Covered so the study-space color does not
+  // show through courtyards and the gaps between rooms.
+  recordNumber?: string | null;
 }) {
   const font = useLabelFont();
+  const coloring = useFloorColoring(plan);
   if (!plan) return null;
   const id = `floor-plan`;
   return (
-    // Keyed by URL so switching floors swaps the data in place.
-    <Source key={plan.geojson} id={id} type="geojson" data={plan.geojson}>
+    <>
+      {/* Keyed by URL so switching floors swaps the data in place. */}
+      <Source key={plan.geojson} id={id} type="geojson" data={coloring.planData ?? plan.geojson}>
       <Layer
         id={`${id}-structure`}
         type="fill"
@@ -79,12 +95,23 @@ export function FloorPlanLayers({
         type="fill"
         minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
         filter={["==", ["get", "layer"], "room"]}
-        paint={{ "fill-color": colors.card, "fill-opacity": 0.92 }}
+        paint={{ "fill-color": colors.card, "fill-opacity": 1 }}
         beforeId={SLOTS.floorPlans}
       />
+      <Layer
+        id={FLOOR_ROOM_LINES}
+        type="line"
+        minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
+        filter={["==", ["get", "layer"], "room"]}
+        paint={{
+          "line-color": colors.foreground,
+          "line-width": ["interpolate", ["linear"], ["zoom"], 16, 1, 19, 1.75],
+        }}
+        beforeId={SLOTS.floorPlans}
+      />
+      {/* Direct children of Source. A fragment would swallow the source id
+          and these layers would never mount. */}
       {availability ? null : (
-        // Noise fills and bookable stripes belong beside the staff layer.
-        // They stay off the rooms map, where free grey and booked red are the fills.
         <FloorStaffLayer
           colors={colors}
           minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
@@ -92,17 +119,11 @@ export function FloorPlanLayers({
           floor={plan.floor}
         />
       )}
-      <Layer
-        id={FLOOR_ROOM_LINES}
-        type="line"
-        minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
-        filter={["==", ["get", "layer"], "room"]}
-        paint={{
-          "line-color": colors["muted-foreground"],
-          "line-width": ["interpolate", ["linear"], ["zoom"], 16, 0.5, 19, 1.25],
-        }}
-        beforeId={SLOTS.floorPlans}
-      />
+      {availability ? null : (
+        <FloorNoiseLayer colors={colors} minzoom={FLOOR_PLAN_MIN_ZOOM - 1} byNoise={coloring.byNoise} />
+      )}
+      {availability ? null : <FloorBookableLayer minzoom={FLOOR_PLAN_MIN_ZOOM - 1} rooms={coloring.bookableRooms} />}
+      {availability ? null : <FloorNoiseGlyphLayer colors={colors} minzoom={NOISE_GLYPH_MIN_ZOOM} />}
       {availability ? (
         <FloorRoomAvailability
           building={plan.building}
@@ -122,7 +143,11 @@ export function FloorPlanLayers({
             "text-font": font,
             "text-size": ["interpolate", ["linear"], ["zoom"], LABEL_MIN_ZOOM, 10, 19, 12],
             "text-max-width": 6,
-            "text-padding": 1,
+            // Labels collide, and a lower rank is placed first. Tagged and
+            // bookable rooms keep their number; stairs and staff give way.
+            "text-padding": 4,
+            "text-allow-overlap": false,
+            "symbol-sort-key": ["coalesce", ["get", "labelRank"], 3],
           }}
           paint={{
             "text-color": colors.foreground,
@@ -133,5 +158,18 @@ export function FloorPlanLayers({
         />
       ) : null}
     </Source>
+      {recordNumber ? (
+        <Layer
+          id="floor-plan-plate"
+          type="fill"
+          source={FO_BUILDINGS_SOURCE}
+          minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
+          filter={["==", ["get", "loc_ObjectNum"], recordNumber]}
+          paint={{ "fill-color": colors.card, "fill-opacity": 1 }}
+          beforeId={`${id}-structure`}
+        />
+      ) : null}
+    <FloorPrintersLayer plan={plan} rooms={coloring.rooms} />
+    </>
   );
 }

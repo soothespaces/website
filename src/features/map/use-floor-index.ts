@@ -3,13 +3,10 @@
 import { useEffect, useState } from "react";
 import type { FloorRecord } from "@/features/floor-alignment/floors";
 
-export type FloorPlan = Pick<FloorRecord, "building" | "floor" | "geojson" | "rooms" | "labeled"> & {
-  geojson: string;
-  /** Present on plans loaded from the floor index. */
-  buildingName?: string;
-  /** Sheet corners, [lng, lat], when the index has them. */
-  corners?: [number, number][];
-};
+export type FloorPlan = Pick<FloorRecord, "building" | "floor" | "geojson" | "labeled"> &
+  Partial<Pick<FloorRecord, "rooms" | "buildingName" | "sheet" | "width" | "height" | "corners">> & {
+    geojson: string;
+  };
 
 // Floor plans the map can draw, by building slug, lowest floor first. Read
 // from public/floor-plans/index.json (scripts/mprint/pipeline.py writes it);

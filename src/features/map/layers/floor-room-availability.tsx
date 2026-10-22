@@ -8,6 +8,7 @@ import { useRoomsData } from "@/features/side-view/rooms-map/rooms-data";
 import { roomTitle } from "@/features/side-view/rooms-map/room-copy";
 import { useMapState } from "../map-state";
 import { SLOTS } from "../slots";
+import { FLOOR_ROOM_LINES } from "./floor-layer-ids";
 import type { MapColors } from "../use-map-colors";
 import {
   geometryCenter,
@@ -19,8 +20,6 @@ import {
 
 export const ROOM_AVAILABILITY_HIT_LAYER = "floor-room-availability-hit";
 
-// Room outlines. Fills use this as beforeId so a late mount stays underneath them.
-export const FLOOR_ROOM_LINES = "floor-plan-room-lines";
 
 const MATCH_NONE: FilterSpecification = ["==", ["get", "roomNumber"], ""] as unknown as FilterSpecification;
 

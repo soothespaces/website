@@ -1,11 +1,12 @@
 "use client";
 
 import { Layer } from "react-map-gl/maplibre";
-import { SLOTS } from "../slots";
 import type { MapColors } from "../use-map-colors";
+import { FLOOR_ROOM_LINES } from "./floor-layer-ids";
 import { staffRoomFilter } from "./floor-staff-rooms";
 
 export const FLOOR_STAFF_LAYER = "floor-plan-staff";
+export { FLOOR_ROOM_LINES };
 
 // Flat grey over staff, office, storage and mechanical rooms. Sits on the
 // floor-plan source, above the white room fill and under the room outlines,
@@ -42,7 +43,7 @@ export function FloorStaffLayer({
       minzoom={minzoom}
       filter={staffRoomFilter(building, floor)}
       paint={{ "fill-color": colors["floor-staff"], "fill-opacity": 1 }}
-      beforeId={SLOTS.floorPlans}
+      beforeId={FLOOR_ROOM_LINES}
     />
   );
 }

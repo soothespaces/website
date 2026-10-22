@@ -117,6 +117,26 @@ export const SoundQuietIcon = icon("SoundQuietIcon", SoundQuietGlyph);
 export const TrashIcon = icon("TrashIcon", TrashGlyph);
 export const WarningIcon = icon("WarningIcon", WarningGlyph);
 
+// No Radix glyph for a printer. Drawn here so the floor-plan marker and the
+// legend share one shape.
+export function PrinterIcon({ size = "md", label, className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 15 15"
+      aria-hidden={label ? undefined : true}
+      aria-label={label}
+      focusable="false"
+      {...props}
+      className={cx(SIZE[size], "shrink-0", className)}
+    >
+      <path
+        fill="currentColor"
+        d="M4 1.5h7V4H4V1.5ZM2.75 4.75h9.5A1.25 1.25 0 0 1 13.5 6v3.25h-2V12.5h-8V9.25h-2V6a1.25 1.25 0 0 1 1.25-1.25Zm1.75 4.5h6v2.5h-6V9.25Zm7.25-2.1a.65.65 0 1 0 0-1.3.65.65 0 0 0 0 1.3Z"
+      />
+    </svg>
+  );
+}
+
 // Brand mark, not a Radix glyph. It follows currentColor so it stays
 // visible on the primary button (primary-foreground) in every mode.
 export function GoogleIcon({ size = "md", label, className, ...props }: IconProps) {
