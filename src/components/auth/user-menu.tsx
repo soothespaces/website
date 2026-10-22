@@ -6,6 +6,7 @@ import { DropdownMenu } from "radix-ui";
 import { useRef } from "react";
 import { loginHref } from "@/lib/auth/paths";
 import { useSession } from "@/lib/auth/use-session";
+import { panelHref } from "@/features/side-view/panel-route";
 import { ROUTES } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 
@@ -54,6 +55,18 @@ export function UserMenu() {
             )}
           </div>
           <DropdownMenu.Separator className="my-1 h-px bg-border" />
+          <DropdownMenu.Item asChild>
+            <Link
+              href={
+                pathname === "/map"
+                  ? panelHref("/map", { kind: "my-spots" }, new URLSearchParams(searchParams.toString()))
+                  : "/map?panel=my-spots"
+              }
+              className="block rounded-sm px-3 py-2 outline-none data-[highlighted]:bg-accent"
+            >
+              Your spots
+            </Link>
+          </DropdownMenu.Item>
           <DropdownMenu.Item asChild>
             <Link
               href={ROUTES.accountPreferences}

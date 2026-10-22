@@ -28,6 +28,11 @@ export type MonthlyStats = {
   spots: number;
   /** Null until visit dates exist. 0 is a real streak of none. */
   weeksInARow: number | null;
+  /**
+   * False when the history has no per-visit dates. The counts are then
+   * all-time, so the card must not say "October so far".
+   */
+  thisMonth: boolean;
 };
 
 function asCount(value: unknown): number | null {
@@ -87,6 +92,7 @@ export function monthlyStats(history: readonly HistoryPlace[], now: Date): Month
       checkIns: history.reduce((sum, place) => sum + place.checkInCount, 0),
       spots: history.length,
       weeksInARow: null,
+      thisMonth: false,
     };
   }
 
@@ -108,7 +114,13 @@ export function monthlyStats(history: readonly HistoryPlace[], now: Date): Month
     cursor = addDays(cursor, -7);
   }
 
-  return { month, checkIns: dates.filter((date) => date.startsWith(monthPrefix)).length, spots, weeksInARow };
+  return {
+    month,
+    checkIns: dates.filter((date) => date.startsWith(monthPrefix)).length,
+    spots,
+    weeksInARow,
+    thisMonth: true,
+  };
 }
 
 export type MyHistoryState = {

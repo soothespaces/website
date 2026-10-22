@@ -24,6 +24,7 @@ test("without visit dates, counts are all-time and weeks are hidden", () => {
   assert.equal(stats.checkIns, 9);
   assert.equal(stats.spots, 2);
   assert.equal(stats.weeksInARow, null);
+  assert.equal(stats.thisMonth, false);
 });
 
 test("with visit dates, the month is counted and the streak walks back by week", () => {
@@ -46,6 +47,7 @@ test("with visit dates, the month is counted and the streak walks back by week",
   assert.equal(stats.checkIns, 5);
   assert.equal(stats.spots, 2);
   assert.equal(stats.weeksInARow, 3);
+  assert.equal(stats.thisMonth, true);
 
   const gap = monthlyStats(
     [place({ targetId: "a", checkInCount: 2, visitedOn: ["2026-10-21", "2026-10-04"] })],

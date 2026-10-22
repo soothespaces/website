@@ -221,6 +221,12 @@ export function widthAtLeast(widths: readonly number[], requested: number): numb
   return sorted.find((width) => width >= requested) ?? sorted[sorted.length - 1];
 }
 
+/** Left goes to the next photo, right to the previous. A short or vertical drag is ignored. */
+export function swipeDirection(dx: number, dy: number): "next" | "prev" | null {
+  if (Math.abs(dx) < 56 || Math.abs(dx) < Math.abs(dy) * 1.35) return null;
+  return dx < 0 ? "next" : "prev";
+}
+
 export function photoSrcSet(supabaseUrl: string, pathPrefix: string, widths: readonly number[]): string {
   return orderedWidths(widths)
     .map((width) => `${photoUrl(supabaseUrl, pathPrefix, width)} ${width}w`)

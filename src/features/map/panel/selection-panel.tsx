@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import type { SpaceListDensity } from "@/features/spaces";
-import { panelRouteKey, type PanelRoute } from "@/features/side-view/panel-route";
+import { PANEL_KIND_TITLES, panelRouteKey, type PanelRoute } from "@/features/side-view/panel-route";
 import { detailPanelKinds, panelRegistry } from "@/features/side-view/registry";
 import { useMapState } from "../map-state";
 import { PanelHeader } from "./panel-header";
@@ -16,22 +16,9 @@ function scrollContainer(frame: HTMLElement): HTMLElement {
   return overflow === "auto" || overflow === "scroll" ? frame : detail;
 }
 
-const TITLES: Record<PanelRoute["kind"], string> = {
-  home: "Home",
-  building: "Building",
-  hours: "Hours",
-  spaces: "Spaces",
-  rooms: "Rooms",
-  "rooms-map": "Rooms map",
-  photos: "Photos",
-  space: "Space",
-  preferences: "Preferences",
-  "my-spots": "Your spots",
-};
-
 // A route with no screen yet. Wave 1 fills these in through the registry.
 function PanelPlaceholder({ route }: { route: PanelRoute }) {
-  const title = TITLES[route.kind];
+  const title = PANEL_KIND_TITLES[route.kind];
   return (
     <div className="flex flex-col gap-1 px-3">
       <h2 className="text-lg">{title}</h2>
