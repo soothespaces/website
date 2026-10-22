@@ -5,7 +5,23 @@ import { useMemo, useSyncExternalStore } from "react";
 // Design tokens the map's own layers paint with. MapLibre paints on a canvas
 // and can't read CSS variables, so their current values are read from the
 // page and re-read whenever the theme, contrast or palette changes.
-const TOKENS = ["primary", "primary-foreground", "card", "foreground", "muted-foreground", "floor-staff"] as const;
+const TOKENS = [
+  "primary",
+  "primary-foreground",
+  "card",
+  "foreground",
+  "muted-foreground",
+  "floor-staff",
+  "noise-quiet",
+  "noise-low",
+  "noise-conversational",
+  "noise-loud",
+  "noise-fill-opacity",
+  "study-1",
+  "study-2",
+  "study-5",
+  "study-10",
+] as const;
 export type MapColors = Record<(typeof TOKENS)[number], string>;
 
 const QUERIES = ["(prefers-color-scheme: dark)", "(prefers-contrast: more)"];
@@ -34,6 +50,8 @@ export function useMapColors(): MapColors {
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, () => "");
   return useMemo(() => {
     const values = snapshot.split("|");
-    return Object.fromEntries(TOKENS.map((token, i) => [token, values[i] || "#000000"])) as MapColors;
+    return Object.fromEntries(
+      TOKENS.map((token, i) => [token, values[i] || (token === "noise-fill-opacity" ? "72%" : "#000000")]),
+    ) as MapColors;
   }, [snapshot]);
 }

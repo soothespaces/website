@@ -317,78 +317,93 @@
 }
 
 /*
- * Noise fills for the badge and, later, floor-plan room fills (L1).
- * Decorative only: the bar count and the word carry the meaning.
+ * Noise fills for the badge (F2.1) and the floor-plan room fills (L1).
+ * Each mode is one lightness ramp so adjacent levels stay apart after the
+ * fill is blended. Light is oklch L 0.92, 0.80, 0.68, 0.56 at hue 145.
+ * Dark reverses that ramp. High contrast uses L 0.95, 0.75, 0.55, 0.35
+ * (reversed on a dark page) and a solid fill. The colorblind palette walks
+ * blue to orange on the same kind of lightness steps.
+ * --noise-fill-opacity is how the map and the legend mix the fill over the
+ * room. High contrast paints it solid.
  * --noise-bar is the unfilled bar: light on light backgrounds and dark on
  * dark ones, so it stays far from every fill (including high contrast).
  * --slot-free is the grey free block
  * on the room timeline (#bfc3c0 on the board). Booked blocks use
  * --destructive plus a hatch, so they are not given another red.
  */
+/* ramp: light card #ffffff opacity 72% */
 :root {
-  --noise-quiet: #3e6f8e;
-  --noise-low: #3d6b4f;
-  --noise-conversational: #8a5a12;
-  --noise-loud: #a33b32;
+  --noise-quiet: #cfefcf;
+  --noise-low: #a8c8a8;
+  --noise-conversational: #84a284;
+  --noise-loud: #607d61;
+  --noise-fill-opacity: 72%;
   --noise-bar: #e5e5e5;
   --slot-free: #bfc3c0;
 }
 
+/* ramp: dark card #171717 opacity 72% */
 :root[data-theme="dark"] {
-  --noise-quiet: #8fb4d6;
-  --noise-low: #8cc7a1;
-  --noise-conversational: #e0b15a;
-  --noise-loud: #f0a090;
+  --noise-quiet: #607d61;
+  --noise-low: #84a284;
+  --noise-conversational: #a8c8a8;
+  --noise-loud: #cfefcf;
   --noise-bar: #333333;
   --slot-free: #bfc3c0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --noise-quiet: #8fb4d6;
-    --noise-low: #8cc7a1;
-    --noise-conversational: #e0b15a;
-    --noise-loud: #f0a090;
+    --noise-quiet: #607d61;
+    --noise-low: #84a284;
+    --noise-conversational: #a8c8a8;
+    --noise-loud: #cfefcf;
     --noise-bar: #333333;
     --slot-free: #bfc3c0;
   }
 }
 
+/* ramp: high-contrast-light card #ffffff opacity 100% */
 :root[data-contrast="more"] {
-  --noise-quiet: #1f4e73;
-  --noise-low: #1f4a31;
-  --noise-conversational: #6b3e00;
-  --noise-loud: #8b1e12;
+  --noise-quiet: #ddf7dc;
+  --noise-low: #9db69d;
+  --noise-conversational: #617962;
+  --noise-loud: #2b412c;
+  --noise-fill-opacity: 100%;
   --noise-bar: #e5e5e5;
   --slot-free: #5c615e;
 }
 
 @media (prefers-contrast: more) {
   :root:not([data-contrast="normal"]) {
-    --noise-quiet: #1f4e73;
-    --noise-low: #1f4a31;
-    --noise-conversational: #6b3e00;
-    --noise-loud: #8b1e12;
+    --noise-quiet: #ddf7dc;
+    --noise-low: #9db69d;
+    --noise-conversational: #617962;
+    --noise-loud: #2b412c;
+    --noise-fill-opacity: 100%;
     --noise-bar: #e5e5e5;
     --slot-free: #5c615e;
   }
 }
 
+/* ramp: high-contrast-dark card #000000 opacity 100% */
 :root[data-theme="dark"][data-contrast="more"] {
-  --noise-quiet: #b8d8f2;
-  --noise-low: #a8dcb8;
-  --noise-conversational: #f0c878;
-  --noise-loud: #ffb0a4;
+  --noise-quiet: #2b412c;
+  --noise-low: #617962;
+  --noise-conversational: #9db69d;
+  --noise-loud: #ddf7dc;
+  --noise-fill-opacity: 100%;
   --noise-bar: #333333;
   --slot-free: #d5d8d6;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"])[data-contrast="more"] {
-    --noise-quiet: #b8d8f2;
-    --noise-low: #a8dcb8;
-    --noise-conversational: #f0c878;
-    --noise-loud: #ffb0a4;
+    --noise-quiet: #2b412c;
+    --noise-low: #617962;
+    --noise-conversational: #9db69d;
+    --noise-loud: #ddf7dc;
+    --noise-fill-opacity: 100%;
     --noise-bar: #333333;
     --slot-free: #d5d8d6;
   }
@@ -396,10 +411,11 @@
 
 @media (prefers-contrast: more) {
   :root[data-theme="dark"]:not([data-contrast="normal"]) {
-    --noise-quiet: #b8d8f2;
-    --noise-low: #a8dcb8;
-    --noise-conversational: #f0c878;
-    --noise-loud: #ffb0a4;
+    --noise-quiet: #2b412c;
+    --noise-low: #617962;
+    --noise-conversational: #9db69d;
+    --noise-loud: #ddf7dc;
+    --noise-fill-opacity: 100%;
     --noise-bar: #333333;
     --slot-free: #d5d8d6;
   }
@@ -407,35 +423,61 @@
 
 @media (prefers-color-scheme: dark) and (prefers-contrast: more) {
   :root:not([data-theme="light"]):not([data-contrast="normal"]) {
-    --noise-quiet: #b8d8f2;
-    --noise-low: #a8dcb8;
-    --noise-conversational: #f0c878;
-    --noise-loud: #ffb0a4;
+    --noise-quiet: #2b412c;
+    --noise-low: #617962;
+    --noise-conversational: #9db69d;
+    --noise-loud: #ddf7dc;
+    --noise-fill-opacity: 100%;
     --noise-bar: #333333;
     --slot-free: #d5d8d6;
   }
 }
 
-/* Colorblind-safe hues. Declared last so they win over the rules above. */
+/* Colorblind: blue to orange on a lightness ramp. Declared last so it wins. */
+/* ramp: colorblind-light card #ffffff opacity 72% */
 :root[data-palette="cvd"] {
-  --noise-quiet: #005a9c;
-  --noise-low: #0072b2;
-  --noise-conversational: #8a5a00;
-  --noise-loud: #9a3a00;
+  --noise-quiet: #c4e4f4;
+  --noise-low: #9dc3a3;
+  --noise-conversational: #bb8e63;
+  --noise-loud: #a26050;
 }
 
+/* ramp: colorblind-dark card #171717 opacity 72% */
 :root[data-palette="cvd"][data-theme="dark"] {
-  --noise-quiet: #56b4e9;
-  --noise-low: #9ad8f5;
-  --noise-conversational: #f0c14d;
-  --noise-loud: #f5a06e;
+  --noise-quiet: #5c7988;
+  --noise-low: #7ea385;
+  --noise-conversational: #dbad81;
+  --noise-loud: #ffc9b6;
 }
 
 @media (prefers-color-scheme: dark) {
   :root[data-palette="cvd"]:not([data-theme="light"]) {
-    --noise-quiet: #56b4e9;
-    --noise-low: #9ad8f5;
-    --noise-conversational: #f0c14d;
-    --noise-loud: #f5a06e;
+    --noise-quiet: #5c7988;
+    --noise-low: #7ea385;
+    --noise-conversational: #dbad81;
+    --noise-loud: #ffc9b6;
+  }
+}
+
+/* Building footprints, by how many listed study spaces they have.
+   More spaces are darker on a light map and lighter on a dark map. */
+:root {
+  --study-1: #d7f0e0;
+  --study-2: #8dcea8;
+  --study-5: #3c9a66;
+  --study-10: #1c5c3a;
+}
+:root[data-theme="dark"] {
+  --study-1: #1c4030;
+  --study-2: #2f7a50;
+  --study-5: #7dcca0;
+  --study-10: #d7f5e4;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --study-1: #1c4030;
+    --study-2: #2f7a50;
+    --study-5: #7dcca0;
+    --study-10: #d7f5e4;
   }
 }

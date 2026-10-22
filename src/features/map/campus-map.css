@@ -62,6 +62,21 @@
   filter: invert(1);
 }
 
+/* Buildings that are not places to study: an X over the footprint. */
+.not-study-swatch {
+  background-color: var(--muted);
+  background-image:
+    repeating-linear-gradient(45deg, transparent 0 4px, var(--foreground) 4px 5px),
+    repeating-linear-gradient(-45deg, transparent 0 4px, var(--foreground) 4px 5px);
+}
+
+/* Bookable rooms: white 45° stripes over the noise fill (the legend swatch
+   uses the low-noise green so the white stripes stay visible). */
+.bookable-swatch {
+  background-color: color-mix(in srgb, var(--noise-conversational) var(--noise-fill-opacity), var(--card));
+  background-image: repeating-linear-gradient(-45deg, transparent 0 3px, #fff 3px 4px, #171717 4px 5px, transparent 5px 8px);
+}
+
 /* Popups: a card in the page's colors, with the tip to match. */
 .map-popup .maplibregl-popup-content {
   background: var(--card);

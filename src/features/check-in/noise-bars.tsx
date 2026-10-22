@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { NOISE_BAR_COUNT, NOISE_FILL_CLASS, type NoiseLevel } from "@/components/ui/noise-badge";
+import { NOISE_BAR_COUNT, type NoiseLevel } from "@/components/ui/noise-badge";
 import { cx } from "@/lib/cx";
 
 const BAR_HEIGHT = ["h-1", "h-1.5", "h-2.5", "h-3.5"] as const;
@@ -15,7 +15,7 @@ export function NoiseBars({ level }: { level: NoiseLevel }) {
       {BAR_HEIGHT.map((height, index) => (
         <span
           key={height}
-          className={cx("w-0.5 rounded-sm", height, index < filled ? NOISE_FILL_CLASS[level] : "border border-foreground bg-noise-bar")}
+          className={cx("w-0.5 rounded-sm", height, index < filled ? "bg-foreground" : "border border-foreground bg-noise-bar")}
         />
       ))}
     </span>
