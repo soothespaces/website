@@ -8,6 +8,7 @@ import { HoursScreen } from "./hours/hours-screen";
 import { MySpotsScreen } from "./my-spots/my-spots-screen";
 import { PhotosScreen } from "./photos/photos-screen";
 import type { PanelRoute } from "./panel-route";
+import { RoomsDrawer } from "./rooms-map/rooms-drawer";
 import { PreferencesScreen } from "./preferences/preferences-screen";
 import { RoomsScreen } from "./rooms/rooms-screen";
 import { SpaceScreen } from "./space/space-screen";
@@ -25,6 +26,7 @@ export const panelRegistry: Partial<Record<PanelRoute["kind"], ComponentType<Pan
   photos: PhotosScreen,
   spaces: SpacesScreen,
   rooms: RoomsScreen,
+  "rooms-map": RoomsDrawer,
   "my-spots": MySpotsScreen,
   preferences: PreferencesScreen,
 };
@@ -40,6 +42,7 @@ export const detailPanelKinds: ReadonlySet<PanelRoute["kind"]> = new Set([
   "spaces",
   "space",
   "rooms",
+  "rooms-map",
   "my-spots",
   "preferences",
 ]);

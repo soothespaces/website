@@ -70,15 +70,19 @@ test("rooms group by floor with unnamed floors last", () => {
 
 test("the floor plan opens the floor with the most free rooms", () => {
   const rooms = [free("a", 1, 2), booked("b", 1), free("c", 2, 4), free("d", 2, 6), booked("e", 3), free("f", 4, 8)];
-  assert.equal(chooseRoomsMapFloor(rooms, [1, 2, 3]), 2);
-  assert.equal(chooseRoomsMapFloor([booked("b", 1), booked("e", 3), free("f", 4, 8)], [1, 3]), 1);
-  assert.equal(chooseRoomsMapFloor([], [3, 1]), 1);
-  assert.equal(chooseRoomsMapFloor(rooms, []), null);
+  assert.equal(chooseRoomsMapFloor({ plans: [1, 2, 3], rooms }), 2);
+  assert.equal(chooseRoomsMapFloor({ plans: [1, 3], rooms: [booked("b", 1), booked("e", 3), free("f", 4, 8)] }), 1);
+  assert.equal(chooseRoomsMapFloor({ plans: [3, 1], rooms: [] }), 1);
+  assert.equal(chooseRoomsMapFloor({ plans: [], rooms }), null);
   assert.equal(
-    chooseRoomsMapFloor(
-      [free("a", 1, 2), { ...free("down", 2, 4), slots: null, status: "Availability unavailable" }],
-      [1, 2],
-    ),
+    chooseRoomsMapFloor({
+      plans: [1, 2],
+      rooms: [free("a", 1, 2), { ...free("down", 2, 4), slots: null, status: "Availability unavailable" }],
+    }),
     1,
+  );
+  assert.equal(
+    chooseRoomsMapFloor({ plans: [1, 2, 3], rooms, focusedFloor: 1, rememberedFloor: 3 }),
+    3,
   );
 });

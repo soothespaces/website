@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useMapState } from "@/features/map/map-state";
-import { useRoomSlots } from "@/lib/data/room-slots";
+import { useRoomSlots, type RoomSlot } from "@/lib/data/room-slots";
 import type { PanelScreenProps } from "../builtin-screens";
 import { roomSizeFromGroup, type RoomSize } from "./room-list";
 import { RoomsList } from "./rooms-list";
@@ -11,9 +11,10 @@ import { RoomsList } from "./rooms-list";
 // so the selection panel lets this frame fill the dock. The phone sheet still
 // dismisses with a downward swipe; this screen does not add its own Close.
 export function RoomsScreen({ route }: PanelScreenProps) {
-  const { data, back, push, groupSize, floorPlans } = useMapState();
+  const { data, back, push, groupSize, floorPlans, rememberedFloor } = useMapState();
   const now = useNow();
   const [sizeOverride, setSizeOverride] = useState<RoomSize | null>(null);
+  const [focusedRoom, setFocusedRoom] = useState<RoomSlot | null>(null);
   const slug = route.kind === "rooms" ? route.slug : null;
   const slots = useRoomSlots(slug, now);
   const size = sizeOverride ?? roomSizeFromGroup(groupSize);
@@ -34,7 +35,12 @@ export function RoomsScreen({ route }: PanelScreenProps) {
       now={now}
       onBack={back}
       planFloors={plans.map((plan) => plan.floor)}
-      onViewFloorPlan={(floor) => push({ kind: "rooms-map", slug: route.slug, floor })}
+      rememberedFloor={rememberedFloor}
+      focusedRoom={focusedRoom}
+      onFocusRoom={setFocusedRoom}
+      onViewFloorPlan={(floor, roomId) =>
+        push(roomId ? { kind: "rooms-map", slug: route.slug, floor, roomId } : { kind: "rooms-map", slug: route.slug, floor })
+      }
     />
   );
 }

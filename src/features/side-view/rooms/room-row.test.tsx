@@ -102,6 +102,9 @@ test("View on floor plan is present for a planned building and absent without on
       now={eightPm}
       onBack={() => {}}
       planFloors={[1, 2, 3]}
+      rememberedFloor={null}
+      focusedRoom={null}
+      onFocusRoom={() => {}}
       onViewFloorPlan={() => {}}
     />,
   );
@@ -126,6 +129,9 @@ test("View on floor plan is present for a planned building and absent without on
       now={eightPm}
       onBack={() => {}}
       planFloors={[]}
+      rememberedFloor={null}
+      focusedRoom={null}
+      onFocusRoom={() => {}}
       onViewFloorPlan={() => {}}
     />,
   );

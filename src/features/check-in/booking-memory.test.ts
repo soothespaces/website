@@ -34,6 +34,7 @@ describe("booking memory (K3 / SOS-161)", () => {
     assert.equal(bookingPill(booking.startsAt, booking.endsAt), "Your booking · 8 – 10 PM");
     assert.equal(bookingTitle(booking), "How's Room 2124?");
     assert.equal(bookingTitle({ roomName: "Fishbowl", roomNumber: "" }), "How's Fishbowl?");
+    assert.equal(bookingTitle({ roomName: "Booth 1", roomNumber: "BOOTH1" }), "How's Booth 1?");
   });
 
   it("keeps a booking only while now is inside its window", () => {

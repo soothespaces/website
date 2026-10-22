@@ -15,6 +15,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import { type SpaceSearch, useSpaceSearch } from "@/features/spaces";
 import { HOME_ROUTE, stackForRoute, type PanelRoute } from "@/features/side-view/panel-route";
+import { RoomsDataProvider } from "@/features/side-view/rooms-map/rooms-data";
 import { EMPTY_SPACE_FILTERS, type SpaceFilters } from "./space-filters";
 import {
   historyStateWithoutNextKeys,
@@ -42,7 +43,37 @@ export type MapSelection =
 
 // Asks the map to move its camera to a selection. `key` changes on every
 // request, so asking twice for the same place moves it twice.
-export type CameraRequest = { key: number; selection: MapSelection };
+export type CameraRequest = {
+  key: number;
+  selection: MapSelection;
+  // Used when the building point is not loaded yet. The rooms map frames the
+  // floor sheet so the plan is on screen.
+  bounds?: [[number, number], [number, number]];
+};
+
+function planBounds(plans: FloorPlan[] | undefined, floor: number): CameraRequest["bounds"] {
+  const plan = plans?.find((item) => item.floor === floor) ?? plans?.[0];
+  const corners = plan?.corners;
+  if (!corners?.length) return undefined;
+  let west = Infinity;
+  let south = Infinity;
+  let east = -Infinity;
+  let north = -Infinity;
+  for (const pair of corners) {
+    const lng = pair[0];
+    const lat = pair[1];
+    if (typeof lng !== "number" || typeof lat !== "number") return undefined;
+    west = Math.min(west, lng);
+    south = Math.min(south, lat);
+    east = Math.max(east, lng);
+    north = Math.max(north, lat);
+  }
+  if (west === Infinity) return undefined;
+  return [
+    [west, south],
+    [east, north],
+  ];
+}
 
 type MapState = {
   data: MapData;
@@ -72,6 +103,11 @@ type MapState = {
   // The floor shown for the selected building, or null for none.
   floor: number | null;
   setFloor: (floor: number | null) => void;
+  // The floor the rooms map last showed for this building. Null until it has
+  // been open, so the first visit can pick the floor with the most free rooms.
+  rememberedFloor: number | null;
+  // Change the open rooms map without pushing, so Back still returns to Rooms.
+  setRoomsMap: (patch: { floor?: number; roomId?: string | null }) => void;
   // "How many people?" null means not chosen. Ranking scores a group size
   // only when one is set. Mirrored to ?people= (just-me, 2-3, 4+).
   groupSize: GroupSize | null;
@@ -263,8 +299,9 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
     if (userMoved || route.kind === "home") return null;
     const place = mapSelectionFor(stackForRoute(route), data);
     if (!place || !canFly(place, data)) return null;
-    return { key: 1, selection: place };
-  }, [userMoved, route, data]);
+    const bounds = route.kind === "rooms-map" ? planBounds(floorPlans.get(route.slug), route.floor) : undefined;
+    return bounds ? { key: 1, selection: place, bounds } : { key: 1, selection: place };
+  }, [userMoved, route, data, floorPlans]);
 
   useEffect(() => {
     panelRef.current = panel;
@@ -274,12 +311,20 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
     if (leaving.kind === "rooms-map") setFloorChoice({ building: leaving.slug, floor: leaving.floor });
   }, []);
 
-  const follow = useCallback((next: PanelRoute) => {
-    const place = placeOf(next);
-    if (!place) return;
-    setUserMoved(true);
-    setCamera((current) => ({ key: (current?.key ?? 0) + 1, selection: place }));
-  }, []);
+  const follow = useCallback(
+    (next: PanelRoute) => {
+      const place = placeOf(next) ?? (next.kind === "rooms-map" ? mapSelectionFor([next], data) : null);
+      if (!place) return;
+      const bounds = next.kind === "rooms-map" ? planBounds(floorPlans.get(next.slug), next.floor) : undefined;
+      setUserMoved(true);
+      setCamera((current) => ({
+        key: (current?.key ?? 0) + 1,
+        selection: place,
+        ...(bounds ? { bounds } : {}),
+      }));
+    },
+    [data, floorPlans],
+  );
 
   // `moveCamera` is false for Close and for search, which leave the map where
   // it is. A place screen recenters, including a second tap on the same one.
@@ -329,6 +374,25 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
     (next: number | null) => buildingSlug && setFloorChoice({ building: buildingSlug, floor: next }),
     [buildingSlug],
   );
+  const setRoomsMap = useCallback((patch: { floor?: number; roomId?: string | null }) => {
+    const current = panelRef.current.route;
+    if (current.kind !== "rooms-map") return;
+    const floor = patch.floor ?? current.floor;
+    const floorChanged = patch.floor != null && patch.floor !== current.floor;
+    const roomId =
+      patch.roomId === null || (floorChanged && patch.roomId === undefined)
+        ? undefined
+        : patch.roomId === undefined
+          ? current.roomId
+          : patch.roomId || undefined;
+    const next: PanelRoute = roomId
+      ? { kind: "rooms-map", slug: current.slug, floor, roomId }
+      : { kind: "rooms-map", slug: current.slug, floor };
+    if (!panelRef.current.replace(next)) return;
+    setEntrance(null);
+  }, []);
+  const rememberedFloor =
+    floorChoice && floorChoice.building === buildingSlug && floorChoice.floor != null ? floorChoice.floor : null;
 
   // replaceState updates the address bar before this returns, so a second
   // choice in the same turn sees the first. App history keys (the panel
@@ -380,6 +444,8 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
       floorPlans,
       floor: floors?.some((plan) => plan.floor === chosenFloor) ? chosenFloor : null,
       setFloor,
+      rememberedFloor,
+      setRoomsMap,
       groupSize,
       setGroupSize,
       filters,
@@ -407,6 +473,8 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
       floors,
       chosenFloor,
       setFloor,
+      rememberedFloor,
+      setRoomsMap,
       groupSize,
       setGroupSize,
       filters,
@@ -421,7 +489,9 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
         <PanelQuerySync onParams={panel.adoptUrl} />
         <GroupSizeFromUrl />
       </Suspense>
-      {children}
+      <RoomsDataProvider buildingSlug={route.kind === "rooms" || route.kind === "rooms-map" ? route.slug : null}>
+        {children}
+      </RoomsDataProvider>
     </MapStateContext>
   );
 }

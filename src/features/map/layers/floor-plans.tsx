@@ -9,6 +9,7 @@ import { FloorBookableLayer } from "./floor-bookable";
 import { FloorNoiseGlyphLayer, FloorNoiseLayer, useFloorColoring } from "./floor-noise";
 import { FloorPrintersLayer } from "./floor-printers";
 import { FLOOR_ROOM_LINES } from "./floor-layer-ids";
+import { FloorRoomAvailability } from "./floor-room-availability";
 import { FloorStaffLayer } from "./floor-staff";
 import { FO_BUILDINGS_SOURCE } from "./campus-detail";
 
@@ -66,7 +67,8 @@ export function FloorPlanLayers({
 }: {
   plan: FloorPlan | null;
   colors: MapColors;
-  // Rooms map paints free and booked instead, so noise and stripes stay off.
+  // Rooms map: free grey and booked red, with staff grey, noise, and stripes
+  // off so those two states stay readable. Leaving the route paints the normal plan.
   availability?: boolean;
   // The footprint under this plan. Covered so the study-space color does not
   // show through courtyards and the gaps between rooms.
@@ -107,19 +109,29 @@ export function FloorPlanLayers({
         }}
         beforeId={SLOTS.floorPlans}
       />
-      <FloorStaffLayer
-        colors={colors}
-        minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
-        building={plan.building}
-        floor={plan.floor}
-      />
       {/* Direct children of Source. A fragment would swallow the source id
           and these layers would never mount. */}
+      {availability ? null : (
+        <FloorStaffLayer
+          colors={colors}
+          minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
+          building={plan.building}
+          floor={plan.floor}
+        />
+      )}
       {availability ? null : (
         <FloorNoiseLayer colors={colors} minzoom={FLOOR_PLAN_MIN_ZOOM - 1} byNoise={coloring.byNoise} />
       )}
       {availability ? null : <FloorBookableLayer minzoom={FLOOR_PLAN_MIN_ZOOM - 1} rooms={coloring.bookableRooms} />}
       {availability ? null : <FloorNoiseGlyphLayer colors={colors} minzoom={NOISE_GLYPH_MIN_ZOOM} />}
+      {availability ? (
+        <FloorRoomAvailability
+          building={plan.building}
+          floor={plan.floor}
+          minzoom={FLOOR_PLAN_MIN_ZOOM - 1}
+          colors={colors}
+        />
+      ) : null}
       {font ? (
         <Layer
           id={`${id}-labels`}

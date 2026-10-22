@@ -11,6 +11,7 @@ import {
   parsePanelRoute,
   planPush,
   reconcileStack,
+  replaceTop,
   resetRoute,
   samePanelRoute,
   samePanelStack,
@@ -117,6 +118,16 @@ export function usePanelStack() {
 
   const reset = useCallback((route: PanelRoute) => apply(resetRoute(route), "replace"), [apply]);
 
+  const replace = useCallback(
+    (route: PanelRoute) => {
+      const next = replaceTop(stackRef.current, route);
+      if (next === stackRef.current) return false;
+      apply(next, "replace");
+      return true;
+    },
+    [apply],
+  );
+
   const back = useCallback(() => {
     const current = stackRef.current;
     if (current.length <= 1) return;
@@ -146,6 +157,7 @@ export function usePanelStack() {
     push,
     back,
     reset,
+    replace,
     adoptUrl,
   };
 }

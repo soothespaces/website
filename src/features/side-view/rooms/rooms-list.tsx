@@ -30,6 +30,9 @@ export function RoomsList({
   now,
   onBack,
   planFloors,
+  rememberedFloor,
+  focusedRoom,
+  onFocusRoom,
   onViewFloorPlan,
 }: {
   buildingName: string;
@@ -41,14 +44,25 @@ export function RoomsList({
   now: Date;
   onBack: () => void;
   planFloors: readonly number[];
-  onViewFloorPlan: (floor: number) => void;
+  rememberedFloor: number | null;
+  focusedRoom: RoomSlot | null;
+  onFocusRoom: (room: RoomSlot) => void;
+  onViewFloorPlan: (floor: number, roomId?: string) => void;
 }) {
   const start = slotWindowStart(now);
   const listId = useId();
   const period = periodLabel(detroitParts(now).minutes);
   const filtered = rooms.filter((room) => roomMatchesSize(room.capacity, size));
   const groups = groupRoomsByFloor(filtered);
-  const floor = loaded ? chooseRoomsMapFloor(rooms, planFloors) : null;
+  const floor = chooseRoomsMapFloor({
+    plans: planFloors,
+    rooms,
+    rememberedFloor,
+    focusedFloor: focusedRoom?.floor ?? null,
+    roomsLoaded: loaded,
+  });
+  const roomId =
+    focusedRoom && focusedRoom.floor === floor && focusedRoom.roomNumber ? focusedRoom.roomNumber : undefined;
 
   let body = null;
   if (!loaded) {
@@ -84,7 +98,7 @@ export function RoomsList({
             <ul className="divide-y divide-border">
               {group.rooms.map((room) => (
                 <li key={room.id}>
-                  <RoomRow room={room} start={start} />
+                  <RoomRow room={room} start={start} onFocus={() => onFocusRoom(room)} />
                 </li>
               ))}
             </ul>
@@ -123,7 +137,7 @@ export function RoomsList({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-sm font-semibold">{period}</p>
           {floor == null ? null : (
-            <Button variant="outline" size="sm" className="rounded-full" onClick={() => onViewFloorPlan(floor)}>
+            <Button variant="outline" size="sm" className="rounded-full" onClick={() => onViewFloorPlan(floor, roomId)}>
               <MapIcon />
               View on floor plan
             </Button>

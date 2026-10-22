@@ -13,6 +13,9 @@ import { StudyLegend } from "./study-legend";
 import { StudyBuildingLayers } from "./layers/study-buildings";
 import { FLOOR_PRINTERS_LAYER } from "./layers/floor-printer-points";
 import { FLOOR_PLAN_MIN_ZOOM, FloorPlanLayers } from "./layers/floor-plans";
+import { ROOM_AVAILABILITY_HIT_LAYER, RoomAvailabilityPin } from "./layers/floor-room-availability";
+import { normalizeRoomNumber, propertyRoomNumber } from "./layers/room-match";
+import { useRoomsData } from "@/features/side-view/rooms-map/rooms-data";
 import { SpacePins } from "./layers/space-pins";
 import { LayersPanel } from "./layers-panel";
 import { WIDE_QUERY } from "./map-layout-config";
@@ -43,8 +46,22 @@ export function MapExplorer() {
   const theme = useResolvedTheme();
   const colors = useMapColors();
   const wide = useMediaQuery(WIDE_QUERY);
-  const { data, selection, select, clear, camera, entrance, setEntrance, layers, setLayers, floorPlans, floor, route } =
-    useMapState();
+  const {
+    data,
+    selection,
+    select,
+    clear,
+    camera,
+    entrance,
+    setEntrance,
+    layers,
+    setLayers,
+    floorPlans,
+    floor,
+    route,
+    setRoomsMap,
+  } = useMapState();
+  const roomData = useRoomsData();
   const { entrances, spots, buildings, buildingsBySlug, spaces, error } = data;
   const map = useMap().current?.getMap();
   const selectedBuilding = useSelectedBuilding();
@@ -55,6 +72,7 @@ export function MapExplorer() {
   // click on the map, a pin, or a search result.
   useEffect(() => {
     if (!map || !camera) return;
+    const request = camera;
     const duration = prefersReducedMotion() ? 0 : 600;
     // On phones the selection sheet covers the bottom of the map.
     const padding = wide
@@ -84,7 +102,7 @@ export function MapExplorer() {
     function show(target: MapSelection) {
       if (!map) return;
       if (target.kind === "building") {
-        const bounds = target.recordNumber ? boundsOfBuilding(target.recordNumber) : null;
+        const bounds = request.bounds ?? (target.recordNumber ? boundsOfBuilding(target.recordNumber) : null);
         const fit = bounds ? map.cameraForBounds(bounds, { padding, maxZoom: 18 }) : null;
         const ours = target.slug ? buildingsBySlug.get(target.slug) : undefined;
         const center = bounds
@@ -105,7 +123,7 @@ export function MapExplorer() {
       map.easeTo({ center: [lng, lat], zoom: Math.max(map.getZoom(), FLOOR_PLAN_MIN_ZOOM), padding, duration });
     }
 
-    show(camera.selection);
+    show(request.selection);
     // Only a new request moves the camera, not new data or a resize.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, camera]);
@@ -117,6 +135,16 @@ export function MapExplorer() {
 
     function onClick(event: MapMouseEvent) {
       if (!map) return;
+      // A room on the rooms map selects that room. Other taps stay on this
+      // route so the drawer does not close.
+      if (route.kind === "rooms-map") {
+        if (map.getLayer(ROOM_AVAILABILITY_HIT_LAYER)) {
+          const [roomHit] = map.queryRenderedFeatures(event.point, { layers: [ROOM_AVAILABILITY_HIT_LAYER] });
+          const roomId = normalizeRoomNumber(propertyRoomNumber(roomHit?.properties?.roomNumber));
+          if (roomId) setRoomsMap({ roomId });
+        }
+        return;
+      }
       // Printer markers handle their own popup. A click there must not clear
       // the building, or the floor plan (and the marker) would disappear.
       if (map.getLayer(FLOOR_PRINTERS_LAYER)) {
@@ -163,19 +191,24 @@ export function MapExplorer() {
     const pointer = () => (map.getCanvas().style.cursor = "pointer");
     const grab = () => (map.getCanvas().style.cursor = "");
 
+    const pointerLayers = [ENTRANCES_LAYER, BUILDINGS_HIT_LAYER].filter((id) => map.getLayer(id));
+    if (route.kind === "rooms-map" && map.getLayer(ROOM_AVAILABILITY_HIT_LAYER)) {
+      pointerLayers.unshift(ROOM_AVAILABILITY_HIT_LAYER);
+    }
+
     map.on("click", onClick);
-    for (const layer of [ENTRANCES_LAYER, BUILDINGS_HIT_LAYER]) {
+    for (const layer of pointerLayers) {
       map.on("mouseenter", layer, pointer);
       map.on("mouseleave", layer, grab);
     }
     return () => {
       map.off("click", onClick);
-      for (const layer of [ENTRANCES_LAYER, BUILDINGS_HIT_LAYER]) {
+      for (const layer of pointerLayers) {
         map.off("mouseenter", layer, pointer);
         map.off("mouseleave", layer, grab);
       }
     };
-  }, [map, entrancesById, buildings, select, clear, setEntrance]);
+  }, [map, entrancesById, buildings, select, clear, setEntrance, route.kind, setRoomsMap, roomData.loaded, roomData.rooms.length]);
 
   // Escape closes the entrance popup.
   useEffect(() => {
@@ -230,6 +263,7 @@ export function MapExplorer() {
         availability={route.kind === "rooms-map"}
         recordNumber={plan ? selectedBuilding?.recordNumber ?? null : null}
       />
+      {route.kind === "rooms-map" && plan ? <RoomAvailabilityPin geojson={plan.geojson} /> : null}
       {plan ? <FloorLegend plan={plan} /> : null}
       {!plan && data.loaded ? <StudyLegend /> : null}
       <CurbRampLayer colors={colors} visible={layers.curbRamps} />

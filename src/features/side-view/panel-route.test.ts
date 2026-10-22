@@ -4,6 +4,7 @@ import {
   backRoute,
   panelHref,
   panelSearchForStack,
+  replaceTop,
   parsePanelRoute,
   planPush,
   pushRoute,
@@ -116,6 +117,25 @@ test("pushing a screen already in the stack pops back to it", () => {
   assert.deepEqual(planPush(stack, building, 0), { type: "replace", stack: [building] });
   assert.deepEqual(planPush(stack, { kind: "hours", slug: "shapiro" }, 1).type, "push");
   assert.equal(planPush(stack, space, 1).type, "none");
+});
+
+test("a rooms map link keeps the floor and room", () => {
+  const href = panelHref(
+    "/map",
+    { kind: "rooms-map", slug: "shapiro-library", floor: 2, roomId: "2124" },
+    new URLSearchParams(),
+  );
+  assert.equal(href, "/map?panel=rooms-map&b=shapiro-library&floor=2&room=2124");
+});
+
+test("replacing the rooms map keeps the room list under it", () => {
+  const rooms: PanelRoute = { kind: "rooms", slug: "shapiro" };
+  const map: PanelRoute = { kind: "rooms-map", slug: "shapiro", floor: 2 };
+  const stack = [rooms, map];
+  const next = replaceTop(stack, { kind: "rooms-map", slug: "shapiro", floor: 2, roomId: "2124" });
+  assert.deepEqual(next, [rooms, { kind: "rooms-map", slug: "shapiro", floor: 2, roomId: "2124" }]);
+  assert.deepEqual(backRoute(next), [rooms]);
+  assert.equal(replaceTop(next, next[1]!), next);
 });
 
 test("filling in a building's record number does not make it a new route", () => {

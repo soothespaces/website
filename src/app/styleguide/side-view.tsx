@@ -298,6 +298,9 @@ function RoomsExample() {
           now={EIGHT_PM_DATE}
           onBack={() => {}}
           planFloors={[1, 2, 3]}
+          rememberedFloor={null}
+          focusedRoom={null}
+          onFocusRoom={() => {}}
           onViewFloorPlan={() => {}}
         />
       </div>

@@ -1,6 +1,8 @@
 import type { GroupSize } from "@/lib/ranking";
 import type { RoomSlot } from "@/lib/data/room-slots";
 
+export { chooseRoomsMapFloor } from "../rooms-map/choose-floor";
+
 export type RoomSize = "any" | GroupSize;
 
 export const ROOM_SIZES: { value: RoomSize; label: string }[] = [
@@ -65,37 +67,3 @@ export function groupRoomsByFloor(rooms: readonly RoomSlot[]): FloorGroup[] {
     }));
 }
 
-export function isFreeNow(room: Pick<RoomSlot, "status" | "slots">): boolean {
-  if (room.slots == null) return false;
-  return room.status.startsWith("Free");
-}
-
-/**
- * Floor to open on the rooms map: the plan floor with the most rooms free
- * right now. Ties keep the lower floor. With no free rooms, the first plan
- * floor that has rooms. With no rooms on a plan, the first plan floor.
- * Null when the building has no vector plan.
- */
-export function chooseRoomsMapFloor(
-  rooms: readonly Pick<RoomSlot, "floor" | "status" | "slots">[],
-  planFloors: readonly number[],
-): number | null {
-  if (planFloors.length === 0) return null;
-  const plans = [...new Set(planFloors)].sort((a, b) => a - b);
-  const stats = new Map<number, { free: number; total: number }>();
-  for (const floor of plans) stats.set(floor, { free: 0, total: 0 });
-  for (const room of rooms) {
-    if (room.floor == null) continue;
-    const stat = stats.get(room.floor);
-    if (!stat) continue;
-    stat.total += 1;
-    if (isFreeNow(room)) stat.free += 1;
-  }
-  const withRooms = plans.filter((floor) => (stats.get(floor)?.total ?? 0) > 0);
-  const pool = withRooms.length > 0 ? withRooms : plans;
-  return pool.reduce((best, floor) => {
-    const free = stats.get(floor)?.free ?? 0;
-    const bestFree = stats.get(best)?.free ?? 0;
-    return free > bestFree ? floor : best;
-  });
-}

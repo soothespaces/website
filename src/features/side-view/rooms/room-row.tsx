@@ -7,7 +7,7 @@ import { roomBookingLabel, roomIsBookableLink, roomStatusLine } from "./room-sta
 
 const rowClass = cx(roomColumns, "items-center py-3 text-left");
 
-export function RoomRow({ room, start }: { room: RoomSlot; start: number }) {
+export function RoomRow({ room, start, onFocus }: { room: RoomSlot; start: number; onFocus?: () => void }) {
   const status = roomStatusLine(room);
   const statusId = useId();
   const summaryId = useId();
@@ -43,6 +43,7 @@ export function RoomRow({ room, start }: { room: RoomSlot; start: number }) {
         aria-label={roomBookingLabel(room.name)}
         aria-describedby={describedBy}
         className={cx(rowClass, "rounded-md hover:bg-accent")}
+        onFocus={onFocus}
       >
         {body}
       </a>

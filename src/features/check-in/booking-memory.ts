@@ -98,9 +98,9 @@ export function bookingPill(startIso: string, endIso: string): string {
 
 export function bookingTitle(booking: Pick<SavedBooking, "roomName" | "roomNumber">): string {
   const number = booking.roomNumber.trim().replace(/^room\s+/i, "");
-  if (number) return `How's Room ${number}?`;
+  if (/^\d/.test(number)) return `How's Room ${number}?`;
   const name = booking.roomName.trim();
-  return name ? `How's ${name}?` : "How's this room?";
+  return name ? `How's ${name}?` : number ? `How's ${number}?` : "How's this room?";
 }
 
 function browserStore(): Store {
