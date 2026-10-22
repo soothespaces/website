@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { notStudyCrossImage } from "./not-study-pattern.ts";
-import { notStudyRecords, studyColorExpression, studyCountsByRecord, studyStep } from "./study-building-counts.ts";
+import { notStudyFilter, notStudyRecords, studyColorExpression, studyCountsByRecord, studyStep } from "./study-building-counts.ts";
 
 test("study space counts join to the building footprint id", () => {
   const buildings = new Map([
@@ -49,6 +49,19 @@ test("the cross is only for hospitals, parking, and athletic buildings", () => {
   ]);
   const crossed = notStudyRecords(buildings, new Set(["1000227"]));
   assert.deepEqual(crossed.sort(), ["1000099", "1000257", "1000316"]);
+});
+
+test("parking structures on the campus map are crossed even when they are missing from the buildings table", () => {
+  const filter = notStudyFilter(["1000227"], ["1000316"]);
+  assert.deepEqual(filter, [
+    "all",
+    ["!", ["in", ["get", "loc_ObjectNum"], ["literal", ["1000227"]]]],
+    [
+      "any",
+      ["in", ["get", "Building_Type"], ["literal", ["PARK", "PARKU"]]],
+      ["in", ["get", "loc_ObjectNum"], ["literal", ["1000316"]]],
+    ],
+  ]);
 });
 
 test("the not-a-study cross is an X that repeats every period", () => {

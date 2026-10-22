@@ -54,6 +54,18 @@ export function studyColorExpression(counts: ReadonlyMap<string, number>, colors
   return expression;
 }
 
+// Footprints the campus map already marks as a parking structure. Many of
+// these, including Fletcher St. and Thayer St., are not in the buildings table.
+export const PARKING_FOOTPRINT_TYPES = ["PARK", "PARKU"] as const;
+
+export function notStudyFilter(studyIds: readonly string[], otherIds: readonly string[]) {
+  const parking = ["in", ["get", "Building_Type"], ["literal", [...PARKING_FOOTPRINT_TYPES]]];
+  const marked = otherIds.length > 0 ? ["in", ["get", "loc_ObjectNum"], ["literal", [...otherIds]]] : null;
+  const either = marked ? ["any", parking, marked] : parking;
+  if (studyIds.length === 0) return either;
+  return ["all", ["!", ["in", ["get", "loc_ObjectNum"], ["literal", [...studyIds]]]], either];
+}
+
 export function notStudyRecords(
   buildingsBySlug: ReadonlyMap<string, { recordNumber: string | null; category: string | null }>,
   studyRecords: { has(record: string): boolean },

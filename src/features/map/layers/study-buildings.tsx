@@ -7,7 +7,7 @@ import type { MapColors } from "../use-map-colors";
 import { SLOTS } from "../slots";
 import { FO_BUILDINGS_SOURCE } from "./campus-detail";
 import { NOT_STUDY_PATTERN, notStudyCrossImage } from "./not-study-pattern";
-import { notStudyRecords, studyColorExpression, studyCountsByRecord, type StudyStep } from "./study-building-counts";
+import { notStudyFilter, notStudyRecords, studyColorExpression, studyCountsByRecord, type StudyStep } from "./study-building-counts";
 
 // Same zoom the campus building footprints appear. No max zoom: the floor
 // plan is drawn above this, so zooming into a floor covers it instead of
@@ -48,8 +48,9 @@ function recordFilter(records: readonly string[]): FilterSpecification {
 }
 
 // Buildings with listed study spaces are colored by how many they have.
-// A cross is only for hospitals, parking structures, and athletic buildings.
-// Classroom buildings stay unmarked when they have no listed space yet.
+// A cross is for hospitals, athletic buildings, and parking structures,
+// including the ones the campus map labels PARK that are missing from the
+// buildings table. Classroom buildings stay unmarked.
 export function StudyBuildingLayers({
   spaces,
   buildingsBySlug,
@@ -83,17 +84,15 @@ export function StudyBuildingLayers({
         paint={{ "fill-color": color as unknown as ExpressionSpecification, "fill-opacity": 0.9 }}
         beforeId={SLOTS.floorPlans}
       />
-      {crossed.length > 0 ? (
-        <Layer
-          id="not-study-buildings"
-          type="fill"
-          source={FO_BUILDINGS_SOURCE}
-          minzoom={12}
-          filter={recordFilter(crossed)}
-          paint={{ "fill-pattern": NOT_STUDY_PATTERN }}
-          beforeId={SLOTS.floorPlans}
-        />
-      ) : null}
+      <Layer
+        id="not-study-buildings"
+        type="fill"
+        source={FO_BUILDINGS_SOURCE}
+        minzoom={12}
+        filter={notStudyFilter(records, crossed) as unknown as FilterSpecification}
+        paint={{ "fill-pattern": NOT_STUDY_PATTERN }}
+        beforeId={SLOTS.floorPlans}
+      />
     </>
   );
 }
