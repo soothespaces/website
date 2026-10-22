@@ -1,0 +1,42 @@
+# Throwaway: downloads MPrint floor-plan sheets for a cloud session that
+# cannot reach mprint.umich.edu, and commits them to this scratch branch.
+name: MPrint sheet fetch (scratch)
+
+on:
+  push:
+    branches:
+      - "claude/mprint-sheet-fetch-*"
+    paths:
+      - ".github/workflows/mprint-sheet-fetch.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and probe sheets
+        run: |
+          mkdir -p fetched
+          : > fetched/manifest.tsv
+          for tag in glibn glibs dc ulib mh taubl sm tap eq; do
+            for f in b ll g a m 0 1 2 3 4 5 6 7 8 9 10; do
+              sheet="${tag}_${f}"
+              url="https://mprint.umich.edu/assets/floorplans/${tag}/${sheet}.png"
+              code=$(curl -sS -L -o "fetched/${sheet}.png" -w '%{http_code}' --retry 2 --max-time 60 "$url" || echo ERR)
+              type=$(file -b --mime-type "fetched/${sheet}.png" 2>/dev/null || echo none)
+              if [ "$code" != "200" ] || [ "$type" != "image/png" ]; then rm -f "fetched/${sheet}.png"; fi
+              size=$(stat -c %s "fetched/${sheet}.png" 2>/dev/null || echo 0)
+              printf '%s\t%s\t%s\t%s\n' "$sheet" "$code" "$type" "$size" | tee -a fetched/manifest.tsv
+            done
+          done
+      - name: Commit sheets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add fetched
+          git commit -m "Fetched MPrint sheets (scratch)"
+          git push
