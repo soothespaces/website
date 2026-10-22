@@ -29,31 +29,60 @@ export function withNoiseBars<T extends { properties?: Record<string, unknown> }
   });
 }
 
-// Four bars, short to tall. Filled bars are the foreground; empty bars are
-// the same color at 30% opacity. The count is the level, so color is not
-// the only cue.
-export function noiseBarImage(filled: number, foreground: string): { width: number; height: number; data: Uint8Array } {
+function hexChannels(hex: string): [number, number, number] {
+  const value = Number.parseInt(hex.slice(1), 16);
+  return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
+}
+
+function inRoundRect(x: number, y: number, right: number, bottom: number, radius: number) {
+  const cx = Math.min(Math.max(x, radius), right - radius);
+  const cy = Math.min(Math.max(y, radius), bottom - radius);
+  const dx = x - cx;
+  const dy = y - cy;
+  return dx * dx + dy * dy <= radius * radius;
+}
+
+// Four bars, short to tall, on a rounded card plate. Filled bars are the
+// foreground; empty bars are the same color at 30% opacity, mixed onto the
+// plate. The plate keeps the bars readable on a dark noise fill. The count
+// is the level, so color is not the only cue.
+export function noiseBarImage(
+  filled: number,
+  foreground: string,
+  card: string,
+): { width: number; height: number; data: Uint8Array } {
   const width = 48;
   const height = 48;
   const data = new Uint8Array(width * height * 4);
-  const channel = (index: number) => parseInt(foreground.slice(1 + index * 2, 3 + index * 2), 16);
-  const [r, g, b] = [0, 1, 2].map(channel);
+  const [fr, fg, fb] = hexChannels(foreground);
+  const [cr, cg, cb] = hexChannels(card);
+  const radius = 8;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (!inRoundRect(x + 0.5, y + 0.5, width - 1, height - 1, radius)) continue;
+      const index = (y * width + x) * 4;
+      data[index] = cr;
+      data[index + 1] = cg;
+      data[index + 2] = cb;
+      data[index + 3] = 255;
+    }
+  }
   const barWidth = 8;
   const gap = 4;
   const heights = [12, 20, 30, 40];
   const bottom = 44;
   const left = Math.floor((width - (4 * barWidth + 3 * gap)) / 2);
   for (let bar = 0; bar < 4; bar++) {
-    const alpha = bar < filled ? 255 : Math.round(255 * 0.3);
+    const mix = bar < filled ? 1 : 0.3;
     const barHeight = heights[bar] ?? 12;
     const x0 = left + bar * (barWidth + gap);
     for (let y = bottom - barHeight; y < bottom; y++) {
       for (let x = x0; x < x0 + barWidth; x++) {
         const index = (y * width + x) * 4;
-        data[index] = r;
-        data[index + 1] = g;
-        data[index + 2] = b;
-        data[index + 3] = alpha;
+        data[index] = Math.round(mix * fr + (1 - mix) * cr);
+        data[index + 1] = Math.round(mix * fg + (1 - mix) * cg);
+        data[index + 2] = Math.round(mix * fb + (1 - mix) * cb);
+        data[index + 3] = 255;
       }
     }
   }

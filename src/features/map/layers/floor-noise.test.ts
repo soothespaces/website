@@ -182,20 +182,22 @@ test("a bookable item with no spaceId colors nothing", () => {
   assert.deepEqual(groupByNoise(linked).quiet, ["2122"]);
 });
 
-test("noise bar images fill from one bar to four", () => {
-  const quiet = noiseBarImage(1, "#171717");
-  const loud = noiseBarImage(4, "#171717");
+test("noise bar images sit on a card plate", () => {
+  const card = "#ffffff";
+  const quiet = noiseBarImage(1, "#171717", card);
+  const loud = noiseBarImage(4, "#ffffff", "#000000");
   assert.equal(quiet.width, 48);
   assert.equal(quiet.height, 48);
-  const alpha = (image: { width: number; data: Uint8Array }, x: number, y: number) =>
-    image.data[(y * image.width + x) * 4 + 3];
-  const channel = (image: { width: number; data: Uint8Array }, x: number, y: number) =>
-    image.data[(y * image.width + x) * 4];
-  // First bar is filled at every level; the last bar is empty until loud.
-  assert.equal(alpha(quiet, 5, 40), 255);
-  assert.equal(channel(quiet, 5, 40), 23);
-  assert.equal(alpha(quiet, 41, 20), Math.round(255 * 0.3));
-  assert.equal(alpha(loud, 5, 40), 255);
-  assert.equal(alpha(loud, 41, 20), 255);
-  assert.equal(alpha(quiet, 0, 0), 0);
+  const pixel = (image: { width: number; data: Uint8Array }, x: number, y: number) => {
+    const index = (y * image.width + x) * 4;
+    return [image.data[index], image.data[index + 1], image.data[index + 2], image.data[index + 3]];
+  };
+  // First bar is filled at every level. The last bar is 30% foreground on the card until loud.
+  assert.deepEqual(pixel(quiet, 5, 40), [23, 23, 23, 255]);
+  assert.deepEqual(pixel(quiet, 41, 20), [185, 185, 185, 255]);
+  assert.deepEqual(pixel(quiet, 20, 8), [255, 255, 255, 255]);
+  assert.deepEqual(pixel(loud, 5, 40), [255, 255, 255, 255]);
+  assert.deepEqual(pixel(loud, 41, 20), [255, 255, 255, 255]);
+  assert.deepEqual(pixel(loud, 20, 8), [0, 0, 0, 255]);
+  assert.deepEqual(pixel(quiet, 0, 0), [0, 0, 0, 0]);
 });

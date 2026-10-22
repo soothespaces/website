@@ -118,22 +118,23 @@ export function noiseFillOpacity(value: string | undefined) {
   return Number.isFinite(number) && number > 0 ? number : NOISE_FILL_OPACITY;
 }
 
-function useNoiseBars(foreground: string) {
+function useNoiseBars(foreground: string, card: string) {
   const map = useMap().current?.getMap();
   const painted = useRef<string | null>(null);
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    if (!map || !foreground.startsWith("#")) return;
+    if (!map || !foreground.startsWith("#") || !card.startsWith("#")) return;
+    const key = `${foreground}|${card}`;
     const add = () => {
-      if (painted.current === foreground && NOISE_BAR_IMAGES.every((id) => map.hasImage(id))) {
+      if (painted.current === key && NOISE_BAR_IMAGES.every((id) => map.hasImage(id))) {
         setReady(true);
         return;
       }
       for (const [index, id] of NOISE_BAR_IMAGES.entries()) {
         if (map.hasImage(id)) map.removeImage(id);
-        map.addImage(id, noiseBarImage(index + 1, foreground));
+        map.addImage(id, noiseBarImage(index + 1, foreground, card));
       }
-      painted.current = foreground;
+      painted.current = key;
       setReady(true);
     };
     add();
@@ -141,7 +142,7 @@ function useNoiseBars(foreground: string) {
     return () => {
       map.off("styledata", add);
     };
-  }, [map, foreground]);
+  }, [map, foreground, card]);
   return ready;
 }
 
@@ -355,8 +356,8 @@ export function FloorNoiseLayer({
 
 // The 4-bar glyph for each filled room. It sits under the room outlines, and
 // the label layer is above it, so icon-allow-overlap false lets the room
-// number win when the two collide. The offset drops the bars below the number
-// so both fit in a study room.
+// number win when the two collide. icon-offset is in icon-size units, so the
+// bars stay just under the number as the glyph scales.
 export function FloorNoiseGlyphLayer({
   colors,
   minzoom,
@@ -366,7 +367,7 @@ export function FloorNoiseGlyphLayer({
   minzoom: number;
   source?: string;
 }) {
-  const ready = useNoiseBars(colors.foreground);
+  const ready = useNoiseBars(colors.foreground, colors.card);
   if (!source || !ready) return null;
   return (
     <Layer
@@ -377,8 +378,9 @@ export function FloorNoiseGlyphLayer({
       filter={["has", "noiseBars"]}
       layout={{
         "icon-image": ["concat", "noise-bars-", ["to-string", ["get", "noiseBars"]]],
-        "icon-size": 0.5,
-        "icon-offset": [0, 40],
+        "icon-size": ["interpolate", ["linear"], ["zoom"], minzoom, 0.22, minzoom + 1, 0.36],
+        "icon-offset": [0, 26],
+        "icon-padding": 0,
         "icon-allow-overlap": false,
         "icon-anchor": "center",
       }}

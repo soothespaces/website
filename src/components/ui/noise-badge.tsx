@@ -4,20 +4,14 @@ import type { SpaceSummary } from "@/features/spaces/types";
 
 export type NoiseLevel = NonNullable<SpaceSummary["noise_level"]>;
 
-// How many of the four bars are filled. The count carries the meaning
-// along with the word; the fill color is the same token the floor plan uses.
+// How many of the four bars are filled. The count carries the level.
+// Filled bars use the foreground, so a pale noise color cannot hide them
+// against the empty bars.
 export const NOISE_BAR_COUNT: Record<NoiseLevel, number> = {
   quiet: 1,
   low_noise: 2,
   conversational: 3,
   loud: 4,
-};
-
-export const NOISE_FILL_CLASS: Record<NoiseLevel, string> = {
-  quiet: "bg-noise-quiet",
-  low_noise: "bg-noise-low",
-  conversational: "bg-noise-conversational",
-  loud: "bg-noise-loud",
 };
 
 const BAR_HEIGHT = ["h-1", "h-1.5", "h-2.5", "h-3.5"] as const;
@@ -42,7 +36,7 @@ export function NoiseBadge({ level, size = "md" }: { level: NoiseLevel; size?: "
               className={cx(
                 "w-1 rounded-sm",
                 height,
-                index < filled ? NOISE_FILL_CLASS[level] : "border border-foreground bg-noise-bar",
+                index < filled ? "bg-foreground" : "border border-foreground bg-noise-bar",
               )}
             />
           ))}

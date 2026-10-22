@@ -18,6 +18,11 @@ export const FLOOR_PLAN_MIN_ZOOM = 17;
 // Room numbers only fit once rooms are a few pixels across.
 const LABEL_MIN_ZOOM = 18;
 
+// The campus map stops at zoom 19. Shapiro's shortest study room is about
+// 25px tall there, so the glyph has to be small enough to sit under the
+// room number without leaving the room.
+const NOISE_GLYPH_MIN_ZOOM = 19;
+
 // The font of the basemap's own labels. Glyphs come from the style's font
 // server, which only has the fonts its style uses, and each style names
 // them differently, so borrow one from a label layer that's already there.
@@ -109,7 +114,7 @@ export function FloorPlanLayers({
         <FloorNoiseLayer colors={colors} minzoom={FLOOR_PLAN_MIN_ZOOM - 1} byNoise={coloring.byNoise} />
       )}
       {availability ? null : <FloorBookableLayer minzoom={FLOOR_PLAN_MIN_ZOOM - 1} rooms={coloring.bookableRooms} />}
-      {availability ? null : <FloorNoiseGlyphLayer colors={colors} minzoom={LABEL_MIN_ZOOM} />}
+      {availability ? null : <FloorNoiseGlyphLayer colors={colors} minzoom={NOISE_GLYPH_MIN_ZOOM} />}
       {font ? (
         <Layer
           id={`${id}-labels`}
@@ -122,8 +127,17 @@ export function FloorPlanLayers({
             "text-size": ["interpolate", ["linear"], ["zoom"], LABEL_MIN_ZOOM, 10, 19, 12],
             "text-max-width": 6,
             "text-padding": 1,
-            // Lift the number off a noise glyph so the bars can sit under it.
-            "text-offset": ["case", ["has", "noiseBars"], ["literal", [0, -0.9]], ["literal", [0, 0]]],
+            // Lift the number only once the glyph is drawn under it. On the
+            // rooms map there is no glyph, so the number stays centered.
+            "text-offset": availability
+              ? [0, 0]
+              : [
+                  "step",
+                  ["zoom"],
+                  ["literal", [0, 0]],
+                  NOISE_GLYPH_MIN_ZOOM,
+                  ["case", ["has", "noiseBars"], ["literal", [0, -0.7]], ["literal", [0, 0]]],
+                ],
           }}
           paint={{
             "text-color": colors.foreground,
