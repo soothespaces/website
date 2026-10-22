@@ -354,10 +354,10 @@ export function FloorNoiseLayer({
   );
 }
 
-// The 4-bar glyph for each filled room. It sits under the room outlines, and
-// the label layer is above it, so icon-allow-overlap false lets the room
-// number win when the two collide. icon-offset is in icon-size units, so the
-// bars stay just under the number as the glyph scales.
+// The 4-bar glyph for each filled room. It hangs from its top edge, just
+// under the centered room number. icon-size stays constant: an interpolation
+// makes MapLibre reserve the next zoom's box, which hides glyphs at zoom 19.
+// The number is a higher layer, so it paints over the glyph where they meet.
 export function FloorNoiseGlyphLayer({
   colors,
   minzoom,
@@ -378,11 +378,11 @@ export function FloorNoiseGlyphLayer({
       filter={["has", "noiseBars"]}
       layout={{
         "icon-image": ["concat", "noise-bars-", ["to-string", ["get", "noiseBars"]]],
-        "icon-size": ["interpolate", ["linear"], ["zoom"], minzoom, 0.22, minzoom + 1, 0.36],
-        "icon-offset": [0, 26],
+        "icon-size": 0.22,
+        "icon-offset": [0, 12],
         "icon-padding": 0,
         "icon-allow-overlap": false,
-        "icon-anchor": "center",
+        "icon-anchor": "top",
       }}
       beforeId={FLOOR_ROOM_LINES}
     />

@@ -127,17 +127,10 @@ export function FloorPlanLayers({
             "text-size": ["interpolate", ["linear"], ["zoom"], LABEL_MIN_ZOOM, 10, 19, 12],
             "text-max-width": 6,
             "text-padding": 1,
-            // Lift the number only once the glyph is drawn under it. On the
-            // rooms map there is no glyph, so the number stays centered.
-            "text-offset": availability
-              ? [0, 0]
-              : [
-                  "step",
-                  ["zoom"],
-                  ["literal", [0, 0]],
-                  NOISE_GLYPH_MIN_ZOOM,
-                  ["case", ["has", "noiseBars"], ["literal", [0, -0.7]], ["literal", [0, 0]]],
-                ],
+            // The noise glyph hangs just under the number. Its box touches the
+            // number, so the number must not reserve that space or the glyph is
+            // dropped. The number is a higher layer, so it still paints on top.
+            "text-ignore-placement": true,
           }}
           paint={{
             "text-color": colors.foreground,
