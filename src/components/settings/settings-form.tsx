@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useSettings, type SettingsPersistence } from "@/lib/settings/settings-provider";
 import { ROUTES } from "@/lib/site";
 import { LocationSettingsNote } from "@/features/check-in/location-prompt";
+import { StudyPreferencesSection } from "@/features/side-view/preferences/study-preferences-section";
 import { ChoiceGroup } from "./choice-group";
 
 export function SettingsForm() {
@@ -108,6 +109,7 @@ export function SettingsForm() {
       />
 
       <LocationSettingsNote />
+      <StudyPreferencesSection />
     </div>
   );
 }
