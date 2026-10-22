@@ -22,6 +22,7 @@ import {
   assignRoomNoise,
   bookableRoomNumbers,
   groupByNoise,
+  labelRank,
   NOISE_BAR_IMAGES,
   NOISE_FILL_OPACITY,
   NOISE_LEVELS,
@@ -146,10 +147,29 @@ function useNoiseBars(foreground: string, card: string) {
   return ready;
 }
 
-function stampPlan(features: PlanFeature[], noiseByRoom: ReadonlyMap<string, NoiseLevel>): GeoJSON.FeatureCollection {
+function stampPlan(
+  features: PlanFeature[],
+  noiseByRoom: ReadonlyMap<string, NoiseLevel>,
+  where: { building: string; floor: number },
+  bookableRooms: ReadonlySet<string>,
+): GeoJSON.FeatureCollection {
   return {
     type: "FeatureCollection",
-    features: withNoiseBars(features, noiseByRoom) as GeoJSON.Feature[],
+    features: withNoiseBars(features, noiseByRoom).map((feature) => {
+      const properties = feature.properties ?? {};
+      if (properties.layer !== "room") return feature;
+      const number = typeof properties.roomNumber === "string" ? properties.roomNumber.trim() : "";
+      return {
+        ...feature,
+        properties: {
+          ...properties,
+          labelRank: labelRank(properties, where, {
+            noise: number.length > 0 && noiseByRoom.has(number),
+            bookable: bookableRooms.has(number),
+          }),
+        },
+      };
+    }) as GeoJSON.Feature[],
   };
 }
 
@@ -208,7 +228,14 @@ async function loadFloorColoring(plan: FloorPlan): Promise<FloorColoring> {
   const rooms = roomsFromPlan(features);
   if (!env) {
     const split = splitPlanRooms(features.map((feature) => ({ properties: feature.properties ?? {} })), plan, new Map());
-    return { byNoise: EMPTY_NOISE, bookableRooms: [], ...split, rooms, planData: stampPlan(features, new Map()), loaded: true };
+    return {
+      byNoise: EMPTY_NOISE,
+      bookableRooms: [],
+      ...split,
+      rooms,
+      planData: stampPlan(features, new Map(), plan, new Set()),
+      loaded: true,
+    };
   }
 
   const supabase = createClient();
@@ -284,7 +311,7 @@ async function loadFloorColoring(plan: FloorPlan): Promise<FloorColoring> {
     bookableRooms: stripes,
     ...split,
     rooms,
-    planData: stampPlan(features, noiseByRoom),
+    planData: stampPlan(features, noiseByRoom, plan, new Set(stripes)),
     loaded: true,
   };
 }

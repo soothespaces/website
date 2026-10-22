@@ -17,6 +17,24 @@ export const NOISE_BARS: Record<NoiseLevel, number> = {
 
 // The glyph reads noiseBars off the same features as the fill. Untagged rooms
 // keep their properties, so they stay white and get no icon.
+// Lower ranks are placed first, so they keep the spot when labels collide.
+// Tagged and bookable rooms beat a name, which beats a plain number.
+// Staff, stairs, and corridors give way.
+export const LABEL_RANK = { tagged: 0, bookable: 1, named: 2, room: 3, background: 4 } as const;
+
+export function labelRank(
+  properties: Record<string, unknown>,
+  where: { building: string; floor: number },
+  flags: { noise: boolean; bookable: boolean },
+): number {
+  if (flags.noise) return LABEL_RANK.tagged;
+  if (flags.bookable) return LABEL_RANK.bookable;
+  const number = typeof properties.roomNumber === "string" ? properties.roomNumber : "";
+  if (isStaffRoom(properties, where) || isServiceRoom(number)) return LABEL_RANK.background;
+  if (typeof properties.roomName === "string" && properties.roomName.trim()) return LABEL_RANK.named;
+  return LABEL_RANK.room;
+}
+
 export function withNoiseBars<T extends { properties?: Record<string, unknown> }>(
   features: readonly T[],
   noiseByRoom: ReadonlyMap<string, NoiseLevel>,

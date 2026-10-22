@@ -7,6 +7,7 @@ import {
   bookableRoomNumbers,
   groupByNoise,
   isServiceRoom,
+  labelRank,
   noiseBarImage,
   noiseFromLabel,
   resolvedNoise,
@@ -180,6 +181,20 @@ test("a bookable item with no spaceId colors nothing", () => {
   assert.equal(stamped[0]?.properties?.noiseBars, 1);
   assert.equal(stamped[1]?.properties?.noiseBars, undefined);
   assert.deepEqual(groupByNoise(linked).quiet, ["2122"]);
+});
+
+test("tagged and bookable rooms outrank staff and corridors", () => {
+  const where = { building: "harold-t-and-vivian-b-shapiro-library", floor: 2 };
+  const study = { layer: "room", roomNumber: "2122" };
+  const named = { layer: "room", roomNumber: "2002", roomName: "Askwith" };
+  const open = { layer: "room", roomNumber: "2000" };
+  const staff = { layer: "room", roomNumber: "2166" };
+  const stair = { layer: "room", roomNumber: "2S11" };
+  assert.ok(labelRank(study, where, { noise: true, bookable: true }) < labelRank(study, where, { noise: false, bookable: true }));
+  assert.ok(labelRank(study, where, { noise: false, bookable: true }) < labelRank(named, where, { noise: false, bookable: false }));
+  assert.ok(labelRank(named, where, { noise: false, bookable: false }) < labelRank(open, where, { noise: false, bookable: false }));
+  assert.ok(labelRank(open, where, { noise: false, bookable: false }) < labelRank(staff, where, { noise: false, bookable: false }));
+  assert.equal(labelRank(staff, where, { noise: false, bookable: false }), labelRank(stair, where, { noise: false, bookable: false }));
 });
 
 test("noise bar images sit on a card plate", () => {

@@ -126,11 +126,11 @@ export function FloorPlanLayers({
             "text-font": font,
             "text-size": ["interpolate", ["linear"], ["zoom"], LABEL_MIN_ZOOM, 10, 19, 12],
             "text-max-width": 6,
-            "text-padding": 1,
-            // The noise glyph hangs just under the number. Its box touches the
-            // number, so the number must not reserve that space or the glyph is
-            // dropped. The number is a higher layer, so it still paints on top.
-            "text-ignore-placement": true,
+            // Labels collide, and a lower rank is placed first. Tagged and
+            // bookable rooms keep their number; stairs and staff give way.
+            "text-padding": 4,
+            "text-allow-overlap": false,
+            "symbol-sort-key": ["coalesce", ["get", "labelRank"], 3],
           }}
           paint={{
             "text-color": colors.foreground,
