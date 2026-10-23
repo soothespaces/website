@@ -316,7 +316,7 @@ for (const slug of [...Object.keys(overrides.spaceFloors), ...Object.keys(overri
 // Room number and floor from a LibCal title. The formats differ per location:
 //   "2nd Floor - 2122 - Study Room (Capacity 5)"   Shapiro
 //   "Carrel 3-01 (3001) (Capacity 1)"               Hatcher carrel, room 3001
-//   "4S - 50"                                       Hatcher donor carrel (no room)
+//   "4S - 50", "6S - 600"                           Hatcher donor carrel, room 4050 or 600
 //   "Hatcher 212A", "DC 2344", "GGBL 2502 - ...",   building code + room
 //   "NCRC 028-G129 Seat 06", "2407 Mason Hall", "1133B"
 const libcalPlace = (title) => {
@@ -329,7 +329,11 @@ const libcalPlace = (title) => {
   if (m) return { floor: Number(m[1]), room_number: /^\d/.test(m[2]) ? m[2] : null };
   m = text.match(/^Carrel (\d)-\d+ \((\d{4})\)$/);
   if (m) return { floor: Number(m[1]), room_number: m[2] };
-  m = text.match(/^Carrel (\d)-/) ?? text.match(/^(\d)S - \d+$/);
+  // The floor sheets print donor carrels as plain numbers: "4S - 49" is 4049 and
+  // "6S - 600" (the corner room) is 600. Read off the sheets, not from the Library.
+  m = text.match(/^(\d)S - (\d+)$/);
+  if (m) return { floor: Number(m[1]), room_number: m[2].length > 2 ? m[2] : `${m[1]}0${m[2].padStart(2, "0")}` };
+  m = text.match(/^Carrel (\d)-/);
   if (m) return { floor: Number(m[1]), room_number: null };
   m = text.match(/^NCRC \d+-(G?\d+)\b/);
   if (m) return { floor: m[1].startsWith("G") ? 0 : floorFrom(m[1]), room_number: m[1] };
@@ -419,12 +423,14 @@ for (const item of bookableItems) {
 
 // ---------------------------------------------------------------- space locations
 
-// The rooms each space is in: its LibCal items' rooms, plus spaceRooms. Open
-// areas need an outline drawn in /admin/spaces, so they aren't seeded.
+// The rooms each space is in: its LibCal items' rooms, or its spaceRooms when it
+// has them (they win where a LibCal room isn't drawn on the plan). Open areas
+// need an outline drawn in /admin/spaces, so they aren't seeded.
 const spaceLocationKeys = new Set();
 const spaceLocations = [
   ...bookableItems
     .filter((item) => item.space_slug && item.room_number && item.floor !== null)
+    .filter((item) => !(item.space_slug in overrides.spaceRooms))
     .map((item) => ({ space_slug: item.space_slug, floor: item.floor, room_number: item.room_number })),
   ...Object.entries(overrides.spaceRooms).flatMap(([slug, rooms]) =>
     rooms.map((r) => ({ space_slug: slug, floor: r.floor, room_number: r.room })),
