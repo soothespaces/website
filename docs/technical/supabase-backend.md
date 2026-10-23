@@ -180,6 +180,12 @@ edit spaces in `/admin/spaces`:
   `Polygon` drawn on the plan). The building is the space's. The editor also sets
   `spaces.lat`/`lng` to the middle of them, which puts the space on the map. Public
   read; admins insert and delete. `created_by` is stamped from the JWT.
+- The seed (section `space_locations`) adds rooms for spaces no admin has placed:
+  each linked LibCal item's room, plus `overrides.json` `spaceRooms`. Its rows have
+  `created_by = 'seed'` and are replaced on every run. A space with any other
+  location keeps only those. `bookable_items.space_id` comes from
+  `overrides.json` `libcalSpaces`, and `spaceFloors` fills `spaces.floor` for
+  Library spaces whose page names one floor but whose title doesn't.
 
 ### `public.floor_plans` and `public.room_zones` (WP5)
 
@@ -895,7 +901,7 @@ supabase/tests/
   building_entrances.test.sql, classroom_meetings.test.sql,
   own_history_and_favorites.test.sql, printers.test.sql, classrooms.test.sql,
   admin_photos.test.sql, space_editor.test.sql, photo_uploader.test.sql,
-  check_in_where_only.test.sql
+  check_in_where_only.test.sql, seed_space_links.test.sql
                                            per-migration checks
 ```
 

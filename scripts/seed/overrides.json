@@ -116,5 +116,77 @@
   "_officialIds": "official_id set by hand after matching. 1000152 is U-M's record for \"Angell Hall and Tisch Hall\" (435 State St); mguide gives it to both, so neither would keep it.",
   "officialIds": {
     "angell-hall": "1000152"
+  },
+  "_spaceFloors": "Floor for Library spaces whose title names none but whose page names exactly one (\"on floor 2 of Hatcher North\", \"the Clark Commons\", which is Shapiro floor 3). Spaces on several floors stay null; their space_locations carry each floor.",
+  "spaceFloors": {
+    "berts-study-lounge": 1,
+    "clark-commons-computing-spaces": 3,
+    "clark-commons-seating-areas": 3,
+    "duderstadt-center-interview-rooms": 2,
+    "hatcher-north-212a": 2,
+    "hatcher-reference-reading-room": 2,
+    "hatcher-south-bookable-daily-carrels": 3,
+    "international-studies-reading-room": 1,
+    "music-library-carrels": 4,
+    "shapiro-reading-room": 3
+  },
+  "_libcalSpaces": "LibCal items -> the listed space they belong to, by lid and grouping, and a title pattern where one grouping holds two spaces. Sets bookable_items.space_id; each linked item with a room number also becomes a space_locations row.",
+  "libcalSpaces": [
+    {
+      "lid": "2761",
+      "grouping": "Study Rooms",
+      "title": "Study Room|Connect to Display",
+      "space": "shapiro-bookable-study-rooms"
+    },
+    {
+      "lid": "2761",
+      "grouping": "Study Rooms",
+      "title": "Soundproof Booth",
+      "space": "soundproof-booths"
+    },
+    {
+      "lid": "3509",
+      "grouping": "3rd Floor Study Carrels",
+      "space": "hatcher-south-bookable-daily-carrels"
+    },
+    {
+      "lid": "23105",
+      "grouping": "2nd Floor Study Space",
+      "space": "hatcher-north-212a"
+    },
+    {
+      "lid": "14566",
+      "grouping": "Donor Carrels",
+      "space": "hatcher-south-bookable-weekly-carrels"
+    },
+    {
+      "lid": "11261",
+      "grouping": "Interview Rooms",
+      "space": "duderstadt-center-interview-rooms"
+    },
+    {
+      "lid": "11261",
+      "grouping": "Collaboration Computers - 2nd Southwest (Vizhub stations)",
+      "space": "art-architecture-and-engineering-library-floor-2-computing-spaces"
+    },
+    {
+      "lid": "11261",
+      "grouping": "Collaboration Computers - 3rd Southwest",
+      "space": "art-architecture-and-engineering-library-floor-3"
+    },
+    {
+      "lid": "11261",
+      "grouping": "Collaboration Computers - 3rd West Alcove",
+      "space": "art-architecture-and-engineering-library-floor-3"
+    }
+  ],
+  "_spaceRooms": "Rooms a space is in that no LibCal item gives, as printed on the floor plan. 3100 is the Shapiro Reading Room (scripts/mprint/rooms/known.json).",
+  "spaceRooms": {
+    "shapiro-reading-room": [
+      {
+        "floor": 3,
+        "room": "3100"
+      }
+    ]
   }
 }
