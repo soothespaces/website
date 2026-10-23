@@ -181,7 +181,8 @@ edit spaces in `/admin/spaces`:
   `spaces.lat`/`lng` to the middle of them, which puts the space on the map. Public
   read; admins insert and delete. `created_by` is stamped from the JWT.
 - The seed (section `space_locations`) adds rooms for spaces no admin has placed:
-  each linked LibCal item's room, plus `overrides.json` `spaceRooms`. Its rows have
+  each linked LibCal item's room, or `overrides.json` `spaceRooms` where a space has
+  them (for a LibCal room the plan doesn't draw, like Hatcher 212A). Its rows have
   `created_by = 'seed'` and are replaced on every run. A space with any other
   location keeps only those. `bookable_items.space_id` comes from
   `overrides.json` `libcalSpaces`, and `spaceFloors` fills `spaces.floor` for

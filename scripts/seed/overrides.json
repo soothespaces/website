@@ -180,8 +180,14 @@
       "space": "art-architecture-and-engineering-library-floor-3"
     }
   ],
-  "_spaceRooms": "Rooms a space is in that no LibCal item gives, as printed on the floor plan. 3100 is the Shapiro Reading Room (scripts/mprint/rooms/known.json).",
+  "_spaceRooms": "Rooms a space is in, as printed on the floor plan, where no LibCal item gives one or LibCal's isn't drawn. A space listed here takes only these rooms. 3100 is the Shapiro Reading Room (scripts/mprint/rooms/known.json). Hatcher 212A is a glass room inside the open area the plan prints as 212.",
   "spaceRooms": {
+    "hatcher-north-212a": [
+      {
+        "floor": 2,
+        "room": "212"
+      }
+    ],
     "shapiro-reading-room": [
       {
         "floor": 3,
