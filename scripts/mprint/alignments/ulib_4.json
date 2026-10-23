@@ -1,0 +1,46 @@
+{
+ "image": "ulib_4.png",
+ "sha256": "bd16d6894ac1a7182ec309ce476b05d6a4f5f568b6b79c83d8649b0ad5bc9bbd",
+ "width": 1110,
+ "height": 1813,
+ "wall": 200,
+ "close": 0,
+ "upHint": 0.0,
+ "footprint": "footprints/shapiro.json",
+ "spurDropped": true,
+ "transform": "similarity",
+ "metersPerPixel": 0.050303,
+ "cmPerPixel": 5.03,
+ "imageUpDegreesFromNorth": -0.595,
+ "fit": {
+  "medianMeters": 0.423,
+  "p90Meters": 3.453,
+  "fractionWithin1m": 0.817,
+  "fractionWithin0_5m": 0.73,
+  "iou": 0.956,
+  "planCoveredByFootprint": 0.976,
+  "footprintCoveredByPlan": 0.98,
+  "medianMetersEastHalf": 0.287,
+  "medianMetersWestHalf": 0.447
+ },
+ "usable": true,
+ "corners": [
+  [
+   -83.7375373,
+   42.2760291
+  ],
+  [
+   -83.7368594,
+   42.2760343
+  ],
+  [
+   -83.7368479,
+   42.2752151
+  ],
+  [
+   -83.7375258,
+   42.2752099
+  ]
+ ],
+ "aligned": "auto"
+}

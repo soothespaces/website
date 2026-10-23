@@ -1,6 +1,376 @@
 {
  "floors": [
   {
+   "building": "alfred-a-taubman-health-sciences-library",
+   "buildingName": "Taubman Health Sciences Library",
+   "floor": 2,
+   "sheet": "taubl_2",
+   "sha256": "ccbab28529851f4c4a01b279bb3bee9464a381579cf4930c9d62be13d03d503d",
+   "corners": [
+    [
+     -83.7350549,
+     42.2838734
+    ],
+    [
+     -83.7339821,
+     42.2838918
+    ],
+    [
+     -83.7339634,
+     42.2832966
+    ],
+    [
+     -83.7350362,
+     42.2832781
+    ]
+   ],
+   "width": 2000,
+   "height": 1500,
+   "footprint": "/floor-plans/footprints/taubman-library.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.267,
+   "labeled": false,
+   "geojson": "/floor-plans/alfred-a-taubman-health-sciences-library/2.geojson",
+   "rooms": 96
+  },
+  {
+   "building": "alfred-a-taubman-health-sciences-library",
+   "buildingName": "Taubman Health Sciences Library",
+   "floor": 3,
+   "sheet": "taubl_3",
+   "sha256": "f81a92fda3cd137922fd8fe5be3f5823752a5c3d6a1367591765a8a4e79920a0",
+   "corners": [
+    [
+     -83.7350486,
+     42.2838822
+    ],
+    [
+     -83.7339838,
+     42.2839045
+    ],
+    [
+     -83.7339596,
+     42.2832742
+    ],
+    [
+     -83.7350245,
+     42.2832519
+    ]
+   ],
+   "width": 2000,
+   "height": 1600,
+   "footprint": "/floor-plans/footprints/taubman-library.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.171,
+   "labeled": false,
+   "geojson": "/floor-plans/alfred-a-taubman-health-sciences-library/3.geojson",
+   "rooms": 123
+  },
+  {
+   "building": "alfred-a-taubman-health-sciences-library",
+   "buildingName": "Taubman Health Sciences Library",
+   "floor": 4,
+   "sheet": "taubl_4",
+   "sha256": "7b31bb698ddd8c31a5f0dafaf88376e7b49a208ae7b64d98776ff0b848d6871d",
+   "corners": [
+    [
+     -83.7350385,
+     42.2838635
+    ],
+    [
+     -83.7339689,
+     42.2838793
+    ],
+    [
+     -83.7339529,
+     42.2832857
+    ],
+    [
+     -83.7350225,
+     42.2832699
+    ]
+   ],
+   "width": 2000,
+   "height": 1500,
+   "footprint": "/floor-plans/footprints/taubman-library.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.201,
+   "labeled": false,
+   "geojson": "/floor-plans/alfred-a-taubman-health-sciences-library/4.geojson",
+   "rooms": 93
+  },
+  {
+   "building": "alfred-a-taubman-health-sciences-library",
+   "buildingName": "Taubman Health Sciences Library",
+   "floor": 5,
+   "sheet": "taubl_5",
+   "sha256": "de144327150200379e1ef3096c33c5171b12f654ca27641cd722042e9b3908a9",
+   "corners": [
+    [
+     -83.7350382,
+     42.2838763
+    ],
+    [
+     -83.7339853,
+     42.2838917
+    ],
+    [
+     -83.7339687,
+     42.2832685
+    ],
+    [
+     -83.7350215,
+     42.2832531
+    ]
+   ],
+   "width": 2000,
+   "height": 1600,
+   "footprint": "/floor-plans/footprints/taubman-library.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.186,
+   "labeled": false,
+   "geojson": "/floor-plans/alfred-a-taubman-health-sciences-library/5.geojson",
+   "rooms": 85
+  },
+  {
+   "building": "alfred-a-taubman-health-sciences-library",
+   "buildingName": "Taubman Health Sciences Library",
+   "floor": 6,
+   "sheet": "taubl_6",
+   "sha256": "3e22fbef715d851db959f423790e44c34d04006443ab177c8ef94d5223684279",
+   "corners": [
+    [
+     -83.7350384,
+     42.2838733
+    ],
+    [
+     -83.7339804,
+     42.2838903
+    ],
+    [
+     -83.7339621,
+     42.2832641
+    ],
+    [
+     -83.73502,
+     42.2832472
+    ]
+   ],
+   "width": 2000,
+   "height": 1600,
+   "footprint": "/floor-plans/footprints/taubman-library.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.084,
+   "labeled": false,
+   "geojson": "/floor-plans/alfred-a-taubman-health-sciences-library/6.geojson",
+   "rooms": 89
+  },
+  {
+   "building": "earl-v-moore-building",
+   "buildingName": "Moore Building",
+   "floor": 0,
+   "sheet": "sm_b",
+   "sha256": "537e8cc930317d058a7a7af8b8bc7133ae8fc54ef6164c03fe7b6e760a49a415",
+   "corners": [
+    [
+     -83.7246961,
+     42.2921361
+    ],
+    [
+     -83.7169014,
+     42.2915325
+    ],
+    [
+     -83.7174455,
+     42.2876878
+    ],
+    [
+     -83.7252402,
+     42.2882915
+    ]
+   ],
+   "width": 6299,
+   "height": 4200,
+   "footprint": "/floor-plans/footprints/moore.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 122.109,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "earl-v-moore-building",
+   "buildingName": "Moore Building",
+   "floor": 1,
+   "sheet": "sm_1",
+   "sha256": "09617c32018d06da26e3501d3f1f4cf9c2489703176511f487a5b1e52e4f972e",
+   "corners": [
+    [
+     -83.7236265,
+     42.2901103
+    ],
+    [
+     -83.7197507,
+     42.2919839
+    ],
+    [
+     -83.718062,
+     42.2900722
+    ],
+    [
+     -83.7219377,
+     42.2881986
+    ]
+   ],
+   "width": 6299,
+   "height": 4200,
+   "footprint": "/floor-plans/footprints/moore.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 47.475,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "earl-v-moore-building",
+   "buildingName": "Moore Building",
+   "floor": 2,
+   "sheet": "sm_2",
+   "sha256": "1675fba39d4056f660dba73e2cf4b657892ab1cfcc78a01a9f0433db6fa08c64",
+   "corners": [
+    [
+     -83.7219279,
+     42.2890605
+    ],
+    [
+     -83.7219352,
+     42.2915134
+    ],
+    [
+     -83.7197242,
+     42.291517
+    ],
+    [
+     -83.7197169,
+     42.2890641
+    ]
+   ],
+   "width": 6299,
+   "height": 4200,
+   "footprint": "/floor-plans/footprints/moore.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.487,
+   "labeled": false,
+   "geojson": "/floor-plans/earl-v-moore-building/2.geojson",
+   "rooms": 238
+  },
+  {
+   "building": "earl-v-moore-building",
+   "buildingName": "Moore Building",
+   "floor": 3,
+   "sheet": "sm_3",
+   "sha256": "07457f778ab3436876d34ee85565225556de2f3b4d7c6e963cad654f6633f9c8",
+   "corners": [
+    [
+     -83.7232446,
+     42.2913043
+    ],
+    [
+     -83.7190893,
+     42.290938
+    ],
+    [
+     -83.7194194,
+     42.2888884
+    ],
+    [
+     -83.7235748,
+     42.2892547
+    ]
+   ],
+   "width": 6299,
+   "height": 4200,
+   "footprint": "/floor-plans/footprints/moore.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 24.815,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "earl-v-moore-building",
+   "buildingName": "Moore Building",
+   "floor": 4,
+   "sheet": "sm_4",
+   "sha256": "85fa632f08d02ceb076706fd0d36ba74613868ff41095515574754625cbbfbe1",
+   "corners": [
+    [
+     -83.7229523,
+     42.2909416
+    ],
+    [
+     -83.7195599,
+     42.2910684
+    ],
+    [
+     -83.7194457,
+     42.2893951
+    ],
+    [
+     -83.722838,
+     42.2892684
+    ]
+   ],
+   "width": 6299,
+   "height": 4200,
+   "footprint": "/floor-plans/footprints/moore.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 13.177,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "east-quadrangle",
+   "buildingName": "East Quad",
+   "floor": 0,
+   "sheet": "eq_ll",
+   "sha256": "2453e69f1093391881301db864f1612e9c5497863be89fe1e22dc024483baa14",
+   "corners": [
+    [
+     -83.7345052,
+     42.2737539
+    ],
+    [
+     -83.7344671,
+     42.2721142
+    ],
+    [
+     -83.7361243,
+     42.2720931
+    ],
+    [
+     -83.7361625,
+     42.2737328
+    ]
+   ],
+   "width": 7171,
+   "height": 5363,
+   "footprint": "/floor-plans/footprints/east-quad.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.157,
+   "labeled": false,
+   "geojson": "/floor-plans/east-quadrangle/0.geojson",
+   "rooms": 426
+  },
+  {
    "building": "east-quadrangle",
    "buildingName": "East Quad",
    "floor": 1,
@@ -33,6 +403,679 @@
    "labeled": false,
    "geojson": "/floor-plans/east-quadrangle/1.geojson",
    "rooms": 285
+  },
+  {
+   "building": "east-quadrangle",
+   "buildingName": "East Quad",
+   "floor": 2,
+   "sheet": "eq_2",
+   "sha256": "2bea76947c35cb6e3400605942b5169d7acf5f0aaf13bba53dab0f09587b177b",
+   "corners": [
+    [
+     -83.7347547,
+     42.2737061
+    ],
+    [
+     -83.7344515,
+     42.2720457
+    ],
+    [
+     -83.7353868,
+     42.2719522
+    ],
+    [
+     -83.73569,
+     42.2736126
+    ]
+   ],
+   "width": 2500,
+   "height": 1042,
+   "footprint": "/floor-plans/footprints/east-quad.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 5.476,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "east-quadrangle",
+   "buildingName": "East Quad",
+   "floor": 3,
+   "sheet": "eq_3",
+   "sha256": "e79965f28d6aaa5108de113476653c52e55eb121e44a0ad598cfa53fecc285e6",
+   "corners": [
+    [
+     -83.7346972,
+     42.2736743
+    ],
+    [
+     -83.7346622,
+     42.2720945
+    ],
+    [
+     -83.7355853,
+     42.2720833
+    ],
+    [
+     -83.7356204,
+     42.2736631
+    ]
+   ],
+   "width": 2500,
+   "height": 1081,
+   "footprint": "/floor-plans/footprints/east-quad.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 2.507,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "east-quadrangle",
+   "buildingName": "East Quad",
+   "floor": 4,
+   "sheet": "eq_4",
+   "sha256": "aa3a37f9f174181c16db89e7dbf47cd37b45dfcf577bbdabd73881e26b2cd384",
+   "corners": [
+    [
+     -83.7347063,
+     42.2736821
+    ],
+    [
+     -83.7346418,
+     42.2720452
+    ],
+    [
+     -83.7355975,
+     42.2720246
+    ],
+    [
+     -83.735662,
+     42.2736615
+    ]
+   ],
+   "width": 2500,
+   "height": 1080,
+   "footprint": "/floor-plans/footprints/east-quad.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 4.269,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher - North",
+   "floor": 0,
+   "sheet": "glibn_b",
+   "sha256": "2f05f1ed8d951ac2b59756f3749d4762f33d4a06b8fc4f9fc72e111bce2fe170",
+   "corners": [
+    [
+     -83.7386406,
+     42.2766904
+    ],
+    [
+     -83.737757,
+     42.2767045
+    ],
+    [
+     -83.7377387,
+     42.2760768
+    ],
+    [
+     -83.7386223,
+     42.2760627
+    ]
+   ],
+   "width": 1503,
+   "height": 1443,
+   "footprint": "/floor-plans/footprints/hatcher-north.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 0.968,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher- South",
+   "floor": 0,
+   "sheet": "glibs_b",
+   "sha256": "3ac1a3adf90994ee9ee2c188202dec3887f4b70847053a042164164fdca8f804",
+   "corners": [
+    [
+     -83.7390585,
+     42.27622
+    ],
+    [
+     -83.7372427,
+     42.2760971
+    ],
+    [
+     -83.7373134,
+     42.2755257
+    ],
+    [
+     -83.7391291,
+     42.2756486
+    ]
+   ],
+   "width": 1827,
+   "height": 777,
+   "footprint": "/floor-plans/footprints/hatcher-south.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 1.786,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher - North",
+   "floor": 1,
+   "sheet": "glibn_1",
+   "sha256": "b6672c9f3458c2f0e9d4330a016255123d2133e6b956586eaee5a5ca9d14d847",
+   "corners": [
+    [
+     -83.7386752,
+     42.2766673
+    ],
+    [
+     -83.7377544,
+     42.2766991
+    ],
+    [
+     -83.7377156,
+     42.2760835
+    ],
+    [
+     -83.7386364,
+     42.2760518
+    ]
+   ],
+   "width": 1584,
+   "height": 1431,
+   "footprint": "/floor-plans/footprints/hatcher-north.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 1.121,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher- South",
+   "floor": 1,
+   "sheet": "glibs_1",
+   "sha256": "39ddb9b218302e696e904b32c4c4e46ca25934cd71926d988c17c10cc843db5e",
+   "corners": [
+    [
+     -83.7387949,
+     42.2761177
+    ],
+    [
+     -83.7376222,
+     42.2761302
+    ],
+    [
+     -83.7376158,
+     42.2757958
+    ],
+    [
+     -83.7387885,
+     42.2757834
+    ]
+   ],
+   "width": 1905,
+   "height": 734,
+   "footprint": "/floor-plans/footprints/hatcher-south.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.235,
+   "labeled": false,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/1.geojson",
+   "rooms": 13
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher - North",
+   "floor": 2,
+   "sheet": "glibn_2",
+   "sha256": "9112b344bb085317bb7b7497ba83822762e8aeaa608efd95fa2c2594e9262d1f",
+   "corners": [
+    [
+     -83.7386815,
+     42.2766045
+    ],
+    [
+     -83.7377314,
+     42.276615
+    ],
+    [
+     -83.7377201,
+     42.2760607
+    ],
+    [
+     -83.7386702,
+     42.2760501
+    ]
+   ],
+   "width": 1542,
+   "height": 1216,
+   "footprint": "/floor-plans/footprints/hatcher-north.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.179,
+   "labeled": true,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/2.geojson",
+   "rooms": 60
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher- South",
+   "floor": 2,
+   "sheet": "glibs_2",
+   "sha256": "9082ebd3289be361fdf26c970d20efec2461893e2a07aa8a234a0db461f3f6fd",
+   "corners": [
+    [
+     -83.738796,
+     42.2761356
+    ],
+    [
+     -83.7376092,
+     42.27615
+    ],
+    [
+     -83.7376013,
+     42.2757958
+    ],
+    [
+     -83.7387881,
+     42.2757813
+    ]
+   ],
+   "width": 1889,
+   "height": 762,
+   "footprint": "/floor-plans/footprints/hatcher-south.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.237,
+   "labeled": true,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/2.geojson",
+   "rooms": 37
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher - North",
+   "floor": 3,
+   "sheet": "glibn_3",
+   "sha256": "266bb5114f145dbd83c6012b2872fa93bef48f9f6d475275c18490244914c7fd",
+   "corners": [
+    [
+     -83.7386853,
+     42.2766108
+    ],
+    [
+     -83.7377318,
+     42.2766216
+    ],
+    [
+     -83.7377202,
+     42.2760583
+    ],
+    [
+     -83.7386737,
+     42.2760475
+    ]
+   ],
+   "width": 1548,
+   "height": 1236,
+   "footprint": "/floor-plans/footprints/hatcher-north.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.155,
+   "labeled": false,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/3.geojson",
+   "rooms": 51
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher- South",
+   "floor": 3,
+   "sheet": "glibs_3",
+   "sha256": "2d8c92b887db1e735a734720c58c6601197d7ce44c4aff7b0ff97cf923f0e0cb",
+   "corners": [
+    [
+     -83.7387947,
+     42.2761242
+    ],
+    [
+     -83.7376244,
+     42.2761374
+    ],
+    [
+     -83.7376174,
+     42.2757957
+    ],
+    [
+     -83.7387876,
+     42.2757826
+    ]
+   ],
+   "width": 1878,
+   "height": 741,
+   "footprint": "/floor-plans/footprints/hatcher-south.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.428,
+   "labeled": true,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/3.geojson",
+   "rooms": 115
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher - North",
+   "floor": 4,
+   "sheet": "glibn_4",
+   "sha256": "64c58ae9cfc4cd6fb12e713600a61e25d0c5ec3508ca7d18a1a93b7bf703f3af",
+   "corners": [
+    [
+     -83.7386958,
+     42.2765983
+    ],
+    [
+     -83.7377299,
+     42.27661
+    ],
+    [
+     -83.7377178,
+     42.2760594
+    ],
+    [
+     -83.7386837,
+     42.2760477
+    ]
+   ],
+   "width": 1568,
+   "height": 1208,
+   "footprint": "/floor-plans/footprints/hatcher-north.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.227,
+   "labeled": true,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/4.geojson",
+   "rooms": 47
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher- South",
+   "floor": 4,
+   "sheet": "glibs_4",
+   "sha256": "f5b6d292690f7f9879912e799f87b1cc6b087f347a7d4c458a84463279ed2b10",
+   "corners": [
+    [
+     -83.738781,
+     42.2761333
+    ],
+    [
+     -83.7376237,
+     42.2761469
+    ],
+    [
+     -83.7376161,
+     42.2757948
+    ],
+    [
+     -83.7387734,
+     42.2757811
+    ]
+   ],
+   "width": 1860,
+   "height": 765,
+   "footprint": "/floor-plans/footprints/hatcher-south.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.439,
+   "labeled": true,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/4.geojson",
+   "rooms": 115
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher - North",
+   "floor": 5,
+   "sheet": "glibn_5",
+   "sha256": "a364bda14a259d2293485a3c211a94f7d8c65eea1d3635960257ccda9511f675",
+   "corners": [
+    [
+     -83.7386685,
+     42.2766
+    ],
+    [
+     -83.7377299,
+     42.2766108
+    ],
+    [
+     -83.7377183,
+     42.2760588
+    ],
+    [
+     -83.7386569,
+     42.276048
+    ]
+   ],
+   "width": 1521,
+   "height": 1209,
+   "footprint": "/floor-plans/footprints/hatcher-north.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.231,
+   "labeled": false,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/5.geojson",
+   "rooms": 19
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher- South",
+   "floor": 5,
+   "sheet": "glibs_5",
+   "sha256": "f10c570649e6b2474d1a3a92093b20cec0d757ea4e81943dfbee86ea8236ae86",
+   "corners": [
+    [
+     -83.7387713,
+     42.2761399
+    ],
+    [
+     -83.7376297,
+     42.2761541
+    ],
+    [
+     -83.7376217,
+     42.2758006
+    ],
+    [
+     -83.7387633,
+     42.2757863
+    ]
+   ],
+   "width": 1842,
+   "height": 771,
+   "footprint": "/floor-plans/footprints/hatcher-south.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.397,
+   "labeled": false,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/5.geojson",
+   "rooms": 16
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher- South",
+   "floor": 6,
+   "sheet": "glibs_6",
+   "sha256": "390eecdea49dd70d51add982e87dfe4f7097fac022122cac1167473849511a76",
+   "corners": [
+    [
+     -83.7388025,
+     42.2761171
+    ],
+    [
+     -83.7375974,
+     42.2761303
+    ],
+    [
+     -83.7375908,
+     42.2758027
+    ],
+    [
+     -83.738796,
+     42.2757895
+    ]
+   ],
+   "width": 1938,
+   "height": 712,
+   "footprint": "/floor-plans/footprints/hatcher-south.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.419,
+   "labeled": true,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/6.geojson",
+   "rooms": 115
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher- South",
+   "floor": 7,
+   "sheet": "glibs_7",
+   "sha256": "108dc145ad50169c8ff54abbfb003d66213940c31c31c3572dac69a3f5790764",
+   "corners": [
+    [
+     -83.7387789,
+     42.2761196
+    ],
+    [
+     -83.737625,
+     42.2761328
+    ],
+    [
+     -83.7376179,
+     42.2757916
+    ],
+    [
+     -83.7387718,
+     42.2757784
+    ]
+   ],
+   "width": 1854,
+   "height": 741,
+   "footprint": "/floor-plans/footprints/hatcher-south.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.415,
+   "labeled": false,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/7.geojson",
+   "rooms": 24
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher- South",
+   "floor": 8,
+   "sheet": "glibs_8",
+   "sha256": "94be01cd9fc79453081d1c885fd5a3dd88f784f8e0283a3fd0933bc36d3e0af6",
+   "corners": [
+    [
+     -83.7387967,
+     42.2761352
+    ],
+    [
+     -83.737613,
+     42.2761485
+    ],
+    [
+     -83.7376058,
+     42.2757951
+    ],
+    [
+     -83.7387895,
+     42.2757818
+    ]
+   ],
+   "width": 1896,
+   "height": 765,
+   "footprint": "/floor-plans/footprints/hatcher-south.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.341,
+   "labeled": false,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/8.geojson",
+   "rooms": 55
+  },
+  {
+   "building": "harlan-h-hatcher-graduate-library",
+   "buildingName": "Hatcher- South",
+   "floor": 9,
+   "sheet": "glibs_9",
+   "sha256": "1557e180807cafdbec34461f42f06277380788f8f750a2ab9c1092e4b27566da",
+   "corners": [
+    [
+     -83.7387964,
+     42.2761179
+    ],
+    [
+     -83.7376101,
+     42.276131
+    ],
+    [
+     -83.7376033,
+     42.2757912
+    ],
+    [
+     -83.7387895,
+     42.2757781
+    ]
+   ],
+   "width": 1914,
+   "height": 741,
+   "footprint": "/floor-plans/footprints/hatcher-south.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.056,
+   "labeled": false,
+   "geojson": "/floor-plans/harlan-h-hatcher-graduate-library/9.geojson",
+   "rooms": 18
+  },
+  {
+   "building": "harold-t-and-vivian-b-shapiro-library",
+   "buildingName": "Shapiro Library",
+   "floor": 0,
+   "sheet": "ulib_b",
+   "sha256": "22fc95efefaf1296c8a6289c1b2b07bc98a7b98db23905db45093adb895a2f62",
+   "corners": [
+    [
+     -83.7375118,
+     42.2760445
+    ],
+    [
+     -83.7368678,
+     42.2760559
+    ],
+    [
+     -83.7368402,
+     42.2752038
+    ],
+    [
+     -83.7374842,
+     42.2751924
+    ]
+   ],
+   "width": 949,
+   "height": 1697,
+   "footprint": "/floor-plans/footprints/shapiro.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 1.789,
+   "labeled": true,
+   "geojson": null
   },
   {
    "building": "harold-t-and-vivian-b-shapiro-library",
@@ -137,6 +1180,107 @@
    "rooms": 72
   },
   {
+   "building": "harold-t-and-vivian-b-shapiro-library",
+   "buildingName": "Shapiro Library",
+   "floor": 4,
+   "sheet": "ulib_4",
+   "sha256": "bd16d6894ac1a7182ec309ce476b05d6a4f5f568b6b79c83d8649b0ad5bc9bbd",
+   "corners": [
+    [
+     -83.7375373,
+     42.2760291
+    ],
+    [
+     -83.7368594,
+     42.2760343
+    ],
+    [
+     -83.7368479,
+     42.2752151
+    ],
+    [
+     -83.7375258,
+     42.2752099
+    ]
+   ],
+   "width": 1110,
+   "height": 1813,
+   "footprint": "/floor-plans/footprints/shapiro.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.423,
+   "labeled": false,
+   "geojson": "/floor-plans/harold-t-and-vivian-b-shapiro-library/4.geojson",
+   "rooms": 48
+  },
+  {
+   "building": "harold-t-and-vivian-b-shapiro-library",
+   "buildingName": "Shapiro Library",
+   "floor": 5,
+   "sheet": "ulib_5",
+   "sha256": "f4238d22e63849bc32c3dabe947c16855bea681c130ebe3fef02a77105f82abd",
+   "corners": [
+    [
+     -83.7375647,
+     42.2760578
+    ],
+    [
+     -83.7368372,
+     42.2760683
+    ],
+    [
+     -83.7368134,
+     42.2751676
+    ],
+    [
+     -83.737541,
+     42.2751571
+    ]
+   ],
+   "width": 1187,
+   "height": 1986,
+   "footprint": "/floor-plans/footprints/shapiro.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.351,
+   "labeled": false,
+   "geojson": "/floor-plans/harold-t-and-vivian-b-shapiro-library/5.geojson",
+   "rooms": 62
+  },
+  {
+   "building": "james-and-anne-duderstadt-center",
+   "buildingName": "Duderstadt Center",
+   "floor": 0,
+   "sheet": "dc_b",
+   "sha256": "1fa92936446fea118cb2575c8a43f1bb9d08c9d32965702ab1a63df271a779cd",
+   "corners": [
+    [
+     -83.7173445,
+     42.2917232
+    ],
+    [
+     -83.7148585,
+     42.2917186
+    ],
+    [
+     -83.7148624,
+     42.2905876
+    ],
+    [
+     -83.7173484,
+     42.2905922
+    ]
+   ],
+   "width": 3600,
+   "height": 2214,
+   "footprint": "/floor-plans/footprints/duderstadt.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 2.294,
+   "labeled": false,
+   "geojson": null
+  },
+  {
    "building": "james-and-anne-duderstadt-center",
    "buildingName": "Duderstadt Center",
    "floor": 1,
@@ -201,6 +1345,409 @@
    "fitMedianMeters": 1.985,
    "labeled": false,
    "geojson": null
+  },
+  {
+   "building": "james-and-anne-duderstadt-center",
+   "buildingName": "Duderstadt Center",
+   "floor": 3,
+   "sheet": "dc_3",
+   "sha256": "6c5a8fc687c8166fa920d0d6256ce1e9910686d96516fa4ceb29a4eb5fbc7929",
+   "corners": [
+    [
+     -83.7171042,
+     42.2916249
+    ],
+    [
+     -83.7148041,
+     42.2916325
+    ],
+    [
+     -83.7147981,
+     42.2906465
+    ],
+    [
+     -83.7170982,
+     42.2906389
+    ]
+   ],
+   "width": 3738,
+   "height": 2166,
+   "footprint": "/floor-plans/footprints/duderstadt.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.114,
+   "labeled": true,
+   "geojson": "/floor-plans/james-and-anne-duderstadt-center/3.geojson",
+   "rooms": 34
+  },
+  {
+   "building": "mason-hall",
+   "buildingName": "Mason Hall",
+   "floor": -1,
+   "sheet": "mh_b",
+   "sha256": "f150d765c3ec24b1c4183573ebea259b450e578a8a927acd61f3f40130a217dc",
+   "corners": [
+    [
+     -83.7400065,
+     42.2771842
+    ],
+    [
+     -83.739285,
+     42.2773573
+    ],
+    [
+     -83.7390489,
+     42.2768186
+    ],
+    [
+     -83.7397705,
+     42.2766455
+    ]
+   ],
+   "width": 1338,
+   "height": 1350,
+   "footprint": "/floor-plans/footprints/mason-hall.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 6.423,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "mason-hall",
+   "buildingName": "Mason Hall",
+   "floor": 0,
+   "sheet": "mh_g",
+   "sha256": "79fbe5985e54d2243438c984e74dcbf294414e0c81794bcc228a117e84408962",
+   "corners": [
+    [
+     -83.7399151,
+     42.277397
+    ],
+    [
+     -83.7390954,
+     42.2774108
+    ],
+    [
+     -83.7390762,
+     42.2767851
+    ],
+    [
+     -83.7398959,
+     42.2767714
+    ]
+   ],
+   "width": 1329,
+   "height": 1371,
+   "footprint": "/floor-plans/footprints/mason-hall.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.641,
+   "labeled": true,
+   "geojson": "/floor-plans/mason-hall/0.geojson",
+   "rooms": 64
+  },
+  {
+   "building": "mason-hall",
+   "buildingName": "Mason Hall",
+   "floor": 1,
+   "sheet": "mh_1",
+   "sha256": "46bdb87473fd330ffd4027d0a2bb86009d9646e9fe38062774a674185c0d157a",
+   "corners": [
+    [
+     -83.7399294,
+     42.2773975
+    ],
+    [
+     -83.7391066,
+     42.277409
+    ],
+    [
+     -83.7390908,
+     42.2767929
+    ],
+    [
+     -83.7399136,
+     42.2767814
+    ]
+   ],
+   "width": 1336,
+   "height": 1352,
+   "footprint": "/floor-plans/footprints/mason-hall.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.291,
+   "labeled": false,
+   "geojson": "/floor-plans/mason-hall/1.geojson",
+   "rooms": 56
+  },
+  {
+   "building": "mason-hall",
+   "buildingName": "Mason Hall",
+   "floor": 2,
+   "sheet": "mh_2",
+   "sha256": "581a3ff35a8d1fb9584f637e8f52a936a93604db1c609ab426ee15d7b53ec7ea",
+   "corners": [
+    [
+     -83.7398873,
+     42.2773359
+    ],
+    [
+     -83.7391768,
+     42.2772964
+    ],
+    [
+     -83.7392302,
+     42.2767707
+    ],
+    [
+     -83.7399407,
+     42.2768102
+    ]
+   ],
+   "width": 1347,
+   "height": 1347,
+   "footprint": "/floor-plans/footprints/mason-hall.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 7.423,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "mason-hall",
+   "buildingName": "Mason Hall",
+   "floor": 3,
+   "sheet": "mh_3",
+   "sha256": "0e80fba6f5faaa20271525de3b1692a78a533078ada3884fbc12b3de08cb0209",
+   "corners": [
+    [
+     -83.7398861,
+     42.2773433
+    ],
+    [
+     -83.7392005,
+     42.2773089
+    ],
+    [
+     -83.7392475,
+     42.2767948
+    ],
+    [
+     -83.7399332,
+     42.2768291
+    ]
+   ],
+   "width": 1338,
+   "height": 1356,
+   "footprint": "/floor-plans/footprints/mason-hall.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 7.442,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "mason-hall",
+   "buildingName": "Mason Hall",
+   "floor": 4,
+   "sheet": "mh_4",
+   "sha256": "5676b7e0f7257b7ea451a7206707007730d345bbf1b861d8af21845b93bf2e2e",
+   "corners": [
+    [
+     -83.7399914,
+     42.2772964
+    ],
+    [
+     -83.7392488,
+     42.2773412
+    ],
+    [
+     -83.7391877,
+     42.2767869
+    ],
+    [
+     -83.7399303,
+     42.276742
+    ]
+   ],
+   "width": 1347,
+   "height": 1359,
+   "footprint": "/floor-plans/footprints/mason-hall.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 8.048,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "mason-hall",
+   "buildingName": "Mason Hall",
+   "floor": 5,
+   "sheet": "mh_5",
+   "sha256": "b4c9e475464fbff29373ba67c36c66437e03e9df95366b3477310863b61ea6ec",
+   "corners": [
+    [
+     -83.7398739,
+     42.2773244
+    ],
+    [
+     -83.7392578,
+     42.2773013
+    ],
+    [
+     -83.7392923,
+     42.2767971
+    ],
+    [
+     -83.7399084,
+     42.2768202
+    ]
+   ],
+   "width": 1134,
+   "height": 1254,
+   "footprint": "/floor-plans/footprints/mason-hall.json",
+   "aligned": "auto",
+   "usable": false,
+   "fitMedianMeters": 13.453,
+   "labeled": false,
+   "geojson": null
+  },
+  {
+   "building": "tappan-hall",
+   "buildingName": "Tappan Hall",
+   "floor": 0,
+   "sheet": "tap_b",
+   "sha256": "7a5ffe5b1a5e8c32e1e14602f266f0d68ab616bf4c6eed9dc96f721e9799feb6",
+   "corners": [
+    [
+     -83.7395836,
+     42.2757496
+    ],
+    [
+     -83.7389802,
+     42.2757524
+    ],
+    [
+     -83.7389756,
+     42.2752007
+    ],
+    [
+     -83.739579,
+     42.2751979
+    ]
+   ],
+   "width": 984,
+   "height": 1216,
+   "footprint": "/floor-plans/footprints/tappan.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.08,
+   "labeled": false,
+   "geojson": "/floor-plans/tappan-hall/0.geojson",
+   "rooms": 33
+  },
+  {
+   "building": "tappan-hall",
+   "buildingName": "Tappan Hall",
+   "floor": 1,
+   "sheet": "tap_1",
+   "sha256": "d05a6d042f9790006f4119c9cd4d9dc721c71445fa9cd9f5d5c8b69cb4939ec0",
+   "corners": [
+    [
+     -83.7396077,
+     42.2757593
+    ],
+    [
+     -83.7389491,
+     42.2757605
+    ],
+    [
+     -83.7389472,
+     42.2751883
+    ],
+    [
+     -83.7396058,
+     42.2751871
+    ]
+   ],
+   "width": 1068,
+   "height": 1254,
+   "footprint": "/floor-plans/footprints/tappan.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.173,
+   "labeled": false,
+   "geojson": "/floor-plans/tappan-hall/1.geojson",
+   "rooms": 40
+  },
+  {
+   "building": "tappan-hall",
+   "buildingName": "Tappan Hall",
+   "floor": 2,
+   "sheet": "tap_2",
+   "sha256": "09863f0c95c917afffbd43a8ecf4c25aebe0bb5bb1cc91677d546cfb22ded358",
+   "corners": [
+    [
+     -83.739604,
+     42.2757637
+    ],
+    [
+     -83.7389604,
+     42.275766
+    ],
+    [
+     -83.7389567,
+     42.2751832
+    ],
+    [
+     -83.7396003,
+     42.275181
+    ]
+   ],
+   "width": 1032,
+   "height": 1263,
+   "footprint": "/floor-plans/footprints/tappan.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.19,
+   "labeled": false,
+   "geojson": "/floor-plans/tappan-hall/2.geojson",
+   "rooms": 15
+  },
+  {
+   "building": "tappan-hall",
+   "buildingName": "Tappan Hall",
+   "floor": 3,
+   "sheet": "tap_3",
+   "sha256": "4e468aa46eff8e15af0dd1e3f4ee23cced5c34b4656181e87cd2ba4853f2c3ee",
+   "corners": [
+    [
+     -83.7395851,
+     42.2757583
+    ],
+    [
+     -83.7389752,
+     42.2757614
+    ],
+    [
+     -83.7389699,
+     42.2751835
+    ],
+    [
+     -83.7395798,
+     42.2751804
+    ]
+   ],
+   "width": 984,
+   "height": 1260,
+   "footprint": "/floor-plans/footprints/tappan.json",
+   "aligned": "auto",
+   "usable": true,
+   "fitMedianMeters": 0.137,
+   "labeled": false,
+   "geojson": "/floor-plans/tappan-hall/3.geojson",
+   "rooms": 6
   }
  ]
 }

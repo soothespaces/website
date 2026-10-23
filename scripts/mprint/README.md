@@ -42,8 +42,12 @@ rough bearing for the sheet's top when it isn't north (East Quad: 90).
 `pipeline.py` runs every sheet in `sheets.json` end to end: download, fit,
 and, when the fit is usable, vectorize into
 `public/floor-plans/<building slug>/<floor>.geojson`.
-`public/floor-plans/index.json` lists every floor with its corners, whether
-the fit is usable, and its GeoJSON path. Each GeoJSON has `layer: "room"`
+`public/floor-plans/index.json` lists every sheet with its building, floor,
+corners, whether the fit is usable, and its GeoJSON path. A floor can be
+drawn on more than one sheet: MPrint draws Hatcher's north (`glibn_*`) and
+south (`glibs_*`) wings separately, each numbering its floors from 1. Each
+sheet keeps its own fit and index record, and the floor's one GeoJSON holds
+every sheet of that floor that fitted; the map shows one plan per floor. Each GeoJSON has `layer: "room"`
 polygons (with `roomNumber` when the floor has a labels file) and one
 `layer: "structure"` MultiPolygon of the drawing's ink. In MapLibre, add it as
 a GeoJSON source and draw rooms as a fill and structure as a dark fill above
@@ -67,8 +71,14 @@ own numbers stay in `alignments/<sheet>.json` under `fit`.
 image sha256). A fit with `usable: false` did not land on the footprint; don't
 drape that sheet from those corners. `footprints/shapiro.json` is FO's Shapiro
 polygon, including the bridge to Hatcher; the fit drops that spur because it
-is not drawn on the sheet. `footprints/duderstadt.json` and `footprints/east-quad.json`
-are the same layer for those buildings. GeoJSON and preview PNGs are generated, same as the masks.
+is not drawn on the sheet. The other files in `footprints/` (Duderstadt, East
+Quad, Hatcher's two wings, Mason Hall, Moore, Tappan, Taubman Library) are the
+same layer for those buildings, copied from `public/campus-map/9-buildings.geojson`
+by `loc_ObjectNum`.
+
+Basements are floor 0, as in the seed data's printers (`dc_b`, `ulib_b`,
+Hatcher's `_b` sheets, East Quad's lower level `eq_ll`). Mason Hall has both a
+ground floor and a basement, so `mh_g` is 0 and `mh_b` is -1. GeoJSON and preview PNGs are generated, same as the masks.
 
 ### Room numbers from printed labels
 

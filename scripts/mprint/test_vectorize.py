@@ -20,7 +20,7 @@ from geom import (
     signed_area,
     simplify_ring,
 )
-from read_rooms import grow
+from read_rooms import grow, libcal_room
 from vectorize import vectorize
 
 
@@ -86,6 +86,14 @@ class RoomNameTests(unittest.TestCase):
         self.assertEqual(report["missing"], ["2374"])
         self.assertEqual(report["roomsNotInLibcal"], ["2376"])
         self.assertEqual({item["kind"] for item in report["ignored"]}, {"extension", "stair", "corridor", "open"})
+
+    def test_libcal_titles_name_rooms_on_their_floor(self):
+        self.assertEqual(libcal_room("3rd Floor - 3045 - Clark Commons", 3), ("3045", "Clark Commons"))
+        self.assertEqual(libcal_room("Carrel 3-01 (3001) (Capacity 1)", 3), ("3001", "Carrel 3-01 (3001)"))
+        self.assertEqual(libcal_room("Hatcher 212A (Capacity 5)", 2), ("212A", "Hatcher 212A"))
+        self.assertIsNone(libcal_room("Hatcher 212A (Capacity 5)", 3))
+        self.assertIsNone(libcal_room("6S - 49 (Capacity 1)", 6))
+        self.assertIsNone(libcal_room("Anatomage Table (Capacity 8)", 4))
 
     def test_duderstadt_footprint_uses_the_large_ring(self):
         path = Path(__file__).parent / "footprints" / "duderstadt.json"

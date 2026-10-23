@@ -5,19 +5,25 @@ import { AlignmentEditor } from "@/features/floor-alignment";
 import { findFloor } from "@/features/floor-alignment/floors";
 import { getSavedAlignments, isOnMap, savedFor } from "@/features/floor-alignment/saved";
 
+function sheetParam(value: string | string[] | undefined) {
+  return typeof value === "string" ? value : undefined;
+}
+
 export async function generateMetadata({
   params,
+  searchParams,
 }: PageProps<"/admin/floors/[building]/[floor]">): Promise<Metadata> {
   const { building, floor } = await params;
-  const record = findFloor(building, floor);
+  const record = findFloor(building, floor, sheetParam((await searchParams).sheet));
   return { title: record ? `${record.buildingName} floor ${floor}` : "Floor plan" };
 }
 
 export default async function FloorAlignmentPage({
   params,
+  searchParams,
 }: PageProps<"/admin/floors/[building]/[floor]">) {
   const { building, floor } = await params;
-  const record = findFloor(building, floor);
+  const record = findFloor(building, floor, sheetParam((await searchParams).sheet));
   if (!record) notFound();
   const saved = savedFor(record, await getSavedAlignments());
 
@@ -28,7 +34,8 @@ export default async function FloorAlignmentPage({
           ← Floor plans
         </Link>
         <h1 className="text-lg font-semibold">
-          {record.buildingName}, floor {floor}
+          {record.buildingName}, floor {floor}{" "}
+          <span className="font-mono text-sm font-normal text-muted-foreground">{record.sheet}</span>
         </h1>
       </div>
       <AlignmentEditor

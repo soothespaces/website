@@ -1,5 +1,6 @@
 import "server-only";
 import { floors } from "@/features/floor-alignment/floors";
+import { plansByBuilding } from "@/features/map/floor-plan-index";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/supabase";
 import type { AdminPhoto, PhotoKind } from "./photo";
@@ -18,13 +19,12 @@ export type TaggableFloor = {
 
 function taggableFloors() {
   const byBuilding = new Map<string, TaggableFloor[]>();
-  for (const f of floors) {
-    if (!f.usable || !f.geojson) continue;
-    const list = byBuilding.get(f.building) ?? [];
-    list.push({ floor: f.floor, geojson: f.geojson, corners: f.corners, labeled: f.labeled });
-    byBuilding.set(f.building, list);
+  for (const [building, plans] of plansByBuilding(floors)) {
+    byBuilding.set(
+      building,
+      plans.map((f) => ({ floor: f.floor, geojson: f.geojson, corners: f.corners, labeled: f.labeled })),
+    );
   }
-  for (const list of byBuilding.values()) list.sort((a, b) => a.floor - b.floor);
   return byBuilding;
 }
 

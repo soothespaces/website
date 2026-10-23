@@ -1,0 +1,202 @@
+{
+ "image": "dc_3.png",
+ "source": "https://mprint.umich.edu/assets/floorplans/dc/dc_3.png",
+ "width": 3738,
+ "height": 2166,
+ "dilation": 5,
+ "wall": 200,
+ "readBy": "Claude, from read_rooms.py candidates contact sheets, 2026-10-22",
+ "skipped": "Columns, stairs, door glyphs and UP/DN. The second 'ROOF BELOW' (printed twice in the same spot) and a second partial '3S31' read inside the stair. A label behind a fixture near 3418M reads like '3V37' but is too obscured to read with confidence, so it is left out. The floor's open area is one region that holds 3200, 3300A, 3300B, 3320, 3330, 3370, 3400, 3404 and the corridor labels 3C20-3C42; those zones have no walls between them, so only the corridor label 3C33 (the one nearest the region's middle) is kept: the open floor comes out as corridor rather than as one of the room numbers or, unlabeled, merged into a stair (printers here are placed by their MPrint pixel position, not by room).",
+ "readings": [
+  {
+   "text": "FIRST FLOOR - BELOW",
+   "x": 2043.0,
+   "y": 482.5
+  },
+  {
+   "text": "3412",
+   "x": 2866.5,
+   "y": 609.5
+  },
+  {
+   "text": "3408",
+   "x": 2813.0,
+   "y": 665.5
+  },
+  {
+   "text": "3414W",
+   "x": 2903.5,
+   "y": 644.0
+  },
+  {
+   "text": "3416J",
+   "x": 2975.5,
+   "y": 649.5
+  },
+  {
+   "text": "3418M",
+   "x": 2959.0,
+   "y": 717.5
+  },
+  {
+   "text": "3E37",
+   "x": 2708.5,
+   "y": 759.5
+  },
+  {
+   "text": "SECOND FLOOR BELOW",
+   "x": 2267.0,
+   "y": 761.0
+  },
+  {
+   "text": "3S36",
+   "x": 2982.5,
+   "y": 813.0
+  },
+  {
+   "text": "3S34",
+   "x": 2462.5,
+   "y": 888.5
+  },
+  {
+   "text": "3S33",
+   "x": 2335.5,
+   "y": 944.5
+  },
+  {
+   "text": "3E36",
+   "x": 2886.0,
+   "y": 920.0
+  },
+  {
+   "text": "ROOF BELOW",
+   "x": 741.0,
+   "y": 1036.5
+  },
+  {
+   "text": "ROOF",
+   "x": 1359.0,
+   "y": 1036.5
+  },
+  {
+   "text": "3S31",
+   "x": 2236.0,
+   "y": 1042.0
+  },
+  {
+   "text": "3S32",
+   "x": 2185.5,
+   "y": 1166.0
+  },
+  {
+   "text": "3C33",
+   "x": 2495.5,
+   "y": 1205.0
+  },
+  {
+   "text": "3358A",
+   "x": 2875.0,
+   "y": 1205.5
+  },
+  {
+   "text": "3358C",
+   "x": 2760.5,
+   "y": 1311.5
+  },
+  {
+   "text": "3358B",
+   "x": 2987.5,
+   "y": 1311.5
+  },
+  {
+   "text": "3E31",
+   "x": 2054.5,
+   "y": 1411.5
+  },
+  {
+   "text": "3358D",
+   "x": 2877.0,
+   "y": 1417.5
+  },
+  {
+   "text": "3336C",
+   "x": 2605.0,
+   "y": 1475.5
+  },
+  {
+   "text": "3304",
+   "x": 1962.0,
+   "y": 1519.0
+  },
+  {
+   "text": "3229",
+   "x": 1904.0,
+   "y": 1574.5
+  },
+  {
+   "text": "3V21",
+   "x": 2047.0,
+   "y": 1597.0
+  },
+  {
+   "text": "3336A",
+   "x": 2493.0,
+   "y": 1582.0
+  },
+  {
+   "text": "3336D",
+   "x": 2717.0,
+   "y": 1574.5
+  },
+  {
+   "text": "3350A",
+   "x": 3095.5,
+   "y": 1587.0
+  },
+  {
+   "text": "3233W",
+   "x": 1938.0,
+   "y": 1611.0
+  },
+  {
+   "text": "3350",
+   "x": 2988.5,
+   "y": 1622.5
+  },
+  {
+   "text": "3237M",
+   "x": 2007.0,
+   "y": 1661.0
+  },
+  {
+   "text": "3235J",
+   "x": 1956.5,
+   "y": 1680.5
+  },
+  {
+   "text": "3S21",
+   "x": 2118.5,
+   "y": 1683.5
+  },
+  {
+   "text": "3336B",
+   "x": 2608.5,
+   "y": 1693.5
+  },
+  {
+   "text": "3350B",
+   "x": 3116.0,
+   "y": 1708.5
+  },
+  {
+   "text": "3360",
+   "x": 2860.0,
+   "y": 1754.0
+  },
+  {
+   "text": "3360A",
+   "x": 3003.5,
+   "y": 1818.5
+  }
+ ]
+}
