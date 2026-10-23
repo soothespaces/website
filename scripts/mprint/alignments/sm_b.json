@@ -1,0 +1,46 @@
+{
+ "image": "sm_b.png",
+ "sha256": "537e8cc930317d058a7a7af8b8bc7133ae8fc54ef6164c03fe7b6e760a49a415",
+ "width": 6299,
+ "height": 4200,
+ "wall": 200,
+ "close": 0,
+ "upHint": 0.0,
+ "footprint": "footprints/moore.json",
+ "spurDropped": true,
+ "transform": "similarity",
+ "metersPerPixel": 0.102459,
+ "cmPerPixel": 10.246,
+ "imageUpDegreesFromNorth": 5.976,
+ "fit": {
+  "medianMeters": 122.109,
+  "p90Meters": 234.471,
+  "fractionWithin1m": 0.014,
+  "fractionWithin0_5m": 0.005,
+  "iou": 0.089,
+  "planCoveredByFootprint": 0.1,
+  "footprintCoveredByPlan": 0.448,
+  "medianMetersEastHalf": 135.972,
+  "medianMetersWestHalf": 108.709
+ },
+ "usable": false,
+ "corners": [
+  [
+   -83.7246961,
+   42.2921361
+  ],
+  [
+   -83.7169014,
+   42.2915325
+  ],
+  [
+   -83.7174455,
+   42.2876878
+  ],
+  [
+   -83.7252402,
+   42.2882915
+  ]
+ ],
+ "aligned": "auto"
+}

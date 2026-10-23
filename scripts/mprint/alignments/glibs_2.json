@@ -1,0 +1,46 @@
+{
+ "image": "glibs_2.png",
+ "sha256": "9082ebd3289be361fdf26c970d20efec2461893e2a07aa8a234a0db461f3f6fd",
+ "width": 1889,
+ "height": 762,
+ "wall": 200,
+ "close": 0,
+ "upHint": 0.0,
+ "footprint": "footprints/hatcher-south.json",
+ "spurDropped": false,
+ "transform": "similarity",
+ "metersPerPixel": 0.051755,
+ "cmPerPixel": 5.175,
+ "imageUpDegreesFromNorth": -0.944,
+ "fit": {
+  "medianMeters": 0.237,
+  "p90Meters": 0.838,
+  "fractionWithin1m": 0.927,
+  "fractionWithin0_5m": 0.795,
+  "iou": 0.944,
+  "planCoveredByFootprint": 0.983,
+  "footprintCoveredByPlan": 0.959,
+  "medianMetersEastHalf": 0.257,
+  "medianMetersWestHalf": 0.166
+ },
+ "usable": true,
+ "corners": [
+  [
+   -83.738796,
+   42.2761356
+  ],
+  [
+   -83.7376092,
+   42.27615
+  ],
+  [
+   -83.7376013,
+   42.2757958
+  ],
+  [
+   -83.7387881,
+   42.2757813
+  ]
+ ],
+ "aligned": "auto"
+}

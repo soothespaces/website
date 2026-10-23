@@ -1,0 +1,46 @@
+{
+ "image": "mh_2.png",
+ "sha256": "581a3ff35a8d1fb9584f637e8f52a936a93604db1c609ab426ee15d7b53ec7ea",
+ "width": 1347,
+ "height": 1347,
+ "wall": 200,
+ "close": 6,
+ "upHint": 0.0,
+ "footprint": "footprints/mason-hall.json",
+ "spurDropped": false,
+ "transform": "similarity",
+ "metersPerPixel": 0.043564,
+ "cmPerPixel": 4.356,
+ "imageUpDegreesFromNorth": 4.298,
+ "fit": {
+  "medianMeters": 7.423,
+  "p90Meters": 19.95,
+  "fractionWithin1m": 0.104,
+  "fractionWithin0_5m": 0.041,
+  "iou": 0.409,
+  "planCoveredByFootprint": 0.978,
+  "footprintCoveredByPlan": 0.413,
+  "medianMetersEastHalf": 7.423,
+  "medianMetersWestHalf": 7.415
+ },
+ "usable": false,
+ "corners": [
+  [
+   -83.7398873,
+   42.2773359
+  ],
+  [
+   -83.7391768,
+   42.2772964
+  ],
+  [
+   -83.7392302,
+   42.2767707
+  ],
+  [
+   -83.7399407,
+   42.2768102
+  ]
+ ],
+ "aligned": "auto"
+}

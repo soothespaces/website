@@ -1,0 +1,46 @@
+{
+ "image": "taubl_3.png",
+ "sha256": "f81a92fda3cd137922fd8fe5be3f5823752a5c3d6a1367591765a8a4e79920a0",
+ "width": 2000,
+ "height": 1600,
+ "wall": 200,
+ "close": 20,
+ "upHint": 0.0,
+ "footprint": "footprints/taubman-library.json",
+ "spurDropped": false,
+ "transform": "similarity",
+ "metersPerPixel": 0.043867,
+ "cmPerPixel": 4.387,
+ "imageUpDegreesFromNorth": -1.621,
+ "fit": {
+  "medianMeters": 0.171,
+  "p90Meters": 0.48,
+  "fractionWithin1m": 0.94,
+  "fractionWithin0_5m": 0.902,
+  "iou": 0.982,
+  "planCoveredByFootprint": 0.993,
+  "footprintCoveredByPlan": 0.989,
+  "medianMetersEastHalf": 0.166,
+  "medianMetersWestHalf": 0.177
+ },
+ "usable": true,
+ "corners": [
+  [
+   -83.7350486,
+   42.2838822
+  ],
+  [
+   -83.7339838,
+   42.2839045
+  ],
+  [
+   -83.7339596,
+   42.2832742
+  ],
+  [
+   -83.7350245,
+   42.2832519
+  ]
+ ],
+ "aligned": "auto"
+}

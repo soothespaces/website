@@ -1,0 +1,46 @@
+{
+ "image": "tap_2.png",
+ "sha256": "09863f0c95c917afffbd43a8ecf4c25aebe0bb5bb1cc91677d546cfb22ded358",
+ "width": 1032,
+ "height": 1263,
+ "wall": 200,
+ "close": 0,
+ "upHint": 0.0,
+ "footprint": "footprints/tappan.json",
+ "spurDropped": false,
+ "transform": "similarity",
+ "metersPerPixel": 0.051364,
+ "cmPerPixel": 5.136,
+ "imageUpDegreesFromNorth": -0.269,
+ "fit": {
+  "medianMeters": 0.19,
+  "p90Meters": 0.438,
+  "fractionWithin1m": 0.987,
+  "fractionWithin0_5m": 0.908,
+  "iou": 0.963,
+  "planCoveredByFootprint": 0.98,
+  "footprintCoveredByPlan": 0.982,
+  "medianMetersEastHalf": 0.229,
+  "medianMetersWestHalf": 0.099
+ },
+ "usable": true,
+ "corners": [
+  [
+   -83.739604,
+   42.2757637
+  ],
+  [
+   -83.7389604,
+   42.275766
+  ],
+  [
+   -83.7389567,
+   42.2751832
+  ],
+  [
+   -83.7396003,
+   42.275181
+  ]
+ ],
+ "aligned": "auto"
+}

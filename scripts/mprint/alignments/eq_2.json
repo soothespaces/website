@@ -1,0 +1,46 @@
+{
+ "image": "eq_2.png",
+ "sha256": "2bea76947c35cb6e3400605942b5169d7acf5f0aaf13bba53dab0f09587b177b",
+ "width": 2500,
+ "height": 1042,
+ "wall": 200,
+ "close": 0,
+ "upHint": 90,
+ "footprint": "footprints/east-quad.json",
+ "spurDropped": false,
+ "transform": "similarity",
+ "metersPerPixel": 0.074609,
+ "cmPerPixel": 7.461,
+ "imageUpDegreesFromNorth": 82.306,
+ "fit": {
+  "medianMeters": 5.476,
+  "p90Meters": 20.943,
+  "fractionWithin1m": 0.136,
+  "fractionWithin0_5m": 0.076,
+  "iou": 0.585,
+  "planCoveredByFootprint": 0.682,
+  "footprintCoveredByPlan": 0.805,
+  "medianMetersEastHalf": 5.865,
+  "medianMetersWestHalf": 5.047
+ },
+ "usable": false,
+ "corners": [
+  [
+   -83.7347547,
+   42.2737061
+  ],
+  [
+   -83.7344515,
+   42.2720457
+  ],
+  [
+   -83.7353868,
+   42.2719522
+  ],
+  [
+   -83.73569,
+   42.2736126
+  ]
+ ],
+ "aligned": "auto"
+}

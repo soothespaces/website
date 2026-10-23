@@ -1,0 +1,46 @@
+{
+ "image": "glibn_4.png",
+ "sha256": "64c58ae9cfc4cd6fb12e713600a61e25d0c5ec3508ca7d18a1a93b7bf703f3af",
+ "width": 1568,
+ "height": 1208,
+ "wall": 200,
+ "close": 6,
+ "upHint": 0.0,
+ "footprint": "footprints/hatcher-north.json",
+ "spurDropped": false,
+ "transform": "similarity",
+ "metersPerPixel": 0.050745,
+ "cmPerPixel": 5.075,
+ "imageUpDegreesFromNorth": -0.934,
+ "fit": {
+  "medianMeters": 0.227,
+  "p90Meters": 1.275,
+  "fractionWithin1m": 0.787,
+  "fractionWithin0_5m": 0.652,
+  "iou": 0.962,
+  "planCoveredByFootprint": 0.994,
+  "footprintCoveredByPlan": 0.967,
+  "medianMetersEastHalf": 0.215,
+  "medianMetersWestHalf": 0.243
+ },
+ "usable": true,
+ "corners": [
+  [
+   -83.7386958,
+   42.2765983
+  ],
+  [
+   -83.7377299,
+   42.27661
+  ],
+  [
+   -83.7377178,
+   42.2760594
+  ],
+  [
+   -83.7386837,
+   42.2760477
+  ]
+ ],
+ "aligned": "auto"
+}

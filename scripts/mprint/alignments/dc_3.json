@@ -1,0 +1,46 @@
+{
+ "image": "dc_3.png",
+ "sha256": "6c5a8fc687c8166fa920d0d6256ce1e9910686d96516fa4ceb29a4eb5fbc7929",
+ "width": 3738,
+ "height": 2166,
+ "wall": 200,
+ "close": 0,
+ "upHint": 0.0,
+ "footprint": "footprints/duderstadt.json",
+ "spurDropped": false,
+ "transform": "similarity",
+ "metersPerPixel": 0.050672,
+ "cmPerPixel": 5.067,
+ "imageUpDegreesFromNorth": -0.256,
+ "fit": {
+  "medianMeters": 0.114,
+  "p90Meters": 0.283,
+  "fractionWithin1m": 0.939,
+  "fractionWithin0_5m": 0.912,
+  "iou": 0.981,
+  "planCoveredByFootprint": 0.985,
+  "footprintCoveredByPlan": 0.995,
+  "medianMetersEastHalf": 0.127,
+  "medianMetersWestHalf": 0.098
+ },
+ "usable": true,
+ "corners": [
+  [
+   -83.7171042,
+   42.2916249
+  ],
+  [
+   -83.7148041,
+   42.2916325
+  ],
+  [
+   -83.7147981,
+   42.2906465
+  ],
+  [
+   -83.7170982,
+   42.2906389
+  ]
+ ],
+ "aligned": "auto"
+}
