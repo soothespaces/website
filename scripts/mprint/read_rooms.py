@@ -56,6 +56,24 @@ def sheet_entry(sheet: str) -> dict:
     sys.exit(f"{sheet} is not in sheets.json")
 
 
+def libcal_room(title: str, floor: int) -> tuple[str, str] | None:
+    """(room number, name) from a LibCal space title on `floor`, if it names one.
+
+    Shapiro titles lead with the floor ("3rd Floor - 3045 - Name"). Hatcher's
+    put the number in parentheses ("Carrel 3-01 (3001) (Capacity 1)") or after
+    the building ("Hatcher 212A (Capacity 5)"); a library number starts with
+    its floor. Donor carrels ("6S - 49") name no printed room and are skipped.
+    """
+    prefix = f"{ORDINAL.get(floor, f'{floor}th')} Floor - "
+    match = re.match(rf"{re.escape(prefix)}(\w+) - (.+)", title)
+    if match and re.fullmatch(r"\d{3,4}[A-Z]?", match.group(1)):
+        return match.group(1), match.group(2)
+    match = re.search(r"\((\d{3,4}[A-Z]?)\)", title) or re.match(r"[A-Za-z]+ (\d{3,4}[A-Z]?) \(Capacity", title)
+    if match and floor > 0 and match.group(1).startswith(str(floor)):
+        return match.group(1), title.split(" (Capacity")[0]
+    return None
+
+
 def expected_rooms(entry: dict, seed_raw: Path = SEED_RAW) -> dict:
     """Room number -> what each source says about it, for one building floor."""
     floor = entry["floor"]
@@ -66,15 +84,13 @@ def expected_rooms(entry: dict, seed_raw: Path = SEED_RAW) -> dict:
 
     libcal_path = seed_raw / "libcal-items.json"
     if entry.get("libcal") and libcal_path.exists():
-        prefix = f"{ORDINAL.get(floor, f'{floor}th')} Floor - "
         for location in json.loads(libcal_path.read_text()):
             if entry["libcal"] not in location["location"] or location["kind"] != "spaces":
                 continue
             for item in location["items"]:
-                title = item["title"]
-                match = re.match(rf"{re.escape(prefix)}(\w+) - (.+)", title)
-                if match and re.fullmatch(r"\d{3,4}[A-Z]?", match.group(1)):
-                    note(match.group(1), "libcal", match.group(2))
+                room = libcal_room(item["title"], floor)
+                if room:
+                    note(room[0], "libcal", room[1])
     cms_path = seed_raw / "umich-library-cms.json"
     if entry.get("cms") and cms_path.exists():
         cms = json.loads(cms_path.read_text())

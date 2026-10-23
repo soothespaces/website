@@ -25,8 +25,10 @@ export type FloorRecord = {
 
 export const floors = floorIndex.floors as unknown as FloorRecord[];
 
-export function findFloor(building: string, floor: string) {
-  return floors.find((f) => f.building === building && String(f.floor) === floor);
+/** A floor drawn on several sheets (Hatcher's two wings) has a record per sheet; `sheet` picks one. */
+export function findFloor(building: string, floor: string, sheet?: string) {
+  const onFloor = floors.filter((f) => f.building === building && String(f.floor) === floor);
+  return (sheet && onFloor.find((f) => f.sheet === sheet)) || onFloor[0];
 }
 
 export function findSheet(sheet: string) {

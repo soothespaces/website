@@ -8,6 +8,11 @@ trace its rooms and ink into longitude/latitude
 (public/floor-plans/<building>/<floor>.geojson). public/floor-plans/index.json
 lists every floor with its corners, whether it is usable, and its GeoJSON.
 
+A floor can be drawn on more than one sheet: MPrint draws Hatcher's north
+and south wings separately, and both wings number their floors from 1. Every
+sheet keeps its own fit and index record, and the floor's one GeoJSON holds
+the rooms and ink of each of its sheets that fitted.
+
 Each floor's GeoJSON has two kinds of feature, told apart by `layer`:
 `room` (one polygon per room, `roomNumber` when the floor is labeled) and
 `structure` (one MultiPolygon of the drawing's ink: walls, doors, stairs,
@@ -97,7 +102,8 @@ def load_saved_alignments() -> dict[str, dict]:
     return {row["sheet"]: row for row in rows}
 
 
-def run(entry: dict, sheets: Path, previews: Path | None, saved: dict[str, dict]) -> dict:
+def run(entry: dict, sheets: Path, previews: Path | None, saved: dict[str, dict]) -> tuple[dict, list[dict] | None]:
+    """Fit one sheet. Returns its index record and, when the fit is usable, its map features."""
     sheet = entry["sheet"]
     image = fetch(sheet, sheets)
     fit = fit_plan(str(image), str(HERE / entry["footprint"]), None, 200, 1.0,
@@ -146,7 +152,7 @@ def run(entry: dict, sheets: Path, previews: Path | None, saved: dict[str, dict]
         "geojson": None,
     }
     if not fit["usable"]:
-        return record
+        return record, None
 
     labels = str(HERE / entry["labels"]) if "labels" in entry else None
     names = None
@@ -161,14 +167,17 @@ def run(entry: dict, sheets: Path, previews: Path | None, saved: dict[str, dict]
         if previews:
             write_report(report, expected, previews / f"{sheet}_report.md", sheet)
     collection, rgb, gray, room_ids, records, spec = vectorize(str(image), labels, 1.0, str(alignment))
-    dest = PUBLIC / entry["building"] / f"{entry['floor']}.geojson"
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_text(json.dumps({"type": "FeatureCollection", "features": map_features(collection, names)}, separators=(",", ":")))
-    record["geojson"] = "/" + dest.relative_to(PUBLIC.parent).as_posix()
     record["rooms"] = sum(1 for f in collection["features"] if f["properties"]["layer"] == "room")
     if previews:
         render_preview(rgb, room_ids, records, gray < spec["wall"], 1.0, previews / f"{sheet}_vector.png")
-    return record
+    return record, map_features(collection, names)
+
+
+def write_floor(building: str, floor: int, features: list[dict]) -> str:
+    dest = PUBLIC / building / f"{floor}.geojson"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(json.dumps({"type": "FeatureCollection", "features": features}, separators=(",", ":")))
+    return "/" + dest.relative_to(PUBLIC.parent).as_posix()
 
 
 def main() -> None:
@@ -184,16 +193,26 @@ def main() -> None:
         previews.mkdir(parents=True, exist_ok=True)
     index_path = PUBLIC / "index.json"
     saved = load_saved_alignments()
-    index = {(f["building"], f["floor"]): f for f in json.loads(index_path.read_text())["floors"]} if index_path.exists() else {}
+    index = {f["sheet"]: f for f in json.loads(index_path.read_text())["floors"]} if index_path.exists() else {}
+    # A floor's GeoJSON is every sheet of that floor, so --only still runs
+    # the other sheets of a floor it touches.
+    wanted = {(e["building"], e["floor"]) for e in manifest if not args.only or e["sheet"] in args.only}
+    groups: dict[tuple[str, int], list[dict]] = {}
     for entry in manifest:
-        if args.only and entry["sheet"] not in args.only:
-            continue
-        record = run(entry, Path(args.sheets), previews, saved)
-        index[(record["building"], record["floor"])] = record
-        state = f"{record['rooms']} rooms -> {record['geojson']}" if record["geojson"] else "fit not usable, no GeoJSON"
-        print(f"{entry['sheet']}: median {record['fitMedianMeters']} m, {state}", file=sys.stderr)
+        if (entry["building"], entry["floor"]) in wanted:
+            groups.setdefault((entry["building"], entry["floor"]), []).append(entry)
+    for (building, floor), entries in groups.items():
+        results = [run(entry, Path(args.sheets), previews, saved) for entry in entries]
+        features = [feature for _, sheet_features in results for feature in sheet_features or []]
+        path = write_floor(building, floor, features) if features else None
+        for record, sheet_features in results:
+            if sheet_features is not None:
+                record["geojson"] = path
+            index[record["sheet"]] = record
+            state = f"{record['rooms']} rooms -> {record['geojson']}" if record["geojson"] else "fit not usable, no GeoJSON"
+            print(f"{record['sheet']}: median {record['fitMedianMeters']} m, {state}", file=sys.stderr)
     PUBLIC.mkdir(parents=True, exist_ok=True)
-    floors = sorted(index.values(), key=lambda f: (f["building"], f["floor"]))
+    floors = sorted(index.values(), key=lambda f: (f["building"], f["floor"], f["sheet"]))
     index_path.write_text(json.dumps({"floors": floors}, indent=1) + "\n")
 
 

@@ -23,7 +23,7 @@ export default async function FloorPlansAdminPage() {
             {list.map((f) => (
               <li key={f.sheet}>
                 <Link
-                  href={`/admin/floors/${f.building}/${f.floor}`}
+                  href={`/admin/floors/${f.building}/${f.floor}?sheet=${f.sheet}`}
                   className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-3 hover:bg-accent"
                 >
                   <span className="font-medium">
