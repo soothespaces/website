@@ -21,7 +21,7 @@ export function RoomsScreen({ route }: PanelScreenProps) {
 
   if (route.kind !== "rooms") return null;
   const known = data.buildingsBySlug.get(route.slug);
-  const buildingName = known?.shortName || known?.name || "Building";
+  const buildingName = known?.shortName || known?.name || "";
   const plans = floorPlans.get(route.slug) ?? [];
 
   return (

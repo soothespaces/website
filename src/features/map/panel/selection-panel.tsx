@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefO
 import type { SpaceListDensity } from "@/features/spaces";
 import { PANEL_KIND_TITLES, panelRouteKey, type PanelRoute } from "@/features/side-view/panel-route";
 import { detailPanelKinds, panelRegistry } from "@/features/side-view/registry";
+import { RetryProvider } from "@/components/ui/error-note";
 import { useMapState } from "../map-state";
 import { PanelHeader } from "./panel-header";
 
@@ -118,8 +119,17 @@ function PanelFrame({
     target.focus({ preventScroll: previous === false, focusVisible: true } as FocusOptions);
   }, [active, focus, key, started]);
 
+  // "Try again" remounts the screen, so its hooks read again. A failed map
+  // data read is shared by every screen, so that reads again too.
+  const { data } = useMapState();
+  const [attempt, setAttempt] = useState(0);
+  const retry = () => {
+    if (data.error) data.reload?.();
+    setAttempt((n) => n + 1);
+  };
+
   let body: ReactNode = <PanelPlaceholder route={route} />;
-  if (Screen) body = <Screen route={route} density={density} />;
+  if (Screen) body = <Screen key={attempt} route={route} density={density} />;
 
   return (
     <div
@@ -141,7 +151,7 @@ function PanelFrame({
     >
       <div className={fill ? "flex min-h-0 flex-1 flex-col" : "flex flex-col gap-1"}>
         {detail ? null : <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />}
-        {body}
+        <RetryProvider value={retry}>{body}</RetryProvider>
       </div>
     </div>
   );

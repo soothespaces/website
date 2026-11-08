@@ -1,5 +1,7 @@
 "use client";
 
+import { ErrorNote } from "@/components/ui/error-note";
+import { SkeletonRows } from "@/components/ui/feedback";
 import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip, ChipGroup } from "@/components/ui/chip-group";
@@ -66,17 +68,9 @@ export function RoomsList({
 
   let body = null;
   if (!loaded) {
-    body = (
-      <p role="status" className="text-sm text-muted-foreground">
-        Loading rooms…
-      </p>
-    );
+    body = <SkeletonRows label="Loading rooms" rowClassName="h-12" />;
   } else if (error && rooms.length === 0) {
-    body = (
-      <p role="alert" className="text-sm text-muted-foreground">
-        {error}
-      </p>
-    );
+    body = <ErrorNote message={error} />;
   } else if (filtered.length === 0) {
     body = (
       <p className="text-sm text-muted-foreground">

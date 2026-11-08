@@ -56,3 +56,26 @@ export function Separator({ className, ...props }: ComponentProps<typeof Separat
     />
   );
 }
+
+// SOS-169: loading is a skeleton the size of what loads, not a sentence.
+// The label is read out; the blocks are hidden from screen readers.
+export function SkeletonRows({
+  label,
+  rows = 3,
+  rowClassName = "h-10",
+  className,
+}: {
+  label: string;
+  rows?: number;
+  rowClassName?: string;
+  className?: string;
+}) {
+  return (
+    <div role="status" className={cx("flex flex-col gap-2", className)}>
+      <span className="sr-only">{label}</span>
+      {Array.from({ length: rows }, (_, index) => (
+        <Skeleton key={index} className={cx("w-full", rowClassName)} />
+      ))}
+    </div>
+  );
+}

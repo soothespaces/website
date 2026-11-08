@@ -37,8 +37,8 @@ type SpaceRow = Database["public"]["Tables"]["spaces"]["Row"];
 const MATCH_REASON_LABELS: Partial<Record<MatchReasonKey, string>> = {
   quiet: "quiet",
   low_noise: "low noise",
-  conversational: "conversational",
-  loud: "loud",
+  // "conversational" and "loud" still score, but SOS-121's list doesn't name
+  // them, so they stay off the line (QA-033).
   soft_lighting: "soft lighting",
   bright_lighting: "bright",
   natural_light: "lots of daylight",
@@ -222,8 +222,13 @@ export function scoreSpace<T extends CatalogSpace>(space: T, context: RankContex
     if (view.daylight === "bright_daylight") reasons.push("natural_light");
   }
 
-  // 6. Group size ("Just me", "2–3", "4+")
-  if (groupSize && supportsGroupSize(view, groupSize)) {
+  // 6. Group size ("Just me", "2–3", "4+"). SOS-112: null means not chosen,
+  // and ranking treats it as solo (QA-029). Only a chosen size is a reason
+  // on the Matches line.
+  // With no preferences either, lists keep their plain order.
+  if (groupSize == null && preferences && supportsGroupSize(view, "just_me")) {
+    score += WEIGHTS.GROUP_SIZE;
+  } else if (groupSize && supportsGroupSize(view, groupSize)) {
     score += WEIGHTS.GROUP_SIZE;
     reasons.push("fits_group");
   }

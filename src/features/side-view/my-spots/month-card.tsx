@@ -1,5 +1,6 @@
 "use client";
 
+import { ErrorNote } from "@/components/ui/error-note";
 import { useId } from "react";
 import { Skeleton } from "@/components/ui/feedback";
 import { monthlyStats, type MyHistoryState } from "@/lib/data/my-history";
@@ -19,7 +20,7 @@ export function MonthCard({ now, history }: { now: Date; history: MyHistoryState
   }
 
   if (history.error) {
-    return <p className="text-sm text-muted-foreground">{history.error}</p>;
+    return <ErrorNote message={history.error} />;
   }
 
   const model = monthCardModel(monthlyStats(history.places, now));

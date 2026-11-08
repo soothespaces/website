@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import { SPACE_SUMMARY_SELECT, type SpaceSummary } from "@/features/spaces";
@@ -92,6 +92,8 @@ export type MapData = {
   // Set when Supabase isn't configured or a read failed; the map still works
   // without these layers.
   error: string | null;
+  /** Reads everything again after a failure ("Try again"). */
+  reload?: () => void;
 };
 
 const EMPTY: MapData = {
@@ -111,6 +113,12 @@ export function useMapData(): MapData {
   const [data, setData] = useState<MapData>(() =>
     getSupabaseEnv() ? EMPTY : { ...EMPTY, loaded: true, error: "Supabase isn't configured." },
   );
+  const [attempt, setAttempt] = useState(0);
+  const reload = useCallback(() => {
+    if (!getSupabaseEnv()) return;
+    setData(EMPTY);
+    setAttempt((n) => n + 1);
+  }, []);
 
   useEffect(() => {
     if (!getSupabaseEnv()) return;
@@ -175,7 +183,7 @@ export function useMapData(): MapData {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [attempt]);
 
-  return data;
+  return useMemo(() => ({ ...data, reload }), [data, reload]);
 }

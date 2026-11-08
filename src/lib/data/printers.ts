@@ -104,7 +104,9 @@ export function usePrinters(buildingSlug: string | null): PrintersState {
   );
 
   useEffect(() => {
-    if (!getSupabaseEnv() || !buildingSlug || printerCache.has(buildingSlug) || printerInflight.has(buildingSlug)) return;
+    // A failed read stays cached only until the next mount ("Try again").
+    const known = buildingSlug ? printerCache.get(buildingSlug) : undefined;
+    if (!getSupabaseEnv() || !buildingSlug || (known && !known.error) || printerInflight.has(buildingSlug)) return;
     const supabase = createClient();
     const pending = readAll<PrinterRecord>((from, to) =>
       supabase

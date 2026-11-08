@@ -1,6 +1,7 @@
 "use client";
 
 import { SpaceList, type SpaceListDensity, type SpaceSummary } from "@/features/spaces";
+import { ErrorNote } from "@/components/ui/error-note";
 import { useMapState } from "../map-state";
 
 // The search results: every listed study space, or the ones matching the
@@ -15,6 +16,9 @@ export function ResultsPanel({
 }) {
   const { data, search, select } = useMapState();
   const count = search.results.length;
+  if (data.loaded && data.error) {
+    return <ErrorNote message="Study spaces failed to load." onRetry={data.reload} className="px-3 py-2" />;
+  }
   return (
     <div className="flex flex-col gap-1">
       {data.loaded && !data.error ? (
@@ -29,7 +33,7 @@ export function ResultsPanel({
         label={search.query.trim() ? "Search results" : "Study spaces"}
         density={density}
         loading={!data.loaded}
-        empty={data.error ? `${data.error} Study spaces can’t be listed.` : "No study spaces match your search."}
+        empty="No study spaces match your search."
         onSelect={(space: SpaceSummary) => {
           select({ kind: "space", slug: space.slug });
           onPicked?.();

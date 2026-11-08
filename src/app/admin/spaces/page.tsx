@@ -12,8 +12,10 @@ export const metadata: Metadata = {
 export default async function SpacesAdminPage({ searchParams }: PageProps<"/admin/spaces">) {
   const params = await searchParams;
   const building = typeof params.building === "string" ? params.building : "";
-  const [buildings, spaces] = await Promise.all([getSpaceBuildings(), getSpaceRows(building || undefined)]);
-  const withSpaces = new Set((await getSpaceRows()).map((s) => s.buildingSlug));
+  // One read of every space; the building filter narrows it here (QA-048).
+  const [buildings, all] = await Promise.all([getSpaceBuildings(), getSpaceRows()]);
+  const spaces = building ? all.filter((s) => s.buildingSlug === building) : all;
+  const withSpaces = new Set(all.map((s) => s.buildingSlug));
 
   return (
     <ContentPage

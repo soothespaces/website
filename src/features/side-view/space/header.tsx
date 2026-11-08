@@ -57,7 +57,7 @@ export function SpaceToolbar({
           />
         </div>
       ) : (
-        <Button variant="ghost" size="icon" shape="circle" disabled className="-mr-2" aria-label={`Add ${name} to your spots`}>
+        <Button variant="ghost" size="icon" shape="circle" disabled className="-mr-2" aria-label={name ? `Add ${name} to your spots` : "Add to your spots"}>
           <HeartIcon />
         </Button>
       )}

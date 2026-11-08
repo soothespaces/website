@@ -1,5 +1,6 @@
 "use client";
 
+import { SkeletonRows } from "@/components/ui/feedback";
 import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -50,7 +51,7 @@ export function RecommendedSection({ slug }: { slug: string | null }) {
     return (
       <section aria-busy="true" className="flex flex-col gap-3">
         <SectionHeader title="Recommended" action={{ label: "Refine", onClick: refine }} />
-        <p className="text-sm text-muted-foreground">Loading recommendations…</p>
+        <SkeletonRows label="Loading recommendations" rows={1} rowClassName="h-24" />
       </section>
     );
   }
@@ -93,7 +94,7 @@ export function RecommendedSection({ slug }: { slug: string | null }) {
     return (
       <section aria-busy="true" className="flex flex-col gap-3">
         <SectionHeader title="Recommended" action={{ label: "Refine", onClick: refine }} />
-        <p className="text-sm text-muted-foreground">Loading recommendations…</p>
+        <SkeletonRows label="Loading recommendations" rows={1} rowClassName="h-24" />
       </section>
     );
   }

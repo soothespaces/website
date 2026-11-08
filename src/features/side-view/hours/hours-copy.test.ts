@@ -110,7 +110,7 @@ test("status lines keep the open-until wording and spell out the next close", ()
   assert.equal(statusHeadline("Closed today"), "Closed today");
   assert.equal(statusHeadline("Opens at 8 AM"), "Opens at 8 AM");
   assert.equal(nextCloseLine(null), null);
-  assert.equal(nextCloseLine("Closes Sun midnight"), "Next close: Sunday midnight");
+  assert.equal(nextCloseLine("Closes Mon 12 AM"), "Next close: Monday 12 AM");
   assert.equal(weekDayLabel("Friday", false), "Friday");
 });
 

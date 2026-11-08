@@ -48,7 +48,8 @@ export function BusynessChart({
                 width={barWidth}
                 height={height}
                 rx={1}
-                className={highlighted ? "fill-primary" : "fill-muted-foreground"}
+                // Pale green as on the board (QA-042), still at least 3:1 on the card.
+                className={highlighted ? "fill-primary" : "fill-primary/70"}
               />
             </g>
           );

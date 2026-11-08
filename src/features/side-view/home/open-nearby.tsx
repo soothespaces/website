@@ -1,5 +1,6 @@
 "use client";
 
+import { safeSpaceImageUrl } from "@/features/side-view/spaces/use-building-spaces";
 import { Button } from "@/components/ui/button";
 import { NoiseBadge } from "@/components/ui/noise-badge";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -49,11 +50,12 @@ export function OpenNearby({ spaces }: { spaces: HomeSpace[] }) {
 
 function Thumb({ space }: { space: HomeSpace }) {
   const alt = space.image_alt?.trim() || "";
-  if (!space.image_url) {
+  const src = safeSpaceImageUrl(space.image_url);
+  if (!src) {
     return <span aria-hidden="true" className="size-11 shrink-0 rounded-md bg-muted" />;
   }
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={space.image_url} alt={alt} className="size-11 shrink-0 rounded-md object-cover" />
+    <img src={src} alt={alt} className="size-11 shrink-0 rounded-md object-cover" />
   );
 }

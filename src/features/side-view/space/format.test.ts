@@ -72,9 +72,9 @@ test("open status turns a later opening into closed now", () => {
   assert.equal(spaceOpenStatus(null), null);
   assert.equal(spaceOpenStatus("Open 24 hours"), "Open 24 hours");
   assert.equal(spaceOpenStatus("Open until 11 PM"), "Open until 11 PM");
-  assert.equal(spaceOpenStatus("Open until midnight"), "Open until midnight");
+  assert.equal(spaceOpenStatus("Open until 12 AM"), "Open until 12 AM");
   assert.equal(spaceOpenStatus("Opens at 8 AM"), "Closed now · opens 8 AM");
-  assert.equal(spaceOpenStatus("Closed today"), "Closed today");
+  assert.equal(spaceOpenStatus("Closed today"), "Closed now");
 });
 
 test("walk time hides without a position and rounds to minutes", () => {

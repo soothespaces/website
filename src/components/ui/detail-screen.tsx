@@ -50,7 +50,7 @@ export function DetailScreen({
       className={cx("flex h-full min-h-0 flex-col bg-background", className)}
     >
       <header className="flex items-center gap-1 border-b border-border px-1 pt-1 pb-2">
-        <PanelBackButton label={`Back to ${backTo}`} onClick={onBack} icon={<ChevronLeftIcon />} />
+        <PanelBackButton label={backTo ? `Back to ${backTo}` : "Back"} onClick={onBack} icon={<ChevronLeftIcon />} />
         <div className="min-w-0 flex-1">
           {subtitle ? <p className="text-sm text-muted-foreground">{subtitle}</p> : null}
           <h2 id={titleId} ref={titleRef} tabIndex={-1} className="text-lg break-words">

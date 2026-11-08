@@ -1,5 +1,6 @@
 "use client";
 
+import { ErrorNote } from "@/components/ui/error-note";
 import { useEffect, useId, useRef, useState } from "react";
 import { BusynessChart } from "@/components/ui/busyness-chart";
 import { Label } from "@/components/ui/field";
@@ -25,7 +26,7 @@ export function BusySection({
   if (!loaded || !times) {
     // The hours screen already says when Supabase itself is missing.
     if (loaded && error && error !== "Supabase isn't configured.") {
-      return <p className="text-sm text-muted-foreground">{error}</p>;
+      return <ErrorNote message={error} />;
     }
     return null;
   }
@@ -86,7 +87,7 @@ function BusyDays({ times, now, focus }: { times: PopularTimes; now: Date; focus
           {summary.peak}
         </p>
       ) : (
-        <p>No typical busyness.</p>
+        <p className="text-sm text-muted-foreground">Not enough data for this day.</p>
       )}
       {values ? <BusynessChart values={values} highlightHour={highlighted} /> : null}
     </section>

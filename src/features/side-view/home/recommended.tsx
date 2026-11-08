@@ -1,5 +1,6 @@
 "use client";
 
+import { safeSpaceImageUrl } from "@/features/side-view/spaces/use-building-spaces";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/icons";
@@ -142,7 +143,8 @@ function RecommendationCard({
 function SpacePhoto({ space }: { space: HomeSpace }) {
   const alt = space.image_alt?.trim() || `Interior: ${space.name}`;
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
-  if (!space.image_url || failedSrc === space.image_url) {
+  const src = safeSpaceImageUrl(space.image_url);
+  if (!src || failedSrc === src) {
     return (
       <span className="flex h-36 items-center justify-center bg-muted px-6 text-center text-sm text-muted-foreground">{alt}</span>
     );
@@ -150,6 +152,6 @@ function SpacePhoto({ space }: { space: HomeSpace }) {
   return (
     // Library photos are hosted off-site, so this is a plain image.
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={space.image_url} alt={alt} className="h-36 w-full object-cover" onError={() => setFailedSrc(space.image_url ?? null)} />
+    <img src={src} alt={alt} className="h-36 w-full object-cover" onError={() => setFailedSrc(src)} />
   );
 }

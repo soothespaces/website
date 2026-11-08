@@ -1,5 +1,6 @@
 "use client";
 
+import { ErrorNote } from "@/components/ui/error-note";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/feedback";
@@ -34,7 +35,7 @@ export function Visited({ now, history }: { now: Date; history: MyHistoryState }
     return (
       <section className="flex flex-col gap-1">
         <h2 className="text-base">Places you’ve checked in</h2>
-        <p className="text-sm text-muted-foreground">{history.error}</p>
+        <ErrorNote message={history.error} />
       </section>
     );
   }

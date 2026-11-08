@@ -42,6 +42,10 @@ test("past-midnight close is open until 2 AM", () => {
   assert.equal(isOpenNow(hours, now), true);
   assert.equal(openStatus(hours, now), "Open until 2 AM");
   assert.equal(weekRows(hours).find((day) => day.weekday === 2)?.hours, "8 AM – 2 AM");
+  // Today's row is the night that's still open, not Wednesday's "Closed".
+  const today = weekRows(hours, now).find((day) => day.today);
+  assert.equal(today?.weekday, 2);
+  assert.equal(today?.hours, "8 AM – 2 AM");
 });
 
 test("a 24-hour day reads Open 24 hours and closes when the stretch ends", () => {
@@ -157,7 +161,7 @@ test("a period that starts mid-week does not inherit today's hours", () => {
   ];
   const hours = resolveOpeningHours(rows, "2026-11-24");
   const tuesdayNoon = new Date("2026-11-24T17:00:00Z");
-  assert.equal(nextClose(hours, tuesdayNoon), "Closes Tue midnight");
+  assert.equal(nextClose(hours, tuesdayNoon), "Closes Wed 12 AM");
   assert.equal(openStatus(hours, tuesdayNoon), "Open 24 hours");
   const listed = weekRows(hours);
   assert.equal(listed.find((day) => day.date === "2026-11-25")?.hours, "10 AM – 6 PM");
@@ -183,7 +187,7 @@ test("winter break replaces the semester on the dates it covers", () => {
   assert.notEqual(listed.find((day) => day.weekday === 5)?.hours, "12 AM – 6 PM");
 });
 
-test("Sunday hours that run into a 24-hour Monday do not claim to close at midnight", () => {
+test("Sunday hours that run into a 24-hour Monday read Open 24 hours, and the weekday is on the close", () => {
   const rows = [0, 1, 2, 3, 4, 5, 6].map((weekday) =>
     row({
       weekday,
@@ -195,14 +199,14 @@ test("Sunday hours that run into a 24-hour Monday do not claim to close at midni
   );
   const hours = resolveOpeningHours(rows, "2026-10-18");
   const sundayNoon = new Date("2026-10-18T16:00:00Z");
-  assert.equal(openStatus(hours, sundayNoon), "Open until Fri 6 PM");
+  assert.equal(openStatus(hours, sundayNoon), "Open 24 hours");
   assert.equal(nextClose(hours, sundayNoon), "Closes Fri 6 PM");
 });
 
-test("a midnight close is named for the day that is ending", () => {
+test("a midnight close is a number, 12 AM (SOS-93)", () => {
   const rows = [row({ weekday: 0, opens: "10:00:00", closes: "24:00:00", validFrom: "2026-10-01", validUntil: "2026-10-31" })];
   const hours = resolveOpeningHours(rows, "2026-10-18");
   const sundayNoon = new Date("2026-10-18T16:00:00Z");
-  assert.equal(nextClose(hours, sundayNoon), "Closes Sun midnight");
-  assert.equal(openStatus(hours, sundayNoon), "Open until midnight");
+  assert.equal(nextClose(hours, sundayNoon), "Closes Mon 12 AM");
+  assert.equal(openStatus(hours, sundayNoon), "Open until 12 AM");
 });

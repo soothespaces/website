@@ -1,5 +1,6 @@
 "use client";
 
+import { SkeletonRows } from "@/components/ui/feedback";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { NoiseBadge } from "@/components/ui/noise-badge";
@@ -34,7 +35,7 @@ export function SpacesPreview({ slug }: { slug: string | null }) {
 
   if (!slug) return null;
   if (!data.loaded) {
-    return <p className="text-sm text-muted-foreground">Loading study spaces…</p>;
+    return <SkeletonRows label="Loading study spaces" rowClassName="h-14" />;
   }
   if (ranked.length === 0) return null;
 

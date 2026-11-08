@@ -221,9 +221,10 @@ test("4+ re-sorts recommended without dropping a space, and preferences change t
 
   const noSize = place({ slug: "solo-seat", name: "Alpha Seat", noise_level: "quiet", capacity: 0, open: true });
   const anySeat = place({ slug: "any-seat", name: "Bravo Seat", noise_level: "loud", capacity: 1, open: true });
+  // SOS-112: no size chosen ranks as solo, the same as "Just me" (QA-029).
   assert.equal(
     orderRecommended([noSize, anySeat], { study: DEFAULT_STUDY, groupSize: null, origin: null })[0]?.space.slug,
-    "solo-seat",
+    "any-seat",
   );
   assert.equal(
     orderRecommended([noSize, anySeat], { study: DEFAULT_STUDY, groupSize: "just_me", origin: null })[0]?.space.slug,
@@ -249,11 +250,11 @@ test("4+ re-sorts recommended without dropping a space, and preferences change t
   assert.equal(hasStudyPreferences(DEFAULT_STUDY), false);
   const preferred = orderRecommended([carrel, room], { study: loudStudy, groupSize: "just_me", origin: null });
   assert.equal(preferred[0]?.space.slug, "room");
-  assert.equal(preferred[0]?.matchesLine, "Matches: conversational · fits your group");
+  assert.equal(preferred[0]?.matchesLine, "Matches: fits your group");
 
   const unset = orderRecommended([carrel, room], { study: loudStudy, groupSize: null, origin: null });
   assert.equal(unset[0]?.space.slug, "room");
-  assert.equal(unset[0]?.matchesLine, "Matches: conversational");
+  assert.equal(unset[0]?.matchesLine, null);
 
   const quietStudy: StudyPreferences = {
     ...DEFAULT_STUDY,

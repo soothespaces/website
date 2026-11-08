@@ -36,6 +36,8 @@ type PlaceFacts = {
   hours: HourIndex;
   spaceIds: ReadonlySet<string>;
   buildingSlugs: ReadonlySet<string>;
+  /** A failed read is not an empty campus (QA-024). */
+  error?: string | null;
 };
 
 const HOUR_SELECT = "building_slug, space_id, valid_from, valid_until, weekday, opens, closes, access";
@@ -93,7 +95,15 @@ function usePlaceFacts(): PlaceFacts {
       })
       .catch((error: unknown) => {
         console.error("Home catalog failed to load", error);
-        if (!cancelled) setFacts({ loaded: true, hours: EMPTY_INDEX, spaceIds: EMPTY_IDS, buildingSlugs: EMPTY_IDS });
+        if (!cancelled) {
+          setFacts({
+            loaded: true,
+            hours: EMPTY_INDEX,
+            spaceIds: EMPTY_IDS,
+            buildingSlugs: EMPTY_IDS,
+            error: "Study spaces failed to load.",
+          });
+        }
       });
 
     return () => {
@@ -105,7 +115,7 @@ function usePlaceFacts(): PlaceFacts {
 }
 
 /** Listed spaces with hours, brightness and bookable items filled in. */
-export function useHomeCatalog(): { spaces: HomeSpace[]; loaded: boolean } {
+export function useHomeCatalog(): { spaces: HomeSpace[]; loaded: boolean; error: string | null } {
   const { data } = useMapState();
   const facts = usePlaceFacts();
   const [now, setNow] = useState(() => new Date());
@@ -127,5 +137,5 @@ export function useHomeCatalog(): { spaces: HomeSpace[]; loaded: boolean } {
     );
   }, [data.loaded, data.spaces, facts, now]);
 
-  return { spaces, loaded: data.loaded && facts.loaded };
+  return { spaces, loaded: data.loaded && facts.loaded, error: data.error ?? facts.error ?? null };
 }

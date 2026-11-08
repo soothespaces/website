@@ -97,12 +97,14 @@ export function buildingDisplayName(building: { name: string; shortName: string 
 
 /**
  * F1.1 says "Opens at 8 AM" for later today. The space meta line reads
- * "Closed now · opens 8 AM". A day with no later opening stays "Closed today".
+ * "Closed now · opens 8 AM". A day with no later opening is "Closed now":
+ * SOS-147 never uses "Closed today" on this line (QA-060).
  */
 export function spaceOpenStatus(status: string | null): string | null {
   if (!status) return null;
   const later = /^Opens at (.+)$/.exec(status);
   if (later) return `Closed now · opens ${later[1]}`;
+  if (status === "Closed today") return "Closed now";
   return status;
 }
 

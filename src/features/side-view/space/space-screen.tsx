@@ -108,7 +108,7 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
     );
   }
 
-  const name = record?.name ?? listed?.name ?? "Study space";
+  const name = record?.name ?? listed?.name ?? "";
   const building: SpaceHeaderBuilding | null =
     record?.building ??
     (listed?.building

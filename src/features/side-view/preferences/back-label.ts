@@ -16,7 +16,7 @@ export function panelBackLabel(
   names: { building?: string | null; space?: string | null } = {},
 ): string {
   if (!parent || parent.kind === "home") return "Home";
-  if (parent.kind === "building") return parent.name || names.building || "Building";
-  if (parent.kind === "space") return names.space || "Space";
-  return SCREEN_NAMES[parent.kind] ?? "Back";
+  if (parent.kind === "building") return parent.name || names.building || "";
+  if (parent.kind === "space") return names.space || "";
+  return SCREEN_NAMES[parent.kind] ?? "";
 }

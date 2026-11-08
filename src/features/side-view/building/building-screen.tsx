@@ -25,7 +25,7 @@ export function BuildingPanelScreen({ route }: PanelScreenProps) {
 
   const known = slug ? data.buildingsBySlug.get(slug) : undefined;
   const recordNumber = route.recordNumber ?? known?.recordNumber ?? null;
-  const name = profile.data?.shortName || profile.data?.name || route.name || known?.name || "Building";
+  const name = profile.data?.shortName || profile.data?.name || route.name || known?.name || "";
   const subtitle = buildingSubtitle(profile.data?.acronym, profile.data?.address);
   const plans = slug ? floorPlans.get(slug) : undefined;
   const entrances = buildingEntrances(data.entrances, slug, recordNumber);
@@ -46,7 +46,7 @@ export function BuildingPanelScreen({ route }: PanelScreenProps) {
       />
       <div className="flex items-start justify-between gap-3 px-1">
         <div className="min-w-0">
-          <h2 className="text-2xl break-words">{name}</h2>
+          {name ? <h2 className="text-2xl break-words">{name}</h2> : null}
           {subtitle ? <p className="text-sm text-muted-foreground">{subtitle}</p> : null}
         </div>
         {slug ? <CheckInHereButton buildingSlug={slug} buildingName={name} /> : null}

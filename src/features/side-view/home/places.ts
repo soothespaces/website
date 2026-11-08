@@ -187,11 +187,11 @@ function compareDistance(a: HomeSpace, b: HomeSpace, origin: GeoPoint | null): n
  */
 function compareFallback(a: HomeSpace, b: HomeSpace, groupSize: GroupSize | null, origin: GeoPoint | null): number {
   if (a.open !== b.open) return a.open ? -1 : 1;
-  if (groupSize) {
-    const fitA = fitsGroup(a, groupSize);
-    const fitB = fitsGroup(b, groupSize);
-    if (fitA !== fitB) return fitA ? -1 : 1;
-  }
+  // SOS-112: no size chosen ranks as solo, the chip shown by default (QA-029).
+  const size = groupSize ?? "just_me";
+  const fitA = fitsGroup(a, size);
+  const fitB = fitsGroup(b, size);
+  if (fitA !== fitB) return fitA ? -1 : 1;
   const distance = compareDistance(a, b, origin);
   if (distance !== 0) return distance;
   const noise = noiseRank(a.noise_level) - noiseRank(b.noise_level);
@@ -203,7 +203,7 @@ export function orderRecommended(
   spaces: readonly HomeSpace[],
   options: {
     study: StudyPreferences;
-    /** Null until the visitor picks a size. The default chip is not a ranking choice. */
+    /** Null until the visitor picks a size; ranked as "Just me", the default chip. */
     groupSize: GroupSize | null;
     origin: GeoPoint | null;
     filters?: SpaceFilters;

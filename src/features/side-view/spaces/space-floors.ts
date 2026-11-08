@@ -31,7 +31,7 @@ export function describeFloorLabel(label: string | null | undefined): FloorLabel
   const lower = text.toLowerCase();
   if (lower === "basement" || lower === "0b" || lower === "b") return { number: -1, title: "Basement" };
   if (lower === "ground" || lower === "ground floor" || lower === "0g" || lower === "g") {
-    return { number: 0, title: "Ground" };
+    return { number: 0, title: "Ground floor" };
   }
   const floorWord = lower.match(/^floor\s+(-?\d+)$/);
   if (floorWord) return titled(Number(floorWord[1]));
@@ -45,9 +45,10 @@ function titled(number: number): FloorLabel {
   return { number, title: titleFromNumber(number) };
 }
 
+// SOS-128: "Basement", "Floor 1", "Floor 2". Floor 0 is the basement, as
+// on the building screen (QA-047).
 function titleFromNumber(number: number): string {
-  if (number < 0) return "Basement";
-  if (number === 0) return "Ground";
+  if (number <= 0) return "Basement";
   return `Floor ${number}`;
 }
 
@@ -103,15 +104,14 @@ export function spacesTitle(count: number): string {
 }
 
 /**
- * Why the rows are ordered. Preferences and group size both feed rankSpaces.
- * Null when neither is set, so the line stays hidden.
+ * Why the rows are ordered. Preferences and group size both feed rankSpaces,
+ * but SOS-130 names only preferences, and hides the line without them.
  */
 export function spacesSortCaption(study: StudyPreferences, groupSize: GroupSize | null): string | null {
   const preferences = hasStudyPreferences(study);
-  if (!preferences && groupSize == null) return null;
-  if (preferences && groupSize) return "Sorted by how you like to study and your group size";
-  if (preferences) return "Sorted by how you like to study";
-  return "Sorted for your group size";
+  // SOS-130: one line, only when preferences are set (QA-045).
+  void groupSize;
+  return preferences ? "Sorted by how you like to study" : null;
 }
 
 const NOISE_RANK = { quiet: 0, low_noise: 1, conversational: 2, loud: 3 } as const;

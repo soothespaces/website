@@ -1,5 +1,6 @@
 "use client";
 
+import { ErrorNote } from "@/components/ui/error-note";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { DetailScreen } from "@/components/ui/detail-screen";
@@ -66,7 +67,7 @@ function SpacesList({ slug }: { slug: string }) {
     catalog.spaces.find((space) => space.building?.short_name)?.building?.short_name ||
     catalog.spaces[0]?.building?.name ||
     data.buildingsBySlug.get(slug)?.name ||
-    "Building";
+    "";
   const sortCaption = spacesSortCaption(study, groupSize);
   const canChangeSort = hasStudyPreferences(study);
   const openSpace = (space: ListedSpace) => push({ kind: "space", id: space.slug });
@@ -82,7 +83,7 @@ function SpacesList({ slug }: { slug: string }) {
       </div>
     );
   } else if (catalog.error) {
-    body = <p className="text-sm text-muted-foreground">{catalog.error}</p>;
+    body = <ErrorNote message={catalog.error} />;
   } else {
     body = (
       <div className="flex flex-col gap-4">
@@ -107,10 +108,10 @@ function SpacesList({ slug }: { slug: string }) {
         ) : null}
         <SpaceFilterChips value={filters} onValueChange={setFilters} />
         {filters.includes("printer") && printers.error ? (
-          <p className="text-sm text-muted-foreground">{printers.error}</p>
+          <ErrorNote message={printers.error} />
         ) : null}
         {catalog.spaces.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No study spaces listed yet.</p>
+          <p className="text-sm text-muted-foreground">No study spaces listed for this building yet.</p>
         ) : groups.length === 0 ? (
           <p className="text-sm">
             No spaces match.{" "}
