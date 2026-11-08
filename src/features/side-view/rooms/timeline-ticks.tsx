@@ -19,15 +19,20 @@ export function TimelineTicks({
   const ticks = hourTicks(start, slotCount, slotMinutes).filter((tick) => tick < end);
   return (
     <div aria-hidden="true" className="relative h-4 min-w-0">
-      {ticks.map((tick) => (
+      {ticks.map((tick) => {
+        const at = ((tick - start) / span) * 100;
+        return (
         <span
           key={tick}
-          className="absolute top-0 text-xs whitespace-nowrap text-muted-foreground"
-          style={{ left: `${((tick - start) / span) * 100}%` }}
+          // A label near the end ends at its hour instead, so it stays inside
+          // the column (QA-054).
+          className={`absolute top-0 text-xs whitespace-nowrap text-muted-foreground ${at > 80 ? "-translate-x-full" : ""}`}
+          style={{ left: `${at}%` }}
         >
           {formatClock(tick)}
         </span>
-      ))}
+        );
+      })}
     </div>
   );
 }

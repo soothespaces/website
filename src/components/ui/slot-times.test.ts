@@ -26,7 +26,7 @@ test("keeps a booked block at the end and half-hour edges", () => {
 });
 
 test("does not invent a summary when the window is empty or the start is unusable", () => {
-  assert.equal(summarizeSlots(eight, []), "No times in this window");
+  assert.equal(summarizeSlots(eight, []), "Availability unavailable");
   assert.equal(summarizeSlots(Number.NaN, ["free"]), "Availability unavailable");
 });
 

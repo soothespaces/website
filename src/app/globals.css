@@ -219,6 +219,12 @@ html[data-motion="reduce"] *::after {
     );
 }
 
+/* The grey free fill is under 3:1 on a white card, so a free block also gets
+   an edge that is at least 3:1 (QA-010). The fill stays the board's grey. */
+.slot-free {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 50%, transparent);
+}
+
 @media (forced-colors: active) {
   .slot-booked {
     background-color: CanvasText;

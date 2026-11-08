@@ -121,7 +121,7 @@ test("Google photos and panoramas stay out of every chip", () => {
   );
   assert.equal(photoCountLabel(12), "12 photos");
   assert.equal(photoCountLabel(1), "1 photo");
-  assert.equal(photoCountLabel(0), "No photos");
+  assert.equal(photoCountLabel(0), "Photos");
 });
 
 test("a photo belongs to a space by id, room number, or spot", () => {

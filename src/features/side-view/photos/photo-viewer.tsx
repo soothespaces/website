@@ -88,10 +88,11 @@ export function PhotoViewer({
       }}
     >
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black" />
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black forced-colors:bg-[Canvas]" />
         <Dialog.Content
           data-no-swipe=""
-          className="fixed inset-0 z-50 flex flex-col bg-black text-white outline-none"
+          // Forced colors keep a background and text (QA-057).
+          className="fixed inset-0 z-50 flex flex-col bg-black text-white outline-none forced-colors:bg-[Canvas] forced-colors:text-[CanvasText]"
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             const id = shownId.current;

@@ -54,7 +54,7 @@ function Note({ children }: { children: string }) {
 export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDensity }) {
   const slug = route.kind === "space" ? route.id : null;
   const titleId = useId();
-  const { data, stack, canGoBack, back, clear, push, setFloor, floor, floorPlans } = useMapState();
+  const { data, stack, canGoBack, back, clear, push, reset, setFloor, floor, floorPlans } = useMapState();
   const detail = useSpaceDetail(slug);
   const listed = slug ? (data.spaces.find((space) => space.slug === slug) ?? null) : null;
   const record = detail.space;
@@ -69,9 +69,15 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
       : null,
   );
 
+  // A pasted space link has nothing under it. Back goes to the space's
+  // building, the screen it would have come from (QA-061); Close still clears.
+  const home = record?.building ?? listed?.building ?? null;
   const onBack = () => {
     if (canGoBack) back();
-    else clear();
+    else if (home) {
+      const known = data.buildingsBySlug.get(home.slug);
+      reset({ kind: "building", slug: home.slug, recordNumber: known?.recordNumber ?? null, name: home.name });
+    } else clear();
   };
   function onKeyDown(event: KeyboardEvent<HTMLElement>) {
     if (event.key !== "Escape" || event.defaultPrevented) return;
@@ -150,7 +156,7 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
       <SpaceToolbar
         name={name}
         spaceId={record?.id ?? null}
-        backLabel={spaceBackLabel(parent, buildingDisplayName(building))}
+        backLabel={spaceBackLabel(parent ?? (building ? { kind: "building", slug: building.slug } : undefined), buildingDisplayName(building))}
         onBack={onBack}
       />
       {!detail.loaded ? (

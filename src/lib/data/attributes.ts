@@ -9,17 +9,22 @@ type SpaceSource = Database["public"]["Enums"]["space_source"];
  */
 export const CHECK_IN_CONSENSUS_MIN = 3;
 
-/** Copy from the Reports board, plus the floor-plan and edited labels the resolver needs. */
+/**
+ * SOS-101's source labels: "U-M Library listing", "From check-ins", "From the
+ * floor plan" (QA-059). MGuide follows the listing pattern. A value the team
+ * tagged by hand has no source line (empty), and agreeing check-ins don't
+ * add words the ticket doesn't list.
+ */
 export const SOURCE_LABELS = {
-  library: "From the U-M Library",
-  mguide: "From MGuide",
+  library: "U-M Library listing",
+  mguide: "MGuide listing",
   checkIns: "From check-ins",
-  confirmedLibrary: "U-M Library · confirmed in check-ins",
-  confirmedMguide: "MGuide · confirmed in check-ins",
+  confirmedLibrary: "U-M Library listing",
+  confirmedMguide: "MGuide listing",
   floorPlan: "From the floor plan",
-  edited: "Edited",
-  added: "Added here",
-  confirmedAdded: "Added here · confirmed in check-ins",
+  edited: "",
+  added: "",
+  confirmedAdded: "From check-ins",
 } as const;
 
 export type AttributeSource = "admin" | "check_ins" | "listing" | "floor_plan";
@@ -146,6 +151,9 @@ function shortSource(resolved: ResolvedValue, source: SpaceSource): string {
 
 function lightingLabel(brightness: ResolvedValue | null, daylight: ResolvedValue | null, source: SpaceSource): string | null {
   if (brightness && daylight) {
+    // A hand-tagged side has no label; name only the other (QA-059).
+    if (brightness.source === "admin") return daylight.sourceLabel || null;
+    if (daylight.source === "admin") return brightness.sourceLabel || null;
     const day = shortSource(daylight, source);
     const bright = shortSource(brightness, source);
     if (day !== bright) return `Daylight: ${day} · Brightness: ${bright}`;

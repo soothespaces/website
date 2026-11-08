@@ -1,5 +1,7 @@
 "use client";
 
+import { rememberBooking } from "@/features/check-in/booking-memory";
+import { bookingRoomNumber, detroitSlots, roomTitle } from "@/features/side-view/rooms-map/room-copy";
 import { useEffect, useState } from "react";
 import { useMapState } from "@/features/map/map-state";
 import { useRoomSlots, type RoomSlot } from "@/lib/data/room-slots";
@@ -38,6 +40,7 @@ export function RoomsScreen({ route }: PanelScreenProps) {
       rememberedFloor={rememberedFloor}
       focusedRoom={focusedRoom}
       onFocusRoom={setFocusedRoom}
+      onBookRoom={(room) => rememberListBooking(room, route.slug, now)}
       onViewFloorPlan={(floor, roomId) =>
         push(roomId ? { kind: "rooms-map", slug: route.slug, floor, roomId } : { kind: "rooms-map", slug: route.slug, floor })
       }
@@ -72,4 +75,25 @@ function useNow(): Date {
     };
   }, []);
   return now;
+}
+
+// SOS-161: opening LibCal from the list saves the slot the visitor was
+// looking at, the first free half hour, so "How's Room 2124?" can follow
+// (QA-050). The rooms map's Book button does the same with its chosen slot.
+function rememberListBooking(room: RoomSlot, buildingSlug: string, now: Date) {
+  const roomNumber = bookingRoomNumber(room);
+  if (!roomNumber || !room.slots) return;
+  const times = detroitSlots(now);
+  const index = room.slots.findIndex((slot, i) => slot === "free" && times[i]?.startsAt);
+  const slot = index >= 0 ? times[index] : null;
+  if (!slot?.startsAt || !slot.endsAt) return;
+  rememberBooking({
+    buildingSlug,
+    roomNumber,
+    spaceId: room.spaceId ?? null,
+    startsAt: slot.startsAt,
+    endsAt: slot.endsAt,
+    bookingUrl: room.bookingUrl,
+    roomName: roomTitle(room),
+  });
 }

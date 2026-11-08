@@ -84,7 +84,8 @@ export function SlotTimeline({
             const at = starts?.[index];
             const label = formatClock(start + index * slotMinutes);
             const free = slot === "free" && !!at;
-            const state = !at ? "unavailable" : free ? "free" : "booked";
+            // A half hour the clocks skip can't be booked: SOS-107 has only free and booked (QA-053).
+            const state = free ? "free" : "booked";
             return (
               <Button
                 key={start + index * slotMinutes}

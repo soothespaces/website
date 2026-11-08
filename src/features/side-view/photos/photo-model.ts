@@ -132,8 +132,9 @@ export function filterPhotos(photos: readonly ClassifiedPhoto[], filter: PhotoFi
   });
 }
 
+// SOS-169: never "0 photos" or "No photos" as a title; with none it's "Photos" (QA-055).
 export function photoCountLabel(count: number): string {
-  if (count === 0) return "No photos";
+  if (count === 0) return "Photos";
   if (count === 1) return "1 photo";
   return `${count} photos`;
 }

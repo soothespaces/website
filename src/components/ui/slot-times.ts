@@ -12,7 +12,8 @@ export function summarizeSlots(start: number, slots: readonly SlotState[], slotM
   if (!Number.isFinite(start) || !Number.isFinite(slotMinutes) || slotMinutes <= 0) {
     return "Availability unavailable";
   }
-  if (slots.length === 0) return "No times in this window";
+  // SOS-107: an empty list is the same "Availability unavailable" (QA-053).
+  if (slots.length === 0) return "Availability unavailable";
 
   const ranges: { state: SlotState; from: number; to: number }[] = [];
   for (let i = 0; i < slots.length; i++) {

@@ -43,8 +43,9 @@ function brightnessPhrase(value: string): string {
 
 function known(value: string, source: string): { value: string; source: string } | null {
   const line = value.trim();
+  // A hand-tagged value has no source line (an empty label), and still shows.
   const from = source.trim();
-  if (!line || !from || /unknown/i.test(line) || /unknown/i.test(from)) return null;
+  if (!line || /unknown/i.test(line) || /unknown/i.test(from)) return null;
   return { value: line, source: from };
 }
 
@@ -78,8 +79,7 @@ function lightRow(resolved: ResolvedAttributes): LikeRow | null {
     parts.push(parts.length > 0 ? day : resolved.daylight.value);
   }
   if (parts.length === 0) return null;
-  const source = resolved.lightingLabel ?? resolved.brightness?.sourceLabel ?? resolved.daylight?.sourceLabel;
-  if (!source) return null;
+  const source = resolved.lightingLabel ?? resolved.brightness?.sourceLabel ?? resolved.daylight?.sourceLabel ?? "";
   const row = known(parts.join(", "), source);
   return row ? { id: "light", ...row } : null;
 }

@@ -35,6 +35,7 @@ export function RoomsList({
   rememberedFloor,
   focusedRoom,
   onFocusRoom,
+  onBookRoom,
   onViewFloorPlan,
 }: {
   buildingName: string;
@@ -49,6 +50,7 @@ export function RoomsList({
   rememberedFloor: number | null;
   focusedRoom: RoomSlot | null;
   onFocusRoom: (room: RoomSlot) => void;
+  onBookRoom?: (room: RoomSlot) => void;
   onViewFloorPlan: (floor: number, roomId?: string) => void;
 }) {
   const start = slotWindowStart(now);
@@ -92,7 +94,12 @@ export function RoomsList({
             <ul className="divide-y divide-border">
               {group.rooms.map((room) => (
                 <li key={room.id}>
-                  <RoomRow room={room} start={start} onFocus={() => onFocusRoom(room)} />
+                  <RoomRow
+                    room={room}
+                    start={start}
+                    onFocus={() => onFocusRoom(room)}
+                    onBook={onBookRoom ? () => onBookRoom(room) : undefined}
+                  />
                 </li>
               ))}
             </ul>

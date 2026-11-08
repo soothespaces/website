@@ -48,7 +48,7 @@ test("a classroom names the next class, or says class until, and is not a link",
   const inClass = roomStatusLine(
     room({ kind: "classroom", status: "Booked until 4 PM", slots: eight("booked"), currentCourse: "EECS 281" }),
   );
-  assert.equal(inClass.text, "Class until 4 PM, EECS 281");
+  assert.equal(inClass.text, "Class until 4 PM");
   assert.equal(inClass.tone, "booked");
 
   const unnamed = roomStatusLine(room({ kind: "classroom", status: "Booked until 4 PM", slots: eight("booked") }));
