@@ -44,7 +44,11 @@ export function LayerSlots() {
   // Campus detail stays under the first symbol so it doesn't cover labels.
   // The floor plan goes above the highest basemap fill or line. The dark
   // style paints building footprints after its first symbol, and that
-  // footprint was covering the rooms.
+  // footprint was covering the rooms. The cost (QA-013): in that style the
+  // symbols drawn before its last fill or line (water and minor road names)
+  // sit under the plan, so the opaque plate hides the ones inside the
+  // selected building. Place and street labels around it stay on top. Our
+  // own labels (room numbers, the outline) are in the overlays band.
   const order =
     map?.getLayersOrder().map((id) => {
       const layer = map.getLayer(id);

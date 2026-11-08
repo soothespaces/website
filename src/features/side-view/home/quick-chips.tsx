@@ -34,7 +34,8 @@ export function QuickChips() {
       value={selected}
       onValueChange={(values) => setFilters(filtersFrom(values))}
       className="min-w-0 w-full"
-      groupClassName="min-w-0 flex-nowrap overflow-x-auto overscroll-x-contain pb-1"
+      // Phones scroll the row (SOS-151); the wide dock wraps it (QA-031).
+      groupClassName="min-w-0 max-md:flex-nowrap max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pb-1"
     >
       {OPTIONS.map((option) => (
         <Chip key={option.value} value={option.value}>

@@ -200,7 +200,7 @@ export default function AlignmentEditor({
             >
               <span
                 title={`Drag the ${CORNER_NAMES[index]} corner to rotate and scale`}
-                className="block size-4 cursor-grab rounded-sm border-2 border-white bg-[#ea580c] shadow"
+                className="block size-6 cursor-grab rounded-sm border-2 border-white bg-[#ea580c] shadow"
               />
             </Marker>
           ))}

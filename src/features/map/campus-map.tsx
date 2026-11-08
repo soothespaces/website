@@ -3,10 +3,12 @@
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { ReactNode } from "react";
-import Map, { GeolocateControl, NavigationControl, ScaleControl } from "react-map-gl/maplibre";
+import Map, { AttributionControl, GeolocateControl, NavigationControl, ScaleControl } from "react-map-gl/maplibre";
 import { rememberFix } from "@/lib/location/store";
 import { useReducedMotion } from "@/lib/settings/use-reduced-motion";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { useResolvedTheme } from "@/lib/use-resolved-theme";
+import { WIDE_QUERY } from "./map-layout-config";
 import {
   CAMPUS_BOUNDS,
   CAMPUS_INITIAL_VIEW,
@@ -26,6 +28,7 @@ import { LayerSlots } from "./slots";
 export default function CampusMap({ children }: { children?: ReactNode }) {
   const theme = useResolvedTheme();
   const reducedMotion = useReducedMotion();
+  const wide = useMediaQuery(WIDE_QUERY);
 
   return (
     <div data-map-theme={theme} className="absolute inset-0 bg-muted">
@@ -71,6 +74,7 @@ export default function CampusMap({ children }: { children?: ReactNode }) {
         }}
         locale={{ "Map.Title": "Campus map" }}
         style={{ width: "100%", height: "100%" }}
+        attributionControl={false}
       >
         <NavigationControl position="top-right" showCompass={false} />
         <GeolocateControl
@@ -82,6 +86,9 @@ export default function CampusMap({ children }: { children?: ReactNode }) {
             );
           }}
         />
+        {/* On phones the sheet covers the bottom of the map, so the credits
+            sit under the zoom and locate buttons instead (QA-016). */}
+        <AttributionControl key={wide ? "wide" : "phone"} position={wide ? "bottom-right" : "top-right"} compact={!wide} />
         <ScaleControl position="bottom-left" />
         <LayerSlots />
         {children}

@@ -75,7 +75,7 @@ function BusyDays({ times, now, focus }: { times: PopularTimes; now: Date; focus
               if (value) setChoice(value);
             }}
             options={BUSY_DAY_OPTIONS}
-            className="h-auto min-h-0 w-auto gap-1 border-0 bg-transparent px-1 py-0 text-sm font-normal text-muted-foreground shadow-none"
+            className="h-auto min-h-6 w-auto gap-1 border-0 bg-transparent px-1 py-0 text-sm font-normal text-muted-foreground shadow-none"
           />
         </div>
       </div>

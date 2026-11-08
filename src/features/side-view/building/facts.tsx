@@ -4,7 +4,7 @@ import { Accordion as AccordionPrimitive } from "radix-ui";
 import { ChevronDownIcon } from "@/components/ui/icons";
 import { Accordion } from "@/components/ui/tabs";
 import type { Entrance } from "@/features/map/use-map-data";
-import { entranceSummary } from "./copy";
+import { entranceLine, entranceSummary } from "./copy";
 
 // The entrance count the old panel showed, plus the building's own ramp and
 // elevator notes. The summary stays visible while the list is collapsed.
@@ -21,23 +21,17 @@ export function BuildingFacts({
   elevatorAccess: string | null;
 }) {
   const automatic = entrances.filter((entrance) => entrance.automatic).length;
-  const entranceLine = entrancesKnown ? entranceSummary(entrances.length, automatic) : null;
+  const entranceRow = entrancesKnown ? entranceSummary(entrances.length, automatic) : null;
   const accessLine = rampAccess || elevatorAccess;
   const accessBody = rampAccess && elevatorAccess && rampAccess !== elevatorAccess ? [elevatorAccess] : [];
-  const entranceBody = entrances.flatMap((entrance) => {
-    const where = entrance.location_description?.trim();
-    const notes = entrance.notes?.trim();
-    if (!where && !notes && !entrance.automatic) return [];
-    const line = [where || "Accessible entrance", entrance.automatic ? "Automatic" : null, notes].filter(Boolean).join(" · ");
-    return [line];
-  });
+  const entranceBody = entrances.map(entranceLine);
 
-  if (!accessLine && !entranceLine) return null;
+  if (!accessLine && !entranceRow) return null;
 
   return (
     <div className="flex flex-col">
       {accessLine ? <Fact title="Accessibility" summary={accessLine} body={accessBody} /> : null}
-      {entranceLine ? <Fact title="Entrances" summary={entranceLine} body={entranceBody} /> : null}
+      {entranceRow ? <Fact title="Entrances" summary={entranceRow} body={entranceBody} /> : null}
     </div>
   );
 }

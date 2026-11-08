@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import type { FloorRecord } from "@/features/floor-alignment/floors";
-import { plansByBuilding } from "./floor-plan-index";
+import { plansByBuilding, type PlanSheet } from "./floor-plan-index";
 
 export type FloorPlan = Pick<FloorRecord, "building" | "floor" | "geojson" | "labeled"> &
   Partial<Pick<FloorRecord, "rooms" | "buildingName" | "sheet" | "width" | "height" | "corners">> & {
     geojson: string;
+    /** Every sheet the floor is drawn on, with its corners (see plansByBuilding). */
+    sheets?: PlanSheet[];
   };
 
 // Floor plans the map can draw, by building slug, lowest floor first. Read

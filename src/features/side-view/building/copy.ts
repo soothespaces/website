@@ -21,9 +21,40 @@ export function buildingSubtitle(acronym: string | null | undefined, address: st
   return parts.length ? parts.join(" · ") : null;
 }
 
-export function entranceSummary(accessible: number, automatic: number): string {
-  if (accessible <= 0) return "No accessible entrances on record";
+/** Null hides the row: no entrances on record is missing data, not a fact (QA-036). */
+export function entranceSummary(accessible: number, automatic: number): string | null {
+  if (accessible <= 0) return null;
   return `${accessible} accessible, ${automatic} automatic`;
+}
+
+/** FO's floor labels: "01", "0G" (ground), "0B" (basement), "1-4" and so on. */
+export function entranceFloorName(label: string) {
+  const floor = label.replace(/^0(?=\w)/, "");
+  if (floor === "G") return "Ground floor";
+  if (floor === "B") return "Basement";
+  return `Floor ${floor}`;
+}
+
+/**
+ * One line per entrance, every door the map draws (QA-018): where it is,
+ * its floor, the kind of door, and any notes.
+ */
+export function entranceLine(entrance: {
+  location_description: string | null;
+  notes: string | null;
+  automatic: boolean;
+  floor_label: string | null;
+}): string {
+  const where = entrance.location_description?.trim();
+  const capital = where ? where.charAt(0).toUpperCase() + where.slice(1) : null;
+  return [
+    capital,
+    entrance.floor_label ? entranceFloorName(entrance.floor_label) : null,
+    entrance.automatic ? "Automatic door" : "Manual door",
+    entrance.notes?.trim() || null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 export function photoCount(count: number): string {

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 // Phones: a search bar floating over the map. It's a button: tapping it
 // opens the full-screen search (<MapSearchScreen>). Home has its own field.
-export function MapSearchBar({ onOpen }: { onOpen: () => void }) {
+export function MapSearchBar({ open, onOpen }: { open: boolean; onOpen: () => void }) {
   const { search, route } = useMapState();
   if (route.kind === "home" && panelRegistry.home) return null;
   return (
@@ -16,6 +16,7 @@ export function MapSearchBar({ onOpen }: { onOpen: () => void }) {
       variant="ghost"
       onClick={onOpen}
       aria-haspopup="dialog"
+      aria-expanded={open}
       className="absolute top-2.5 right-[3.75rem] left-2.5 z-10 flex h-11 justify-start gap-3 rounded-full bg-card px-4 text-left text-sm font-normal text-card-foreground shadow-[0_0_0_1px_var(--input),0_2px_8px_rgb(0_0_0/0.12)] hover:bg-accent md:hidden"
     >
       <SearchIcon className="size-4 text-muted-foreground" />

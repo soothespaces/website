@@ -47,14 +47,15 @@ function usePrinterImage() {
   return ready;
 }
 
-function sheetOf(plan: FloorPlan): SheetPlacement | null {
-  if (!plan.sheet || !plan.width || !plan.height || !plan.corners) return null;
-  return { sheet: plan.sheet, width: plan.width, height: plan.height, corners: plan.corners };
+export function sheetsOf(plan: FloorPlan): SheetPlacement[] {
+  if (plan.sheets?.length) return plan.sheets as SheetPlacement[];
+  if (!plan.sheet || !plan.width || !plan.height || !plan.corners) return [];
+  return [{ sheet: plan.sheet, width: plan.width, height: plan.height, corners: plan.corners }];
 }
 
 export function printerPoints(printers: readonly Printer[], plan: FloorPlan, rooms: readonly RoomPoint[]): PrinterPoint[] {
   const centroids = new Map(rooms.map((room) => [room.roomNumber.toUpperCase(), { lng: room.lng, lat: room.lat }]));
-  const sheet = sheetOf(plan);
+  const sheet = sheetsOf(plan);
   const points: PrinterPoint[] = [];
   for (const printer of printersOnFloor(printers, plan.floor)) {
     const position = printerPosition(printer, sheet, centroids);

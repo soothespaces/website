@@ -27,11 +27,11 @@ export function MapLayout() {
       <CheckInHost>
         <div className="flex h-full min-h-0 flex-1">
           <MapDock />
-          <div className="relative min-w-0 flex-1">
+          <div data-map-column="" className="relative min-w-0 flex-1">
             <CampusMap>
               <MapExplorer />
             </CampusMap>
-            <MapSearchBar onOpen={() => setSearching(true)} />
+            <MapSearchBar open={searching && !wide} onOpen={() => setSearching(true)} />
             <MapSheet />
             <LocationPrompt />
           </div>

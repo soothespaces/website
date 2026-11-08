@@ -44,7 +44,7 @@ export function Select({
           sideOffset={4}
           className="z-50 max-h-[var(--radix-select-content-available-height)] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-pop-in"
         >
-          <SelectPrimitive.ScrollUpButton className="flex justify-center py-1">
+          <SelectPrimitive.ScrollUpButton aria-label="Scroll up" className="flex min-h-6 items-center justify-center py-1">
             <ChevronUpIcon />
           </SelectPrimitive.ScrollUpButton>
           <SelectPrimitive.Viewport className="p-1">
@@ -52,7 +52,7 @@ export function Select({
               <SelectPrimitive.Item
                 key={option.value}
                 value={option.value}
-                className="relative flex min-h-10 cursor-default items-center rounded-sm py-2 pr-3 pl-8 outline-none select-none data-[disabled]:opacity-40 data-[highlighted]:bg-accent"
+                className="relative flex min-h-10 cursor-default items-center rounded-sm py-2 pr-3 pl-8 outline-none select-none data-[disabled]:opacity-40 data-[highlighted]:bg-accent data-[highlighted]:outline-2 data-[highlighted]:-outline-offset-2 data-[highlighted]:outline-ring"
               >
                 <SelectPrimitive.ItemIndicator className="absolute left-2">
                   <CheckIcon />
@@ -61,7 +61,7 @@ export function Select({
               </SelectPrimitive.Item>
             ))}
           </SelectPrimitive.Viewport>
-          <SelectPrimitive.ScrollDownButton className="flex justify-center py-1">
+          <SelectPrimitive.ScrollDownButton aria-label="Scroll down" className="flex min-h-6 items-center justify-center py-1">
             <ChevronDownIcon />
           </SelectPrimitive.ScrollDownButton>
         </SelectPrimitive.Content>

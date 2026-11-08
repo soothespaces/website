@@ -3,11 +3,9 @@
 import { useId, type KeyboardEvent } from "react";
 import { Skeleton } from "@/components/ui/feedback";
 import { FloorSwitcher } from "@/features/map/panel/floor-switcher";
-import { WIDE_QUERY } from "@/features/map/map-layout-config";
 import { useMapState } from "@/features/map/map-state";
 import type { PanelRoute } from "@/features/side-view/panel-route";
 import type { SpaceListDensity } from "@/features/spaces";
-import { useMediaQuery } from "@/lib/use-media-query";
 import type { AttributeSpace } from "@/lib/data/attributes";
 import type { SpaceDetail } from "./detail";
 import { floorsForPrinters, locationFloors } from "./detail";
@@ -56,7 +54,6 @@ function Note({ children }: { children: string }) {
 export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDensity }) {
   const slug = route.kind === "space" ? route.id : null;
   const titleId = useId();
-  const wide = useMediaQuery(WIDE_QUERY);
   const { data, stack, canGoBack, back, clear, push, setFloor, floor, floorPlans } = useMapState();
   const detail = useSpaceDetail(slug);
   const listed = slug ? (data.spaces.find((space) => space.slug === slug) ?? null) : null;
@@ -77,7 +74,7 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
     else clear();
   };
   function onKeyDown(event: KeyboardEvent<HTMLElement>) {
-    if (!wide || event.key !== "Escape" || event.defaultPrevented) return;
+    if (event.key !== "Escape" || event.defaultPrevented) return;
     event.preventDefault();
     event.stopPropagation();
     onBack();

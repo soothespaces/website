@@ -4,6 +4,8 @@ import type { LngLatLike, MapMouseEvent } from "maplibre-gl";
 import { useEffect, useMemo } from "react";
 import { Popup, useMap } from "react-map-gl/maplibre";
 import { useMediaQuery } from "@/lib/use-media-query";
+// The in-app Reduce motion setting (data-motion) as well as the device's (QA-014).
+import { prefersReducedMotion } from "@/lib/settings/use-reduced-motion";
 import { useResolvedTheme } from "@/lib/use-resolved-theme";
 import { CurbRampLayer, ENTRANCES_LAYER, EntranceLayer } from "./layers/accessibility";
 import { BUILDINGS_HIT_LAYER, BuildingLayers } from "./layers/buildings";
@@ -15,28 +17,20 @@ import { FLOOR_PRINTERS_LAYER } from "./layers/floor-printer-points";
 import { FLOOR_PLAN_MIN_ZOOM, FloorPlanLayers } from "./layers/floor-plans";
 import { ROOM_AVAILABILITY_HIT_LAYER, RoomAvailabilityPin } from "./layers/floor-room-availability";
 import { normalizeRoomNumber, propertyRoomNumber } from "./layers/room-match";
+import { entranceFloorName as floorName } from "@/features/side-view/building/copy";
 import { useRoomsData } from "@/features/side-view/rooms-map/rooms-data";
 import { SpacePins } from "./layers/space-pins";
 import { LayersPanel } from "./layers-panel";
+import { MarkerFocusGuard } from "./marker-focus-guard";
 import { WIDE_QUERY } from "./map-layout-config";
 import { type MapSelection, useMapState, useSelectedBuilding } from "./map-state";
 import { useMapColors } from "./use-map-colors";
 import type { Entrance, SpaceSpot } from "./use-map-data";
 
-// FO's floor labels: "01", "0G" (ground), "0B" (basement), "1-4" and so on.
-function floorName(label: string) {
-  const floor = label.replace(/^0(?=\w)/, "");
-  if (floor === "G") return "Ground floor";
-  if (floor === "B") return "Basement";
-  return `Floor ${floor}`;
-}
-
 const sentence = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 
 // How far, in pixels, a click can land from a door and still pick it.
 const TAP_SLOP = 10;
-
-const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // The campus map's contents: FO's campus detail, accessible entrances and
 // curb ramps, clickable buildings, study-space pins, floor plans and the
@@ -269,6 +263,7 @@ export function MapExplorer() {
       <CurbRampLayer colors={colors} visible={layers.curbRamps} />
       <EntranceLayer entrances={entrances} colors={colors} visible={layers.entrances} />
       {layers.spaces ? <SpacePins spots={spots} selectedKey={selectedSpotKey} onSelect={onSelectSpot} /> : null}
+      <MarkerFocusGuard />
 
       {entrance ? <EntrancePopup entrance={entrance} onClose={() => setEntrance(null)} /> : null}
 
