@@ -149,10 +149,13 @@ export function FloorPlanLayers({
             "text-allow-overlap": false,
             "symbol-sort-key": ["coalesce", ["get", "labelRank"], 3],
           }}
+          // A halo wide enough to be a plate under each number, so it reads on
+          // the booked hatch, the darker noise fills, and a noise glyph that
+          // sits under it (QA-015, QA-023).
           paint={{
             "text-color": colors.foreground,
             "text-halo-color": colors.card,
-            "text-halo-width": 1.25,
+            "text-halo-width": 2,
           }}
           beforeId={SLOTS.overlays}
         />

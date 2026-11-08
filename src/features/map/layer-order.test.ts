@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { campusDetailBeforeId, floorPlanBeforeId } from "./layer-order.ts";
+import { basemapLayersToLower, campusDetailBeforeId, floorPlanBeforeId, type StackLayer } from "./layer-order.ts";
 
 test("the dark basemap keeps the floor plan above its building footprint", () => {
   const layers = [
@@ -69,4 +69,53 @@ test("campus detail stays under the first basemap label, not under our noise gly
   ];
   assert.equal(campusDetailBeforeId(layers), "waterway_line_label");
   assert.equal(floorPlanBeforeId(layers), "waterway_line_label");
+});
+
+// What map.moveLayer(id, beforeId) does to the list.
+function lower(layers: StackLayer[]) {
+  const move = basemapLayersToLower(layers);
+  if (!move) return layers;
+  const moved = layers.filter((layer) => move.ids.includes(layer.id));
+  const rest = layers.filter((layer) => !move.ids.includes(layer.id));
+  const at = rest.findIndex((layer) => layer.id === move.beforeId);
+  return [...rest.slice(0, at), ...moved, ...rest.slice(at)];
+}
+
+test("the dark basemap's late fills move under its first label, so no label sits under the floor plan", () => {
+  const layers = lower([
+    { id: "water", type: "fill" },
+    { id: "water_name", type: "symbol" },
+    { id: "building", type: "fill" },
+    { id: "highway_minor", type: "line" },
+    { id: "highway_name_other", type: "symbol" },
+    { id: "boundary_country_z5-", type: "line" },
+    { id: "place_other", type: "symbol" },
+  ]);
+  assert.deepEqual(
+    layers.map((layer) => layer.id),
+    ["water", "building", "highway_minor", "boundary_country_z5-", "water_name", "highway_name_other", "place_other"],
+  );
+  const before = floorPlanBeforeId(layers);
+  assert.equal(before, "water_name");
+  assert.equal(campusDetailBeforeId(layers), "water_name");
+  assert.equal(basemapLayersToLower(layers), null);
+});
+
+test("the light basemap is already in order", () => {
+  const layers = [
+    { id: "building", type: "fill" },
+    { id: "highway_minor", type: "line" },
+    { id: "waterway_line_label", type: "symbol" },
+    { id: "label_city", type: "symbol" },
+  ];
+  assert.equal(basemapLayersToLower(layers), null);
+});
+
+test("our own layers are never moved", () => {
+  const layers = [
+    { id: "water_name", type: "symbol", sourceType: "vector" },
+    { id: "floor-plan-rooms", type: "fill", sourceType: "geojson" },
+    { id: "slot-floor-plans", type: "background" },
+  ];
+  assert.equal(basemapLayersToLower(layers), null);
 });

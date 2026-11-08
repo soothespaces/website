@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Layer, useMap } from "react-map-gl/maplibre";
-import { campusDetailBeforeId, floorPlanBeforeId } from "./layer-order";
+import { basemapLayersToLower, campusDetailBeforeId, floorPlanBeforeId, type StackLayer } from "./layer-order";
 
 // Named positions in the layer stack. Each slot is an invisible layer;
 // features add their layers with beforeId={SLOTS.x}, which puts them just
@@ -26,6 +26,16 @@ export const SLOTS = {
   overlays: "slot-overlays",
 } as const;
 
+type StyleMap = NonNullable<ReturnType<typeof useMap>["current"]> extends { getMap(): infer M } ? M : never;
+
+function stackOf(map: StyleMap): StackLayer[] {
+  return map.getLayersOrder().map((id) => {
+    const layer = map.getLayer(id);
+    const source = layer?.source ? map.getSource(layer.source) : undefined;
+    return { id, type: layer?.type ?? "", sourceType: source?.type };
+  });
+}
+
 // Render once inside <CampusMap>, before any layer that uses a slot.
 export function LayerSlots() {
   const map = useMap().current?.getMap();
@@ -34,7 +44,14 @@ export function LayerSlots() {
   const [, setVersion] = useState(0);
   useEffect(() => {
     if (!map) return;
-    const update = () => setVersion((v) => v + 1);
+    const update = () => {
+      // Basemap labels above basemap fills first (QA-013). Moving a layer
+      // fires styledata again, and by then there is nothing left to move.
+      const move = basemapLayersToLower(stackOf(map));
+      if (move) for (const id of move.ids) map.moveLayer(id, move.beforeId);
+      setVersion((v) => v + 1);
+    };
+    if (map.isStyleLoaded()) update();
     map.on("styledata", update);
     return () => {
       map.off("styledata", update);
@@ -42,19 +59,11 @@ export function LayerSlots() {
   }, [map]);
 
   // Campus detail stays under the first symbol so it doesn't cover labels.
-  // The floor plan goes above the highest basemap fill or line. The dark
-  // style paints building footprints after its first symbol, and that
-  // footprint was covering the rooms. The cost (QA-013): in that style the
-  // symbols drawn before its last fill or line (water and minor road names)
-  // sit under the plan, so the opaque plate hides the ones inside the
-  // selected building. Place and street labels around it stay on top. Our
-  // own labels (room numbers, the outline) are in the overlays band.
-  const order =
-    map?.getLayersOrder().map((id) => {
-      const layer = map.getLayer(id);
-      const source = layer?.source ? map.getSource(layer.source) : undefined;
-      return { id, type: layer?.type ?? "", sourceType: source?.type };
-    }) ?? [];
+  // The floor plan goes above the highest basemap fill or line, which is
+  // under every basemap label once the effect above has lowered the dark
+  // style's late fills. Our own labels (room numbers, the outline) are in
+  // the overlays band.
+  const order = map ? stackOf(map) : [];
   const firstLabel = campusDetailBeforeId(order);
   const floorPlanAnchor = floorPlanBeforeId(order);
 

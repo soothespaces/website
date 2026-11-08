@@ -85,6 +85,11 @@ test("adjacent noise fills differ by at least 1.25:1 in every mode", () => {
       return hex;
     });
     const blended = colors.map((hex) => luminance(blend(hex, card, opacity / 100)));
+    const cardLuminance = luminance(hexToRgb(card));
+    blended.forEach((value, index) => {
+      const ratio = contrast(value, cardLuminance);
+      assert.ok(ratio >= 3, `${mode} level ${index} is ${ratio.toFixed(2)} against the card`);
+    });
     const darker = mode.includes("dark");
     for (let index = 1; index < blended.length; index++) {
       const ratio = contrast(blended[index - 1], blended[index]);
@@ -105,5 +110,21 @@ test("the glyph plate keeps foreground bars at least 4.5:1 against the card", ()
     assert.ok(card && foreground, mode);
     const ratio = contrast(luminance(hexToRgb(foreground)), luminance(hexToRgb(card)));
     assert.ok(ratio >= 4.5, `${mode} glyph plate is ${ratio.toFixed(2)}`);
+  }
+});
+
+test("staff rooms and free slots are at least 3:1 against the card", () => {
+  const css = readFileSync("src/app/tokens.css", "utf8");
+  const cards = tokenBySelector(css, "card");
+  for (const name of ["floor-staff", "slot-free"]) {
+    const fills = tokenBySelector(css, name);
+    for (const mode of ["light", "dark", "high-contrast-light", "high-contrast-dark"]) {
+      const selector = CARD_SELECTOR[mode];
+      const card = cards.get(selector);
+      const fill = fills.get(selector);
+      assert.ok(card && fill, `${name} ${mode}`);
+      const ratio = contrast(luminance(hexToRgb(fill)), luminance(hexToRgb(card)));
+      assert.ok(ratio >= 3, `${name} ${mode} is ${ratio.toFixed(2)}`);
+    }
   }
 });
