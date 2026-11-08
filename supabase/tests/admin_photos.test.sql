@@ -59,7 +59,7 @@ select lives_ok(
 );
 
 select is(
-  (select uploaded_by from public.photos where path_prefix = 'photos/buildings/test-photo-hall/abc'),
+  (select uploaded_by from public.photo_uploaders(array(select id from public.photos where path_prefix = 'photos/buildings/test-photo-hall/abc'))),
   'tkaslan@umich.edu',
   'uploaded_by is the signed-in admin, not what the client sent'
 );
@@ -86,7 +86,7 @@ select lives_ok(
 );
 
 select is(
-  (select uploaded_by from public.photos where path_prefix = 'photos/buildings/test-photo-hall/abc'),
+  (select uploaded_by from public.photo_uploaders(array(select id from public.photos where path_prefix = 'photos/buildings/test-photo-hall/abc'))),
   'tkaslan@umich.edu',
   'uploaded_by never changes after upload'
 );

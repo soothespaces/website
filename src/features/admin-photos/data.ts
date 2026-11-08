@@ -3,7 +3,7 @@ import { floors } from "@/features/floor-alignment/floors";
 import { plansByBuilding } from "@/features/map/floor-plan-index";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/supabase";
-import type { AdminPhoto, PhotoKind } from "./photo";
+import { BUCKET, HIDDEN_BUCKET, type AdminPhoto, type PhotoKind } from "./photo";
 
 type PhotoRow = Database["public"]["Tables"]["photos"]["Row"];
 
@@ -43,7 +43,7 @@ export function floorsFor(buildingSlug: string) {
 }
 
 const COLUMNS =
-  "id, building_slug, floor, room_number, lat, lng, heading, alt, credit, license, kind, is_listed, path_prefix, widths, width, height, source_url, uploaded_by, created_at";
+  "id, building_slug, floor, room_number, lat, lng, heading, alt, credit, license, kind, is_listed, path_prefix, widths, width, height, source_url, uploaded, created_at";
 
 function toPhoto(row: Pick<PhotoRow, keyof PhotoRow & string>): AdminPhoto {
   return {
@@ -64,9 +64,31 @@ function toPhoto(row: Pick<PhotoRow, keyof PhotoRow & string>): AdminPhoto {
     width: row.width,
     height: row.height,
     sourceUrl: row.source_url,
-    uploadedBy: row.uploaded_by,
+    uploaded: row.uploaded,
+    uploadedBy: null,
     createdAt: row.created_at,
+    signed: null,
   };
+}
+
+type Supabase = Awaited<ReturnType<typeof createClient>>;
+
+/** Unlisted photos' files are in the private bucket; sign their URLs for an hour. */
+async function signHidden(supabase: Supabase, photos: AdminPhoto[]) {
+  const hidden = photos.filter((p) => !p.isListed);
+  if (!hidden.length) return photos;
+  const paths = hidden.flatMap((p) => p.widths.map((w) => `${p.pathPrefix.slice(BUCKET.length + 1)}-${w}.webp`));
+  const { data } = await supabase.storage.from(HIDDEN_BUCKET).createSignedUrls(paths, 3600);
+  const byPath = new Map((data ?? []).filter((d) => d.signedUrl).map((d) => [d.path, d.signedUrl]));
+  for (const p of hidden) {
+    const signed: Record<number, string> = {};
+    for (const w of p.widths) {
+      const url = byPath.get(`${p.pathPrefix.slice(BUCKET.length + 1)}-${w}.webp`);
+      if (url) signed[w] = url;
+    }
+    p.signed = Object.keys(signed).length ? signed : null;
+  }
+  return photos;
 }
 
 export const PAGE_SIZE = 48;
@@ -91,15 +113,23 @@ export async function getPhotos({
     .order("id")
     .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
   if (building) query = query.eq("building_slug", building);
-  if (uploaded) query = query.not("uploaded_by", "is", null);
+  if (uploaded) query = query.eq("uploaded", true);
   const { data, error, count } = await query;
   if (error) throw new Error(`Couldn't read photos: ${error.message}`);
-  return { photos: data.map((row) => toPhoto(row as PhotoRow)), total: count ?? 0 };
+  const photos = await signHidden(supabase, data.map((row) => toPhoto(row as PhotoRow)));
+  return { photos, total: count ?? 0 };
 }
 
 export async function getPhoto(id: string) {
   const supabase = await createClient();
   const { data, error } = await supabase.from("photos").select(COLUMNS).eq("id", id).maybeSingle();
   if (error) throw new Error(`Couldn't read the photo: ${error.message}`);
-  return data && data.building_slug ? toPhoto(data as PhotoRow) : null;
+  if (!data || !data.building_slug) return null;
+  const [photo] = await signHidden(supabase, [toPhoto(data as PhotoRow)]);
+  if (photo.uploaded) {
+    // uploaded_by isn't readable through the API; this returns it to admins only.
+    const { data: uploader } = await supabase.rpc("photo_uploaders", { photo_ids: [id] });
+    photo.uploadedBy = uploader?.[0]?.uploaded_by ?? null;
+  }
+  return photo;
 }

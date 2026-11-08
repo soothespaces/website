@@ -721,6 +721,7 @@ export type Database = {
           source_url: string | null;
           space_id: string | null;
           updated_at: string;
+          uploaded: boolean;
           uploaded_by: string | null;
           width: number;
           widths: number[];
@@ -1077,6 +1078,20 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      floor_alignment_authors: {
+        Args: never;
+        Returns: {
+          aligned_by: string;
+          sheet: string;
+        }[];
+      };
+      photo_uploaders: {
+        Args: { photo_ids: string[] };
+        Returns: {
+          id: string;
+          uploaded_by: string;
+        }[];
+      };
       check_in_overview: {
         Args: { since?: string; target_kind: string };
         Returns: {

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ContentPage } from "@/components/content-page";
 import { getBuildingOptions, getPhotos, PAGE_SIZE } from "@/features/admin-photos/data";
-import { describeTags, photoUrl } from "@/features/admin-photos/photo";
+import { adminPhotoSrc, describeTags } from "@/features/admin-photos/photo";
 import { requireSupabaseEnv } from "@/lib/supabase/env";
 import { Button } from "@/components/ui/button";
 
@@ -77,7 +77,7 @@ export default async function PhotosAdminPage({ searchParams }: PageProps<"/admi
               <Link href={`/admin/photos/${p.id}`} className="flex flex-col gap-2 rounded-md border border-input p-2 hover:bg-accent">
                 {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized Supabase files */}
                 <img
-                  src={photoUrl(url, p.pathPrefix, p.widths[0])}
+                  src={adminPhotoSrc(url, p, p.widths[0])}
                   alt={p.alt}
                   width={p.width}
                   height={p.height}

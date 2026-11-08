@@ -6,7 +6,7 @@ import { useId, useMemo, useState, useTransition, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { deletePhoto, updatePhoto, uploadPhoto } from "./actions";
 import type { BuildingOption } from "./data";
-import { DEFAULT_CREDIT, DEFAULT_LICENSE, photoUrl, type AdminPhoto, type PhotoKind, type PhotoTags } from "./photo";
+import { adminPhotoSrc, DEFAULT_CREDIT, DEFAULT_LICENSE, type AdminPhoto, type PhotoKind, type PhotoTags } from "./photo";
 import { prepareUpload } from "./resize";
 
 // MapLibre needs the browser, so the plan only renders on the client.
@@ -161,7 +161,7 @@ export function PhotoEditor({
     });
   }
 
-  const shown = preview ?? (photo ? photoUrl(supabaseUrl, photo.pathPrefix, photo.widths.at(-1)!) : null);
+  const shown = preview ?? (photo ? adminPhotoSrc(supabaseUrl, photo, photo.widths.at(-1)!) : null);
   const ratio = photo ? `${photo.width} / ${photo.height}` : undefined;
 
   return (
@@ -180,7 +180,7 @@ export function PhotoEditor({
         {photo ? (
           <p className="text-sm text-muted-foreground">
             {photo.width}×{photo.height}, {photo.kind}
-            {photo.uploadedBy ? `, uploaded by ${photo.uploadedBy}` : ", imported by the photo script"}
+            {photo.uploaded ? `, uploaded by ${photo.uploadedBy ?? "an admin"}` : ", imported by the photo script"}
             {photo.sourceUrl ? (
               <>
                 {" "}
