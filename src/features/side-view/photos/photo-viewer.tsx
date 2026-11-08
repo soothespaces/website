@@ -185,22 +185,27 @@ export function PhotoViewer({
           <div className="flex flex-col items-center gap-2 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] text-center">
             <Dialog.Title className="text-base font-medium text-balance text-white">{photo.caption}</Dialog.Title>
             <Dialog.Description asChild>
-              <p className="max-w-full text-xs">
-                {photo.sourceUrl ? (
-                  <a
-                    href={photo.sourceUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-block max-w-full truncate rounded-full bg-background px-2.5 py-1 text-foreground"
-                  >
-                    {photo.pill}
-                  </a>
-                ) : (
-                  <span className="inline-block max-w-full truncate rounded-full bg-background px-2.5 py-1 text-foreground">
-                    {photo.pill}
-                  </span>
-                )}
-              </p>
+              <div className="flex max-w-full flex-col items-center gap-1.5 text-xs">
+                {photo.pill ? (
+                  photo.sourceUrl ? (
+                    <a
+                      href={photo.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block max-w-full truncate rounded-full bg-background px-2.5 py-1 text-foreground"
+                    >
+                      {photo.pill}
+                    </a>
+                  ) : (
+                    <span className="inline-block max-w-full truncate rounded-full bg-background px-2.5 py-1 text-foreground">
+                      {photo.pill}
+                    </span>
+                  )
+                ) : null}
+                {/* The full credit and license, which CC BY photos require.
+                    The pill above stays one of three short labels (QA-058). */}
+                {photo.credit.trim() ? <p className="max-w-full text-pretty text-white/85">{photo.credit.trim()}</p> : null}
+              </div>
             </Dialog.Description>
           </div>
         </Dialog.Content>

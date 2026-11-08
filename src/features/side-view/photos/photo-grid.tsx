@@ -53,11 +53,13 @@ function Tile({
       <p className="pointer-events-none absolute inset-x-0 top-0 bg-gradient-to-b from-black/60 from-70% to-transparent p-2 pb-4 text-sm text-white forced-colors:bg-[Canvas] forced-colors:text-[CanvasText]">
         <span className="line-clamp-3">{photo.caption}</span>
       </p>
-      <span className="absolute inset-x-0 bottom-0 p-2">
-        <span className="inline-block max-w-full truncate rounded-full bg-background/90 px-2 py-0.5 text-xs text-foreground">
-          {photo.pill}
+      {photo.pill ? (
+        <span className="absolute inset-x-0 bottom-0 p-2">
+          <span className="inline-block max-w-full truncate rounded-full bg-background/90 px-2 py-0.5 text-xs text-foreground">
+            {photo.pill}
+          </span>
         </span>
-      </span>
+      ) : null}
     </div>
   );
 
@@ -68,7 +70,7 @@ function Tile({
       variant="ghost"
       data-photo-tile={photo.id}
       className="h-auto w-full min-h-0 items-stretch rounded-lg p-0 text-left font-normal hover:bg-transparent"
-      aria-label={`${photo.caption}. ${photo.pill}. Photo ${position} of ${total}`}
+      aria-label={`${photo.caption}. ${photo.pill ? `${photo.pill}. ` : ""}Photo ${position} of ${total}`}
       onClick={() => onOpen(photo.id)}
     >
       {frame}

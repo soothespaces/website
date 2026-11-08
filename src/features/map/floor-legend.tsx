@@ -72,7 +72,14 @@ export function FloorLegend({ plan }: { plan: FloorPlan }) {
               {group.rows.map((row) => (
                 <li key={row.id} className="flex items-center gap-2 text-sm">
                   <Swatch id={row.id} />
-                  <span>{row.label}</span>
+                  <span>
+                    {row.label}
+                    {/* Staff rooms are paint only on the plan, so a screen
+                        reader gets their numbers here (QA-011). */}
+                    {row.id === "staff" && coloring.staffRooms.length > 0 ? (
+                      <span className="sr-only">: rooms {coloring.staffRooms.join(", ")}</span>
+                    ) : null}
+                  </span>
                 </li>
               ))}
             </ul>
