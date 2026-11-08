@@ -77,7 +77,7 @@ export function SiteFooter() {
               {FOOTNOTES.map((note) => (
                 <li key={note.id} id={`footnote-${note.id}`} className="scroll-mt-4">
                   {note.text}{" "}
-                  <a href={note.href} className={`${linkClassName} underline`}>
+                  <a href={note.href} target="_blank" rel="noopener noreferrer" className={`${linkClassName} underline`}>
                     {note.source}
                   </a>
                 </li>

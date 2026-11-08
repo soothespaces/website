@@ -24,7 +24,7 @@ export function Visited({ now, history }: { now: Date; history: MyHistoryState }
   if (!history.loaded || !directory.spacesLoaded || (roomIds.length > 0 && !directory.roomsLoaded)) {
     return (
       <div role="status">
-        <span className="sr-only">Loading places you’ve checked in</span>
+        <span className="sr-only">Loading places you&apos;ve checked in</span>
         <Skeleton className="h-8 w-48" />
         <Skeleton className="mt-2 h-12 w-full" />
       </div>
@@ -34,7 +34,7 @@ export function Visited({ now, history }: { now: Date; history: MyHistoryState }
   if (history.error) {
     return (
       <section className="flex flex-col gap-1">
-        <h2 className="text-base">Places you've checked in</h2>
+        <h2 className="text-base">Places you&apos;ve checked in</h2>
         <ErrorNote message={history.error} />
       </section>
     );
@@ -48,7 +48,7 @@ export function Visited({ now, history }: { now: Date; history: MyHistoryState }
   return (
     <section className="flex flex-col gap-2">
       <div>
-        <h2 className="text-base">Places you've checked in</h2>
+        <h2 className="text-base">Places you&apos;ve checked in</h2>
         <p className="text-sm text-muted-foreground">Only you can see this. Add the ones you keep coming back to.</p>
       </div>
       <ul className="flex flex-col" aria-label="Places you've checked in">

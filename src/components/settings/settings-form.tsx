@@ -94,22 +94,23 @@ export function SettingsForm() {
         />
       </section>
 
-      <ChoiceGroup
-        legend="Default view"
-        description="Which view opens first. The list is still being built, and this choice is saved for it."
-        columns={2}
-        value={value(settings.defaultView)}
-        onValueChange={(defaultView) => {
-          if (defaultView === "map" || defaultView === "list") update({ defaultView });
-        }}
-        options={[
-          { value: "map", label: "Map" },
-          { value: "list", label: "List" },
-        ]}
-      />
+      {/* Default view is left out until there is a list to open (QA-065). */}
 
       <LocationSettingsNote />
       <StudyPreferencesSection />
+      {signedIn ? (
+        <section aria-labelledby="account-heading" className="flex flex-col items-start gap-3">
+          <h2 id="account-heading" className="text-xl">
+            Account
+          </h2>
+          {/* QA-066: sign out from here as well as the account menu. */}
+          <form action="/auth/signout" method="post">
+            <Button type="submit" variant="outline">
+              Sign out
+            </Button>
+          </form>
+        </section>
+      ) : null}
     </div>
   );
 }

@@ -25,9 +25,23 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: { default: "Soothe Spaces", template: "%s · Soothe Spaces" },
   description: "Find quiet, accessible study spaces on campus.",
+  // Link previews (QA-074).
+  openGraph: {
+    siteName: "Soothe Spaces",
+    title: "Soothe Spaces",
+    description: "Find quiet, accessible study spaces on campus.",
+    type: "website",
+    images: [{ url: "/hero-map.webp", width: 1200, height: 900, alt: "The Soothe Spaces campus map" }],
+  },
+  twitter: { card: "summary_large_image" },
   // Proves site ownership to Google Search Console, which Google requires
   // before it shows "Soothe Spaces" on the sign-in consent screen.
   verification: {

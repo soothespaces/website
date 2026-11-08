@@ -10,7 +10,8 @@ export const metadata: Metadata = {
 
 export default async function FloorPlansAdminPage() {
   const saved = await getSavedAlignments();
-  const buildings = Map.groupBy(floors, (f) => f.building);
+  // Grouped by name as well, so each Hatcher wing gets its own heading (QA-068).
+  const buildings = Map.groupBy(floors, (f) => `${f.building}:${f.buildingName}`);
   return (
     <ContentPage
       title="Floor plans"

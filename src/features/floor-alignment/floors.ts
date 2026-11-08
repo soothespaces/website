@@ -28,7 +28,9 @@ export const floors = floorIndex.floors as unknown as FloorRecord[];
 /** A floor drawn on several sheets (Hatcher's two wings) has a record per sheet; `sheet` picks one. */
 export function findFloor(building: string, floor: string, sheet?: string) {
   const onFloor = floors.filter((f) => f.building === building && String(f.floor) === floor);
-  return (sheet && onFloor.find((f) => f.sheet === sheet)) || onFloor[0];
+  // A ?sheet= that isn't on this floor is a 404, not the first sheet (QA-068).
+  if (sheet) return onFloor.find((f) => f.sheet === sheet);
+  return onFloor[0];
 }
 
 export function findSheet(sheet: string) {

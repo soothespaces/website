@@ -5,9 +5,12 @@ import { ContentPage } from "@/components/content-page";
 import { SpaceEditor } from "@/features/admin-spaces";
 import { getSpace, getSpaceBuildings } from "@/features/admin-spaces/data";
 
-export const metadata: Metadata = {
-  title: "Space",
-};
+// The title names the space, like the page's heading (QA-072).
+export async function generateMetadata({ params }: PageProps<"/admin/spaces/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
+  const space = await getSpace(slug).catch(() => null);
+  return { title: space?.name ?? "Space" };
+}
 
 export default async function SpacePage({ params, searchParams }: PageProps<"/admin/spaces/[slug]">) {
   const { slug } = await params;

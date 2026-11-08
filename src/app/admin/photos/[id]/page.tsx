@@ -6,9 +6,14 @@ import { PhotoEditor } from "@/features/admin-photos";
 import { getBuildingOptions, getPhoto } from "@/features/admin-photos/data";
 import { requireSupabaseEnv } from "@/lib/supabase/env";
 
-export const metadata: Metadata = {
-  title: "Photo",
-};
+// The title names the photo, like the page's heading (QA-072).
+export async function generateMetadata({ params }: PageProps<"/admin/photos/[id]">): Promise<Metadata> {
+  const { id } = await params;
+  const photo = await getPhoto(id).catch(() => null);
+  if (!photo) return { title: "Photo" };
+  const alt = photo.alt.length > 60 ? `${photo.alt.slice(0, 59).trimEnd()}…` : photo.alt;
+  return { title: `Photo: ${alt}` };
+}
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

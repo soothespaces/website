@@ -48,7 +48,7 @@ export default async function PhotosAdminPage({ searchParams }: PageProps<"/admi
         <form className="flex flex-wrap items-end gap-3 text-sm" action="/admin/photos">
           <label className="flex flex-col gap-1">
             <span className="font-medium">Building</span>
-            <select name="building" defaultValue={building} className="h-11 w-72 rounded-md border border-input bg-background px-3">
+            <select name="building" defaultValue={building} className="h-11 w-72 max-w-full rounded-md border border-input bg-background px-3">
               <option value="">All buildings</option>
               {buildings.map((b) => (
                 <option key={b.slug} value={b.slug}>

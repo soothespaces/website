@@ -46,7 +46,7 @@ function HoursBody({ slug, focusChart, onBack }: { slug: string; focusChart: boo
     <DetailScreen title="Hours" subtitle={building} backTo={building} onBack={onBack} className="min-h-0 flex-1">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1" aria-live="polite">
-          {!loaded ? <SkeletonRows label="Loading hours" rows={1} rowClassName="h-7 max-w-56" /> : null}
+          {!loaded ? <SkeletonRows label="Loading hours" rows={1} rowClassName="h-7 w-56" /> : null}
           {message ? <ErrorNote message={message} /> : null}
           {headline ? <p className={headlineClass}>{headline}</p> : null}
           {hours && close ? <p>{close}</p> : null}
