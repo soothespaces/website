@@ -1,3 +1,4 @@
+import { busynessWord } from "@/lib/data/popular-times";
 import { busynessAxisLabel, busynessChartLabel, formatHour } from "./busyness";
 
 const CHART_WIDTH = 240;
@@ -32,6 +33,9 @@ export function BusynessChart({
           const highlighted = hour === highlightHour;
           return (
             <g key={hour}>
+              {/* Hovering a bar names its hour (DA-08). The table below is
+                  what screen readers get. */}
+              <title>{`${formatHour(hour)}: ${busynessWord(value) ?? "no data"}`}</title>
               {highlighted ? (
                 <rect
                   x={x - 0.75}

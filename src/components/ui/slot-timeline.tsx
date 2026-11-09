@@ -129,12 +129,13 @@ export function SlotTimeline({
               ))}
             </div>
           ) : null}
-          <div className="flex gap-0.5 overflow-hidden rounded-full">
+          {/* Separate rounded cells, one per half hour, as on the board (DA-03). */}
+          <div className="flex gap-0.5">
             {slots.map((slot, index) => (
               <div
                 key={index}
                 className={cx(
-                  "h-3.5 min-w-1 flex-1",
+                  "h-4 min-w-1 flex-1 rounded-sm",
                   slot === "booked" ? "slot-booked bg-destructive" : "slot-free bg-slot-free",
                 )}
               />

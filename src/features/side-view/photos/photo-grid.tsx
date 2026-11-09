@@ -69,7 +69,7 @@ function Tile({
     <Button
       variant="ghost"
       data-photo-tile={photo.id}
-      className="h-auto w-full min-h-0 items-stretch rounded-lg p-0 text-left font-normal hover:bg-transparent"
+      className="h-auto w-full min-h-0 items-stretch rounded-lg p-0 text-left font-normal hover:bg-transparent active:bg-transparent [&_img]:transition-[filter] hover:[&_img]:brightness-90"
       aria-label={`${photo.caption}. ${photo.pill ? `${photo.pill}. ` : ""}Photo ${position} of ${total}`}
       onClick={() => onOpen(photo.id)}
     >

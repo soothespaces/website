@@ -38,7 +38,8 @@ export function RoomRow({
             status.tone === "free" ? "text-foreground" : "text-muted-foreground",
           )}
         >
-          {status.text}
+          {/* "12 AM" stays on one line (DA-03). */}
+          {status.text.replace(/ (AM|PM)\b/g, "\u00a0$1")}
         </span>
       </span>
       <span className="min-w-0">

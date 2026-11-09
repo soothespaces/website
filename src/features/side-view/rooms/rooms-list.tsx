@@ -1,7 +1,7 @@
 "use client";
 
 import { ErrorNote } from "@/components/ui/error-note";
-import { SkeletonRows } from "@/components/ui/feedback";
+import { EmptyState, SkeletonRows } from "@/components/ui/feedback";
 import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip, ChipGroup } from "@/components/ui/chip-group";
@@ -75,9 +75,7 @@ export function RoomsList({
     body = <ErrorNote message={error} />;
   } else if (filtered.length === 0) {
     body = (
-      <p className="text-sm text-muted-foreground">
-        {rooms.length === 0 ? "No rooms to book in this building." : "No rooms for this size."}
-      </p>
+      <EmptyState compact title={rooms.length === 0 ? "No rooms to book in this building." : "No rooms for this size."} />
     );
   } else {
     body = (

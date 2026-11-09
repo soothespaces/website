@@ -14,6 +14,8 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  /* One step past the hover surface, for a pressed control. */
+  --color-pressed: color-mix(in oklab, var(--accent), var(--foreground) 10%);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-destructive: var(--destructive);
@@ -166,6 +168,13 @@
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
+  }
+
+  /* A screen title that takes focus when it opens is not a control, so it
+     gets no ring. A full-width box around a heading read as a broken
+     selection (DA-04). Screen readers still land on it. */
+  :is(h1, h2, h3)[tabindex="-1"]:focus-visible {
+    outline: none;
   }
 
   /* Windows High Contrast and other forced-color modes: use system colors. */

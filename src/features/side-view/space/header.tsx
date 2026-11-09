@@ -121,7 +121,7 @@ export function SpaceHeading({
               name: known?.name ?? building.name,
             });
           }}
-          className="h-auto min-h-6 justify-start px-0 py-0 text-left text-sm font-medium whitespace-normal text-primary hover:bg-transparent hover:underline"
+          className="h-auto min-h-6 justify-start px-0 py-0 text-left text-sm font-medium whitespace-normal text-primary hover:bg-transparent active:bg-transparent hover:underline"
         >
           {buildingLabel}
         </Button>

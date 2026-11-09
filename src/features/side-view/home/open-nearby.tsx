@@ -7,6 +7,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { useMapState } from "@/features/map/map-state";
 import { useLocation } from "@/lib/location/use-location";
 import { buildingLabel, orderOpenNow, placeMeta, type HomeSpace } from "./places";
+import { PLACE_ROW_CLASS, PLACE_THUMB_CLASS } from "../place-row";
 
 const SHOWN = 3;
 
@@ -31,7 +32,7 @@ export function OpenNearby({ spaces }: { spaces: HomeSpace[] }) {
                   event.currentTarget.blur();
                   select({ kind: "space", slug: space.slug });
                 }}
-                className="h-auto min-h-11 w-full shrink items-center justify-start gap-3 rounded-none border-b border-border px-1 py-3 text-left font-normal"
+                className={PLACE_ROW_CLASS}
               >
                 <Thumb space={space} />
                 <span className="flex min-w-0 flex-1 flex-col">
@@ -52,10 +53,10 @@ function Thumb({ space }: { space: HomeSpace }) {
   const alt = space.image_alt?.trim() || "";
   const src = safeSpaceImageUrl(space.image_url);
   if (!src) {
-    return <span aria-hidden="true" className="size-11 shrink-0 rounded-md bg-muted" />;
+    return <span aria-hidden="true" className={PLACE_THUMB_CLASS} />;
   }
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} className="size-11 shrink-0 rounded-md object-cover" />
+    <img src={src} alt={alt} className={`${PLACE_THUMB_CLASS} object-cover`} />
   );
 }

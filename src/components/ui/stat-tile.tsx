@@ -26,7 +26,14 @@ export function StatTile({ label, value, detail, tone, className, href, onClick 
   const body = (
     <>
       <span className="block w-full text-xs text-muted-foreground">{label}</span>
-      <span className={cx("block w-full text-base font-semibold break-words", tone === "positive" && "text-primary")}>
+      {/* A size down in a phone's three-across row keeps "Open until 10 PM"
+          on one line (DA-15). */}
+      <span
+        className={cx(
+          "block w-full text-base font-semibold break-words @max-[24rem]:text-sm",
+          tone === "positive" && "text-primary",
+        )}
+      >
         {value}
       </span>
       {detail ? <span className="block w-full text-xs break-words text-muted-foreground">{detail}</span> : null}
@@ -46,7 +53,9 @@ export function StatTile({ label, value, detail, tone, className, href, onClick 
       </Button>
     );
   }
-  return <div className={cx(tileClass, className)}>{body}</div>;
+  // Not a control (Floors, SOS-144): a flat tile with no border, so it does
+  // not look like the buttons beside it (DA-19).
+  return <div className={cx(tileClass, "border-transparent bg-muted", className)}>{body}</div>;
 }
 
 // Three across from 20rem (a 390px phone sheet after its padding, as on the

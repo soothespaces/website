@@ -8,10 +8,11 @@ import { cx } from "@/lib/cx";
 // styles can sit on a link. Do not add shadcn/ui or a second button.
 
 const VARIANTS = {
-  primary: "bg-primary text-primary-foreground hover:bg-primary/90",
-  outline: "border border-input bg-background hover:bg-accent",
-  ghost: "hover:bg-accent",
-  destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+  // Press goes a step past hover, so a tap on a small control shows (DA-18).
+  primary: "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
+  outline: "border border-input bg-background hover:bg-accent active:bg-pressed",
+  ghost: "hover:bg-accent active:bg-pressed",
+  destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80",
 } as const;
 
 const SIZES = {
@@ -36,7 +37,7 @@ export function buttonClassName({
   className?: string;
 } = {}) {
   return cx(
-    "inline-flex shrink-0 items-center justify-center rounded-md font-medium disabled:pointer-events-none disabled:opacity-40",
+    "inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md font-medium disabled:pointer-events-none disabled:opacity-40",
     shape === "circle" && "rounded-full",
     VARIANTS[variant],
     SIZES[size],

@@ -34,7 +34,7 @@ test("a LibCal row links out and a classroom row does not", () => {
   assert.match(linked, /target="_blank"/);
   assert.match(linked, /rel="noopener noreferrer"/);
   assert.match(linked, /aria-label="Book Room 2124 on LibCal"/);
-  assert.match(linked, /Free until 10 PM/);
+  assert.match(linked, /Free until 10\u00a0PM/);
   assert.match(linked, /Free 8 to 10 PM, booked 10 PM to 12 AM/);
   const describedBy = /aria-describedby="([^"]+)"/.exec(linked);
   assert.ok(describedBy);
@@ -47,7 +47,7 @@ test("a LibCal row links out and a classroom row does not", () => {
   const booked = renderToStaticMarkup(
     <RoomRow room={{ ...bookable, status: "Booked until 9:30 PM", slots: slots.map(() => "booked") }} start={start} />,
   );
-  assert.match(booked, /Booked until 9:30 PM/);
+  assert.match(booked, /Booked until 9:30\u00a0PM/);
   assert.match(booked, /text-muted-foreground/);
 
   const down = renderToStaticMarkup(
@@ -70,7 +70,7 @@ test("a LibCal row links out and a classroom row does not", () => {
     />,
   );
   assert.equal(classroom.includes("<a"), false);
-  assert.match(classroom, /Free until 3 PM, then EECS 281/);
+  assert.match(classroom, /Free until 3\u00a0PM, then EECS 281/);
 
   const inClass = renderToStaticMarkup(
     <RoomRow
@@ -86,7 +86,7 @@ test("a LibCal row links out and a classroom row does not", () => {
     />,
   );
   assert.equal(inClass.includes("<a"), false);
-  assert.match(inClass, /Class until 4 PM</);
+  assert.match(inClass, /Class until 4\u00a0PM</);
   assert.equal(inClass.includes("EECS 370"), false);
 });
 

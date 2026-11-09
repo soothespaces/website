@@ -70,7 +70,9 @@ function RecommendationCard({
   const go = (delta: number) => setIndex((value) => Math.min(total - 1, Math.max(0, value + delta)));
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-border bg-card">
+    // The ring goes on this frame: it clips the photo, so a ring on the button
+    // inside would be cut off (DA-09).
+    <div className="relative overflow-hidden rounded-lg border border-border bg-card outline-offset-2 has-[>button:focus-visible]:outline-2 has-[>button:focus-visible]:outline-ring">
       <p className="sr-only" aria-live="polite">
         {`Recommendation ${index + 1} of ${total}: ${space.name}`}
       </p>
@@ -98,7 +100,7 @@ function RecommendationCard({
           swiped.current = true;
           go(dx < 0 ? 1 : -1);
         }}
-        className="h-auto min-h-0 w-full shrink touch-pan-y flex-col items-stretch gap-0 rounded-none p-0 text-left font-normal hover:bg-transparent"
+        className="h-auto min-h-0 w-full shrink touch-pan-y flex-col items-stretch gap-0 rounded-none p-0 text-left font-normal focus-visible:outline-none [&_img]:transition-[filter] hover:[&_img]:brightness-95"
       >
         <SpacePhoto space={space} />
         <span className="flex flex-col gap-1 px-3 py-3">

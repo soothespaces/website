@@ -32,7 +32,7 @@ export function SpacePins({
             event.stopPropagation();
             onSelect(spot);
           }}
-          className="group hover:bg-transparent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-ring"
+          className="group hover:bg-transparent active:bg-transparent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-ring"
         >
           <span
             aria-hidden="true"

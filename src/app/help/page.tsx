@@ -23,7 +23,7 @@ export default function HelpPage() {
             <li key={topic.id}>
               <Link
                 href={`#${topic.id}`}
-                className="rounded-sm text-primary underline underline-offset-4"
+                className="rounded-sm text-primary underline underline-offset-4 hover:decoration-2"
               >
                 {topic.title}
               </Link>
