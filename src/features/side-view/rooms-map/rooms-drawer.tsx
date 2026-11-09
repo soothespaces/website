@@ -7,38 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Chip, ChipGroup } from "@/components/ui/chip-group";
 import { DetailScreen } from "@/components/ui/detail-screen";
 import { SlotTimeline } from "@/components/ui/slot-timeline";
-import { formatClock, hourTicks } from "@/components/ui/slot-times";
 import { rememberBooking } from "@/features/check-in/booking-memory";
 import type { PanelScreenProps } from "@/features/side-view/registry";
 import { roomFloor, roomRouteId, sameRoom } from "@/features/map/layers/room-match";
 import { useMapState } from "@/features/map/map-state";
 import { useReducedMotion } from "@/lib/settings/use-reduced-motion";
 import { cx } from "@/lib/cx";
-import { SLOT_COUNT, SLOT_MINUTES, type RoomSlot } from "@/lib/data/room-slots";
+import { type RoomSlot } from "@/lib/data/room-slots";
+import { TimelineTicks } from "@/features/side-view/rooms/timeline-ticks";
 import { useRoomsData } from "./rooms-data";
 import { bookingRoomNumber, detroitSlots, roomAccessibleName, roomFooter, roomTitle, windowLabel } from "./room-copy";
 import { detroitParts } from "@/lib/detroit";
 
 const rowGrid = "grid grid-cols-[minmax(0,1fr)_minmax(7.5rem,46%)] items-center gap-x-3";
-
-function TimeTicks({ start }: { start: number }) {
-  const span = SLOT_COUNT * SLOT_MINUTES;
-  const end = start + span;
-  const ticks = hourTicks(start, SLOT_COUNT, SLOT_MINUTES).filter((tick) => tick < end);
-  return (
-    <div className="relative h-4 min-w-0" aria-hidden="true">
-      {ticks.map((tick) => (
-        <span
-          key={tick}
-          className="absolute top-0 text-xs whitespace-nowrap text-muted-foreground"
-          style={{ left: `${((tick - start) / span) * 100}%` }}
-        >
-          {formatClock(tick)}
-        </span>
-      ))}
-    </div>
-  );
-}
 
 function freeStart(room: RoomSlot, times: readonly { startsAt: string | null }[]): string | null {
   const index = room.slots?.findIndex((slot, i) => slot === "free" && times[i]?.startsAt) ?? -1;
@@ -206,7 +187,7 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
           </ul>
           <div className={rowGrid}>
             <span />
-            <TimeTicks start={start} />
+            <TimelineTicks every={2} start={start} />
           </div>
           {!loaded ? <SkeletonRows label="Loading rooms" rowClassName="h-12" /> : null}
           {error ? <ErrorNote message={error} /> : null}

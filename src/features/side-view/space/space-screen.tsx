@@ -1,8 +1,7 @@
 "use client";
 
-import { useId, type KeyboardEvent } from "react";
+import { useEffect, useId, type KeyboardEvent } from "react";
 import { Skeleton } from "@/components/ui/feedback";
-import { FloorSwitcher } from "@/features/map/panel/floor-switcher";
 import { useMapState } from "@/features/map/map-state";
 import type { PanelRoute } from "@/features/side-view/panel-route";
 import type { SpaceListDensity } from "@/features/spaces";
@@ -54,7 +53,7 @@ function Note({ children }: { children: string }) {
 export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDensity }) {
   const slug = route.kind === "space" ? route.id : null;
   const titleId = useId();
-  const { data, stack, canGoBack, back, clear, push, reset, setFloor, floor, floorPlans } = useMapState();
+  const { data, stack, canGoBack, back, clear, push, reset, setFloor, floorPlans } = useMapState();
   const detail = useSpaceDetail(slug);
   const listed = slug ? (data.spaces.find((space) => space.slug === slug) ?? null) : null;
   const record = detail.space;
@@ -85,6 +84,16 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
     event.stopPropagation();
     onBack();
   }
+
+  // The map opens on the space's own floor, not the building's first plan
+  // (QA-082). The Space board has no floor switcher; the building has one.
+  const recordSlug = record?.slug ?? null;
+  const spaceFloor = record ? (locationFloors(record.locations)[0] ?? null) : null;
+  const homePlans = home ? floorPlans.get(home.slug) : undefined;
+  const hasSpacePlan = spaceFloor != null && Boolean(homePlans?.some((plan) => plan.floor === spaceFloor));
+  useEffect(() => {
+    if (recordSlug && hasSpacePlan) setFloor(spaceFloor);
+  }, [recordSlug, hasSpacePlan, spaceFloor, setFloor]);
 
   if (route.kind !== "space") return null;
 
@@ -132,7 +141,6 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
   const photo = record ? heroPhoto(record) : null;
   const photoLabel = record ? photoCountLabel(visiblePhotoCount(record.photoCount, showsLibraryPhoto)) : null;
   const locationLine = placeLine(buildingDisplayName(building), record?.floorLabel ?? listed?.floor_label ?? null);
-  const plans = building ? floorPlans.get(building.slug) : undefined;
   const placedFloors = record ? locationFloors(record.locations) : [];
   const floorSubtitle = record ? floorPlanSubtitle(placedFloors) : null;
   const parent = stack.at(-2);
@@ -181,7 +189,6 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
       <WhatItsLike rows={rows} />
       <CheckInCard spaceSlug={route.id} spaceId={record?.id} />
       <WhatsHere labels={whatsHereLabels(features, rows?.map((row) => row.id) ?? null)} />
-      {plans?.length ? <FloorSwitcher floors={plans} floor={floor} onChange={setFloor} /> : null}
       {floorSubtitle ? <FloorPlanCard subtitle={floorSubtitle} onShow={onShowFloor} /> : null}
     </section>
   );

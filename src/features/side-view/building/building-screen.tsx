@@ -1,5 +1,6 @@
 "use client";
 
+import { ErrorNote } from "@/components/ui/error-note";
 import { CheckInHereButton } from "@/features/check-in/check-in-here";
 import { FloorSwitcher } from "@/features/map/panel/floor-switcher";
 import { useMapState } from "@/features/map/map-state";
@@ -11,6 +12,7 @@ import { RecommendedSection } from "./recommended";
 import { RoomsPreview } from "./rooms-preview";
 import { SpacesPreview } from "./spaces-preview";
 import { BuildingTiles } from "./tiles";
+import { useBuildingLoadFailed } from "./load-failed";
 import { useBuildingProfile } from "./queries";
 
 // The building route. The header, tiles, recommendations, study spaces and
@@ -20,6 +22,7 @@ export function BuildingPanelScreen({ route }: PanelScreenProps) {
   const { data, floorPlans, floor, setFloor, back, clear, canGoBack, push } = useMapState();
   const slug = route.kind === "building" ? route.slug : null;
   const profile = useBuildingProfile(slug);
+  const failed = useBuildingLoadFailed(slug);
 
   if (route.kind !== "building") return null;
 
@@ -51,6 +54,10 @@ export function BuildingPanelScreen({ route }: PanelScreenProps) {
         </div>
         {slug ? <CheckInHereButton buildingSlug={slug} buildingName={name} /> : null}
       </div>
+      {/* A section with nothing behind it is left out, so a failed read
+          would look like an empty building. One line says so (QA-024);
+          Try again remounts the screen, which reads again. */}
+      {failed ? <ErrorNote message="Some of this building's details didn't load." className="px-1" /> : null}
       <BuildingTiles slug={slug} />
       <RecommendedSection slug={slug} />
       <SpacesPreview slug={slug} />

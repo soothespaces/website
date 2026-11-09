@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanCaption } from "@/features/side-view/photos/photo-model";
 import { Button } from "@/components/ui/button";
 
 export function SpaceHero({
@@ -20,7 +21,7 @@ export function SpaceHero({
         src={photo.src}
         srcSet={photo.srcSet || undefined}
         sizes="24rem"
-        alt={photo.alt}
+        alt={cleanCaption(photo.alt)}
         className="aspect-[4/3] w-full rounded-xl bg-muted object-cover"
       />
       {photo.credit ? <span className="sr-only">Photo credit: {photo.credit}</span> : null}

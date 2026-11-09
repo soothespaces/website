@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
+import { safeSpaceImageUrl } from "@/features/side-view/spaces/use-building-spaces";
 import { isGooglePhoto } from "./copy";
 
 export type BuildingProfile = {
@@ -34,6 +35,8 @@ export type SpaceDetail = {
   lightLevel: "dim" | "moderate" | "bright" | null;
   floor: number | null;
   capacity: number | null;
+  /** The space's own library-page photo, already screened by safeSpaceImageUrl. */
+  imageUrl: string | null;
 };
 
 const NO_PHOTOS: ListedPhoto[] = [];
@@ -62,10 +65,10 @@ function useCached<T>(slug: string | null, cache: Map<string, T>, load: (slug: s
     };
   }, [slug, cache, load, empty]);
   void tick;
-  if (!slug || !getSupabaseEnv()) return { data: empty, ready: true };
-  if (failed === slug && !cache.has(slug)) return { data: empty, ready: true };
-  if (!cache.has(slug)) return { data: empty, ready: false };
-  return { data: cache.get(slug) ?? empty, ready: true };
+  if (!slug || !getSupabaseEnv()) return { data: empty, ready: true, failed: false };
+  if (failed === slug && !cache.has(slug)) return { data: empty, ready: true, failed: true };
+  if (!cache.has(slug)) return { data: empty, ready: false, failed: false };
+  return { data: cache.get(slug) ?? empty, ready: true, failed: false };
 }
 
 function share<T>(load: (slug: string) => Promise<T>) {
@@ -167,7 +170,7 @@ async function fetchDetails(slug: string): Promise<SpaceDetail[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("spaces")
-    .select("id, slug, light_level, floor, capacity")
+    .select("id, slug, light_level, floor, capacity, image_url")
     .eq("building_slug", slug)
     .eq("is_listed", true);
   if (error) throw error;
@@ -177,6 +180,7 @@ async function fetchDetails(slug: string): Promise<SpaceDetail[]> {
     lightLevel: row.light_level,
     floor: row.floor,
     capacity: row.capacity,
+    imageUrl: safeSpaceImageUrl(row.image_url),
   }));
 }
 

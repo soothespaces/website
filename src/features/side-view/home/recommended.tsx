@@ -114,9 +114,10 @@ function RecommendationCard({
       </Button>
       {total > 1 ? (
         <div className="pointer-events-none absolute inset-x-2 top-16 flex -translate-y-1/2 justify-between">
+          {/* 44px circles for touch (QA-032). */}
           <Button
             variant="outline"
-            size="icon-sm"
+            size="icon"
             shape="circle"
             aria-label="Previous recommendation"
             disabled={index === 0}
@@ -127,7 +128,7 @@ function RecommendationCard({
           </Button>
           <Button
             variant="outline"
-            size="icon-sm"
+            size="icon"
             shape="circle"
             aria-label="Next recommendation"
             disabled={index === total - 1}

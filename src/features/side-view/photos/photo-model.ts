@@ -103,8 +103,27 @@ export function creditPill(photo: Pick<GalleryPhoto, "credit" | "license" | "cre
   return { source: "official", label: "" };
 }
 
+/**
+ * Seeded alt text carries catalog ids: "study room 2122 (LibCal 27511)",
+ * "booth BOOTH1 (LibCal 206333)". Those read like inventory (QA-080).
+ */
+export function cleanCaption(text: string): string {
+  return text
+    .replace(/\s*\((?:LibCal|lid|eid|item)\s*#?\s*\d+\)/gi, "")
+    .replace(/\bbooth\s+BOOTH\s*(\d+)\b/gi, "booth $1")
+    .replace(/\s+([,.;:])/g, "$1")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+/** "Caption." for a screen reader, without doubling a period the caption already ends with (QA-089). */
+export function captionSentence(caption: string): string {
+  const text = caption.trim();
+  return /[.!?…]$/.test(text) ? text : `${text}.`;
+}
+
 export function photoCaption(photo: Pick<GalleryPhoto, "alt" | "spaceName" | "roomNumber">): string {
-  const alt = photo.alt.trim();
+  const alt = cleanCaption(photo.alt);
   if (alt) return alt;
   if (photo.spaceName?.trim()) return photo.spaceName.trim();
   if (photo.roomNumber) return `Room ${photo.roomNumber}`;

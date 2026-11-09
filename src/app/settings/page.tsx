@@ -12,7 +12,7 @@ export default function SettingsPage() {
   return (
     <ContentPage
       title="Account preferences"
-      intro="Theme, contrast, text size, motion, the view that opens first, and how you like to study. Changes apply right away."
+      intro="Theme, contrast, text size, motion, and how you like to study. Changes apply right away."
     >
       <SettingsForm />
     </ContentPage>

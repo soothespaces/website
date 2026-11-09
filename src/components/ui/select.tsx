@@ -15,6 +15,7 @@ export function Select({
   options,
   placeholder,
   className,
+  contentClassName,
   id,
   "aria-describedby": describedBy,
   ...props
@@ -22,6 +23,8 @@ export function Select({
   options: readonly SelectOption[];
   placeholder?: string;
   className?: string;
+  /** Extra classes on the menu, such as a width that matches the trigger. */
+  contentClassName?: string;
   /** Matches a Label's htmlFor. */
   id?: string;
   "aria-describedby"?: string;
@@ -42,7 +45,10 @@ export function Select({
         <SelectPrimitive.Content
           position="popper"
           sideOffset={4}
-          className="z-50 max-h-[var(--radix-select-content-available-height)] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-pop-in"
+          className={cx(
+            "z-50 max-h-[var(--radix-select-content-available-height)] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-pop-in",
+            contentClassName,
+          )}
         >
           <SelectPrimitive.ScrollUpButton aria-label="Scroll up" className="flex min-h-6 items-center justify-center py-1">
             <ChevronUpIcon />
@@ -52,7 +58,7 @@ export function Select({
               <SelectPrimitive.Item
                 key={option.value}
                 value={option.value}
-                className="relative flex min-h-10 cursor-default items-center rounded-sm py-2 pr-3 pl-8 outline-none select-none data-[disabled]:opacity-40 data-[highlighted]:bg-accent data-[highlighted]:outline-2 data-[highlighted]:-outline-offset-2 data-[highlighted]:outline-ring"
+                className="relative flex min-h-10 cursor-default items-center rounded-sm py-2 pr-3 pl-8 outline-none select-none data-[disabled]:opacity-40 data-[highlighted]:bg-accent data-[highlighted]:outline-2 data-[highlighted]:outline-solid data-[highlighted]:-outline-offset-2 data-[highlighted]:outline-ring"
               >
                 <SelectPrimitive.ItemIndicator className="absolute left-2">
                   <CheckIcon />

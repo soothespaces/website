@@ -6,16 +6,19 @@ import { cx } from "@/lib/cx";
 
 const BAR_HEIGHT = ["h-1", "h-1.5", "h-2.5", "h-3.5"] as const;
 
-// The four bars from the noise badge, without the word. The chip label
+// The four bars from the noise badge, filled by level, without the word. The chip label
 // next to them is the accessible name.
 export function NoiseBars({ level }: { level: NoiseLevel }) {
   const filled = NOISE_BAR_COUNT[level];
   return (
-    <span aria-hidden="true" className="inline-flex h-3 items-end gap-px">
+    <span aria-hidden="true" className="inline-flex h-3.5 items-end gap-px">
       {BAR_HEIGHT.map((height, index) => (
+        // A 2px bar with a 1px border was solid at every level (QA-085). Empty
+        // bars are the chip's own color, faded, like the preferences chips, so
+        // they also follow the white text on a selected chip.
         <span
           key={height}
-          className={cx("w-0.5 rounded-sm", height, index < filled ? "bg-foreground" : "border border-foreground bg-noise-bar")}
+          className={cx("w-1 rounded-sm bg-current", height, index < filled ? "opacity-100" : "opacity-35")}
         />
       ))}
     </span>

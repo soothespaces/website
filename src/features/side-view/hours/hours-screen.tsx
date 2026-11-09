@@ -9,7 +9,7 @@ import { cx } from "@/lib/cx";
 import { nextClose, openStatus, useOpeningHours, weekRows, type WeekRow } from "@/lib/data/opening-hours";
 import type { PanelScreenProps } from "../builtin-screens";
 import { BusySection } from "./busy-section";
-import { hoursSourceNote, nextCloseLine, statusHeadline, weekDayLabel } from "./hours-copy";
+import { headlineNeedsClose, hoursSourceNote, nextCloseLine, statusHeadline, weekDayLabel } from "./hours-copy";
 
 export function HoursScreen({ route }: PanelScreenProps) {
   const { back } = useMapState();
@@ -39,8 +39,8 @@ function HoursBody({ slug, focusChart, onBack }: { slug: string; focusChart: boo
     headline = statusHeadline(status);
   }
   // "Open until 7 PM" already names the close. The second line is only for a
-  // 24-hour day, where the headline does not say when it finally closes.
-  const close = headline === "Open 24 hours today" ? nextCloseLine(nextClose(hours, now)) : null;
+  // 24-hour day or an overnight stretch, where the headline doesn't say when it finally closes.
+  const close = headlineNeedsClose(headline) ? nextCloseLine(nextClose(hours, now)) : null;
 
   return (
     <DetailScreen title="Hours" subtitle={building} backTo={building} onBack={onBack} className="min-h-0 flex-1">

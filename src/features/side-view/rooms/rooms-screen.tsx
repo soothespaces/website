@@ -84,7 +84,10 @@ function rememberListBooking(room: RoomSlot, buildingSlug: string, now: Date) {
   const roomNumber = bookingRoomNumber(room);
   if (!roomNumber || !room.slots) return;
   const times = detroitSlots(now);
-  const index = room.slots.findIndex((slot, i) => slot === "free" && times[i]?.startsAt);
+  const free = room.slots.findIndex((slot, i) => slot === "free" && times[i]?.startsAt);
+  // No free half hour in view (LibCal can paint all of tonight booked): they
+  // are still booking something, so keep the next half hour that exists.
+  const index = free >= 0 ? free : times.findIndex((time) => time.startsAt);
   const slot = index >= 0 ? times[index] : null;
   if (!slot?.startsAt || !slot.endsAt) return;
   rememberBooking({

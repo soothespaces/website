@@ -87,6 +87,11 @@ export function statusHeadline(status: string | null): string {
   return status;
 }
 
+/** Headlines that don't say when it closes, so the screen adds "Next close: …". */
+export function headlineNeedsClose(headline: string | null): boolean {
+  return headline === "Open 24 hours today" || headline === "Open overnight";
+}
+
 /** "Closes Fri 6 PM" → "Next close: Friday 6 PM". */
 export function nextCloseLine(close: string | null): string | null {
   if (!close) return null;

@@ -18,12 +18,13 @@ export default function HelpPage() {
         <h2 id="help-topics" className="text-xl">
           Topics
         </h2>
-        <ul className="flex flex-col gap-1">
+        <ul className="flex flex-col">
           {HELP_TOPICS.map((topic) => (
             <li key={topic.id}>
               <Link
                 href={`#${topic.id}`}
-                className="rounded-sm text-primary underline underline-offset-4 hover:decoration-2"
+                // 44px rows for touch (DA-26), with the list gap folded in.
+                className="inline-flex min-h-11 items-center rounded-sm text-primary underline underline-offset-4 hover:decoration-2"
               >
                 {topic.title}
               </Link>

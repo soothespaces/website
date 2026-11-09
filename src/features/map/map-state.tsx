@@ -89,7 +89,7 @@ type MapState = {
   // Selecting a building on the map starts a new stack.
   reset: (route: PanelRoute) => void;
   // Older callers. `replace` resets; otherwise the place is pushed. From Home
-  // a selection resets, so search results don't grow a Back stack.
+  // a selection resets, unless it came from search results (QA-009).
   select: (selection: MapSelection, options?: { replace?: boolean; moveCamera?: boolean }) => void;
   clear: () => void;
   camera: CameraRequest | null;
@@ -353,10 +353,19 @@ export function MapStateProvider({ children }: { children: ReactNode }) {
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, [rememberFloor]);
+  // Read in `select` without making it change on every keystroke.
+  const queryRef = useRef(search.query);
+  useEffect(() => {
+    queryRef.current = search.query;
+  }, [search.query]);
   const select = useCallback<MapState["select"]>(
     (next, { replace = false, moveCamera = true } = {}) => {
       const panelRoute = routeFromSelection(next);
-      const mode = replace || panelRef.current.route.kind === "home" ? "reset" : "push";
+      // From Home a selection starts over, except from search results: Back
+      // then returns to the results, with focus on the row that was picked
+      // (QA-009).
+      const fromResults = panelRef.current.route.kind === "home" && queryRef.current.trim().length > 0;
+      const mode = replace || (panelRef.current.route.kind === "home" && !fromResults) ? "reset" : "push";
       commit(panelRoute, mode, moveCamera);
     },
     [commit],

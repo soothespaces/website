@@ -6,6 +6,8 @@ import type { AdminSpace, Ring, SpaceLocation } from "./space";
 export type SpaceBuilding = {
   slug: string;
   name: string;
+  /** "Shapiro Library" for "Harold T And Vivian B Shapiro Library", when the row has one. */
+  shortName: string | null;
   lat: number | null;
   lng: number | null;
   /** Floors with a vector plan on the map, where rooms and areas can be picked. */
@@ -15,9 +17,9 @@ export type SpaceBuilding = {
 /** Every building, the ones with floor plans first. */
 export async function getSpaceBuildings(): Promise<SpaceBuilding[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("buildings").select("slug, name, lat, lng").order("name");
+  const { data, error } = await supabase.from("buildings").select("slug, name, short_name, lat, lng").order("name");
   if (error) throw new Error(`Couldn't read buildings: ${error.message}`);
-  const buildings = data.map((b) => ({ ...b, floors: floorsFor(b.slug) }));
+  const buildings = data.map(({ short_name, ...b }) => ({ ...b, shortName: short_name?.trim() || null, floors: floorsFor(b.slug) }));
   return [...buildings.filter((b) => b.floors.length), ...buildings.filter((b) => !b.floors.length)];
 }
 

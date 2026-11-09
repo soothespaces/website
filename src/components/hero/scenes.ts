@@ -135,7 +135,6 @@ export const COMMONS: StudyScene = {
       { label: "Some seats" },
       { label: "Whiteboards" },
     ],
-    footnote: "Based on 14 check-ins",
     accentBorder: true,
   },
 };

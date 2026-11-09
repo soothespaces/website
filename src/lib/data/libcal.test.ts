@@ -48,6 +48,25 @@ test("a grid keeps booked ranges and drops checksums", () => {
   assert.equal(parseAvailabilityGrid({ slots: [{ start: "2026-10-21 20:00:00", end: "2026-10-21 20:30:00" }] }), null);
 });
 
+test("a slot booked on every room at once is LibCal's own block, not a booking (QA-076)", () => {
+  const slot = (itemId: number, start: string, booked: boolean) => ({
+    itemId,
+    start: `2026-11-08 ${start}:00`,
+    end: `2026-11-08 ${start}:59`,
+    booked,
+  });
+  const slots = [1, 2, 3].flatMap((itemId) => [
+    slot(itemId, "22:30", itemId === 2),
+    slot(itemId, "23:00", true),
+    slot(itemId, "23:30", true),
+  ]);
+  const items = bookedByItem(slots, [1, 2, 3]);
+  assert.deepEqual(items.map((item) => item.booked.length), [0, 1, 0]);
+  // Two rooms are too few to tell a block from two real bookings.
+  const pair = bookedByItem(slots.filter((entry) => entry.itemId !== 3), [1, 2]);
+  assert.deepEqual(pair.map((item) => item.booked.length), [2, 3]);
+});
+
 test("groups come from the location page, ignoring gid 0", () => {
   assert.deepEqual(parseLibcalGroups(`${pageHtml}\nresources.push({ eid: 1, gid: 0 });`), [
     { eid: 27511, gid: 5040 },

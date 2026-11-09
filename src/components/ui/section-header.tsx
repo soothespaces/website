@@ -47,7 +47,9 @@ function SectionActionLink({ action }: { action: SectionAction }) {
         event.currentTarget.blur();
         action.onClick();
       }}
-      className={cx(className, "h-auto min-h-6 px-0 py-0 hover:bg-transparent active:bg-transparent")}
+      // 44px tall and padded sideways for touch, with negative margins so the
+      // header row keeps its height (QA-032, DA-26).
+      className={cx(className, "-mx-2 -my-2.5 h-auto min-h-11 px-2 py-0 hover:bg-transparent active:bg-transparent")}
     >
       {action.label}
     </Button>

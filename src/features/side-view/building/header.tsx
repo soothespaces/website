@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanCaption } from "@/features/side-view/photos/photo-model";
 import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/ui/favorite-button";
 import { CloseIcon, HeartIcon } from "@/components/ui/icons";
@@ -136,7 +137,7 @@ function Frame({ photo, supabaseUrl, sizes }: { photo: ListedPhoto; supabaseUrl:
         src={sources.src}
         srcSet={sources.srcSet || undefined}
         sizes={sizes}
-        alt={photo.alt}
+        alt={cleanCaption(photo.alt)}
         width={photo.width}
         height={photo.height}
         className="absolute inset-0 h-full w-full object-cover"
