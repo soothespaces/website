@@ -53,7 +53,9 @@ function BusyDays({ times, now, focus }: { times: PopularTimes; now: Date; focus
   useEffect(() => {
     const section = sectionRef.current;
     if (!section || !focus) return;
-    const scroll = () => section.scrollIntoView({ block: "start" });
+    // Scroll the panel, never the page: scrollIntoView also moved the
+    // document and pulled the header off screen (DA-08).
+    const scroll = () => scrollPanelTo(section);
     scroll();
     const timer = window.setTimeout(scroll, 0);
     return () => window.clearTimeout(timer);
@@ -76,7 +78,7 @@ function BusyDays({ times, now, focus }: { times: PopularTimes; now: Date; focus
               if (value) setChoice(value);
             }}
             options={BUSY_DAY_OPTIONS}
-            className="h-auto min-h-6 w-auto gap-1 border-0 bg-transparent px-1 py-0 text-sm font-normal text-muted-foreground shadow-none"
+            className="h-auto min-h-8 w-auto cursor-pointer gap-1 rounded-md border-0 bg-transparent px-2 py-1 text-sm font-normal text-muted-foreground shadow-none hover:bg-accent hover:text-foreground"
           />
         </div>
       </div>
@@ -92,4 +94,16 @@ function BusyDays({ times, now, focus }: { times: PopularTimes; now: Date; focus
       {values ? <BusynessChart values={values} highlightHour={highlighted} /> : null}
     </section>
   );
+}
+
+// The nearest ancestor that scrolls, brought to the section's top.
+function scrollPanelTo(section: HTMLElement) {
+  for (let parent = section.parentElement; parent; parent = parent.parentElement) {
+    const overflow = getComputedStyle(parent).overflowY;
+    if ((overflow === "auto" || overflow === "scroll") && parent.scrollHeight > parent.clientHeight) {
+      const top = section.getBoundingClientRect().top - parent.getBoundingClientRect().top + parent.scrollTop;
+      parent.scrollTo({ top });
+      return;
+    }
+  }
 }

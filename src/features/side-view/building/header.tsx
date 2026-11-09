@@ -85,17 +85,30 @@ function PhotoMosaic({ photos, total, onOpen }: { photos: ListedPhoto[]; total: 
       {photoCount(total)}
     </Button>
   );
+  // The pictures open the gallery too, for a pointer (DA-19). The pill is the
+  // one control in the tab order, so this cover stays out of it.
+  const cover = (
+    <Button
+      variant="ghost"
+      tabIndex={-1}
+      aria-hidden="true"
+      onClick={onOpen}
+      className="absolute inset-0 z-[5] h-auto min-h-0 rounded-xl p-0 hover:bg-foreground/5 active:bg-foreground/10"
+    />
+  );
   if (photos.length === 1) {
     return (
       <div className="relative h-40 overflow-hidden rounded-xl bg-muted">
         <Frame photo={photos[0]} supabaseUrl={env.url} sizes="24rem" />
+        {cover}
         {pill}
       </div>
     );
   }
   const stacked = photos.length >= 3;
   return (
-    <div className={`grid h-40 gap-1.5 ${stacked ? "grid-cols-[1.4fr_1fr] grid-rows-2" : "grid-cols-[1.4fr_1fr]"}`}>
+    <div className={`relative grid h-40 gap-1.5 ${stacked ? "grid-cols-[1.4fr_1fr] grid-rows-2" : "grid-cols-[1.4fr_1fr]"}`}>
+      {cover}
       <div className={`relative min-h-0 overflow-hidden rounded-xl bg-muted ${stacked ? "row-span-2" : ""}`}>
         <Frame photo={photos[0]} supabaseUrl={env.url} sizes="16rem" />
       </div>

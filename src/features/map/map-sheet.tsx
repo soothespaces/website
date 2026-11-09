@@ -28,6 +28,8 @@ export function MapSheet() {
     setExpanded(tall);
   }
   const sheetRef = useRef<HTMLElement>(null);
+  // The sheet's height and the room above it when a touch starts.
+  const [bounds, setBounds] = useState({ start: 0, room: 0 });
 
   // Expanded, the sheet covers the map, its controls and the search bar.
   // Take them out of the tab order and away from screen readers while it
@@ -70,9 +72,18 @@ export function MapSheet() {
     event.stopPropagation();
   }
 
-  const offset = drag?.direction === "down" ? drag.offset : drag?.direction === "up" ? -drag.offset : 0;
+  // Down drags slide the sheet. Up drags grow it with the finger, up to the
+  // expanded height, instead of moving 80px and then jumping (DA-01).
+  const down = drag?.direction === "down" ? drag.offset : 0;
+  const up = drag?.direction === "up" && !expanded ? drag.offset : 0;
+  const dragStyle = down
+    ? { transform: `translateY(${down}px)`, transition: "none" }
+    : up
+      ? { height: `${bounds.start + Math.min(up, bounds.room)}px`, maxHeight: "none", transition: "none" }
+      : undefined;
   // The rooms map keeps a real drawer height so the floor stays visible and
-  // the list scrolls above the Book row.
+  // the list scrolls above the Book row. 60% so the first room rows show at
+  // the peek (DA-10).
   const roomsMap = route.kind === "rooms-map";
   return (
     <section
@@ -81,19 +92,25 @@ export function MapSheet() {
       aria-label={home ? "Study spaces" : "Selected place"}
       onKeyDown={onKeyDown}
       {...handlers}
-      style={offset ? { transform: `translateY(${Math.max(offset, -80)}px)`, transition: "none" } : undefined}
+      onTouchStart={(event) => {
+        const sheet = event.currentTarget;
+        const start = sheet.offsetHeight;
+        setBounds({ start, room: Math.max(0, (sheet.parentElement?.clientHeight ?? 0) - 8 - start) });
+        handlers.onTouchStart(event);
+      }}
+      style={dragStyle}
       className={`absolute inset-x-0 bottom-0 z-20 flex min-h-0 flex-col rounded-t-2xl bg-card text-card-foreground shadow-[0_0_0_1px_var(--border),0_-4px_16px_rgb(0_0_0/0.12)] transition-[transform,max-height] duration-200 ease-out motion-reduce:transition-none ${
         expanded || roomsMap ? "overflow-hidden" : ""
-      } ${expanded ? "top-2.5" : roomsMap ? "h-[45%]" : "max-h-[45%]"}`}
+      } ${expanded ? "top-2" : roomsMap ? "h-[60%]" : "max-h-[45%]"}`}
     >
       <Button
         variant="ghost"
         onClick={() => setExpanded((e) => !e)}
         aria-expanded={expanded}
         aria-label={expanded ? "Show more map" : "Show more details"}
-        // The ring sits inside the handle: the sheet clips anything outside it (QA-021).
-        className="flex h-6 min-h-0 w-full rounded-none rounded-t-2xl px-0 hover:bg-transparent focus-visible:-outline-offset-2"
-        data-no-swipe=""
+        // The ring sits inside the handle: the sheet clips anything outside it
+        // (QA-021). A drag on the handle moves the sheet, not the page (DA-01).
+        className="flex h-6 min-h-0 w-full touch-none rounded-none rounded-t-2xl px-0 hover:bg-transparent active:bg-transparent focus-visible:-outline-offset-2"
       >
         <span aria-hidden="true" className="h-1 w-10 rounded-full bg-muted-foreground/50" />
       </Button>

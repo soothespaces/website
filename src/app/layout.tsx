@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
+import { HideOnRoutes } from "@/components/hide-on-routes";
 import { SiteFooter } from "@/components/site-footer";
 import { Toaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -80,7 +81,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 <main id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
                   {children}
                 </main>
-                <SiteFooter />
+                <HideOnRoutes paths={["/map"]}>
+                  <SiteFooter />
+                </HideOnRoutes>
               </Toaster>
             </TooltipProvider>
           </SettingsProvider>

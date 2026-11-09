@@ -42,7 +42,17 @@ export function SpaceSearchField({
         placeholder={SPACE_SEARCH_PLACEHOLDER}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        onKeyDown={onKeyDown}
+        onKeyDown={(event) => {
+          onKeyDown?.(event);
+          if (event.defaultPrevented || event.key !== "ArrowDown") return;
+          // Down from the field goes to the first result (DA-23).
+          const first = document.querySelector<HTMLElement>(
+            "[data-search-results] button:not([disabled]), [data-search-results] a[href]",
+          );
+          if (!first) return;
+          event.preventDefault();
+          first.focus();
+        }}
         className="h-11 w-full rounded-full border border-input bg-background pr-11 pl-9 text-sm placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden"
       />
       {value ? (
@@ -52,7 +62,7 @@ export function SpaceSearchField({
           shape="circle"
           onClick={() => onChange("")}
           aria-label="Clear search"
-          className="absolute top-1/2 right-0 -translate-y-1/2 text-muted-foreground hover:bg-transparent hover:text-foreground"
+          className="absolute top-1/2 right-0 -translate-y-1/2 text-muted-foreground hover:bg-transparent active:bg-transparent hover:text-foreground"
         >
           <CloseIcon className="size-4" />
         </Button>

@@ -149,7 +149,9 @@ function PanelFrame({
               `overflow-y-auto overscroll-contain ${frameClassName} ${bounded ? "min-h-0 flex-1" : "min-h-0 [&_[data-detail-scroll]]:overflow-y-visible"}`
       }
     >
-      <div className={fill ? "flex min-h-0 flex-1 flex-col" : "flex flex-col gap-1"}>
+      {/* A short fade as a screen shows, so it arrives with the map's ease
+          instead of popping in (DA-13). Reduced motion turns it off. */}
+      <div className={`${fill ? "flex min-h-0 flex-1 flex-col" : "flex flex-col gap-1"} animate-fade-in motion-reduce:animate-none`}>
         {detail ? null : <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />}
         <RetryProvider value={retry}>{body}</RetryProvider>
       </div>

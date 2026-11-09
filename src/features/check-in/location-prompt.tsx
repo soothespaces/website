@@ -6,7 +6,6 @@ import { PinIcon } from "@/components/ui/icons";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { useLocation } from "@/lib/location/use-location";
 import { WIDE_QUERY } from "@/features/map/map-layout-config";
-import { useMapState } from "@/features/map/map-state";
 import { isDialogOpen } from "./overlay";
 import {
   LOCATION_SHOW_DELAY_MS,
@@ -28,7 +27,6 @@ export function LocationPrompt() {
   const cardRef = useRef<HTMLElement>(null);
   const { permission, request } = useLocation();
   const permissionRef = useRef(permission);
-  const { route } = useMapState();
   const wide = useMediaQuery(WIDE_QUERY);
   const [open, setOpen] = useState(false);
 
@@ -77,12 +75,15 @@ export function LocationPrompt() {
       stop();
     };
 
-    const arm = () => {
+    const arm = (event?: Event) => {
+      // A tap on the sheet is someone reading or picking a place. Only the
+      // map itself, or a key, brings the card in early (DA-02).
+      if (event?.target instanceof Element && event.target.closest("[data-map-sheet]")) return;
       ready = true;
       tryShow();
     };
 
-    timer = window.setTimeout(arm, LOCATION_SHOW_DELAY_MS);
+    timer = window.setTimeout(() => arm(), LOCATION_SHOW_DELAY_MS);
     retry = window.setInterval(tryShow, 1000);
     window.addEventListener("pointerdown", arm);
     window.addEventListener("keydown", arm);
@@ -118,11 +119,11 @@ export function LocationPrompt() {
     await request();
   }
 
-  const lifted = !wide && route.kind !== "home";
-
+  // Phones: under the search bar, clear of the sheet, so it never sits on
+  // the search field or the recommended card (DA-02).
   return (
     <div
-      className={`pointer-events-none absolute inset-x-0 z-30 flex justify-center px-3 ${lifted ? "bottom-[46%]" : "bottom-14 md:bottom-3"}`}
+      className={`pointer-events-none absolute inset-x-0 z-30 flex justify-center px-3 ${wide ? "bottom-3" : "top-16"}`}
     >
       <section
         ref={cardRef}

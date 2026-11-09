@@ -98,7 +98,7 @@ function SpacesList({ slug }: { slug: string }) {
                   size="sm"
                   onClick={() => push({ kind: "preferences" })}
                   aria-label="Change study preferences"
-                  className="h-auto min-h-0 px-0 py-0 text-sm font-medium text-primary underline underline-offset-2 hover:bg-transparent"
+                  className="h-auto min-h-0 px-0 py-0 text-sm font-medium text-primary underline underline-offset-2 hover:bg-transparent active:bg-transparent"
                 >
                   Change
                 </Button>
@@ -119,7 +119,7 @@ function SpacesList({ slug }: { slug: string }) {
               variant="ghost"
               size="sm"
               onClick={() => setFilters([])}
-              className="h-auto min-h-0 px-0 py-0 text-sm font-medium text-primary underline underline-offset-2 hover:bg-transparent"
+              className="h-auto min-h-0 px-0 py-0 text-sm font-medium text-primary underline underline-offset-2 hover:bg-transparent active:bg-transparent"
             >
               Clear filters
             </Button>

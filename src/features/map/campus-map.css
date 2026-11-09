@@ -114,3 +114,9 @@
   color: var(--muted-foreground);
   border-radius: 0.75rem;
 }
+
+/* A disabled map button (zoom in at the last zoom) fades like the photo
+   viewer's disabled arrows (DA-24). */
+.maplibregl-ctrl button:disabled {
+  opacity: 0.4;
+}

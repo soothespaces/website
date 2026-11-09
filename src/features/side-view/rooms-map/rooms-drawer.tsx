@@ -1,6 +1,6 @@
 "use client";
 
-import { SkeletonRows } from "@/components/ui/feedback";
+import { EmptyState, SkeletonRows } from "@/components/ui/feedback";
 import { ErrorNote } from "@/components/ui/error-note";
 import { useEffect, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -140,7 +140,9 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
       onBack={back}
       footer={
         <div className="flex items-center justify-between gap-3">
-          <p className="min-w-0 text-sm">{selected ? roomFooter(selected) : "Select a room"}</p>
+          <p className={selected ? "min-w-0 text-sm" : "min-w-0 text-sm text-muted-foreground"}>
+            {selected ? roomFooter(selected) : "Pick a room on the map or in the list to book it."}
+          </p>
           {selected?.bookingUrl ? (
             <Button asChild>
               <a
@@ -173,6 +175,8 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
           <ChipGroup
             type="single"
             label="Floor"
+            // One row that scrolls, so a last floor never wraps alone (DA-10).
+            groupClassName="flex-nowrap overflow-x-auto py-1"
             value={String(route.floor)}
             onValueChange={(value) => setRoomsMap({ floor: Number(value) })}
           >
@@ -207,7 +211,7 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
           {!loaded ? <SkeletonRows label="Loading rooms" rowClassName="h-12" /> : null}
           {error ? <ErrorNote message={error} /> : null}
           {loaded && !error && onFloor.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No bookable rooms on this floor.</p>
+            <EmptyState compact title="No bookable rooms on this floor." />
           ) : null}
           <div className="flex flex-col">
             {onFloor.map((room) => {

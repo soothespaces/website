@@ -22,18 +22,22 @@ export function EmptyState({
   title,
   description,
   action,
+  compact = false,
   className,
 }: {
   icon?: ReactNode;
   title: string;
   description?: ReactNode;
   action?: ReactNode;
+  /** A smaller box for an empty list inside a panel. Same treatment (DA-21). */
+  compact?: boolean;
   className?: string;
 }) {
   return (
     <div
       className={cx(
-        "flex flex-col items-center gap-2 rounded-lg border border-dashed border-input px-6 py-10 text-center",
+        "flex flex-col items-center gap-2 rounded-lg border border-dashed border-input text-center",
+        compact ? "px-4 py-4 text-sm" : "px-6 py-10",
         className,
       )}
     >

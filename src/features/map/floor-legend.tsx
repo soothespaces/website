@@ -21,7 +21,8 @@ const NOISE_SWATCH: Record<NoiseLevel, string> = {
   loud: "var(--noise-loud)",
 };
 
-// Shown over the map while a vector floor plan is up. Phones start collapsed
+// Shown over the map while a vector floor plan is up, clear of the credit
+// line under it (DA-20). Phones start collapsed
 // to a Legend button; wider screens keep the groups open.
 export function FloorLegend({ plan }: { plan: FloorPlan }) {
   const [open, setOpen] = useState(false);
@@ -51,7 +52,7 @@ export function FloorLegend({ plan }: { plan: FloorPlan }) {
   return (
     <section
       aria-label="Map legend"
-      className="absolute right-2.5 bottom-8 z-10 max-md:bottom-[46%] rounded-md bg-card text-card-foreground shadow-[0_0_0_1px_var(--input)]"
+      className="absolute right-2 bottom-14 z-10 max-md:bottom-[46%] rounded-md bg-card text-card-foreground shadow-[0_0_0_1px_var(--input)]"
     >
       <Button
         variant="ghost"

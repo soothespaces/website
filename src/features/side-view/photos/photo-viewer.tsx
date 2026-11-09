@@ -69,6 +69,9 @@ export function PhotoViewer({
   const widths = photo.widths.length ? photo.widths : [photo.width];
   const chosen = widthThatFits(widths, viewport.width, viewport.ratio) ?? widths[0] ?? photo.width;
   const src = photoUrl(supabaseUrl, photo.pathPrefix, chosen);
+  // The smallest stored width paints first, under the full one, so the
+  // viewer never opens on a black field (DA-25).
+  const preview = photoUrl(supabaseUrl, photo.pathPrefix, Math.min(...widths));
 
   function step(delta: number) {
     const next = safeIndex + delta;
@@ -165,6 +168,12 @@ export function PhotoViewer({
               height={photo.height}
               unoptimized
               draggable={false}
+              style={{
+                backgroundImage: `url(${JSON.stringify(preview)})`,
+                backgroundSize: "contain",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+              }}
               className={`h-auto max-h-full w-auto max-w-full object-contain ${
                 reduce || motion === "none" ? "" : motion === "next" ? "animate-photo-next" : "animate-photo-prev"
               }`}

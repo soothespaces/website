@@ -47,7 +47,7 @@ function SectionActionLink({ action }: { action: SectionAction }) {
         event.currentTarget.blur();
         action.onClick();
       }}
-      className={cx(className, "h-auto min-h-6 px-0 py-0 hover:bg-transparent")}
+      className={cx(className, "h-auto min-h-6 px-0 py-0 hover:bg-transparent active:bg-transparent")}
     >
       {action.label}
     </Button>

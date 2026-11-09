@@ -6,6 +6,7 @@ import { NoiseBadge } from "@/components/ui/noise-badge";
 import { SpaceTagLine } from "@/components/ui/space-tag-line";
 import { spaceTagWords } from "@/features/spaces/space-tags";
 import type { ListedSpace } from "./listed-space";
+import { PLACE_ROW_CLASS, PLACE_THUMB_CLASS } from "../place-row";
 
 export function SpaceRow({
   space,
@@ -23,9 +24,9 @@ export function SpaceRow({
     <Button
       variant="ghost"
       onClick={() => onOpen(space)}
-      className="flex h-auto min-h-0 w-full items-start justify-start gap-3 rounded-lg px-1 py-2 text-left font-normal"
+      className={`flex ${PLACE_ROW_CLASS} items-start`}
     >
-      <span className="size-14 shrink-0 overflow-hidden rounded-md bg-muted">
+      <span className={PLACE_THUMB_CLASS}>
         {showImage ? (
           // These URLs come from Supabase storage and the library site. They
           // are not in images.remotePatterns, so next/image would refuse them.

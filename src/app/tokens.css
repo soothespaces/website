@@ -328,7 +328,7 @@
  * --noise-bar is the unfilled bar: light on light backgrounds and dark on
  * dark ones, so it stays far from every fill (including high contrast).
  * --slot-free is the grey free block on the room timeline, darkened from
- * the board's #bfc3c0 to 3:1 on the card. --floor-staff is 3:1 too.
+ * the board's #bfc3c0 to 3:1 on the card (dark mode has its own grey, DA-22). --floor-staff is 3:1 too.
  * Booked blocks use --destructive plus a hatch, so they are not given
  * another red.
  */
@@ -350,7 +350,7 @@
   --noise-conversational: #92bf92;
   --noise-loud: #acdaad;
   --noise-bar: #333333;
-  --slot-free: #bfc3c0;
+  --slot-free: #6f7471;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -360,7 +360,7 @@
     --noise-conversational: #92bf92;
     --noise-loud: #acdaad;
     --noise-bar: #333333;
-    --slot-free: #bfc3c0;
+    --slot-free: #6f7471;
   }
 }
 

@@ -10,7 +10,7 @@ const NOTICES = [
 ];
 
 const linkClassName =
-  "rounded-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline";
+  "inline-block rounded-sm py-1 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline";
 
 export function SiteFooter() {
   return (

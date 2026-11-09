@@ -23,7 +23,7 @@ export function ResultsPanel({
     return <ErrorNote message="Study spaces failed to load." onRetry={data.reload} className="px-3 py-2" />;
   }
   return (
-    <div className="flex flex-col gap-1">
+    <div data-search-results="" className="flex flex-col gap-1">
       {data.loaded && !data.error ? (
         <p aria-live="polite" className="px-3 pb-1 text-xs text-muted-foreground">
           {search.query.trim()

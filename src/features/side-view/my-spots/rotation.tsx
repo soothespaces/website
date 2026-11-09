@@ -267,7 +267,9 @@ function RotationList({
             }}
             className={cx(
               "flex items-center gap-2 border-b border-border py-3 transition-transform duration-150 last:border-b-0 motion-reduce:transition-none",
-              item.closed && "opacity-[0.55]",
+              // A closed spot dims its thumb only. Fading the whole row put
+              // muted text under 4.5:1 (DA-22).
+              item.closed && "[&>span]:opacity-50",
               dragging && "relative z-10",
             )}
             style={shift ? { transform: `translateY(${shift}px)` } : undefined}
@@ -290,7 +292,7 @@ function RotationList({
                 <Button
                   variant="ghost"
                   onClick={() => onOpen(item)}
-                  className="h-auto min-h-0 justify-start px-0 py-0 text-left text-sm font-semibold break-words hover:bg-transparent hover:underline"
+                  className="h-auto min-h-0 justify-start px-0 py-0 text-left text-sm font-semibold break-words hover:bg-transparent active:bg-transparent hover:underline"
                 >
                   {item.name}
                 </Button>

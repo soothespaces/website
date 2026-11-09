@@ -16,7 +16,7 @@ export const SheetClose = DialogPrimitive.Close;
 
 const SIDES = {
   bottom:
-    "inset-x-0 bottom-0 max-h-[85dvh] rounded-t-xl border-t data-[state=open]:animate-sheet-up data-[state=closed]:animate-sheet-down",
+    "inset-x-0 bottom-0 max-h-[85dvh] rounded-t-2xl border-t data-[state=open]:animate-sheet-up data-[state=closed]:animate-sheet-down",
   right:
     "inset-y-0 right-0 h-full w-[min(26rem,100%)] border-l data-[state=open]:animate-sheet-in-right data-[state=closed]:animate-sheet-out-right",
 } as const;
@@ -43,7 +43,7 @@ export function SheetContent({
         {...props}
       >
         {side === "bottom" ? (
-          <div aria-hidden="true" className="mx-auto -mt-2 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/40" />
+          <div aria-hidden="true" className="mx-auto -mt-2 h-1 w-10 shrink-0 rounded-full bg-muted-foreground/50" />
         ) : null}
         {children}
         <CloseButton />

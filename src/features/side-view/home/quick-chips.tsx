@@ -35,7 +35,8 @@ export function QuickChips() {
       onValueChange={(values) => setFilters(filtersFrom(values))}
       className="min-w-0 w-full"
       // Phones scroll the row (SOS-151); the wide dock wraps it (QA-031).
-      groupClassName="min-w-0 max-md:flex-nowrap max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pb-1"
+      // The 4px pad keeps a chip's focus ring inside the scroller (DA-26).
+      groupClassName="min-w-0 max-md:flex-nowrap max-md:overflow-x-auto max-md:overscroll-x-contain max-md:p-1 max-md:-m-1"
     >
       {OPTIONS.map((option) => (
         <Chip key={option.value} value={option.value}>
