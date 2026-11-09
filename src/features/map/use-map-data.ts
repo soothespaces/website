@@ -1,5 +1,6 @@
 "use client";
 
+import { spaceShortName } from "@/features/spaces/labels";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabaseEnv } from "@/lib/supabase/env";
@@ -71,7 +72,7 @@ function spotsFor(spaces: MapSpace[]): SpaceSpot[] {
     const lng = own ? space.lng : space.building?.lng;
     if (lat == null || lng == null) continue;
     const key = own ? `space:${space.slug}` : `building:${space.building!.slug}`;
-    const spot = spots.get(key) ?? { key, name: own ? space.name : space.building!.name, lat, lng, spaces: [] };
+    const spot = spots.get(key) ?? { key, name: own ? spaceShortName(space) : (space.building!.short_name?.trim() || space.building!.name), lat, lng, spaces: [] };
     spot.spaces.push(space);
     spots.set(key, spot);
   }

@@ -1,5 +1,6 @@
 "use client";
 
+import { spaceShortName } from "@/features/spaces/labels";
 import { useMemo, useState } from "react";
 import { Chip, ChipGroup } from "@/components/ui/chip-group";
 import { DetailScreen } from "@/components/ui/detail-screen";
@@ -48,12 +49,13 @@ export function PhotosScreen({ route }: PanelScreenProps) {
   if (route.kind !== "photos") return null;
 
   const mapBuilding = data.buildingsBySlug.get(route.slug);
-  const buildingName = loadedPhotos.buildingName || mapBuilding?.name || "";
+  const buildingName = loadedPhotos.buildingName || mapBuilding?.shortName || mapBuilding?.name || "";
   const parent = stack.at(-2);
   let backTo = "Home";
   if (parent?.kind === "building") backTo = buildingName;
   else if (parent?.kind === "space") {
-    backTo = data.spaces.find((space) => space.slug === parent.id)?.name ?? "";
+    const space = data.spaces.find((item) => item.slug === parent.id);
+    backTo = space ? spaceShortName(space) : "";
   }
 
   const title = loadedPhotos.loaded && !loadedPhotos.error ? photoCountLabel(allowed.length) : "Photos";

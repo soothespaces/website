@@ -1,6 +1,7 @@
 // Study spaces, independent of where they're shown: the map's dock and phone
 // search screen use these, and so will the list page.
-export { FEATURE_LABELS, NOISE_LABELS, spaceLocation, spaceTags } from "./labels";
+export { buildingShortName, FEATURE_LABELS, NOISE_LABELS, spaceFloorLine, spaceLocation, spaceNameOnFloor, spaceShortName, spaceTags, spaceTitle } from "./labels";
+export { PlaceName } from "./place-name";
 export { searchSpaces } from "./search";
 export { SpaceDetails } from "./space-details";
 export { SpaceList } from "./space-list";

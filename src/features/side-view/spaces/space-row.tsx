@@ -4,16 +4,20 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NoiseBadge } from "@/components/ui/noise-badge";
 import { SpaceTagLine } from "@/components/ui/space-tag-line";
+import { spaceNameOnFloor } from "@/features/spaces";
 import { spaceTagWords } from "@/features/spaces/space-tags";
 import type { ListedSpace } from "./listed-space";
 import { PLACE_ROW_CLASS, PLACE_THUMB_CLASS } from "../place-row";
 
 export function SpaceRow({
   space,
+  floorTitle,
   printerOnFloor,
   onOpen,
 }: {
   space: ListedSpace;
+  // The heading the row sits under, so the name can leave it out.
+  floorTitle?: string;
   printerOnFloor: boolean;
   onOpen: (space: ListedSpace) => void;
 }) {
@@ -41,7 +45,7 @@ export function SpaceRow({
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="flex items-start justify-between gap-2">
-          <span className="min-w-0 text-sm font-semibold break-words">{space.name}</span>
+          <span className="min-w-0 text-sm font-semibold break-words">{spaceNameOnFloor(space, floorTitle)}</span>
           {space.noise_level ? <NoiseBadge level={space.noise_level} size="sm" /> : null}
         </span>
         <SpaceTagLine tags={tags} className="line-clamp-2 whitespace-normal" />

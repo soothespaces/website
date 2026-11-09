@@ -139,6 +139,7 @@ function SpacesList({ slug }: { slug: string }) {
                     <li key={space.id}>
                       <SpaceRow
                         space={space}
+                        floorTitle={group.title}
                         printerOnFloor={space.floor != null && printersOnFloor(printers.printers, space.floor).length > 0}
                         onOpen={openSpace}
                       />

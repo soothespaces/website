@@ -123,14 +123,17 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
     );
   }
 
-  const name = record?.name ?? listed?.name ?? "";
+  // The building link sits above the title, so the title is just where it
+  // is inside: "Floor 2 · Computing". Spaces without one keep their full name.
+  const shortName = record ? record.shortName : (listed?.short_name?.trim() || null);
+  const name = shortName ?? record?.name ?? listed?.name ?? "";
   const building: SpaceHeaderBuilding | null =
     record?.building ??
     (listed?.building
       ? {
           slug: listed.building.slug,
           name: listed.building.name,
-          shortName: null,
+          shortName: listed.building.short_name?.trim() || null,
           lat: listed.building.lat,
           lng: listed.building.lng,
         }
@@ -140,7 +143,10 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
   const showsLibraryPhoto = Boolean(record?.imageUrl && !isBlockedPhoto({ sourceUrl: record.imageUrl }));
   const photo = record ? heroPhoto(record) : null;
   const photoLabel = record ? photoCountLabel(visiblePhotoCount(record.photoCount, showsLibraryPhoto)) : null;
-  const locationLine = placeLine(buildingDisplayName(building), record?.floorLabel ?? listed?.floor_label ?? null);
+  // The short name already says the floor, and the building is the link above.
+  const locationLine = shortName
+    ? null
+    : placeLine(buildingDisplayName(building), record?.floorLabel ?? listed?.floor_label ?? null);
   const placedFloors = record ? locationFloors(record.locations) : [];
   const floorSubtitle = record ? floorPlanSubtitle(placedFloors) : null;
   const parent = stack.at(-2);
@@ -162,7 +168,7 @@ export function SpaceScreen({ route }: { route: PanelRoute; density: SpaceListDe
       className="flex min-h-0 min-w-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain px-1 pb-2"
     >
       <SpaceToolbar
-        name={name}
+        name={[buildingDisplayName(building), name].filter(Boolean).join(", ")}
         spaceId={record?.id ?? null}
         backLabel={spaceBackLabel(parent ?? (building ? { kind: "building", slug: building.slug } : undefined), buildingDisplayName(building))}
         onBack={onBack}

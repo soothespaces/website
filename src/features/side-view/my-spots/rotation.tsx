@@ -1,5 +1,6 @@
 "use client";
 
+import { PlaceName } from "@/features/spaces";
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/ui/favorite-button";
@@ -276,7 +277,7 @@ function RotationList({
           >
             {reorderable ? (
               <MoveHandle
-                name={item.name}
+                name={rotationLabel(item)}
                 index={index}
                 count={items.length}
                 onPointerDown={(event) => onPointerDown(event, item.favorite.id)}
@@ -294,18 +295,20 @@ function RotationList({
                   onClick={() => onOpen(item)}
                   className="h-auto min-h-0 justify-start px-0 py-0 text-left text-sm font-semibold break-words hover:bg-transparent active:bg-transparent hover:underline"
                 >
-                  {item.name}
+                  <RotationName item={item} />
                 </Button>
               ) : (
-                <p className="text-sm font-semibold break-words">{item.name}</p>
+                <p className="text-sm break-words">
+                  <RotationName item={item} />
+                </p>
               )}
-              {item.place ? <p className="text-xs text-muted-foreground">{item.place}</p> : null}
+              {item.wholeBuilding && item.place ? <p className="text-xs text-muted-foreground">{item.place}</p> : null}
               {item.status ? (
                 <p className={cx("text-xs", item.closed && "text-muted-foreground")}>{item.status}</p>
               ) : null}
             </div>
             <FavoriteButton
-              name={item.name}
+              name={rotationLabel(item)}
               pressed
               signedIn={signedIn}
               onPressedChange={(pressed) => {
@@ -435,6 +438,15 @@ function MoveHandle({
       ) : null}
     </div>
   );
+}
+
+// A saved space reads "Duderstadt Floor 2 · Computing"; a building is just its name.
+function RotationName({ item }: { item: RotationItem }) {
+  return <PlaceName building={item.wholeBuilding ? null : item.place} place={item.name} />;
+}
+
+function rotationLabel(item: RotationItem): string {
+  return item.wholeBuilding || !item.place ? item.name : `${item.place}, ${item.name}`;
 }
 
 function RoomsFree({ slug, from, onCount }: { slug: string; from: Date; onCount: (slug: string, count: number | null) => void }) {

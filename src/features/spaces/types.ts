@@ -7,6 +7,7 @@ export type SpaceSummary = Pick<
   Tables["spaces"]["Row"],
   "id" | "slug" | "name" | "summary" | "floor_label" | "noise_level" | "features" | "lat" | "lng"
 > & {
+  short_name?: string | null;
   light_level?: Tables["spaces"]["Row"]["light_level"];
   capacity?: number | null;
   image_url?: string | null;
@@ -24,4 +25,4 @@ export type SpaceSummary = Pick<
 // the building's short name. Source and edited fields stay off this query;
 // the dim chip reads the stored light level.
 export const SPACE_SUMMARY_SELECT =
-  "id, slug, name, summary, floor_label, noise_level, light_level, features, capacity, lat, lng, image_url, image_alt, building:buildings(slug, name, short_name, lat, lng)";
+  "id, slug, name, short_name, summary, floor_label, noise_level, light_level, features, capacity, lat, lng, image_url, image_alt, building:buildings(slug, name, short_name, lat, lng)";

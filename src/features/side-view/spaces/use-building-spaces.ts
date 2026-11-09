@@ -19,6 +19,7 @@ type SpaceRecord = {
   id: string;
   slug: string;
   name: string;
+  short_name: string | null;
   summary: string | null;
   floor: number | null;
   floor_label: string | null;
@@ -43,7 +44,7 @@ type PhotoRecord = {
 };
 
 const SPACE_SELECT =
-  "id, slug, name, summary, floor, floor_label, noise_level, light_level, features, capacity, source, edited_fields, lat, lng, image_url, image_alt, building:buildings(slug, name, short_name, lat, lng)";
+  "id, slug, name, short_name, summary, floor, floor_label, noise_level, light_level, features, capacity, source, edited_fields, lat, lng, image_url, image_alt, building:buildings(slug, name, short_name, lat, lng)";
 
 export type BuildingSpacesState = {
   spaces: ListedSpace[];
@@ -80,6 +81,7 @@ function toListedSpace(record: SpaceRecord, photo: { url: string; alt: string } 
     id: record.id,
     slug: record.slug,
     name: record.name,
+    short_name: record.short_name,
     summary: record.summary,
     floor: record.floor,
     floor_label: record.floor_label,

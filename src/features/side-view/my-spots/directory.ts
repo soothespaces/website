@@ -1,5 +1,6 @@
 "use client";
 
+import { spaceShortName } from "@/features/spaces";
 import { useEffect, useMemo, useState } from "react";
 import { useMapState } from "@/features/map/map-state";
 import { createClient } from "@/lib/supabase/client";
@@ -96,7 +97,8 @@ export function useSpotDirectory(roomIds: readonly string[]): SpotDirectory {
       next.set(space.id, {
         id: space.id,
         slug: space.slug,
-        name: space.name,
+        // Where it is inside its building; the building is shown beside it.
+        name: spaceShortName(space),
         buildingSlug: space.building?.slug ?? "",
         floorLabel: space.floor_label,
         noiseLevel: space.noise_level,

@@ -1,5 +1,6 @@
 import { SpaceTags } from "@/components/ui/space-tags";
-import { spaceLocation, spaceTags } from "./labels";
+import { buildingShortName, spaceLocation, spaceShortName, spaceTags } from "./labels";
+import { PlaceName } from "./place-name";
 import type { SpaceSummary } from "./types";
 
 // Everything we know about one study space, for a side panel or a page.
@@ -11,11 +12,13 @@ export function SpaceDetails({
   space: SpaceSummary;
   headingLevel?: "h1" | "h2" | "h3";
 }) {
-  const location = spaceLocation(space);
+  const location = spaceLocation(space, { building: false });
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-0.5">
-        <Heading className="text-lg">{space.name}</Heading>
+        <Heading className="text-lg">
+          <PlaceName building={buildingShortName(space.building)} place={spaceShortName(space)} />
+        </Heading>
         {location ? <p className="text-sm text-muted-foreground">{location}</p> : null}
       </div>
       <SpaceTags tags={spaceTags(space, Infinity)} />

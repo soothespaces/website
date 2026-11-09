@@ -1,5 +1,6 @@
 "use client";
 
+import { spaceShortName } from "@/features/spaces/labels";
 import { useEffect, useState } from "react";
 import { readAll } from "@/lib/data/read-all";
 import { createClient } from "@/lib/supabase/client";
@@ -28,7 +29,7 @@ type PhotoRecord = {
   created_at: string;
 };
 
-type SpaceRecord = { id: string; slug: string; name: string; floor: number | null; building_slug: string };
+type SpaceRecord = { id: string; slug: string; name: string; short_name: string | null; floor: number | null; building_slug: string };
 
 type LocationRecord = {
   space_id: string;
@@ -70,7 +71,7 @@ function spacesFor(rows: readonly SpaceRecord[], locations: readonly LocationRec
   return rows.map((space) => ({
     id: space.id,
     slug: space.slug,
-    name: space.name,
+    name: spaceShortName(space),
     buildingSlug: space.building_slug,
     locations: locations
       .filter((location) => location.space_id === space.id)
@@ -112,7 +113,7 @@ export function useBuildingPhotos(slug: string, spaceSlug?: string): BuildingPho
         readAll<SpaceRecord>((from, to) =>
           supabase
             .from("spaces")
-            .select("id, slug, name, floor, building_slug")
+            .select("id, slug, name, short_name, floor, building_slug")
             .eq("building_slug", slug)
             .range(from, to),
         ),

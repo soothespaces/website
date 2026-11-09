@@ -7,6 +7,7 @@ export type ListedSpace = {
   id: string;
   slug: string;
   name: string;
+  short_name: string | null;
   summary: string | null;
   floor: number | null;
   floor_label: string | null;

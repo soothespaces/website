@@ -8,6 +8,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { SpaceTagLine } from "@/components/ui/space-tag-line";
 import { useMapState } from "@/features/map/map-state";
 import { spaceTagWords } from "@/features/spaces/space-tags";
+import { spaceFloorLine, spaceShortName } from "@/features/spaces";
 import { useSession } from "@/lib/auth/use-session";
 import { rankSpaces } from "@/lib/ranking";
 import { hasStudyPreferences } from "@/lib/settings/model";
@@ -53,6 +54,7 @@ export function SpacesPreview({ slug }: { slug: string | null }) {
           const space = result.space;
           const photo = photos.data.find((item) => item.spaceId === space.id);
           const tags = spaceTagWords({ light_level: space.light_level, features: space.features });
+          const floor = spaceFloorLine(space);
           // The Spaces list falls back to the space's own library photo, so this
           // row does too (QA-079). With neither, the square is left out.
           const fallback = details.data.find((detail) => detail.id === space.id)?.imageUrl ?? null;
@@ -78,9 +80,9 @@ export function SpacesPreview({ slug }: { slug: string | null }) {
                   </span>
                 ) : null}
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="text-sm font-semibold">{space.name}</span>
+                  <span className="text-sm font-semibold">{spaceShortName(space)}</span>
                   <SpaceTagLine tags={tags} />
-                  {space.floor_label ? <span className="text-xs text-muted-foreground">{space.floor_label}</span> : null}
+                  {floor ? <span className="text-xs text-muted-foreground">{floor}</span> : null}
                 </span>
                 {space.noise_level ? (
                   <span className="shrink-0">

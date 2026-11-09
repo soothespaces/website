@@ -27,6 +27,8 @@ export type SpaceLocation = {
 /** What the editor reads and writes. */
 export type SpaceFields = {
   name: string;
+  /** Where it is inside the building, shown next to the building's short name. */
+  shortName: string | null;
   summary: string | null;
   description: string | null;
   floor: number | null;

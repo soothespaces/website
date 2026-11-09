@@ -1,5 +1,6 @@
 "use client";
 
+import { spaceShortName } from "@/features/spaces/labels";
 import { Marker } from "react-map-gl/maplibre";
 import { Button } from "@/components/ui/button";
 import type { SpaceSpot } from "../use-map-data";
@@ -25,7 +26,7 @@ export function SpacePins({
           variant="ghost"
           size="icon"
           shape="circle"
-          aria-label={count > 1 ? `${spot.name}: ${count} study spaces` : `${spot.spaces[0].name}, ${spot.name}`}
+          aria-label={count > 1 ? `${spot.name}: ${count} study spaces` : `${spaceShortName(spot.spaces[0])}, ${spot.name}`}
           aria-pressed={selected}
           onClick={(event) => {
             // Keep the click from reaching the map, which would clear it.

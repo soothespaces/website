@@ -102,7 +102,7 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
   if (route.kind !== "rooms-map") return null;
   const plans = floorPlans.get(route.slug) ?? [];
   const building = data.buildingsBySlug.get(route.slug);
-  const place = plans[0]?.buildingName || building?.name || "";
+  const place = building?.shortName || plans[0]?.buildingName || building?.name || "";
   const onFloor = rooms.filter((room) => roomFloor(room) === route.floor);
   const selected = rooms.find((room) => sameRoom(room, route.roomId)) ?? null;
   const selectedFree = selected ? freeStart(selected, times) : null;

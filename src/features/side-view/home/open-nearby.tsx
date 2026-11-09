@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { NoiseBadge } from "@/components/ui/noise-badge";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useMapState } from "@/features/map/map-state";
+import { PlaceName, spaceShortName } from "@/features/spaces";
 import { useLocation } from "@/lib/location/use-location";
-import { buildingLabel, orderOpenNow, placeMeta, type HomeSpace } from "./places";
+import { buildingLabel, orderOpenNow, type HomeSpace } from "./places";
 import { PLACE_ROW_CLASS, PLACE_THUMB_CLASS } from "../place-row";
 
 const SHOWN = 3;
@@ -36,8 +37,8 @@ export function OpenNearby({ spaces }: { spaces: HomeSpace[] }) {
               >
                 <Thumb space={space} />
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="text-sm font-semibold tracking-tight">{space.name}</span>
-                  <span className="text-xs text-muted-foreground">{placeMeta([buildingLabel(space.building), space.openLabel])}</span>
+                  <PlaceName building={buildingLabel(space.building)} place={spaceShortName(space)} className="text-sm tracking-tight" />
+                  {space.openLabel ? <span className="text-xs text-muted-foreground">{space.openLabel}</span> : null}
                 </span>
                 {space.noise_level ? <NoiseBadge level={space.noise_level} size="sm" /> : null}
               </Button>

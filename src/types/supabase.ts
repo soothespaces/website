@@ -988,6 +988,7 @@ export type Database = {
           lng: number | null;
           name: string;
           noise_level: Database["public"]["Enums"]["noise_level"] | null;
+          short_name: string | null;
           slug: string;
           source: Database["public"]["Enums"]["space_source"];
           source_url: string | null;
@@ -1013,6 +1014,7 @@ export type Database = {
           lng?: number | null;
           name: string;
           noise_level?: Database["public"]["Enums"]["noise_level"] | null;
+          short_name?: string | null;
           slug: string;
           source: Database["public"]["Enums"]["space_source"];
           source_url?: string | null;
@@ -1037,6 +1039,7 @@ export type Database = {
           lng?: number | null;
           name?: string;
           noise_level?: Database["public"]["Enums"]["noise_level"] | null;
+          short_name?: string | null;
           slug?: string;
           source?: Database["public"]["Enums"]["space_source"];
           source_url?: string | null;

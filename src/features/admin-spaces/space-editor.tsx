@@ -48,6 +48,7 @@ const UNSET = "unset";
 
 const EMPTY_FIELDS: SpaceFields = {
   name: "",
+  shortName: null,
   summary: null,
   description: null,
   floor: null,
@@ -75,6 +76,7 @@ export function SpaceEditor({ buildings, space }: { buildings: SpaceBuilding[]; 
   const ids = {
     building: useId(),
     name: useId(),
+    shortName: useId(),
     summary: useId(),
     description: useId(),
     floor: useId(),
@@ -220,6 +222,19 @@ export function SpaceEditor({ buildings, space }: { buildings: SpaceBuilding[]; 
             value={fields.name}
             onChange={(e) => set("name", e.target.value)}
             placeholder="Shapiro 3rd floor, east windows"
+          />
+        </Field>
+        <Field
+          id={ids.shortName}
+          label="Short name"
+          hint="Where it is inside the building, without the building's name. Lists show it next to the building: “Duderstadt Floor 2 · Computing”."
+        >
+          <Input
+            id={ids.shortName}
+            aria-describedby={`${ids.shortName}-hint`}
+            value={fields.shortName ?? ""}
+            onChange={(e) => set("shortName", e.target.value)}
+            placeholder="Floor 3 · East windows"
           />
         </Field>
         <Field id={ids.summary} label="Summary" hint="One line for lists and search.">
@@ -468,8 +483,8 @@ export function SpaceEditor({ buildings, space }: { buildings: SpaceBuilding[]; 
 }
 
 function fieldsOf(space: AdminSpace): SpaceFields {
-  const { name, summary, description, floor, floorLabel, noiseLevel, lightLevel, features, capacity, isListed, lat, lng } = space;
-  return { name, summary, description, floor, floorLabel, noiseLevel, lightLevel, features, capacity, isListed, lat, lng };
+  const { name, shortName, summary, description, floor, floorLabel, noiseLevel, lightLevel, features, capacity, isListed, lat, lng } = space;
+  return { name, shortName, summary, description, floor, floorLabel, noiseLevel, lightLevel, features, capacity, isListed, lat, lng };
 }
 
 function Section({ title, children }: { title: string; children: ReactNode }) {

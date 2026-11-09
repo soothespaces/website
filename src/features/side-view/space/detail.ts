@@ -55,6 +55,8 @@ export type SpaceDetail = {
   id: string;
   slug: string;
   name: string;
+  /** Where it is inside the building, "Floor 2 · Computing". */
+  shortName: string | null;
   summary: string | null;
   description: string | null;
   floor: number | null;
@@ -92,6 +94,7 @@ export type SpaceDetailRow = {
   id?: string | null;
   slug?: string | null;
   name?: string | null;
+  short_name?: string | null;
   summary?: string | null;
   description?: string | null;
   floor?: number | null;
@@ -179,6 +182,7 @@ export function toSpaceDetail(row: SpaceDetailRow, photos: SpacePhotos): SpaceDe
     id: row.id,
     slug: row.slug,
     name: row.name.trim(),
+    shortName: row.short_name?.trim() || null,
     summary: row.summary?.trim() || null,
     description: row.description?.trim() || null,
     floor: asNumber(row.floor),

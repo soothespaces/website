@@ -56,7 +56,7 @@ export async function saveSpace(input: {
   if (id) {
     const { data: current, error: readError } = await supabase
       .from("spaces")
-      .select("slug, edited_fields, name, summary, description, floor, floor_label, noise_level, light_level, features, capacity, is_listed, lat, lng")
+      .select("slug, edited_fields, name, short_name, summary, description, floor, floor_label, noise_level, light_level, features, capacity, is_listed, lat, lng")
       .eq("id", id)
       .maybeSingle();
     if (readError) return { ok: false, error: `Reading the space failed: ${readError.message}` };
@@ -127,6 +127,7 @@ export async function deleteSpace(id: string): Promise<{ ok: true } | { ok: fals
 function toRow(f: SpaceFields) {
   return {
     name: f.name.trim(),
+    short_name: blank(f.shortName),
     summary: blank(f.summary),
     description: blank(f.description),
     floor: f.floor,

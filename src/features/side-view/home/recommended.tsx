@@ -7,6 +7,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/icons";
 import { NoiseBadge } from "@/components/ui/noise-badge";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useMapState } from "@/features/map/map-state";
+import { PlaceName, spaceShortName, spaceTitle } from "@/features/spaces";
 import type { Coordinates } from "@/lib/location";
 import { useLocation } from "@/lib/location/use-location";
 import { useStudyPreferences } from "@/lib/settings/settings-provider";
@@ -66,7 +67,7 @@ function RecommendationCard({
   const total = picks.length;
   const swiped = useRef(false);
   const start = useRef<{ x: number; y: number } | null>(null);
-  const meta = placeMeta([buildingLabel(space.building), space.openLabel, walkLabel(spaceMeters(space, origin))]);
+  const meta = placeMeta([space.openLabel, walkLabel(spaceMeters(space, origin))]);
   const go = (delta: number) => setIndex((value) => Math.min(total - 1, Math.max(0, value + delta)));
 
   return (
@@ -74,7 +75,7 @@ function RecommendationCard({
     // inside would be cut off (DA-09).
     <div className="relative overflow-hidden rounded-lg border border-border bg-card outline-offset-2 has-[>button:focus-visible]:outline-2 has-[>button:focus-visible]:outline-ring">
       <p className="sr-only" aria-live="polite">
-        {`Recommendation ${index + 1} of ${total}: ${space.name}`}
+        {`Recommendation ${index + 1} of ${total}: ${spaceTitle(space)}`}
       </p>
       <Button
         variant="ghost"
@@ -105,7 +106,11 @@ function RecommendationCard({
         <SpacePhoto space={space} />
         <span className="flex flex-col gap-1 px-3 py-3">
           <span className="flex items-start justify-between gap-2">
-            <span className="text-base font-semibold tracking-tight">{space.name}</span>
+            <PlaceName
+              building={buildingLabel(space.building)}
+              place={spaceShortName(space)}
+              className="text-base tracking-tight"
+            />
             {space.noise_level ? <NoiseBadge level={space.noise_level} size="sm" /> : null}
           </span>
           {meta ? <span className="text-sm text-muted-foreground">{meta}</span> : null}
@@ -144,7 +149,7 @@ function RecommendationCard({
 }
 
 function SpacePhoto({ space }: { space: HomeSpace }) {
-  const alt = space.image_alt?.trim() || `Interior: ${space.name}`;
+  const alt = space.image_alt?.trim() || `Interior: ${spaceTitle(space)}`;
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const src = safeSpaceImageUrl(space.image_url);
   if (!src || failedSrc === src) {
