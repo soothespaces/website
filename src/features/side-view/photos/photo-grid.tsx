@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { photoUrl } from "@/lib/photos/url";
 import { getSupabaseEnv } from "@/lib/supabase/env";
-import { widthAtLeast, type ClassifiedPhoto } from "./photo-model";
+import { captionSentence, widthAtLeast, type ClassifiedPhoto } from "./photo-model";
 
 // Next asks for a width from its own list. Use the smallest file that still
 // covers that request so a 640px slot is not served the 480px file.
@@ -70,7 +70,7 @@ function Tile({
       variant="ghost"
       data-photo-tile={photo.id}
       className="h-auto w-full min-h-0 items-stretch rounded-lg p-0 text-left font-normal hover:bg-transparent active:bg-transparent [&_img]:transition-[filter] hover:[&_img]:brightness-90"
-      aria-label={`${photo.caption}. ${photo.pill ? `${photo.pill}. ` : ""}Photo ${position} of ${total}`}
+      aria-label={`${captionSentence(photo.caption)} ${photo.pill ? `${photo.pill}. ` : ""}Photo ${position} of ${total}`}
       onClick={() => onOpen(photo.id)}
     >
       {frame}

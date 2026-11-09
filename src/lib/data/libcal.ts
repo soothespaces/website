@@ -1,4 +1,4 @@
-import { addDays } from "@/lib/detroit";
+import { addDays, detroitParts } from "@/lib/detroit";
 
 // The three public LibCal hosts. Anything else is refused so a bad row can't
 // send the server at an arbitrary URL.
@@ -96,36 +96,53 @@ export function parseAvailabilityGrid(body: unknown): GridSlot[] | null {
   return parsed;
 }
 
-/** A location needs this many rooms before "every room booked at once" reads as LibCal's own block. */
+/** A location needs this many rooms before "every room booked at once" can read as LibCal's own block. */
 const BLANKET_MIN_ITEMS = 3;
 
+/** "2026-11-09 23:25:00", the grid's own Detroit wall-clock format. */
+export function libcalWallClock(now: Date): string {
+  const parts = detroitParts(now);
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `${parts.date} ${pad(parts.hour)}:${pad(parts.minute)}:00`;
+}
+
 /**
- * Slot starts where every room the grid lists is marked booked. LibCal paints
- * its own cutoffs (the rest of tonight once it can't be booked, a closure)
- * with the booked class on every room at once (QA-076: all 18 Shapiro rooms
- * read 11 PM – 12 AM at 11 PM). Real bookings never line up across a whole
- * floor, so these are left out of "booked".
+ * The slots LibCal blocks itself: a run of half hours marked booked on every
+ * room at once that has already started. At 11:25 PM all 18 Shapiro rooms read
+ * booked 11 PM – 12 AM, which is LibCal saying the rest of tonight can't be
+ * booked (QA-076). A full row later in the day is real: on a busy Monday every
+ * room is booked at 1 PM, so a run that hasn't started yet stays booked.
  */
-export function blanketStarts(slots: readonly GridSlot[]): Set<string> {
-  const items = new Set(slots.map((slot) => slot.itemId));
+export function blanketStarts(slots: readonly GridSlot[], now: string | null): Set<string> {
   const blanket = new Set<string>();
-  if (items.size < BLANKET_MIN_ITEMS) return blanket;
-  const bookedAt = new Map<string, Set<number>>();
+  const items = new Set(slots.map((slot) => slot.itemId));
+  if (!now || items.size < BLANKET_MIN_ITEMS) return blanket;
+  const bookedAt = new Map<string, { end: string; items: Set<number> }>();
   for (const slot of slots) {
     if (!slot.booked) continue;
-    const at = bookedAt.get(slot.start) ?? new Set<number>();
-    at.add(slot.itemId);
+    const at = bookedAt.get(slot.start) ?? { end: slot.end, items: new Set<number>() };
+    at.items.add(slot.itemId);
     bookedAt.set(slot.start, at);
   }
-  for (const [start, booked] of bookedAt) if (booked.size === items.size) blanket.add(start);
+  const full = new Map([...bookedAt].filter(([, at]) => at.items.size === items.size).map(([start, at]) => [start, at.end]));
+  const current = [...full].find(([start, end]) => start <= now && now < end);
+  let start = current?.[0];
+  while (start != null && full.has(start)) {
+    blanket.add(start);
+    start = full.get(start);
+  }
   return blanket;
 }
 
-export function bookedByItem(slots: readonly GridSlot[], itemIds: readonly number[]): AvailabilityItem[] {
+export function bookedByItem(
+  slots: readonly GridSlot[],
+  itemIds: readonly number[],
+  now: string | null = null,
+): AvailabilityItem[] {
   const wanted = new Set(itemIds);
   const grouped = new Map<number, BookedInterval[]>();
   for (const itemId of itemIds) grouped.set(itemId, []);
-  const blanket = blanketStarts(slots);
+  const blanket = blanketStarts(slots, now);
   for (const slot of slots) {
     if (!slot.booked || !wanted.has(slot.itemId) || blanket.has(slot.start)) continue;
     grouped.get(slot.itemId)?.push({ start: slot.start, end: slot.end });
@@ -243,7 +260,7 @@ export async function loadBookedSlots(
       const hit = cache.get(key);
       const slots = hit && hit.expires > at ? hit.slots : await fetchGrid(location, day, fetchImpl);
       if (!hit || hit.expires <= at) cache.set(key, { expires: at + CACHE_MS, slots });
-      items.push(...bookedByItem(slots, location.itemIds));
+      items.push(...bookedByItem(slots, location.itemIds, libcalWallClock(new Date(at))));
     }
     return { items };
   } catch (error) {

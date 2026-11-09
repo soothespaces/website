@@ -82,7 +82,9 @@ export function RoomsList({
       <div className="flex flex-col gap-2">
         <div className={roomColumns}>
           <span />
-          <TimelineTicks start={start} />
+          {/* Every other hour: at night "3 AM" and "4 AM" ran together in the
+              dock's column (verification of #65). */}
+          <TimelineTicks every={2} start={start} />
         </div>
         {groups.map((group) => (
           <section key={group.label} aria-labelledby={`${listId}-floor-${group.floor ?? "other"}`} className="flex flex-col">
