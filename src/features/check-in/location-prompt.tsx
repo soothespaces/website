@@ -24,10 +24,13 @@ import {
 //
 // DA-02: it never opens on a timer and never takes focus. It comes in after
 // the visitor touches the map itself (a pan, a tap on the canvas, or a key
-// while the map has focus), is announced politely, and sits clear of the
+// while the map has focus), once that tap has ended, is announced politely, and sits clear of the
 // map's controls: the top-left of the map on wide screens, and under the
 // search bar, left of the zoom and locate column, on phones. On a phone it
 // only shows over Home, so it never covers a building's plan.
+/** How long after a tap ends before the card may appear, and before its buttons answer. */
+const SETTLE_MS = 500;
+
 export function LocationPrompt() {
   const titleId = useId();
   const bodyId = useId();
@@ -37,6 +40,7 @@ export function LocationPrompt() {
   const wide = useMediaQuery(WIDE_QUERY);
   const { route } = useMapState();
   const [open, setOpen] = useState(false);
+  const shownAt = useRef(0);
 
   useEffect(() => {
     permissionRef.current = permission;
@@ -47,11 +51,13 @@ export function LocationPrompt() {
     let ready = false;
     let stopped = false;
     let retry = 0;
+    let settle = 0;
 
     const stop = () => {
       stopped = true;
       window.clearInterval(retry);
-      window.removeEventListener("pointerdown", arm);
+      window.clearTimeout(settle);
+      window.removeEventListener("pointerup", arm);
       window.removeEventListener("keydown", arm);
     };
 
@@ -77,6 +83,7 @@ export function LocationPrompt() {
         return;
       }
       rememberShownThisVisit(window.sessionStorage);
+      shownAt.current = Date.now();
       setOpen(true);
       stop();
     };
@@ -87,25 +94,37 @@ export function LocationPrompt() {
       // reading or picking a place.
       const target = event.target instanceof Element ? event.target : null;
       if (!target?.closest(".maplibregl-canvas-container, .maplibregl-canvas")) return;
-      ready = true;
-      tryShow();
+      // Wait until the tap is over, finger lifted and its click delivered, so
+      // the card never appears under the finger and takes that click
+      // (verification of #65: a map tap could press "Turn on location").
+      window.clearTimeout(settle);
+      settle = window.setTimeout(() => {
+        ready = true;
+        tryShow();
+      }, SETTLE_MS);
     };
 
     retry = window.setInterval(tryShow, 1000);
-    window.addEventListener("pointerdown", arm);
+    window.addEventListener("pointerup", arm);
     window.addEventListener("keydown", arm);
     return () => stop();
   }, []);
 
   const visible = open && permission !== "granted" && permission !== "denied" && (wide || route.kind === "home");
 
+  // A tap already under way when the card appears (the 1s retry can land
+  // mid-tap) must not press a button the person hasn't seen yet.
+  const tooSoon = () => Date.now() - shownAt.current < SETTLE_MS;
+
   function notNow() {
+    if (tooSoon()) return;
     dismissLocationPrompt(Date.now(), window.localStorage);
     rememberShownThisVisit(window.sessionStorage);
     setOpen(false);
   }
 
   async function turnOn() {
+    if (tooSoon()) return;
     rememberShownThisVisit(window.sessionStorage);
     setOpen(false);
     await request();

@@ -225,6 +225,9 @@ function continuousStart(placed: NonNullable<ReturnType<typeof placeNow>>, curre
   }
 }
 
+/** From 5 PM a stretch that runs through the night reads "Open overnight". */
+const EVENING_MINUTES = 17 * 60;
+
 function describeClose(end: number, originDate: string): { weekday: number; minute: number } {
   // Times are numbers (SOS-93): a close at midnight is the next day's 12 AM.
   const date = addDays(originDate, Math.floor(end / 1440));
@@ -258,7 +261,14 @@ export function openStatus(hours: OpeningHours | null, now: Date): string | null
     // hours" when it has also been open since midnight (SOS-126, QA-075): a
     // Sunday that opened at 10 AM and runs into a 24-hour Monday is "Open
     // overnight". The weekday belongs on nextClose ("Closes Fri 6 PM").
-    return continuousStart(placed, current) <= todayIndex * 1440 ? "Open 24 hours" : "Open overnight";
+    if (continuousStart(placed, current) <= todayIndex * 1440) return "Open 24 hours";
+    // "Overnight" is news in the evening. Earlier in the day the useful thing
+    // is when it closes: "Open until Fri 6 PM" at 2 PM on a Sunday.
+    if (end != null && placed.minutes < EVENING_MINUTES) {
+      const close = describeClose(end, hours.byDate[0]!.date);
+      return `Open until ${WEEKDAY_SHORT[close.weekday]} ${closeClock(close.minute)}`;
+    }
+    return "Open overnight";
   }
   const later = placed.today.intervals.find((interval) => interval.opens > placed.minutes);
   if (later) return `Opens at ${formatClock(later.opens)}`;

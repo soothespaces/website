@@ -187,7 +187,7 @@ test("winter break replaces the semester on the dates it covers", () => {
   assert.notEqual(listed.find((day) => day.weekday === 5)?.hours, "12 AM – 6 PM");
 });
 
-test("Sunday hours that run into a 24-hour Monday read Open overnight, and the weekday is on the close (QA-075)", () => {
+test("Sunday hours that run into a 24-hour Monday read Open until Fri by day and Open overnight from the evening (QA-075)", () => {
   const rows = [0, 1, 2, 3, 4, 5, 6].map((weekday) =>
     row({
       weekday,
@@ -199,7 +199,8 @@ test("Sunday hours that run into a 24-hour Monday read Open overnight, and the w
   );
   const hours = resolveOpeningHours(rows, "2026-10-18");
   const sundayNoon = new Date("2026-10-18T16:00:00Z");
-  assert.equal(openStatus(hours, sundayNoon), "Open overnight");
+  assert.equal(openStatus(hours, sundayNoon), "Open until Fri 6 PM");
+  assert.equal(openStatus(hours, new Date("2026-10-18T21:00:00Z")), "Open overnight");
   assert.equal(nextClose(hours, sundayNoon), "Closes Fri 6 PM");
   const sundayLate = new Date("2026-10-19T03:25:00Z");
   assert.equal(openStatus(hours, sundayLate), "Open overnight");

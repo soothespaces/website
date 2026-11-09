@@ -21,7 +21,8 @@ export function BuildingTiles({ slug }: { slug: string | null }) {
   const now = new Date();
 
   const status = hours.loaded ? openStatus(hours.hours, now) : null;
-  const close = hours.loaded ? nextClose(hours.hours, now) : null;
+  // "Open until Fri 6 PM" already names the close, so the tile doesn't repeat it.
+  const close = hours.loaded && !status?.startsWith("Open until ") ? nextClose(hours.hours, now) : null;
   const parts = detroitParts(now);
   const typical = popular.times?.busyness[parts.weekday]?.[parts.hour];
   const word = typical == null ? null : busynessWord(typical);

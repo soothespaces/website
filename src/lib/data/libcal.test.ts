@@ -10,6 +10,7 @@ import {
   type LibcalLocation,
 } from "./libcal.ts";
 import gridFixture from "./libcal-grid.fixture.json" with { type: "json" };
+import shapiroGrid from "./libcal-shapiro-grid.fixture.json" with { type: "json" };
 
 const location: LibcalLocation = {
   instance: "umich.libcal.com",
@@ -48,23 +49,37 @@ test("a grid keeps booked ranges and drops checksums", () => {
   assert.equal(parseAvailabilityGrid({ slots: [{ start: "2026-10-21 20:00:00", end: "2026-10-21 20:30:00" }] }), null);
 });
 
-test("a slot booked on every room at once is LibCal's own block, not a booking (QA-076)", () => {
-  const slot = (itemId: number, start: string, booked: boolean) => ({
+test("an every-room run that has started is LibCal's own block; a later full row is real (QA-076)", () => {
+  const slot = (itemId: number, start: string, end: string, booked: boolean) => ({
     itemId,
     start: `2026-11-08 ${start}:00`,
-    end: `2026-11-08 ${start}:59`,
+    end: `2026-11-08 ${end}:00`,
     booked,
   });
   const slots = [1, 2, 3].flatMap((itemId) => [
-    slot(itemId, "22:30", itemId === 2),
-    slot(itemId, "23:00", true),
-    slot(itemId, "23:30", true),
+    slot(itemId, "13:00", "13:30", true),
+    slot(itemId, "22:30", "23:00", itemId === 2),
+    slot(itemId, "23:00", "23:30", true),
+    slot(itemId, "23:30", "24:00", true),
   ]);
-  const items = bookedByItem(slots, [1, 2, 3]);
-  assert.deepEqual(items.map((item) => item.booked.length), [0, 1, 0]);
+  // 11:25 PM: the 11 PM – 12 AM run has started, so it is dropped.
+  const late = bookedByItem(slots, [1, 2, 3], "2026-11-08 23:25:00");
+  assert.deepEqual(late.map((item) => item.booked.length), [1, 2, 1]);
+  // 12:30 PM: the 1 PM full row hasn't started, so every room stays booked.
+  const noon = bookedByItem(slots, [1, 2, 3], "2026-11-08 12:30:00");
+  assert.deepEqual(noon.map((item) => item.booked.length), [3, 4, 3]);
   // Two rooms are too few to tell a block from two real bookings.
-  const pair = bookedByItem(slots.filter((entry) => entry.itemId !== 3), [1, 2]);
-  assert.deepEqual(pair.map((item) => item.booked.length), [2, 3]);
+  const pair = bookedByItem(slots.filter((entry) => entry.itemId !== 3), [1, 2], "2026-11-08 23:25:00");
+  assert.deepEqual(pair.map((item) => item.booked.length), [3, 4]);
+});
+
+test("the live Shapiro grid keeps its full 1 PM and 3 PM rows when read that morning", () => {
+  const slots = parseAvailabilityGrid(shapiroGrid);
+  assert.ok(slots);
+  const ids = [...new Set(slots.map((slot) => slot.itemId))];
+  const items = bookedByItem(slots, ids, "2026-11-09 00:30:00");
+  const atOne = items.filter((item) => item.booked.some((span) => span.start === "2026-11-09 13:00:00"));
+  assert.equal(atOne.length, 18);
 });
 
 test("groups come from the location page, ignoring gid 0", () => {
