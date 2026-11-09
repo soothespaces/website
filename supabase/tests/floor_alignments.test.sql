@@ -5,7 +5,7 @@ create extension if not exists pgtap with schema extensions;
 grant usage on schema extensions to anon, authenticated;
 set local search_path = public, extensions;
 
-select plan(11);
+select plan(13);
 
 set local role authenticated;
 set local request.jwt.claims =
@@ -45,6 +45,28 @@ select lives_ok(
   'an admin can change an alignment'
 );
 
+-- The editor's Save is a PostgREST upsert. Its DO UPDATE reads EXCLUDED for
+-- every column it sends, which needs SELECT on that column, and aligned_by
+-- is no longer selectable. The app leaves aligned_by out; the stamp trigger
+-- fills it (Tanner hit "permission denied for table floor_alignments").
+select lives_ok(
+  $$insert into public.floor_alignments (sheet, sha256, width, height, corners)
+    values ('test_1', repeat('a', 64), 10, 10, '[[0,0],[3,0],[3,3],[0,3]]')
+    on conflict (sheet) do update set
+      sha256 = excluded.sha256, width = excluded.width, height = excluded.height, corners = excluded.corners
+    returning aligned_at$$,
+  'an admin can save over an alignment the way the editor does'
+);
+
+select throws_ok(
+  $$insert into public.floor_alignments (sheet, sha256, width, height, corners, aligned_by)
+    values ('test_1', repeat('a', 64), 10, 10, '[[0,0],[3,0],[3,3],[0,3]]', '')
+    on conflict (sheet) do update set corners = excluded.corners, aligned_by = excluded.aligned_by$$,
+  '42501',
+  null,
+  'an upsert that sends aligned_by is refused, so the app must not send it'
+);
+
 select throws_ok(
   $$insert into public.floor_alignments (sheet, sha256, width, height, corners, aligned_by)
     values ('test_2', repeat('a', 64), 10, 10, '[[0,0],[1,0]]', '')$$,
@@ -63,7 +85,7 @@ delete from public.floor_alignments where sheet = 'test_1';
 
 select is(
   (select corners from public.floor_alignments where sheet = 'test_1'),
-  '[[0,0],[2,0],[2,2],[0,2]]'::jsonb,
+  '[[0,0],[3,0],[3,3],[0,3]]'::jsonb,
   'a student cannot change or remove an alignment'
 );
 
