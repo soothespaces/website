@@ -4,7 +4,8 @@ import { useId, type Ref } from "react";
 import { CloseIcon, SearchIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 
-export const SPACE_SEARCH_PLACEHOLDER = "Search study spaces, buildings…";
+// SOS-124: three periods, as written (QA-034).
+export const SPACE_SEARCH_PLACEHOLDER = "Search study spaces, buildings...";
 
 // The search box for study spaces: a labelled search input with a clear
 // button. Controlled, so the map's dock, the phone search screen and the

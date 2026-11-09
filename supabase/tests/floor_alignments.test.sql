@@ -35,7 +35,7 @@ select lives_ok(
 );
 
 select is(
-  (select aligned_by from public.floor_alignments where sheet = 'test_1'),
+  (select aligned_by from public.floor_alignment_authors() where sheet = 'test_1'),
   'tkaslan@umich.edu',
   'aligned_by is the signed-in admin, not what the client sent'
 );

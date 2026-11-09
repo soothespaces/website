@@ -1,5 +1,7 @@
 "use client";
 
+import { SkeletonRows } from "@/components/ui/feedback";
+import { ErrorNote } from "@/components/ui/error-note";
 import { useEffect, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip, ChipGroup } from "@/components/ui/chip-group";
@@ -119,7 +121,7 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
   if (route.kind !== "rooms-map") return null;
   const plans = floorPlans.get(route.slug) ?? [];
   const building = data.buildingsBySlug.get(route.slug);
-  const place = plans[0]?.buildingName || building?.name || "Building";
+  const place = plans[0]?.buildingName || building?.name || "";
   const onFloor = rooms.filter((room) => roomFloor(room) === route.floor);
   const selected = rooms.find((room) => sameRoom(room, route.roomId)) ?? null;
   const selectedFree = selected ? freeStart(selected, times) : null;
@@ -133,7 +135,7 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
 
   return (
     <DetailScreen
-      title={`${place} rooms`}
+      title={place ? `${place} rooms` : "Rooms"}
       backTo="Rooms"
       onBack={back}
       footer={
@@ -202,8 +204,8 @@ export function RoomsDrawer({ route }: PanelScreenProps) {
             <span />
             <TimeTicks start={start} />
           </div>
-          {!loaded ? <p className="text-sm text-muted-foreground">Loading rooms…</p> : null}
-          {error ? <p className="text-sm text-muted-foreground">{error}</p> : null}
+          {!loaded ? <SkeletonRows label="Loading rooms" rowClassName="h-12" /> : null}
+          {error ? <ErrorNote message={error} /> : null}
           {loaded && !error && onFloor.length === 0 ? (
             <p className="text-sm text-muted-foreground">No bookable rooms on this floor.</p>
           ) : null}

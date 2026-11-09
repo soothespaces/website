@@ -76,12 +76,12 @@ export function ModeSwitcher() {
             aria-labelledby={`mode-${setting.attr}`}
             value={values[setting.attr] ?? UNSET}
             onValueChange={(value) => choose(setting.attr, value)}
-            className="flex flex-col gap-1"
+            className="flex flex-col gap-2"
           >
             {setting.options.map((option) => {
               const id = `mode-${setting.attr}-${option.value ?? UNSET}`;
               return (
-                <div key={option.label} className="flex items-center gap-2">
+                <div key={option.label} className="flex min-h-6 items-center gap-2">
                   <RadioGroup.Item
                     id={id}
                     value={option.value ?? UNSET}

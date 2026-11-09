@@ -216,17 +216,13 @@ function continuousEnd(placed: NonNullable<ReturnType<typeof placeNow>>, current
 }
 
 function describeClose(end: number, originDate: string): { weekday: number; minute: number } {
-  // A close exactly at midnight belongs to the day that is ending, not the next morning.
-  if (end % 1440 === 0) {
-    const date = addDays(originDate, end / 1440 - 1);
-    return { weekday: weekdayOfDate(date), minute: 1440 };
-  }
+  // Times are numbers (SOS-93): a close at midnight is the next day's 12 AM.
   const date = addDays(originDate, Math.floor(end / 1440));
   return { weekday: weekdayOfDate(date), minute: end % 1440 };
 }
 
 function closeClock(minute: number): string {
-  return minute === 1440 ? "midnight" : formatClock(minute);
+  return formatClock(minute % 1440);
 }
 
 export function isOpenNow(hours: OpeningHours | null, now: Date): boolean {
@@ -248,12 +244,10 @@ export function openStatus(hours: OpeningHours | null, now: Date): string | null
     const todayIndex = hours.byDate.indexOf(placed.today);
     const endOfToday = (todayIndex + 1) * 1440;
     // A close overnight, through 6 AM, is still "Open until 2 AM" rather than the next day's name.
-    if (end <= endOfToday + 6 * 60) {
-      if (end === endOfToday) return "Open until midnight";
-      return `Open until ${formatClock(end)}`;
-    }
-    const close = describeClose(end, hours.byDate[0]!.date);
-    return `Open until ${WEEKDAY_SHORT[close.weekday]} ${closeClock(close.minute)}`;
+    if (end <= endOfToday + 6 * 60) return `Open until ${closeClock(end)}`;
+    // Open through the night and past tomorrow morning: SOS-93 calls that
+    // "Open 24 hours". The weekday belongs on nextClose ("Closes Fri 6 PM").
+    return "Open 24 hours";
   }
   const later = placed.today.intervals.find((interval) => interval.opens > placed.minutes);
   if (later) return `Opens at ${formatClock(later.opens)}`;
@@ -263,7 +257,7 @@ export function openStatus(hours: OpeningHours | null, now: Date): string | null
 /**
  * When the building is open, the end of this continuous open stretch.
  * "Closes Fri 6 PM" for a 24-hour building that finally closes Friday.
- * A close at midnight is "Closes Fri midnight", not "Closes Sat 12 AM".
+ * A close at midnight is the next day's 12 AM: "Closes Sat 12 AM".
  * Null when it is closed now, or open every day we can see.
  */
 export function nextClose(hours: OpeningHours | null, now: Date): string | null {
@@ -284,12 +278,28 @@ function hoursLabel(intervals: readonly HourInterval[]): string {
   return intervals.map((interval) => `${formatClock(interval.opens)} – ${formatClock(interval.closes)}`).join(", ");
 }
 
-/** Sunday through Saturday, each row the date of that weekday in the coming week (today through six days ahead). */
-export function weekRows(hours: OpeningHours | null): WeekRow[] {
+/**
+ * Sunday through Saturday, each row the date of that weekday in the coming
+ * week (today through six days ahead). With `now`, a night that's still open
+ * after midnight counts as the day it opened (QA-039): at 1 AM Wednesday,
+ * inside Tuesday's 8 AM–2 AM, Tuesday is today's row.
+ */
+export function weekRows(hours: OpeningHours | null, now?: Date): WeekRow[] {
   if (!hours) return [];
+  let anchor = hours.date;
+  if (now) {
+    const placed = placeNow(hours, now);
+    if (placed) {
+      anchor = placed.today.date;
+      const current = openSpan(placed);
+      const startOfToday = hours.byDate.indexOf(placed.today) * 1440;
+      if (current && current.start < startOfToday && placed.minutes < 6 * 60) anchor = addDays(anchor, -1);
+    }
+  }
+  const anchorWeekday = weekdayOfDate(anchor);
   return WEEKDAY_NAMES.map((day, weekday) => {
-    const delta = (weekday - hours.weekday + 7) % 7;
-    const date = addDays(hours.date, delta);
+    const delta = (weekday - anchorWeekday + 7) % 7;
+    const date = addDays(anchor, delta);
     const intervals = hours.byDate.find((entry) => entry.date === date)?.intervals ?? [];
     return { weekday, date, day, hours: hoursLabel(intervals), today: delta === 0 };
   });

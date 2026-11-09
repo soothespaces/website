@@ -45,10 +45,19 @@ export type PrinterPoint = {
  */
 export function printerPosition(
   printer: Printer,
-  sheet: SheetPlacement | null,
+  sheets: SheetPlacement | readonly SheetPlacement[] | null,
   centroids: ReadonlyMap<string, { lng: number; lat: number }>,
 ): { lng: number; lat: number } | null {
-  if (hasPixel(printer) && sheet && sheetMatches(printer.floorMap, sheet.sheet)) {
+  // A floor drawn on two sheets (Hatcher's wings) keeps each sheet's corners.
+  // A printer with no floor_map can only be placed when there is one sheet
+  // to measure it on (QA-017).
+  const list = sheets == null ? [] : Array.isArray(sheets) ? sheets : [sheets as SheetPlacement];
+  const sheet = printer.floorMap
+    ? list.find((s) => sheetMatches(printer.floorMap, s.sheet))
+    : list.length === 1
+      ? list[0]
+      : undefined;
+  if (hasPixel(printer) && sheet) {
     const [lng, lat] = pixelToLngLat(sheet.corners, sheet.width, sheet.height, printer.floorMapX!, printer.floorMapY!);
     return { lng, lat };
   }

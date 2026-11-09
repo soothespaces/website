@@ -3,14 +3,12 @@
 import { useEffect, useId, useRef, type KeyboardEvent, type ReactNode } from "react";
 import { ChevronLeftIcon } from "@/components/ui/icons";
 import { PanelBackButton } from "@/components/ui/panel-back-button";
-// Same breakpoint as the map dock, so Escape only goes back on the wide layout.
-import { WIDE_QUERY } from "@/features/map/map-layout-config";
-import { useMediaQuery } from "@/lib/use-media-query";
 import { cx } from "@/lib/cx";
 
 // A detail screen inside the wide dock or the phone sheet: back, title,
 // scrolling body, optional sticky footer. Focus moves to the title on open
-// so the new screen is announced. Escape goes back on wide screens.
+// so the new screen is announced. Escape goes back, in the dock and in the
+// phone sheet (QA-008).
 export function DetailScreen({
   title,
   subtitle,
@@ -33,14 +31,13 @@ export function DetailScreen({
 }) {
   const titleId = useId();
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const wide = useMediaQuery(WIDE_QUERY);
 
   useEffect(() => {
     titleRef.current?.focus({ focusVisible: true });
   }, [title]);
 
   function onKeyDown(event: KeyboardEvent<HTMLElement>) {
-    if (!wide || event.key !== "Escape" || event.defaultPrevented) return;
+    if (event.key !== "Escape" || event.defaultPrevented) return;
     event.preventDefault();
     event.stopPropagation();
     onBack();
@@ -52,13 +49,13 @@ export function DetailScreen({
       onKeyDown={onKeyDown}
       className={cx("flex h-full min-h-0 flex-col bg-background", className)}
     >
-      <header className="flex items-center gap-1 border-b border-border px-1 pb-2">
-        <PanelBackButton label={`Back to ${backTo}`} onClick={onBack} icon={<ChevronLeftIcon />} />
+      <header className="flex items-center gap-1 border-b border-border px-1 pt-1 pb-2">
+        <PanelBackButton label={backTo ? `Back to ${backTo}` : "Back"} onClick={onBack} icon={<ChevronLeftIcon />} />
         <div className="min-w-0 flex-1">
           {subtitle ? <p className="text-sm text-muted-foreground">{subtitle}</p> : null}
-          <h1 id={titleId} ref={titleRef} tabIndex={-1} className="text-lg break-words">
+          <h2 id={titleId} ref={titleRef} tabIndex={-1} className="text-lg break-words">
             {title}
-          </h1>
+          </h2>
         </div>
         {actions ? <div className="flex shrink-0 items-center gap-1">{actions}</div> : null}
       </header>

@@ -50,10 +50,12 @@ export async function updateSession(request: NextRequest) {
     }
     const { data: isAdmin, error } = await supabase.rpc("is_admin");
     if (error || isAdmin !== true) {
-      // Pages render the "Admins only" message from the layout; anything
-      // else (sheet images, actions) gets a plain 403.
+      // A page load gets the "Admins only" page instead. It's a rewrite to a
+      // route outside /admin, so no admin page or loader runs for this
+      // visitor (QA-004; a layout that skips children doesn't stop the page
+      // from rendering). Anything else (sheet images, actions) gets a 403.
       if (request.method === "GET" && request.headers.get("accept")?.includes("text/html")) {
-        return response;
+        return withCookies(NextResponse.rewrite(new URL("/admins-only", request.url), { request }), response);
       }
       return withCookies(new NextResponse("Admins only", { status: 403 }), response);
     }

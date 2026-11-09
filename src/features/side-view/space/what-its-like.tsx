@@ -54,7 +54,7 @@ export function WhatItsLike({ rows }: { rows: readonly LikeRow[] | null }) {
               </span>
               <span className="min-w-0">
                 <span className="block text-sm font-medium">{row.value}</span>
-                <span className="block text-xs text-muted-foreground">{row.source}</span>
+                {row.source ? <span className="block text-xs text-muted-foreground">{row.source}</span> : null}
               </span>
             </li>
           );

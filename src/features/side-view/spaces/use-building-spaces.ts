@@ -65,8 +65,9 @@ export function safeSpaceImageUrl(url: string | null | undefined): string | null
   try {
     const parsed = new URL(url);
     if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return null;
-    if (/(?:^|\.)(?:googleusercontent|ggpht)\.com$/i.test(parsed.hostname)) return null;
-    if (parsed.hostname === "maps.googleapis.com") return null;
+    // SOS-83: never a Google photo, on any Google image host (QA-027).
+    if (/(?:^|\.)(?:google|googleusercontent|googleapis|gstatic|ggpht)\.[a-z.]+$/i.test(parsed.hostname)) return null;
+    if (/serpapi|yelp/i.test(parsed.hostname)) return null;
     return url;
   } catch {
     return null;
@@ -131,17 +132,6 @@ export function useBuildingSpaces(buildingSlug: string | null): BuildingSpacesSt
           .order("name")
           .range(from, to),
       ),
-      readAll<PhotoRecord>((from, to) =>
-        supabase
-          .from("photos")
-          .select("space_id, alt, path_prefix, widths")
-          .eq("building_slug", buildingSlug)
-          .eq("is_listed", true)
-          .not("space_id", "is", null)
-          .order("sort_order")
-          .order("id")
-          .range(from, to),
-      ),
       readAll<{ floor: number | null }>((from, to) =>
         supabase
           .from("bookable_items")
@@ -152,6 +142,24 @@ export function useBuildingSpaces(buildingSlug: string | null): BuildingSpacesSt
           .range(from, to),
       ),
     ])
+      // A photo has one subject (photo_has_one_subject): a space photo has no
+      // building_slug, so read them by the spaces' ids (QA-048).
+      .then(async ([spaces, bookable]) => {
+        const ids = spaces.map((space) => space.id);
+        const photos = ids.length
+          ? await readAll<PhotoRecord>((from, to) =>
+              supabase
+                .from("photos")
+                .select("space_id, alt, path_prefix, widths")
+                .in("space_id", ids)
+                .eq("is_listed", true)
+                .order("sort_order")
+                .order("id")
+                .range(from, to),
+            )
+          : [];
+        return [spaces, photos, bookable] as const;
+      })
       .then(([spaces, photos, bookable]) => {
         if (cancelled || !env) return;
         const firstPhoto = new Map<string, { url: string; alt: string }>();

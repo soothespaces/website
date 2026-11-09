@@ -86,7 +86,8 @@ test("a LibCal row links out and a classroom row does not", () => {
     />,
   );
   assert.equal(inClass.includes("<a"), false);
-  assert.match(inClass, /Class until 4 PM, EECS 370/);
+  assert.match(inClass, /Class until 4 PM</);
+  assert.equal(inClass.includes("EECS 370"), false);
 });
 
 test("View on floor plan is present for a planned building and absent without one", () => {

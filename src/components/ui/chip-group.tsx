@@ -75,7 +75,8 @@ export function ChipGroup(props: ChipGroupProps) {
 }
 
 const chipClass =
-  "inline-flex min-h-9 items-center gap-1.5 rounded-full border border-input bg-background px-3 text-sm font-medium hover:bg-accent data-[state=on]:border-primary data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:hover:bg-primary/90 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-background";
+  // One line per chip (QA-030); 44px tall on touch screens (QA-032).
+  "inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-full whitespace-nowrap pointer-coarse:min-h-11 border border-input bg-background px-3 text-sm font-medium hover:bg-accent data-[state=on]:border-primary data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:hover:bg-primary/90 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-background";
 
 export function Chip({
   value,

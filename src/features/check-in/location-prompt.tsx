@@ -91,8 +91,17 @@ export function LocationPrompt() {
 
   const visible = open && permission !== "granted" && permission !== "denied";
 
+  // SOS-136: focus moves into the card. It's a non-modal dialog, so the map
+  // stays usable, and focus goes back where it was when the card closes (QA-064).
+  const returnTo = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    if (visible) cardRef.current?.focus();
+    if (!visible) return;
+    returnTo.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    cardRef.current?.focus();
+    return () => {
+      const target = returnTo.current;
+      if (target?.isConnected) target.focus({ preventScroll: true });
+    };
   }, [visible]);
 
   if (!visible) return null;
@@ -118,6 +127,8 @@ export function LocationPrompt() {
       <section
         ref={cardRef}
         tabIndex={-1}
+        role="dialog"
+        aria-modal="false"
         aria-labelledby={titleId}
         aria-describedby={bodyId}
         onKeyDown={(event) => {

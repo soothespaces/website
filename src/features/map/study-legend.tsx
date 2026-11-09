@@ -28,7 +28,7 @@ export function StudyLegend() {
         Legend
       </Button>
       <div id={panelId} className={open ? "flex flex-col gap-1.5 px-3 pt-1 pb-3" : "hidden flex-col gap-1.5 px-3 py-3 md:flex"}>
-        <h3 className="text-xs font-medium tracking-wide text-muted-foreground">STUDY SPACES</h3>
+        <h2 className="text-xs font-medium tracking-wide text-muted-foreground">STUDY SPACES</h2>
         <ul className="flex flex-col gap-1.5">
           {STEPS.map((step) => (
             <li key={step} className="flex items-center gap-2 text-sm">

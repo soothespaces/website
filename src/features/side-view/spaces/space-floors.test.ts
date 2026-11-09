@@ -169,6 +169,7 @@ test("the screen title and the sort line follow preferences and group size", () 
   assert.equal(hasStudyPreferences(quiet), true);
   assert.equal(spacesSortCaption(none, null), null);
   assert.equal(spacesSortCaption(quiet, null), "Sorted by how you like to study");
-  assert.equal(spacesSortCaption(none, "2_3"), "Sorted for your group size");
-  assert.equal(spacesSortCaption(quiet, "2_3"), "Sorted by how you like to study and your group size");
+  // SOS-130: no line without preferences, and only the one sentence (QA-045).
+  assert.equal(spacesSortCaption(none, "2_3"), null);
+  assert.equal(spacesSortCaption(quiet, "2_3"), "Sorted by how you like to study");
 });

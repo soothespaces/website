@@ -83,3 +83,27 @@ test("printer copy and overlapping markers", () => {
   assert.equal(spread[0].lng, 1);
   assert.notEqual(spread[1].lng, spread[0].lng);
 });
+
+test("a floor on two sheets places each printer with its own sheet's corners (QA-017)", () => {
+  const corners = (x: number): Corners => [
+    [x, 1],
+    [x + 1, 1],
+    [x + 1, 0],
+    [x, 0],
+  ];
+  const north = { sheet: "hatcher_north_2", width: 100, height: 100, corners: corners(0) };
+  const south = { sheet: "hatcher_south_2", width: 100, height: 100, corners: corners(10) };
+  const centroids = new Map([["200", { lng: 5, lat: 0.5 }]]);
+  const onSouth = printerPosition(
+    printer({ id: 1, displayName: "S", roomNumber: "200", floorMap: "x/hatcher_south_2.png", floorMapX: 50, floorMapY: 50 }),
+    [north, south],
+    centroids,
+  );
+  assert.ok(onSouth && onSouth.lng > 10 && onSouth.lng < 11);
+  const unknownSheet = printerPosition(
+    printer({ id: 2, displayName: "U", roomNumber: "200", floorMap: null, floorMapX: 50, floorMapY: 50 }),
+    [north, south],
+    centroids,
+  );
+  assert.deepEqual(unknownSheet, { lng: 5, lat: 0.5 });
+});

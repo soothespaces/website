@@ -21,7 +21,9 @@ export function FavoriteButton({
 }) {
   const pathname = usePathname();
   const [bounce, setBounce] = useState(false);
-  const label = pressed ? `Remove ${name} from your spots` : `Add ${name} to your spots`;
+  const label = pressed
+    ? name ? `Remove ${name} from your spots` : "Remove from your spots"
+    : name ? `Add ${name} to your spots` : "Add to your spots";
   const heart = pressed ? (
     <HeartFilledIcon className={bounce ? "animate-heart-in text-destructive" : "text-destructive"} onAnimationEnd={() => setBounce(false)} />
   ) : (
@@ -32,7 +34,7 @@ export function FavoriteButton({
     return (
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" shape="circle" aria-label={`Add ${name} to your spots`} aria-pressed={false}>
+          <Button variant="ghost" size="icon" shape="circle" aria-label={name ? `Add ${name} to your spots` : "Add to your spots"} aria-pressed={false}>
             <HeartIcon />
           </Button>
         </PopoverTrigger>

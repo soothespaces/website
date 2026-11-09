@@ -18,8 +18,14 @@ export type SavedAlignment = {
 export async function getSavedAlignments(): Promise<Map<string, SavedAlignment>> {
   if (!getSupabaseEnv()) return new Map();
   const supabase = await createClient();
-  const { data, error } = await supabase.from("floor_alignments").select("*");
+  // aligned_by isn't readable through the API; admins get it from
+  // floor_alignment_authors(), which returns nothing for anyone else.
+  const [{ data, error }, authors] = await Promise.all([
+    supabase.from("floor_alignments").select("sheet, sha256, width, height, corners, aligned_at"),
+    supabase.rpc("floor_alignment_authors"),
+  ]);
   if (error) throw new Error(`Couldn't read floor alignments: ${error.message}`);
+  const by = new Map((authors.data ?? []).map((a) => [a.sheet, a.aligned_by]));
   return new Map(
     data.map((row) => [
       row.sheet,
@@ -29,7 +35,7 @@ export async function getSavedAlignments(): Promise<Map<string, SavedAlignment>>
         width: row.width,
         height: row.height,
         corners: row.corners as Corners,
-        alignedBy: row.aligned_by,
+        alignedBy: by.get(row.sheet) ?? "an admin",
         alignedAt: row.aligned_at,
       },
     ]),

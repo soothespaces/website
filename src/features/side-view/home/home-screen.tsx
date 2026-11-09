@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { BackIcon } from "@/components/ui/icons";
+import { ErrorNote } from "@/components/ui/error-note";
 import { Skeleton } from "@/components/ui/feedback";
 import { SpaceSearchField } from "@/features/spaces";
 import { EMPTY_SPACE_FILTERS, spaceFiltersActive } from "@/features/map/space-filters";
@@ -54,7 +55,11 @@ export function HomeScreen({ density }: PanelScreenProps) {
         <>
           <GroupSize />
           <QuickChips />
-          {catalog.loaded ? (
+          {catalog.loaded && catalog.error ? (
+            // A failed read says so, with Try again, instead of painting an
+            // empty campus: no "Nothing is open", no "Browse all 0" (QA-024).
+            <ErrorNote message={catalog.error} />
+          ) : catalog.loaded ? (
             filteredOut ? (
               <NoMatches onClear={() => setFilters(EMPTY_SPACE_FILTERS)} />
             ) : (
@@ -64,10 +69,12 @@ export function HomeScreen({ density }: PanelScreenProps) {
             <HomeLoading />
           )}
           <YourSpots />
-          {catalog.loaded && !filteredOut ? <OpenNearby spaces={filtered} /> : null}
-          <Button variant="outline" className="w-full" onClick={() => setBrowsing(true)}>
-            {browseAllLabel(data.loaded ? data.spaces.length : null)}
-          </Button>
+          {catalog.loaded && !catalog.error && !filteredOut ? <OpenNearby spaces={filtered} /> : null}
+          {catalog.error ? null : (
+            <Button variant="outline" className="w-full" onClick={() => setBrowsing(true)}>
+              {browseAllLabel(data.loaded ? data.spaces.length : null)}
+            </Button>
+          )}
         </>
       )}
     </div>

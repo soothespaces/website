@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ContentPage } from "@/components/content-page";
 import { getBuildingOptions, getPhotos, PAGE_SIZE } from "@/features/admin-photos/data";
-import { describeTags, photoUrl } from "@/features/admin-photos/photo";
+import { adminPhotoSrc, describeTags } from "@/features/admin-photos/photo";
 import { requireSupabaseEnv } from "@/lib/supabase/env";
 import { Button } from "@/components/ui/button";
 
@@ -48,7 +48,7 @@ export default async function PhotosAdminPage({ searchParams }: PageProps<"/admi
         <form className="flex flex-wrap items-end gap-3 text-sm" action="/admin/photos">
           <label className="flex flex-col gap-1">
             <span className="font-medium">Building</span>
-            <select name="building" defaultValue={building} className="h-11 w-72 rounded-md border border-input bg-background px-3">
+            <select name="building" defaultValue={building} className="h-11 w-72 max-w-full rounded-md border border-input bg-background px-3">
               <option value="">All buildings</option>
               {buildings.map((b) => (
                 <option key={b.slug} value={b.slug}>
@@ -77,7 +77,7 @@ export default async function PhotosAdminPage({ searchParams }: PageProps<"/admi
               <Link href={`/admin/photos/${p.id}`} className="flex flex-col gap-2 rounded-md border border-input p-2 hover:bg-accent">
                 {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized Supabase files */}
                 <img
-                  src={photoUrl(url, p.pathPrefix, p.widths[0])}
+                  src={adminPhotoSrc(url, p, p.widths[0])}
                   alt={p.alt}
                   width={p.width}
                   height={p.height}

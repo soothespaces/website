@@ -48,7 +48,8 @@ export function BusynessChart({
                 width={barWidth}
                 height={height}
                 rx={1}
-                className={highlighted ? "fill-primary" : "fill-muted-foreground"}
+                // Pale green as on the board (QA-042), still at least 3:1 on the card.
+                className={highlighted ? "fill-primary" : "fill-primary/70"}
               />
             </g>
           );
@@ -58,11 +59,14 @@ export function BusynessChart({
         {values.map((_, hour) => {
           const label = busynessAxisLabel(hour);
           if (!label || count === 0) return null;
+          const at = ((hour + 0.5) / count) * 100;
+          // Centered on its bar, except at the ends, where it stays inside the chart (QA-054).
+          const shift = at < 6 ? "" : at > 94 ? "-translate-x-full" : "-translate-x-1/2";
           return (
             <span
               key={hour}
-              className="absolute top-0 -translate-x-1/2 text-xs whitespace-nowrap text-muted-foreground"
-              style={{ left: `${((hour + 0.5) / count) * 100}%` }}
+              className={`absolute top-0 ${shift} text-xs whitespace-nowrap text-muted-foreground`}
+              style={{ left: `${at < 6 ? 0 : at}%` }}
             >
               {label}
             </span>

@@ -31,3 +31,20 @@ export function floorPlanBeforeId(layers: StackLayer[]): string | undefined {
   }
   return undefined;
 }
+
+// Some styles (the dark one) draw fills and lines after their first label:
+// building footprints, minor roads, boundaries. The floor plan has to sit
+// above those footprints, so on its own it would end up above those early
+// labels too and hide them (QA-013). Lowering those fills and lines to just
+// under the first label puts every basemap label above every basemap fill,
+// as the light style already is, so the plan fits between them. Returns the
+// layers to move, in order, and the label to move them under. Empty once
+// the stack is in order, so calling it again changes nothing.
+export function basemapLayersToLower(layers: StackLayer[]): { ids: string[]; beforeId: string } | null {
+  const basemap = layers.filter(isBasemap);
+  const first = basemap.findIndex((layer) => layer.type === "symbol");
+  if (first < 0) return null;
+  const ids = basemap.slice(first + 1).filter((layer) => COVERED.has(layer.type)).map((layer) => layer.id);
+  const beforeId = basemap[first]?.id;
+  return ids.length && beforeId ? { ids, beforeId } : null;
+}

@@ -29,7 +29,7 @@ const CONDITIONS = [
 const STEPS = [
   {
     title: "Browse",
-    body: "Open the map or the list and filter out anything too loud, too bright or too crowded.",
+    body: "Open the map and filter out anything too loud, too bright or too crowded.",
   },
   {
     title: "Pick a space",
@@ -65,17 +65,14 @@ export default function Home() {
             </div>
           </div>
           {/*
-            Replace this raster placeholder when the map UI is built. The final
-            hero demo should animate a simple Ann Arbor map: open Shapiro Library,
-            select a private study spot on floor 2, and show that it is booked
-            until 3 PM. Then surface a second chip for the quiet study area on
-            floor 3: not bookable, mostly single-person seating, quiet, decent
-            natural light, and its other useful sensory/access features.
+            The map with Shapiro Library open on floor 3 (QA-069). The later
+            hero demo can animate it: open a building, pick a floor, then a
+            quiet study space and what it's like.
           */}
           <div className="overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
             <Image
-              src="/hero-map-placeholder.png"
-              alt="Placeholder for an animated Ann Arbor study-space map demo"
+              src="/hero-map.webp"
+              alt="The Soothe Spaces map with Shapiro Library open: its hours, floors and busyness beside the floor 3 plan"
               width={1200}
               height={900}
               priority

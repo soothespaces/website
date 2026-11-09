@@ -77,13 +77,15 @@ function isVisitorCredit(credit: string, license: string): boolean {
   return /\bvisitors?\b/i.test(credit) || /\bvisitors?\b/i.test(license);
 }
 
-function shortCredit(credit: string): string {
-  const first = credit.split(",")[0]?.trim() || credit.trim();
-  if (first.length <= 40) return first;
-  return `${first.slice(0, 39).trimEnd()}…`;
-}
+// Free licenses the gallery only ever gets from Wikimedia Commons.
+const FREE_LICENSE = /\bCC\b|creative commons|public domain/i;
 
-/** The pill under a photo, and which chip it belongs to. */
+/**
+ * The pill under a photo, and which chip it belongs to. SOS-134 allows three
+ * pills: "Visitor · Oct 2026", "U-M Library" and "Wikimedia Commons". Any
+ * other credit gets no pill (an empty label) rather than a name (QA-058);
+ * the viewer still shows the full credit, which CC BY photos require.
+ */
 export function creditPill(photo: Pick<GalleryPhoto, "credit" | "license" | "createdAt">): {
   source: PhotoSource;
   label: string;
@@ -92,16 +94,13 @@ export function creditPill(photo: Pick<GalleryPhoto, "credit" | "license" | "cre
     const month = formatCreditMonth(photo.createdAt);
     return { source: "visitor", label: month ? `Visitor · ${month}` : "Visitor" };
   }
-  if (/wikimedia/i.test(photo.credit) || /wikimedia/i.test(photo.license)) {
+  if (/wikimedia/i.test(photo.credit) || /wikimedia/i.test(photo.license) || FREE_LICENSE.test(photo.license)) {
     return { source: "official", label: "Wikimedia Commons" };
   }
   if (/library/i.test(photo.credit) && /michigan|u-m|\bum\b/i.test(photo.credit)) {
     return { source: "official", label: "U-M Library" };
   }
-  if (/soothe spaces/i.test(photo.credit) || /soothe spaces/i.test(photo.license)) {
-    return { source: "official", label: "Soothe Spaces" };
-  }
-  return { source: "official", label: shortCredit(photo.credit) };
+  return { source: "official", label: "" };
 }
 
 export function photoCaption(photo: Pick<GalleryPhoto, "alt" | "spaceName" | "roomNumber">): string {
@@ -132,8 +131,9 @@ export function filterPhotos(photos: readonly ClassifiedPhoto[], filter: PhotoFi
   });
 }
 
+// SOS-169: never "0 photos" or "No photos" as a title; with none it's "Photos" (QA-055).
 export function photoCountLabel(count: number): string {
-  if (count === 0) return "No photos";
+  if (count === 0) return "Photos";
   if (count === 1) return "1 photo";
   return `${count} photos`;
 }

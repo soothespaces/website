@@ -8,21 +8,13 @@ import type { MapData } from "@/features/map/use-map-data";
 import { useSession } from "@/lib/auth/use-session";
 import { useFavorites, type Favorite } from "@/lib/data/favorites";
 
-// Signed in with nothing saved: the row is absent. Signed out still gets
-// See all, so My spots (and its sign-in prompt) opens from Home.
+// SOS-85, SOS-153: signed out, or signed in with nothing saved, the whole
+// row is absent (QA-026). My spots opens from the account menu instead.
 export function YourSpots() {
   const { loading } = useSession();
   const { data, push, select } = useMapState();
   const { favorites, signedIn, loaded } = useFavorites();
-  if (loading) return null;
-  if (!signedIn) {
-    return (
-      <section className="flex flex-col gap-2">
-        <SectionHeader title="Your spots" action={{ label: "See all", onClick: () => push({ kind: "my-spots" }) }} />
-      </section>
-    );
-  }
-  if (!loaded) return null;
+  if (loading || !signedIn || !loaded || data.error) return null;
 
   const spots = favorites.flatMap((favorite) => {
     const spot = spotFor(favorite, data);

@@ -18,7 +18,8 @@ function subscribe(onChange: () => void) {
   };
 }
 
-function prefersReducedMotion() {
+/** Read once, for code outside React's render (a camera move, an animation). */
+export function prefersReducedMotion() {
   // The in-app choice wins when it asks for less motion. Otherwise follow
   // the device, which is also what tokens do when data-motion is absent.
   if (document.documentElement.dataset.motion === "reduce") return true;

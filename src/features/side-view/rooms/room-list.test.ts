@@ -63,7 +63,7 @@ test("rooms group by floor with unnamed floors last", () => {
     [
       ["Floor 1", ["104"]],
       ["Floor 2", ["2124"]],
-      ["Other", ["other"]],
+      ["Floor not listed yet", ["other"]],
     ],
   );
 });

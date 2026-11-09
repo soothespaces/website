@@ -1,6 +1,10 @@
 // Shared by the /admin/photos pages, their server actions and the browser.
 
+import { photoUrl } from "@/lib/photos/url";
+
 export const BUCKET = "photos";
+/** Private bucket for the files of unlisted photos (QA-006). Same file names as in BUCKET. */
+export const HIDDEN_BUCKET = "photos-hidden";
 
 // The same widths and quality as scripts/photos/import.mjs, so admin uploads
 // and imported photos are served the same way.
@@ -49,11 +53,21 @@ export type AdminPhoto = PhotoTags &
     width: number;
     height: number;
     sourceUrl: string | null;
+    /** Whether an admin uploaded it here (not the import script). */
+    uploaded: boolean;
+    /** The uploading admin's email, read through photo_uploaders() on the editor page only. */
     uploadedBy: string | null;
     createdAt: string;
+    /** Signed URLs by width for an unlisted photo, whose files are private. */
+    signed: Record<number, string> | null;
   };
 
-export { photoUrl } from "@/lib/photos/url";
+/** Where to load one width of an admin photo from. */
+export function adminPhotoSrc(supabaseUrl: string, photo: Pick<AdminPhoto, "pathPrefix" | "signed">, width: number) {
+  return photo.signed?.[width] ?? photoUrl(supabaseUrl, photo.pathPrefix, width);
+}
+
+export { photoUrl };
 
 /** The widths a photo is stored at: the kind's widths below its own, then its own. Never upscaled. */
 export function widthsFor(kind: PhotoKind, width: number) {

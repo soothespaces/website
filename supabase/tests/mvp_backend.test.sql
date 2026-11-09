@@ -163,11 +163,13 @@ select is(
     'check_in_overview',
     'check_in_summary',
     'classroom_availability',
+    'floor_alignment_authors',
     'is_admin',
     'my_check_in_history',
+    'photo_uploaders',
     'submit_check_in'
   ],
-  'authenticated can execute only the read functions, is_admin, submit_check_in and my_check_in_history'
+  'authenticated can execute only the read functions, is_admin, the admin-gated author lookups, submit_check_in and my_check_in_history'
 );
 
 select is(

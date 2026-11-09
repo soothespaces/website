@@ -53,7 +53,7 @@ test("building subtitle and entrance count", () => {
   assert.equal(buildingSubtitle("UGLI", "919 S. UNIVERSITY AVE"), "UGLI · 919 S. University Ave");
   assert.equal(buildingSubtitle(null, null), null);
   assert.equal(entranceSummary(5, 2), "5 accessible, 2 automatic");
-  assert.equal(entranceSummary(0, 0), "No accessible entrances on record");
+  assert.equal(entranceSummary(0, 0), null);
   assert.equal(photoCount(1), "1 photo");
   assert.equal(photoCount(12), "12 photos");
   assert.equal(seeAllRooms(18), "See all 18 rooms");

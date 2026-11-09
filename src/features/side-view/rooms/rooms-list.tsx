@@ -1,5 +1,7 @@
 "use client";
 
+import { ErrorNote } from "@/components/ui/error-note";
+import { SkeletonRows } from "@/components/ui/feedback";
 import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip, ChipGroup } from "@/components/ui/chip-group";
@@ -33,6 +35,7 @@ export function RoomsList({
   rememberedFloor,
   focusedRoom,
   onFocusRoom,
+  onBookRoom,
   onViewFloorPlan,
 }: {
   buildingName: string;
@@ -47,6 +50,7 @@ export function RoomsList({
   rememberedFloor: number | null;
   focusedRoom: RoomSlot | null;
   onFocusRoom: (room: RoomSlot) => void;
+  onBookRoom?: (room: RoomSlot) => void;
   onViewFloorPlan: (floor: number, roomId?: string) => void;
 }) {
   const start = slotWindowStart(now);
@@ -66,17 +70,9 @@ export function RoomsList({
 
   let body = null;
   if (!loaded) {
-    body = (
-      <p role="status" className="text-sm text-muted-foreground">
-        Loading rooms…
-      </p>
-    );
+    body = <SkeletonRows label="Loading rooms" rowClassName="h-12" />;
   } else if (error && rooms.length === 0) {
-    body = (
-      <p role="alert" className="text-sm text-muted-foreground">
-        {error}
-      </p>
-    );
+    body = <ErrorNote message={error} />;
   } else if (filtered.length === 0) {
     body = (
       <p className="text-sm text-muted-foreground">
@@ -98,7 +94,12 @@ export function RoomsList({
             <ul className="divide-y divide-border">
               {group.rooms.map((room) => (
                 <li key={room.id}>
-                  <RoomRow room={room} start={start} onFocus={() => onFocusRoom(room)} />
+                  <RoomRow
+                    room={room}
+                    start={start}
+                    onFocus={() => onFocusRoom(room)}
+                    onBook={onBookRoom ? () => onBookRoom(room) : undefined}
+                  />
                 </li>
               ))}
             </ul>

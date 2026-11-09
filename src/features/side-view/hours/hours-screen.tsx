@@ -1,5 +1,7 @@
 "use client";
 
+import { ErrorNote } from "@/components/ui/error-note";
+import { SkeletonRows } from "@/components/ui/feedback";
 import { DetailScreen } from "@/components/ui/detail-screen";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useMapState } from "@/features/map/map-state";
@@ -19,14 +21,14 @@ function HoursBody({ slug, focusChart, onBack }: { slug: string; focusChart: boo
   const now = new Date();
   const building = useBuildingLabel(slug);
   const { hours, loaded, error } = useOpeningHours({ buildingSlug: slug });
-  const rows = weekRows(hours);
+  const rows = weekRows(hours, now);
   const note = hoursSourceNote(hours?.periods ?? []);
   const status = openStatus(hours, now);
   let headline: string | null = null;
   let headlineClass = "text-xl font-semibold text-primary";
   let message: string | null = null;
   if (!loaded) {
-    message = "Loading hours…";
+    // Skeleton below.
   } else if (!hours) {
     if (error) message = error;
     else {
@@ -44,7 +46,8 @@ function HoursBody({ slug, focusChart, onBack }: { slug: string; focusChart: boo
     <DetailScreen title="Hours" subtitle={building} backTo={building} onBack={onBack} className="min-h-0 flex-1">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1" aria-live="polite">
-          {message ? <p className="text-sm text-muted-foreground">{message}</p> : null}
+          {!loaded ? <SkeletonRows label="Loading hours" rows={1} rowClassName="h-7 w-56" /> : null}
+          {message ? <ErrorNote message={message} /> : null}
           {headline ? <p className={headlineClass}>{headline}</p> : null}
           {hours && close ? <p>{close}</p> : null}
         </div>
@@ -87,5 +90,5 @@ function WeekList({ rows }: { rows: WeekRow[] }) {
 function useBuildingLabel(slug: string): string {
   const { data } = useMapState();
   const known = data.buildingsBySlug.get(slug);
-  return known?.shortName || known?.name || "Building";
+  return known?.shortName || known?.name || "";
 }

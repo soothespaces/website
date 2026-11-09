@@ -12,8 +12,10 @@ export const metadata: Metadata = {
 export default async function SpacesAdminPage({ searchParams }: PageProps<"/admin/spaces">) {
   const params = await searchParams;
   const building = typeof params.building === "string" ? params.building : "";
-  const [buildings, spaces] = await Promise.all([getSpaceBuildings(), getSpaceRows(building || undefined)]);
-  const withSpaces = new Set((await getSpaceRows()).map((s) => s.buildingSlug));
+  // One read of every space; the building filter narrows it here (QA-048).
+  const [buildings, all] = await Promise.all([getSpaceBuildings(), getSpaceRows()]);
+  const spaces = building ? all.filter((s) => s.buildingSlug === building) : all;
+  const withSpaces = new Set(all.map((s) => s.buildingSlug));
 
   return (
     <ContentPage
@@ -29,7 +31,7 @@ export default async function SpacesAdminPage({ searchParams }: PageProps<"/admi
         <form className="flex flex-wrap items-end gap-3 text-sm" action="/admin/spaces">
           <label className="flex flex-col gap-1">
             <span className="font-medium">Building</span>
-            <select name="building" defaultValue={building} className="h-11 w-72 rounded-md border border-input bg-background px-3">
+            <select name="building" defaultValue={building} className="h-11 w-72 max-w-full rounded-md border border-input bg-background px-3">
               <option value="">All buildings</option>
               {buildings
                 .filter((b) => withSpaces.has(b.slug))

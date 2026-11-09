@@ -31,8 +31,14 @@ export function LegalLink({
     );
   }
 
+  // Off-site pages open in a new tab, like LibCal links (QA-071).
+  const external = /^https?:\/\//.test(href);
   return (
-    <a href={href} className={linkClassName}>
+    <a
+      href={href}
+      className={linkClassName}
+      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+    >
       {children}
     </a>
   );

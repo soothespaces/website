@@ -5,7 +5,7 @@ create extension if not exists pgtap with schema extensions;
 grant usage on schema extensions to anon, authenticated;
 set local search_path = public, extensions;
 
-select plan(16);
+select plan(17);
 
 insert into public.buildings (slug, name)
 values ('test-space-hall', 'Test Space Hall')
@@ -117,11 +117,22 @@ select throws_ok(
   'a location is a room or an area, not both'
 );
 
+select throws_ok(
+  $$select created_by from public.space_locations where room_number = '2001'$$,
+  '42501',
+  null,
+  'not even an admin can read created_by through the API'
+);
+
+reset role;
 select is(
   (select created_by from public.space_locations where room_number = '2001'),
   'tkaslan@umich.edu',
   'a location records the admin who placed it'
 );
+set local role authenticated;
+set local request.jwt.claims =
+  '{"sub":"22222222-2222-2222-2222-222222222222","email":"tkaslan@umich.edu","role":"authenticated"}';
 
 -- Only spaces added by hand can be deleted (the seed would bring the rest back).
 delete from public.spaces where slug = 'test-library-space';

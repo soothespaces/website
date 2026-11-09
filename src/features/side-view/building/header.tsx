@@ -45,7 +45,7 @@ export function BuildingHeader({
         <div className="flex items-center">
           {slug ? (
             session.loading ? (
-              <Button variant="ghost" size="icon" shape="circle" disabled aria-label={`Add ${name} to your spots`}>
+              <Button variant="ghost" size="icon" shape="circle" disabled aria-label={name ? `Add ${name} to your spots` : "Add to your spots"}>
                 <HeartIcon />
               </Button>
             ) : (

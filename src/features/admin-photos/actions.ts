@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { floorsFor } from "./data";
 import {
   BUCKET,
+  HIDDEN_BUCKET,
   UPLOAD_MAX_BYTES,
   WEBP_QUALITY,
   widthsFor,
@@ -60,13 +61,16 @@ export async function uploadPhoto(form: FormData): Promise<ActionResult> {
     .maybeSingle();
   if (existing) return { ok: false, error: "This photo is already uploaded for this building." };
 
+  // Unlisted photos' files go to the private bucket, so their URLs don't
+  // work for the public (QA-006).
+  const bucket = details.isListed ? BUCKET : HIDDEN_BUCKET;
   const uploaded: string[] = [];
   for (const w of widths) {
     const webp = await sharp(oriented.data).resize({ width: w }).webp({ quality: WEBP_QUALITY }).toBuffer();
     if (webp.length > MAX_BYTES) return cleanUp(uploaded, `The ${w} px version is over the 5 MB limit.`);
     const path = `${prefix}-${w}.webp`;
     const { error } = await supabase.storage
-      .from(BUCKET)
+      .from(bucket)
       .upload(path, webp, { contentType: "image/webp", cacheControl: "31536000", upsert: true });
     if (error) return cleanUp(uploaded, `Uploading failed: ${error.message}`);
     uploaded.push(path);
@@ -92,7 +96,7 @@ export async function uploadPhoto(form: FormData): Promise<ActionResult> {
   return { ok: true, id: data.id };
 
   async function cleanUp(paths: string[], message: string): Promise<ActionResult> {
-    if (paths.length) await supabase.storage.from(BUCKET).remove(paths);
+    if (paths.length) await supabase.storage.from(bucket).remove(paths);
     return { ok: false, error: message };
   }
 }
@@ -103,8 +107,23 @@ export async function updatePhoto(id: string, tags: unknown, details: unknown): 
   const parsed = parse(tags, details);
   if (!parsed.ok) return parsed;
   const supabase = await createClient();
-  const { data: current } = await supabase.from("photos").select("kind").eq("id", id).maybeSingle();
+  const { data: current } = await supabase
+    .from("photos")
+    .select("kind, is_listed, path_prefix, widths")
+    .eq("id", id)
+    .maybeSingle();
   if (!current) return { ok: false, error: "That photo no longer exists." };
+  // Turning "Show it on the site" off moves the files to the private bucket,
+  // so a URL seen while the photo was listed stops working; on moves them back.
+  if (current.is_listed !== parsed.details.isListed) {
+    const moved = await moveFiles(
+      supabase,
+      filesOf(current),
+      current.is_listed ? BUCKET : HIDDEN_BUCKET,
+      current.is_listed ? HIDDEN_BUCKET : BUCKET,
+    );
+    if (!moved.ok) return moved;
+  }
   // The stored widths depend on the kind, so it can't change after upload.
   const { data, error } = await supabase
     .from("photos")
@@ -122,15 +141,44 @@ export async function updatePhoto(id: string, tags: unknown, details: unknown): 
 export async function deletePhoto(id: string): Promise<ActionResult> {
   if (!(await isAdmin())) return NOT_ADMIN;
   const supabase = await createClient();
-  const { data: photo } = await supabase.from("photos").select("path_prefix, widths").eq("id", id).maybeSingle();
+  const { data: photo } = await supabase
+    .from("photos")
+    .select("path_prefix, widths, is_listed")
+    .eq("id", id)
+    .maybeSingle();
   if (!photo) return { ok: false, error: "That photo no longer exists." };
-  const files = photo.widths.map((w) => `${photo.path_prefix.slice(BUCKET.length + 1)}-${w}.webp`);
-  const removed = await supabase.storage.from(BUCKET).remove(files);
+  const removed = await supabase.storage.from(photo.is_listed ? BUCKET : HIDDEN_BUCKET).remove(filesOf(photo));
   if (removed.error) return { ok: false, error: `Removing the files failed: ${removed.error.message}` };
   const { error } = await supabase.from("photos").delete().eq("id", id);
   if (error) return { ok: false, error: `Removing the photo failed: ${error.message}` };
   revalidatePath("/admin/photos", "layout");
   return { ok: true, id };
+}
+
+/** A photo's file names inside its bucket. path_prefix starts with the public bucket's name. */
+function filesOf(photo: { path_prefix: string; widths: number[] }) {
+  return photo.widths.map((w) => `${photo.path_prefix.slice(BUCKET.length + 1)}-${w}.webp`);
+}
+
+type Supabase = Awaited<ReturnType<typeof createClient>>;
+
+async function moveFiles(
+  supabase: Supabase,
+  files: string[],
+  from: string,
+  to: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const done: string[] = [];
+  for (const file of files) {
+    const { error } = await supabase.storage.from(from).move(file, file, { destinationBucket: to });
+    if (error) {
+      // Put back what already moved, so the row and the files stay in step.
+      for (const back of done) await supabase.storage.from(to).move(back, back, { destinationBucket: from });
+      return { ok: false, error: `Moving the files failed: ${error.message}` };
+    }
+    done.push(file);
+  }
+  return { ok: true };
 }
 
 function row(tags: PhotoTags, details: PhotoDetails) {

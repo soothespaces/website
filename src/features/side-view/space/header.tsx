@@ -57,7 +57,7 @@ export function SpaceToolbar({
           />
         </div>
       ) : (
-        <Button variant="ghost" size="icon" shape="circle" disabled className="-mr-2" aria-label={`Add ${name} to your spots`}>
+        <Button variant="ghost" size="icon" shape="circle" disabled className="-mr-2" aria-label={name ? `Add ${name} to your spots` : "Add to your spots"}>
           <HeartIcon />
         </Button>
       )}
@@ -121,14 +121,14 @@ export function SpaceHeading({
               name: known?.name ?? building.name,
             });
           }}
-          className="h-auto min-h-0 justify-start px-0 py-0 text-left text-sm font-medium whitespace-normal text-primary hover:bg-transparent hover:underline"
+          className="h-auto min-h-6 justify-start px-0 py-0 text-left text-sm font-medium whitespace-normal text-primary hover:bg-transparent hover:underline"
         >
           {buildingLabel}
         </Button>
       ) : null}
-      <h1 id={titleId} ref={titleRef} tabIndex={-1} className="text-2xl break-words">
+      <h2 id={titleId} ref={titleRef} tabIndex={-1} className="text-2xl break-words">
         {name}
-      </h1>
+      </h2>
       {locationLine ? <p className="text-sm text-muted-foreground">{locationLine}</p> : null}
       {meta.length > 0 ? (
         <ul className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">

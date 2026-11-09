@@ -62,7 +62,7 @@ export function groupRoomsByFloor(rooms: readonly RoomSlot[]): FloorGroup[] {
     .sort((a, b) => (a[0] ?? 999) - (b[0] ?? 999))
     .map(([floor, list]) => ({
       floor,
-      label: floor == null ? "Other" : `Floor ${floor}`,
+      label: floor == null ? "Floor not listed yet" : floor <= 0 ? "Basement" : `Floor ${floor}`,
       rooms: list,
     }));
 }

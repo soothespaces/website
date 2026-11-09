@@ -1,5 +1,7 @@
 "use client";
 
+import { ErrorNote } from "@/components/ui/error-note";
+import { SkeletonRows } from "@/components/ui/feedback";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useId, useRef, useState } from "react";
@@ -141,9 +143,7 @@ export function CheckInSheet({
   }
 
   const signedOut = !loading && !user;
-  // #57 drops the database rule that an answer is required. Until that lands,
-  // Check in stays disabled when only Where is chosen.
-  const hasAnswer = noise !== "" || light !== "" || daylight !== "" || fullness !== "";
+  // SOS-137: only Where is required (the database rule went in #57; QA-063).
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -153,23 +153,19 @@ export function CheckInSheet({
         ) : null}
         <SheetTitle>How&apos;s it looking?</SheetTitle>
         <SheetDescription className="sr-only">
-          Choose where you are and at least one of noise, brightness, daylight, or how full.
+          Choose where you are. Noise, brightness, daylight, and how full are optional.
         </SheetDescription>
         {loading ? (
-          <p role="status" className="text-sm text-muted-foreground">
-            Loading…
-          </p>
+          <SkeletonRows label="Loading" rows={2} rowClassName="h-11" />
         ) : signedOut ? (
           <Suspense fallback={null}>
             <SignInToCheckIn onLater={close} />
           </Suspense>
         ) : (
           <div className="flex flex-col gap-5">
-            {error ? <p role="alert">{error}</p> : null}
+            {error ? <ErrorNote message={error} /> : null}
             {!loaded && !error ? (
-              <p role="status" className="text-sm text-muted-foreground">
-                Loading spaces…
-              </p>
+              <SkeletonRows label="Loading spaces" rows={2} rowClassName="h-9" />
             ) : null}
             <ChipGroup
               type="single"
@@ -253,7 +249,7 @@ export function CheckInSheet({
               <Button className="flex-1" variant="outline" onClick={close}>
                 Later
               </Button>
-              <Button className="flex-1" disabled={!whereId || !hasAnswer || submitting || loading} onClick={() => void onSubmit()}>
+              <Button className="flex-1" disabled={!whereId || submitting || loading} onClick={() => void onSubmit()}>
                 Check in
               </Button>
             </div>

@@ -1,9 +1,10 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import type { SpaceListDensity } from "@/features/spaces";
 import { PANEL_KIND_TITLES, panelRouteKey, type PanelRoute } from "@/features/side-view/panel-route";
 import { detailPanelKinds, panelRegistry } from "@/features/side-view/registry";
+import { RetryProvider } from "@/components/ui/error-note";
 import { useMapState } from "../map-state";
 import { PanelHeader } from "./panel-header";
 
@@ -35,6 +36,8 @@ function PanelFrame({
   frameClassName,
   bounded,
   scrolls,
+  focus,
+  started,
   onBack,
   onClose,
 }: {
@@ -47,10 +50,13 @@ function PanelFrame({
   // and the frame fills it. A collapsed sheet sizes to its content.
   bounded: boolean;
   scrolls: Map<string, number>;
+  focus: Map<string, HTMLElement>;
+  started: RefObject<boolean>;
   onBack: () => void;
   onClose: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const wasActive = useRef<boolean | null>(null);
   const key = panelRouteKey(route);
   const Screen = panelRegistry[route.kind];
   // Detail screens bring their own back control. When the frame has a fixed
@@ -81,8 +87,49 @@ function PanelFrame({
     };
   }, [active, bounded, key, scrolls]);
 
+  // Remember the last control used on this screen, so Back can return to
+  // it: the row, tile or button that opened the next screen (QA-009).
+  useEffect(() => {
+    const frame = ref.current;
+    if (!frame) return;
+    const remember = (event: FocusEvent) => {
+      if (event.target instanceof HTMLElement) focus.set(key, event.target);
+    };
+    frame.addEventListener("focusin", remember);
+    return () => frame.removeEventListener("focusin", remember);
+  }, [focus, key]);
+
+  // A screen that opens takes focus, so it's announced (detail screens focus
+  // their own title first). A screen shown again by Back gets focus back on
+  // the control that left it. The first screen on page load leaves focus be.
+  useEffect(() => {
+    const frame = ref.current;
+    const previous = wasActive.current;
+    wasActive.current = active;
+    if (!frame || !active || previous === true) return;
+    if (previous === null && !started.current) return;
+    if (frame.contains(document.activeElement)) return;
+    const saved = previous === false ? focus.get(key) : undefined;
+    const target =
+      saved && saved.isConnected && frame.contains(saved)
+        ? saved
+        : frame.querySelector<HTMLElement>("h1, h2, h3");
+    if (!target) return;
+    if (!target.matches("a[href], button, input, select, textarea, [tabindex]")) target.tabIndex = -1;
+    target.focus({ preventScroll: previous === false, focusVisible: true } as FocusOptions);
+  }, [active, focus, key, started]);
+
+  // "Try again" remounts the screen, so its hooks read again. A failed map
+  // data read is shared by every screen, so that reads again too.
+  const { data } = useMapState();
+  const [attempt, setAttempt] = useState(0);
+  const retry = () => {
+    if (data.error) data.reload?.();
+    setAttempt((n) => n + 1);
+  };
+
   let body: ReactNode = <PanelPlaceholder route={route} />;
-  if (Screen) body = <Screen route={route} density={density} />;
+  if (Screen) body = <Screen key={attempt} route={route} density={density} />;
 
   return (
     <div
@@ -97,12 +144,14 @@ function PanelFrame({
           ? "hidden"
           : fill
             ? `flex min-h-0 flex-1 flex-col overflow-hidden ${frameClassName}`
-            : `overflow-y-auto overscroll-contain ${frameClassName} ${bounded ? "min-h-0 flex-1" : "min-h-0"}`
+            : // Unbounded (the collapsed phone sheet), the frame is the one
+              // scroller; the screen's own scroller stays put (QA-020).
+              `overflow-y-auto overscroll-contain ${frameClassName} ${bounded ? "min-h-0 flex-1" : "min-h-0 [&_[data-detail-scroll]]:overflow-y-visible"}`
       }
     >
       <div className={fill ? "flex min-h-0 flex-1 flex-col" : "flex flex-col gap-1"}>
         {detail ? null : <PanelHeader canGoBack={canGoBack} onBack={onBack} onClose={onClose} />}
-        {body}
+        <RetryProvider value={retry}>{body}</RetryProvider>
       </div>
     </div>
   );
@@ -122,6 +171,12 @@ export function SelectionPanel({
 }) {
   const { stack, back, clear } = useMapState();
   const [scrolls] = useState(() => new Map<string, number>());
+  const [focus] = useState(() => new Map<string, HTMLElement>());
+  // False during the first commit: screens there came with the page.
+  const started = useRef(false);
+  useEffect(() => {
+    started.current = true;
+  }, []);
   const rootRef = useRef<HTMLDivElement>(null);
 
   const onBack = () => {
@@ -148,6 +203,8 @@ export function SelectionPanel({
             frameClassName={frameClassName}
             bounded={bounded}
             scrolls={scrolls}
+            focus={focus}
+            started={started}
             onBack={onBack}
             onClose={clear}
           />

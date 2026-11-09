@@ -8,6 +8,7 @@ import { printersOnFloor, usePrinters } from "@/lib/data/printers";
 import { legendGroups, type LegendRowId } from "./floor-legend-model";
 import { useFloorColoring } from "./layers/floor-noise";
 import { printerPosition } from "./layers/floor-printer-points";
+import { sheetsOf } from "./layers/floor-printers";
 import type { FloorPlan } from "./use-floor-index";
 import { useMapState } from "./map-state";
 
@@ -65,13 +66,20 @@ export function FloorLegend({ plan }: { plan: FloorPlan }) {
         {groups.map((group) => (
           <div key={group.heading ?? "status"} className="flex flex-col gap-1.5">
             {group.heading ? (
-              <h3 className="text-xs font-medium tracking-wide text-muted-foreground">{group.heading}</h3>
+              <h2 className="text-xs font-medium tracking-wide text-muted-foreground">{group.heading}</h2>
             ) : null}
             <ul className="flex flex-col gap-1.5">
               {group.rows.map((row) => (
                 <li key={row.id} className="flex items-center gap-2 text-sm">
                   <Swatch id={row.id} />
-                  <span>{row.label}</span>
+                  <span>
+                    {row.label}
+                    {/* Staff rooms are paint only on the plan, so a screen
+                        reader gets their numbers here (QA-011). */}
+                    {row.id === "staff" && coloring.staffRooms.length > 0 ? (
+                      <span className="sr-only">: rooms {coloring.staffRooms.join(", ")}</span>
+                    ) : null}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -88,10 +96,7 @@ function placedPrinters(
   printers: ReturnType<typeof usePrinters>["printers"],
 ) {
   const centroids = new Map(rooms.map((room) => [room.roomNumber.toUpperCase(), room]));
-  const sheet =
-    plan.sheet && plan.width && plan.height && plan.corners
-      ? { sheet: plan.sheet, width: plan.width, height: plan.height, corners: plan.corners }
-      : null;
+  const sheet = sheetsOf(plan);
   return printersOnFloor(printers, plan.floor).filter((printer) => printerPosition(printer, sheet, centroids)).length;
 }
 

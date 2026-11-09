@@ -19,8 +19,8 @@ export const NOISE_BARS: Record<NoiseLevel, number> = {
 // The glyph hangs from its top edge, just under the centered room number.
 // The number is placed first (its layer is higher) and its collision box
 // reaches below the glyph's top, so a glyph that respected collisions would
-// never show. It overlaps instead, the number paints over it where they meet,
-// and it never pushes a number out. icon-size stays constant: an
+// never show. It overlaps instead, the number and its card halo paint over it
+// where they meet, and it never pushes a number out. icon-size stays constant: an
 // interpolation makes MapLibre reserve the next zoom's larger box.
 export const NOISE_GLYPH_LAYOUT = {
   "icon-image": ["concat", "noise-bars-", ["to-string", ["get", "noiseBars"]]],

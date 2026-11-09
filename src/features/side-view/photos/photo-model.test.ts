@@ -85,7 +85,16 @@ test("credit pills match the board", () => {
   });
   assert.deepEqual(creditPill(photo({ credit: "Soothe Spaces team", license: "Soothe Spaces team photo" })), {
     source: "official",
-    label: "Soothe Spaces",
+    label: "",
+  });
+  // A person's name is never a pill (QA-058).
+  assert.deepEqual(creditPill(photo({ credit: "University of Michigan Student Life", license: "UM, used with credit" })), {
+    source: "official",
+    label: "",
+  });
+  assert.deepEqual(creditPill(photo({ credit: "Michael Barera, CC BY-SA 4.0", license: "CC BY-SA 4.0" })), {
+    source: "official",
+    label: "Wikimedia Commons",
   });
   assert.equal(formatCreditMonth("not-a-date"), null);
 });
@@ -121,7 +130,7 @@ test("Google photos and panoramas stay out of every chip", () => {
   );
   assert.equal(photoCountLabel(12), "12 photos");
   assert.equal(photoCountLabel(1), "1 photo");
-  assert.equal(photoCountLabel(0), "No photos");
+  assert.equal(photoCountLabel(0), "Photos");
 });
 
 test("a photo belongs to a space by id, room number, or spot", () => {

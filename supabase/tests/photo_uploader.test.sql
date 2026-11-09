@@ -31,8 +31,8 @@ select is(
 );
 
 select ok(
-  has_column_privilege('authenticated', 'public.photos', 'uploaded_by', 'select'),
-  'signed-in users (admins on /admin/photos) can read uploaded_by'
+  not has_column_privilege('authenticated', 'public.photos', 'uploaded_by', 'select'),
+  'signed-in users cannot read uploaded_by either (admins use photo_uploaders())'
 );
 
 select * from finish();

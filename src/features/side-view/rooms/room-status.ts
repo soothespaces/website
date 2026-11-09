@@ -30,13 +30,10 @@ export function roomStatusLine(
   if (room.kind === "classroom") {
     const until = timeAfterUntil(room.status);
     if (room.status.startsWith("Booked")) {
-      const course = room.currentCourse?.trim();
-      const text = until
-        ? course
-          ? `Class until ${until}, ${course}`
-          : `Class until ${until}`
-        : "Class in session";
-      return { text, tone: "booked" };
+      // SOS-132: "Class until 4 PM". The course belongs on the free line
+      // ("then EECS 281"), and with no time the room's own status stands
+      // (QA-051).
+      return { text: until ? `Class until ${until}` : room.status, tone: "booked" };
     }
     const next = room.nextCourse?.trim();
     if (room.status.startsWith("Free until") && until && next) {

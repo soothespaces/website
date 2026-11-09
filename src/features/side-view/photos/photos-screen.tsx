@@ -48,12 +48,12 @@ export function PhotosScreen({ route }: PanelScreenProps) {
   if (route.kind !== "photos") return null;
 
   const mapBuilding = data.buildingsBySlug.get(route.slug);
-  const buildingName = loadedPhotos.buildingName || mapBuilding?.name || "Building";
+  const buildingName = loadedPhotos.buildingName || mapBuilding?.name || "";
   const parent = stack.at(-2);
   let backTo = "Home";
   if (parent?.kind === "building") backTo = buildingName;
   else if (parent?.kind === "space") {
-    backTo = data.spaces.find((space) => space.slug === parent.id)?.name ?? "Space";
+    backTo = data.spaces.find((space) => space.slug === parent.id)?.name ?? "";
   }
 
   const title = loadedPhotos.loaded && !loadedPhotos.error ? photoCountLabel(allowed.length) : "Photos";

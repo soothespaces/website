@@ -24,7 +24,7 @@ export function UserMenu() {
     if (pathname === "/login") return null;
     const query = searchParams.toString();
     return (
-      <Button asChild variant="outline" size="sm">
+      <Button asChild variant="outline" size="sm" className="pointer-coarse:min-h-11">
         <Link href={loginHref(query ? `${pathname}?${query}` : pathname)}>Sign in</Link>
       </Button>
     );
@@ -37,7 +37,7 @@ export function UserMenu() {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger
-        className="flex size-9 items-center justify-center rounded-full bg-primary font-medium text-primary-foreground"
+        className="flex size-9 items-center justify-center rounded-full bg-primary pointer-coarse:size-11 font-medium text-primary-foreground"
         aria-label={`Account menu for ${name}`}
       >
         {initial}
@@ -62,7 +62,7 @@ export function UserMenu() {
                   ? panelHref("/map", { kind: "my-spots" }, new URLSearchParams(searchParams.toString()))
                   : "/map?panel=my-spots"
               }
-              className="block rounded-sm px-3 py-2 outline-none data-[highlighted]:bg-accent"
+              className="block rounded-sm px-3 py-2 outline-none data-[highlighted]:bg-accent data-[highlighted]:outline-2 data-[highlighted]:-outline-offset-2 data-[highlighted]:outline-ring"
             >
               Your spots
             </Link>
@@ -70,14 +70,14 @@ export function UserMenu() {
           <DropdownMenu.Item asChild>
             <Link
               href={ROUTES.accountPreferences}
-              className="block rounded-sm px-3 py-2 outline-none data-[highlighted]:bg-accent"
+              className="block rounded-sm px-3 py-2 outline-none data-[highlighted]:bg-accent data-[highlighted]:outline-2 data-[highlighted]:-outline-offset-2 data-[highlighted]:outline-ring"
             >
               Account preferences
             </Link>
           </DropdownMenu.Item>
           <DropdownMenu.Item
             onSelect={() => signOutForm.current?.requestSubmit()}
-            className="w-full cursor-default rounded-sm px-3 py-2 text-left outline-none data-[highlighted]:bg-accent"
+            className="w-full cursor-default rounded-sm px-3 py-2 text-left outline-none data-[highlighted]:bg-accent data-[highlighted]:outline-2 data-[highlighted]:-outline-offset-2 data-[highlighted]:outline-ring"
           >
             Sign out
           </DropdownMenu.Item>
