@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { isAdmin } from "@/lib/auth/admin";
 import { createClient } from "@/lib/supabase/server";
+import type { TablesInsert } from "@/types/supabase";
 import { findSheet } from "./floors";
 
 export type SaveResult = { ok: true; alignedAt: string } | { ok: false; error: string };
@@ -15,18 +16,21 @@ export async function saveAlignment(sheet: string, corners: unknown): Promise<Sa
   if (!record) return { ok: false, error: `Unknown sheet ${sheet}.` };
   if (!isCorners(corners)) return { ok: false, error: "The corners aren't four longitude, latitude pairs." };
 
+  // aligned_by is left out: the stamp trigger sets it to the signed-in admin,
+  // and an upsert that sends it needs SELECT on it, which the Data API no
+  // longer has ("permission denied for table floor_alignments"). The
+  // generated type still lists it as required, hence the cast.
+  const row: Omit<TablesInsert<"floor_alignments">, "aligned_by"> = {
+    sheet: record.sheet,
+    sha256: record.sha256,
+    width: record.width,
+    height: record.height,
+    corners,
+  };
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("floor_alignments")
-    .upsert({
-      sheet: record.sheet,
-      sha256: record.sha256,
-      width: record.width,
-      height: record.height,
-      corners,
-      // The database replaces this with the signed-in user's email.
-      aligned_by: "",
-    })
+    .upsert(row as TablesInsert<"floor_alignments">)
     .select("aligned_at")
     .single();
   if (error) return { ok: false, error: error.message };
