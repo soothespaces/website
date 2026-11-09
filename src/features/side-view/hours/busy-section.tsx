@@ -78,7 +78,10 @@ function BusyDays({ times, now, focus }: { times: PopularTimes; now: Date; focus
               if (value) setChoice(value);
             }}
             options={BUSY_DAY_OPTIONS}
-            className="h-auto min-h-8 w-auto cursor-pointer gap-1 rounded-md border-0 bg-transparent px-2 py-1 text-sm font-normal text-muted-foreground shadow-none hover:bg-accent hover:text-foreground"
+            // The trigger is wide enough for "Wednesdays", and the menu is
+            // exactly as wide, so the two line up (DA-08).
+            className="h-auto min-h-8 w-auto min-w-36 cursor-pointer gap-1 rounded-md border-0 bg-transparent px-2 py-1 text-sm font-normal text-muted-foreground shadow-none hover:bg-accent hover:text-foreground"
+            contentClassName="w-[var(--radix-select-trigger-width)] text-sm"
           />
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { ErrorNote } from "@/components/ui/error-note";
 import { StatTile, StatTileGrid } from "@/components/ui/stat-tile";
 import { useMapState } from "@/features/map/map-state";
 import { isOpenNow, nextClose, openStatus, useOpeningHours } from "@/lib/data/opening-hours";
@@ -36,24 +37,32 @@ export function BuildingTiles({ slug }: { slug: string | null }) {
     });
   }, [slug, data.spaces, floorPlans, rooms.data, profile.data?.floors]);
 
-  if (!slug || (!status && !word && !floors)) return null;
+  if (!slug) return null;
+  // A failed read is not "no hours" (QA-024).
+  const failed = Boolean(hours.error || popular.error);
+  if (!status && !word && !floors) {
+    return failed ? <ErrorNote message="Hours and busyness didn't load." className="px-1" /> : null;
+  }
 
   const openHours = () => push({ kind: "hours", slug });
   const openChart = () => push({ kind: "hours", slug, focus: "chart" });
 
   return (
-    <StatTileGrid>
-      {status ? (
-        <StatTile
-          label="Hours"
-          value={status}
-          detail={close ?? undefined}
-          tone={hours.hours && isOpenNow(hours.hours, now) ? "positive" : undefined}
-          onClick={openHours}
-        />
-      ) : null}
-      {floors ? <StatTile label="Floors" value={floors.value} detail={floors.detail} /> : null}
-      {word && usual ? <StatTile label="Busyness" value={word} detail={usual} onClick={openChart} /> : null}
-    </StatTileGrid>
+    <>
+      {failed && !(status && word) ? <ErrorNote message="Hours and busyness didn't load." className="px-1" /> : null}
+      <StatTileGrid>
+        {status ? (
+          <StatTile
+            label="Hours"
+            value={status}
+            detail={close ?? undefined}
+            tone={hours.hours && isOpenNow(hours.hours, now) ? "positive" : undefined}
+            onClick={openHours}
+          />
+        ) : null}
+        {floors ? <StatTile label="Floors" value={floors.value} detail={floors.detail} /> : null}
+        {word && usual ? <StatTile label="Busyness" value={word} detail={usual} onClick={openChart} /> : null}
+      </StatTileGrid>
+    </>
   );
 }

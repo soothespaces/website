@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Chip, ChipGroup } from "@/components/ui/chip-group";
 import { Input, Label } from "@/components/ui/field";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
+import { COMPACT_ON_WIDE } from "./overlay";
 import { useToast } from "@/components/ui/toast";
 import { useSession } from "@/lib/auth/use-session";
 import { loginHref } from "@/lib/auth/paths";
@@ -147,7 +148,7 @@ export function CheckInSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom">
+      <SheetContent side="bottom" className={COMPACT_ON_WIDE}>
         {banner ? (
           <p className="rounded-md bg-primary px-3 py-2 pr-10 text-sm font-medium text-primary-foreground">You&apos;re at {banner}</p>
         ) : null}

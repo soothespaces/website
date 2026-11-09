@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ErrorNote } from "@/components/ui/error-note";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useMapState } from "@/features/map/map-state";
 import { useRoomSlots } from "@/lib/data/room-slots";
@@ -25,6 +26,7 @@ export function RoomsPreview({ slug }: { slug: string | null }) {
 
   if (!slug) return null;
   if (!slots.loaded) return <p className="sr-only">Loading rooms</p>;
+  if (slots.error && bookable.length === 0) return <ErrorNote message="Rooms didn't load." className="px-1" />;
   if (bookable.length === 0) return null;
 
   const openList = () => push({ kind: "rooms", slug });

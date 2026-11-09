@@ -45,7 +45,13 @@ function previousTitle(stack: PanelRoute[], data: ReturnType<typeof useMapState>
   const previous = stack.at(-2);
   if (!previous || previous.kind === "home") return "Home";
   if (previous.kind === "building") {
-    return previous.name || (previous.slug ? data.buildingsBySlug.get(previous.slug)?.name : undefined) || "";
+    return (
+      previous.name ||
+      (previous.slug
+        ? data.buildingsBySlug.get(previous.slug)?.shortName || data.buildingsBySlug.get(previous.slug)?.name
+        : undefined) ||
+      ""
+    );
   }
   if (previous.kind === "space") {
     return data.spaces.find((space) => space.slug === previous.id)?.name || "";

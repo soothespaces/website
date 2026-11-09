@@ -189,7 +189,7 @@ export function SpaceEditor({ buildings, space }: { buildings: SpaceBuilding[]; 
       <Section title="Space">
         {space ? (
           <p className="text-sm text-muted-foreground">
-            In {building?.name ?? space.buildingSlug}. From {SOURCE_LABELS[space.source]}
+            In {building?.shortName || building?.name || space.buildingSlug}. From {SOURCE_LABELS[space.source]}
             {space.sourceUrl ? (
               <>
                 {" "}

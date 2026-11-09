@@ -58,13 +58,15 @@ export function StatTile({ label, value, detail, tone, className, href, onClick 
   return <div className={cx(tileClass, "border-transparent bg-muted", className)}>{body}</div>;
 }
 
-// Three across from 20rem (a 390px phone sheet after its padding, as on the
-// board; QA-038), two from 15rem, and one column below that. SOS-103 lets the
-// row wrap at 320px without clipping.
+// One row of tiles sized to their words, sharing the spare width (QA-038).
+// Equal thirds wrapped "Open 24 hours" and "Closes Fri 6 PM" onto two lines
+// (DA-15), so each tile starts at its own content width and grows from there.
+// When three don't fit, the last one wraps to its own row (SOS-103) instead of
+// a value breaking mid-phrase.
 export function StatTileGrid({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className={cx("@container", className)}>
-      <div className="grid grid-cols-1 gap-2 @min-[15rem]:grid-cols-2 @min-[20rem]:grid-cols-3">{children}</div>
+      <div className="flex flex-wrap gap-2 *:w-auto *:min-w-[min(100%,6rem)] *:flex-[1_1_auto]">{children}</div>
     </div>
   );
 }

@@ -461,7 +461,9 @@
 }
 
 /* Building footprints, by how many listed study spaces they have.
-   More spaces are darker on a light map and lighter on a dark map. */
+   More spaces are darker on a light map and lighter on a dark map. The dark
+   ramp tops out at a mid green, so the busiest building is not the brightest
+   thing on the map (QA-087). */
 :root {
   --study-1: #d7f0e0;
   --study-2: #8dcea8;
@@ -470,15 +472,15 @@
 }
 :root[data-theme="dark"] {
   --study-1: #1c4030;
-  --study-2: #2f7a50;
-  --study-5: #7dcca0;
-  --study-10: #d7f5e4;
+  --study-2: #2a6847;
+  --study-5: #3f9467;
+  --study-10: #5cb886;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --study-1: #1c4030;
-    --study-2: #2f7a50;
-    --study-5: #7dcca0;
-    --study-10: #d7f5e4;
+    --study-2: #2a6847;
+    --study-5: #3f9467;
+    --study-10: #5cb886;
   }
 }

@@ -87,7 +87,8 @@ export function HeaderFrame({ account }: { account: ReactNode }) {
         <PageWidth className="flex min-h-16 items-center gap-2 py-2 sm:gap-6">
           <Link
             href={ROUTES.home}
-            className="flex min-w-0 items-center gap-2 rounded-sm text-foreground sm:gap-3"
+            // 44px tall for touch (QA-032); the logo itself stays 32px.
+            className="flex min-h-11 min-w-0 items-center gap-2 rounded-sm text-foreground sm:gap-3"
           >
             <LogoMark className="h-8 w-auto shrink-0 sm:h-9" />
             <Wordmark className="hidden h-6 w-auto min-[22rem]:block sm:h-7.5" />

@@ -452,7 +452,7 @@ function openItem(item: RotationItem, push: ReturnType<typeof useMapState>["push
     push({
       kind: "building",
       slug: item.buildingSlug,
-      name: building?.name ?? item.name,
+      name: building?.shortName || building?.name || item.name,
       ...(building?.recordNumber ? { recordNumber: building.recordNumber } : {}),
     });
     return;
@@ -473,7 +473,7 @@ function toRotationItem(
     return {
       favorite,
       name,
-      place: building?.name ?? null,
+      place: building?.shortName || building?.name || null,
       wholeBuilding: false,
       buildingSlug,
       spaceId: favorite.spaceId,
@@ -497,7 +497,7 @@ function toRotationItem(
   }
   if (!favorite.buildingSlug) return null;
   const building = buildings.get(favorite.buildingSlug);
-  const name = building?.name ?? "Saved building";
+  const name = building?.shortName || building?.name || "Saved building";
   return {
     favorite,
     name,

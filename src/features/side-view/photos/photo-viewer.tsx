@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from "@/components/ui/icons";
 import { photoUrl } from "@/lib/photos/url";
 import { useReducedMotion } from "@/lib/settings/use-reduced-motion";
-import { swipeDirection, widthThatFits, type ClassifiedPhoto } from "./photo-model";
+import { captionSentence, swipeDirection, widthThatFits, type ClassifiedPhoto } from "./photo-model";
 
 // Full-screen viewer for the gallery and, later, the building and space
 // photo strips. Same photos, same order, same credit.
@@ -138,7 +138,7 @@ export function PhotoViewer({
         >
           <div className="flex items-center justify-between gap-2 px-2 py-2">
             <p aria-live="polite" className="px-2 text-sm">
-              <span className="sr-only">{photo.caption}. </span>
+              <span className="sr-only">{captionSentence(photo.caption)} </span>
               {safeIndex + 1} of {count}
             </p>
             <Dialog.Close asChild>
@@ -156,7 +156,7 @@ export function PhotoViewer({
               aria-label="Previous photo"
               disabled={safeIndex === 0}
               onClick={() => step(-1)}
-              className="absolute left-2 text-white hover:bg-white/15 hover:text-white"
+              className="absolute left-2 z-10 text-white hover:bg-white/15 hover:text-white"
             >
               <ChevronLeftIcon />
             </Button>
@@ -174,7 +174,11 @@ export function PhotoViewer({
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
               }}
-              className={`h-auto max-h-full w-auto max-w-full object-contain ${
+              // The image box fills the stage from the first frame, so the
+              // small preview behind it paints at once and the full photo
+              // lands on top in the same place (DA-25). With auto sizes the
+              // box was 0×0 until the full file arrived.
+              className={`absolute inset-y-0 left-12 h-full w-[calc(100%-6rem)] object-contain ${
                 reduce || motion === "none" ? "" : motion === "next" ? "animate-photo-next" : "animate-photo-prev"
               }`}
             />
@@ -185,7 +189,7 @@ export function PhotoViewer({
               aria-label="Next photo"
               disabled={safeIndex >= count - 1}
               onClick={() => step(1)}
-              className="absolute right-2 text-white hover:bg-white/15 hover:text-white"
+              className="absolute right-2 z-10 text-white hover:bg-white/15 hover:text-white"
             >
               <ChevronRightIcon />
             </Button>

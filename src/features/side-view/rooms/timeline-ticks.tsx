@@ -9,14 +9,19 @@ export function TimelineTicks({
   start,
   slotCount = SLOT_COUNT,
   slotMinutes = SLOT_MINUTES,
+  every = 1,
 }: {
   start: number;
   slotCount?: number;
   slotMinutes?: number;
+  /** Label every nth hour, for a narrow column (the rooms map, QA-054). */
+  every?: number;
 }) {
   const span = Math.max(slotCount * slotMinutes, 1);
   const end = start + span;
-  const ticks = hourTicks(start, slotCount, slotMinutes).filter((tick) => tick < end);
+  const ticks = hourTicks(start, slotCount, slotMinutes)
+    .filter((tick) => tick < end)
+    .filter((_, index) => index % every === 0);
   return (
     <div aria-hidden="true" className="relative h-4 min-w-0">
       {ticks.map((tick) => {

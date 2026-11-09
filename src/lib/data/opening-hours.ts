@@ -215,6 +215,16 @@ function continuousEnd(placed: NonNullable<ReturnType<typeof placeNow>>, current
   return end;
 }
 
+/** Walk back across intervals that touch, to where this open stretch began. */
+function continuousStart(placed: NonNullable<ReturnType<typeof placeNow>>, current: Span): number {
+  let start = current.start;
+  for (;;) {
+    const touch = placed.spans.find((span) => span.end >= start && span.start < start);
+    if (!touch) return start;
+    start = touch.start;
+  }
+}
+
 function describeClose(end: number, originDate: string): { weekday: number; minute: number } {
   // Times are numbers (SOS-93): a close at midnight is the next day's 12 AM.
   const date = addDays(originDate, Math.floor(end / 1440));
@@ -240,14 +250,15 @@ export function openStatus(hours: OpeningHours | null, now: Date): string | null
   if (current) {
     if (isOpenAllDay(placed.today.intervals)) return "Open 24 hours";
     const end = continuousEnd(placed, current);
-    if (end == null) return "Open 24 hours";
     const todayIndex = hours.byDate.indexOf(placed.today);
     const endOfToday = (todayIndex + 1) * 1440;
     // A close overnight, through 6 AM, is still "Open until 2 AM" rather than the next day's name.
-    if (end <= endOfToday + 6 * 60) return `Open until ${closeClock(end)}`;
-    // Open through the night and past tomorrow morning: SOS-93 calls that
-    // "Open 24 hours". The weekday belongs on nextClose ("Closes Fri 6 PM").
-    return "Open 24 hours";
+    if (end != null && end <= endOfToday + 6 * 60) return `Open until ${closeClock(end)}`;
+    // Open through the night and past tomorrow morning. It is only "Open 24
+    // hours" when it has also been open since midnight (SOS-126, QA-075): a
+    // Sunday that opened at 10 AM and runs into a 24-hour Monday is "Open
+    // overnight". The weekday belongs on nextClose ("Closes Fri 6 PM").
+    return continuousStart(placed, current) <= todayIndex * 1440 ? "Open 24 hours" : "Open overnight";
   }
   const later = placed.today.intervals.find((interval) => interval.opens > placed.minutes);
   if (later) return `Opens at ${formatClock(later.opens)}`;

@@ -18,6 +18,7 @@ import {
   mapStyleUrl,
 } from "./config";
 import "./campus-map.css";
+import { CollapsedCredit } from "./collapsed-credit";
 import { LayerSlots } from "./slots";
 
 // The campus base map. Changing theme swaps the whole style, which drops
@@ -89,6 +90,7 @@ export default function CampusMap({ children }: { children?: ReactNode }) {
         {/* On phones the sheet covers the bottom of the map, so the credits
             sit under the zoom and locate buttons instead (QA-016). */}
         <AttributionControl key={wide ? "wide" : "phone"} position={wide ? "bottom-right" : "top-right"} compact={!wide} />
+        {wide ? null : <CollapsedCredit key="phone-credit" />}
         <ScaleControl position="bottom-left" />
         <LayerSlots />
         {children}

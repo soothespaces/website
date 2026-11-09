@@ -136,5 +136,6 @@ function buildingName(
   buildings: ReturnType<typeof useMapState>["data"]["buildingsBySlug"],
 ): string | null {
   if (!slug) return null;
-  return buildings.get(slug)?.name ?? null;
+  const building = buildings.get(slug);
+  return building?.shortName || building?.name || null;
 }

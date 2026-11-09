@@ -95,13 +95,19 @@ export function MapSheet() {
       onTouchStart={(event) => {
         const sheet = event.currentTarget;
         const start = sheet.offsetHeight;
-        setBounds({ start, room: Math.max(0, (sheet.parentElement?.clientHeight ?? 0) - 8 - start) });
+        setBounds({ start, room: Math.max(0, (sheet.parentElement?.clientHeight ?? 0) - start) });
         handlers.onTouchStart(event);
       }}
       style={dragStyle}
-      className={`absolute inset-x-0 bottom-0 z-20 flex min-h-0 flex-col rounded-t-2xl bg-card text-card-foreground shadow-[0_0_0_1px_var(--border),0_-4px_16px_rgb(0_0_0/0.12)] transition-[transform,max-height] duration-200 ease-out motion-reduce:transition-none ${
+      // Expanded, the sheet is the full panel from the boards: flush with the
+      // header, square corners, no lifted shadow (DA-12).
+      className={`absolute inset-x-0 bottom-0 z-20 flex min-h-0 flex-col bg-card text-card-foreground transition-[transform,max-height] duration-200 ease-out motion-reduce:transition-none ${
         expanded || roomsMap ? "overflow-hidden" : ""
-      } ${expanded ? "top-2" : roomsMap ? "h-[60%]" : "max-h-[45%]"}`}
+      } ${
+        expanded
+          ? "top-0 rounded-none border-t border-border"
+          : `rounded-t-2xl shadow-[0_0_0_1px_var(--border),0_-4px_16px_rgb(0_0_0/0.12)] ${roomsMap ? "h-[60%]" : "max-h-[45%]"}`
+      }`}
     >
       <Button
         variant="ghost"
@@ -110,7 +116,10 @@ export function MapSheet() {
         aria-label={expanded ? "Show more map" : "Show more details"}
         // The ring sits inside the handle: the sheet clips anything outside it
         // (QA-021). A drag on the handle moves the sheet, not the page (DA-01).
-        className="flex h-6 min-h-0 w-full touch-none rounded-none rounded-t-2xl px-0 hover:bg-transparent active:bg-transparent focus-visible:-outline-offset-2"
+        // 44px tall for touch (QA-032); the bar sits near the top edge.
+        className={`flex h-11 min-h-0 w-full shrink-0 touch-none items-start rounded-none px-0 pt-2 hover:bg-transparent active:bg-transparent focus-visible:-outline-offset-2 ${
+          expanded ? "" : "rounded-t-2xl"
+        }`}
       >
         <span aria-hidden="true" className="h-1 w-10 rounded-full bg-muted-foreground/50" />
       </Button>

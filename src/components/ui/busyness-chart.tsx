@@ -36,16 +36,6 @@ export function BusynessChart({
               {/* Hovering a bar names its hour (DA-08). The table below is
                   what screen readers get. */}
               <title>{`${formatHour(hour)}: ${busynessWord(value) ?? "no data"}`}</title>
-              {highlighted ? (
-                <rect
-                  x={x - 0.75}
-                  y={Math.max(0, y - 3)}
-                  width={barWidth + 1.5}
-                  height={height + 3}
-                  rx={1}
-                  className="fill-foreground"
-                />
-              ) : null}
               <rect
                 x={x}
                 y={y}
@@ -53,6 +43,8 @@ export function BusynessChart({
                 height={height}
                 rx={1}
                 // Pale green as on the board (QA-042), still at least 3:1 on the card.
+                // The current hour is the solid bar. It used to sit on a
+                // foreground rect that read as a dark cap (QA-091).
                 className={highlighted ? "fill-primary" : "fill-primary/70"}
               />
             </g>

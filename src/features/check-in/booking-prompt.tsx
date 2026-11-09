@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip, ChipGroup } from "@/components/ui/chip-group";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
+import { COMPACT_ON_WIDE } from "./overlay";
 import { useToast } from "@/components/ui/toast";
 import { useSession } from "@/lib/auth/use-session";
 import type { NoiseLevel } from "@/lib/data/check-ins";
@@ -95,7 +96,7 @@ export function BookingPrompt() {
 
   return (
     <Sheet open={shown?.spaceId != null} onOpenChange={(next) => (next ? null : later())}>
-      <SheetContent side="bottom">
+      <SheetContent side="bottom" className={COMPACT_ON_WIDE}>
         {shown ? (
           <>
             <p className="w-fit rounded-full bg-muted px-3 py-1 text-sm font-medium">{bookingPill(shown.startsAt, shown.endsAt)}</p>

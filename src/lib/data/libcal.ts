@@ -96,12 +96,38 @@ export function parseAvailabilityGrid(body: unknown): GridSlot[] | null {
   return parsed;
 }
 
+/** A location needs this many rooms before "every room booked at once" reads as LibCal's own block. */
+const BLANKET_MIN_ITEMS = 3;
+
+/**
+ * Slot starts where every room the grid lists is marked booked. LibCal paints
+ * its own cutoffs (the rest of tonight once it can't be booked, a closure)
+ * with the booked class on every room at once (QA-076: all 18 Shapiro rooms
+ * read 11 PM – 12 AM at 11 PM). Real bookings never line up across a whole
+ * floor, so these are left out of "booked".
+ */
+export function blanketStarts(slots: readonly GridSlot[]): Set<string> {
+  const items = new Set(slots.map((slot) => slot.itemId));
+  const blanket = new Set<string>();
+  if (items.size < BLANKET_MIN_ITEMS) return blanket;
+  const bookedAt = new Map<string, Set<number>>();
+  for (const slot of slots) {
+    if (!slot.booked) continue;
+    const at = bookedAt.get(slot.start) ?? new Set<number>();
+    at.add(slot.itemId);
+    bookedAt.set(slot.start, at);
+  }
+  for (const [start, booked] of bookedAt) if (booked.size === items.size) blanket.add(start);
+  return blanket;
+}
+
 export function bookedByItem(slots: readonly GridSlot[], itemIds: readonly number[]): AvailabilityItem[] {
   const wanted = new Set(itemIds);
   const grouped = new Map<number, BookedInterval[]>();
   for (const itemId of itemIds) grouped.set(itemId, []);
+  const blanket = blanketStarts(slots);
   for (const slot of slots) {
-    if (!slot.booked || !wanted.has(slot.itemId)) continue;
+    if (!slot.booked || !wanted.has(slot.itemId) || blanket.has(slot.start)) continue;
     grouped.get(slot.itemId)?.push({ start: slot.start, end: slot.end });
   }
   return itemIds.map((libcalItemId) => ({ libcalItemId, booked: grouped.get(libcalItemId) ?? [] }));

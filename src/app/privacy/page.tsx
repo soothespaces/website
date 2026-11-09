@@ -114,7 +114,7 @@ const SECTIONS = [
           the answers are distributed, and the time of the most recent check-in
           rounded to about 15 minutes. The database does not allow anyone&apos;s
           browser to read the raw row, including who submitted it. Public copy
-          looks like &quot;Based on 14 check-ins,&quot; not a name.
+          describes the space, never who said it.
         </p>
         <p>
           Check-ins describe the space. We do not ask about diagnoses,

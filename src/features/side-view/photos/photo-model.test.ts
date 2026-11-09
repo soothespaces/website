@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  captionSentence,
   classifyPhoto,
+  cleanCaption,
   creditPill,
   filterPhotos,
   formatCreditMonth,
@@ -182,4 +184,17 @@ test("srcset uses stored widths and the loader covers the request", () => {
     photoSrcSet("https://example.supabase.co/", "photos/buildings/shapiro/abc", [960, 480]),
     "https://example.supabase.co/storage/v1/object/public/photos/buildings/shapiro/abc-480.webp 480w, https://example.supabase.co/storage/v1/object/public/photos/buildings/shapiro/abc-960.webp 960w",
   );
+});
+
+test("captions drop catalog ids, and the spoken caption has one period (QA-080, QA-089)", () => {
+  assert.equal(
+    cleanCaption("Shapiro study room 2122 (LibCal 27511), seen through the window."),
+    "Shapiro study room 2122, seen through the window.",
+  );
+  assert.equal(
+    cleanCaption("Shapiro floor 1 individual soundproof booth BOOTH1 (LibCal 206333) with a desk"),
+    "Shapiro floor 1 individual soundproof booth 1 with a desk",
+  );
+  assert.equal(captionSentence("Tables under fluorescent lights."), "Tables under fluorescent lights.");
+  assert.equal(captionSentence("Reading Room"), "Reading Room.");
 });

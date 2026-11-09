@@ -53,7 +53,11 @@ export function SpacesPreview({ slug }: { slug: string | null }) {
           const space = result.space;
           const photo = photos.data.find((item) => item.spaceId === space.id);
           const tags = spaceTagWords({ light_level: space.light_level, features: space.features });
-          const sources = photo && env ? photoSources(env.url, photo.pathPrefix, photo.widths) : null;
+          // The Spaces list falls back to the space's own library photo, so this
+          // row does too (QA-079). With neither, the square is left out.
+          const fallback = details.data.find((detail) => detail.id === space.id)?.imageUrl ?? null;
+          const sources =
+            photo && env ? photoSources(env.url, photo.pathPrefix, photo.widths) : fallback ? { src: fallback, srcSet: "" } : null;
           return (
             <li key={space.slug} className="border-b border-border">
               <Button
@@ -61,9 +65,9 @@ export function SpacesPreview({ slug }: { slug: string | null }) {
                 onClick={() => select({ kind: "space", slug: space.slug })}
                 className="h-auto min-h-11 w-full items-center justify-start gap-3 whitespace-normal rounded-none px-1 py-3 text-left font-normal"
               >
-                <span className="size-14 shrink-0 overflow-hidden rounded-lg bg-muted">
-                  {sources ? (
-                    // eslint-disable-next-line @next/next/no-img-element
+                {sources ? (
+                  <span className="size-14 shrink-0 overflow-hidden rounded-lg bg-muted">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={sources.src}
                       srcSet={sources.srcSet || undefined}
@@ -71,8 +75,8 @@ export function SpacesPreview({ slug }: { slug: string | null }) {
                       alt=""
                       className="size-full object-cover"
                     />
-                  ) : null}
-                </span>
+                  </span>
+                ) : null}
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="text-sm font-semibold">{space.name}</span>
                   <SpaceTagLine tags={tags} />

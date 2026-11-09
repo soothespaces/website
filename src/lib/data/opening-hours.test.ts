@@ -187,7 +187,7 @@ test("winter break replaces the semester on the dates it covers", () => {
   assert.notEqual(listed.find((day) => day.weekday === 5)?.hours, "12 AM – 6 PM");
 });
 
-test("Sunday hours that run into a 24-hour Monday read Open 24 hours, and the weekday is on the close", () => {
+test("Sunday hours that run into a 24-hour Monday read Open overnight, and the weekday is on the close (QA-075)", () => {
   const rows = [0, 1, 2, 3, 4, 5, 6].map((weekday) =>
     row({
       weekday,
@@ -199,8 +199,12 @@ test("Sunday hours that run into a 24-hour Monday read Open 24 hours, and the we
   );
   const hours = resolveOpeningHours(rows, "2026-10-18");
   const sundayNoon = new Date("2026-10-18T16:00:00Z");
-  assert.equal(openStatus(hours, sundayNoon), "Open 24 hours");
+  assert.equal(openStatus(hours, sundayNoon), "Open overnight");
   assert.equal(nextClose(hours, sundayNoon), "Closes Fri 6 PM");
+  const sundayLate = new Date("2026-10-19T03:25:00Z");
+  assert.equal(openStatus(hours, sundayLate), "Open overnight");
+  // Monday has been open since midnight, so it is a 24-hour day.
+  assert.equal(openStatus(hours, new Date("2026-10-19T16:00:00Z")), "Open 24 hours");
 });
 
 test("a midnight close is a number, 12 AM (SOS-93)", () => {
