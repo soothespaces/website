@@ -1,5 +1,6 @@
 import { SpaceTags } from "@/components/ui/space-tags";
-import { spaceLocation, spaceTags } from "./labels";
+import { buildingShortName, spaceLocation, spaceShortName, spaceTags } from "./labels";
+import { PlaceName } from "./place-name";
 import type { SpaceSummary } from "./types";
 import { Button } from "@/components/ui/button";
 
@@ -23,7 +24,8 @@ export function SpaceListItem({
   onSelect: (space: SpaceSummary) => void;
 }) {
   const compact = density === "compact";
-  const location = spaceLocation(space, { building: showBuilding });
+  // The building leads the name, so the line under it is only the floor.
+  const location = spaceLocation(space, { building: false });
   return (
     <Button
       variant="ghost"
@@ -34,7 +36,11 @@ export function SpaceListItem({
       }`}
     >
       <span className="flex flex-col">
-        <span className="text-sm font-semibold tracking-tight">{space.name}</span>
+        <PlaceName
+          building={showBuilding ? buildingShortName(space.building) : null}
+          place={spaceShortName(space)}
+          className="text-sm tracking-tight"
+        />
         {location ? <span className="text-xs text-muted-foreground">{location}</span> : null}
       </span>
       {!compact && space.summary ? (

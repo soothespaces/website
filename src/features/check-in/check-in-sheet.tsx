@@ -105,6 +105,8 @@ export function CheckInSheet({
     origin: origin && request && origin.id === request.id ? origin.point : null,
     preferId: whereId || preferred?.id || null,
   });
+  // Chips drop the building when they all share it.
+  const oneBuilding = new Set(choices.map((space) => space.buildingSlug)).size <= 1;
   const banner =
     request?.arrivalBuildingName ??
     choices.find((space) => space.buildingSlug === request?.arrivalBuildingSlug)?.buildingName ??
@@ -184,7 +186,7 @@ export function CheckInSheet({
             >
               {choices.map((space) => (
                 <Chip key={space.id} value={space.id}>
-                  {space.name}
+                  {oneBuilding || !space.buildingName ? space.name : `${space.buildingName}, ${space.name}`}
                 </Chip>
               ))}
               <Chip value={ELSEWHERE}>Somewhere else</Chip>

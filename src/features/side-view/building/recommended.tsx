@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { NoiseBadge } from "@/components/ui/noise-badge";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useMapState } from "@/features/map/map-state";
-import type { SpaceSummary } from "@/features/spaces";
+import { spaceFloorLine, spaceShortName, type SpaceSummary } from "@/features/spaces";
 import { loginHref, loginHrefFor } from "@/lib/auth/paths";
 import { useSession } from "@/lib/auth/use-session";
 import { rankSpaces } from "@/lib/ranking";
@@ -109,7 +109,7 @@ export function RecommendedSection({ slug }: { slug: string | null }) {
         {top.map((result) => {
           const space = result.space;
           const photo = photos.data.find((item) => item.spaceId === space.id);
-          const floor = floorLine(space.name, space.floor_label);
+          const floor = spaceFloorLine(space);
           return (
             <li key={space.slug} className="w-3/5 shrink-0 snap-start">
               <Button
@@ -119,7 +119,7 @@ export function RecommendedSection({ slug }: { slug: string | null }) {
               >
                 <PhotoBand photo={photo} />
                 <span className="flex flex-col gap-1 px-3 pb-3">
-                  <span className="text-sm font-semibold">{space.name}</span>
+                  <span className="text-sm font-semibold">{spaceShortName(space)}</span>
                   {floor ? <span className="text-xs text-muted-foreground">{floor}</span> : null}
                   {space.noise_level ? (
                     <span>
@@ -135,12 +135,6 @@ export function RecommendedSection({ slug }: { slug: string | null }) {
       </ul>
     </section>
   );
-}
-
-function floorLine(name: string, label: string | null): string | null {
-  if (!label) return null;
-  if (label.trim().toLowerCase() === name.trim().toLowerCase()) return null;
-  return label;
 }
 
 function PhotoBand({ photo }: { photo: ListedPhoto | undefined }) {

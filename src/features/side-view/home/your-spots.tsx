@@ -1,5 +1,6 @@
 "use client";
 
+import { spaceTitle } from "@/features/spaces";
 import { HeartFilledIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -50,7 +51,7 @@ function spotFor(favorite: Favorite, data: MapData) {
   if (favorite.spaceId) {
     const space = data.spaces.find((item) => item.id === favorite.spaceId);
     if (!space) return null;
-    return { key: `space:${favorite.id}`, name: space.name, selection: { kind: "space" as const, slug: space.slug } };
+    return { key: `space:${favorite.id}`, name: spaceTitle(space), selection: { kind: "space" as const, slug: space.slug } };
   }
   if (favorite.buildingSlug) {
     const building = data.buildingsBySlug.get(favorite.buildingSlug);

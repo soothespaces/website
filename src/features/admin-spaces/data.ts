@@ -64,7 +64,7 @@ export async function getSpace(slug: string): Promise<AdminSpace | null> {
   const { data: s, error } = await supabase
     .from("spaces")
     .select(
-      "id, slug, building_slug, name, summary, description, floor, floor_label, noise_level, light_level, features, capacity, is_listed, lat, lng, source, source_url, edited_fields, locations:space_locations(id, floor, room_number, area)",
+      "id, slug, building_slug, name, short_name, summary, description, floor, floor_label, noise_level, light_level, features, capacity, is_listed, lat, lng, source, source_url, edited_fields, locations:space_locations(id, floor, room_number, area)",
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -83,6 +83,7 @@ export async function getSpace(slug: string): Promise<AdminSpace | null> {
     slug: s.slug,
     buildingSlug: s.building_slug,
     name: s.name,
+    shortName: s.short_name,
     summary: s.summary,
     description: s.description,
     floor: s.floor,

@@ -288,7 +288,7 @@ function EntrancePopup({ entrance, onClose }: { entrance: Entrance; onClose: () 
       className="map-popup"
     >
       <div className="flex flex-col gap-1 text-sm">
-        {building ? <span className="text-xs text-muted-foreground">{building.name}</span> : null}
+        {building ? <span className="text-xs text-muted-foreground">{building.shortName || building.name}</span> : null}
         <span className="font-semibold">
           {entrance.automatic ? "Accessible entrance, automatic door" : "Accessible entrance, manual door"}
         </span>

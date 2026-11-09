@@ -158,7 +158,7 @@ const buildings = meta.map((b) => {
   return {
     slug: b.slug,
     name: clean(b.name),
-    short_name: clean(b.preferredName),
+    short_name: overrides.buildingShortNames[b.slug] ?? clean(b.preferredName),
     acronym: clean(off?.acronym) ?? clean(b.displayAcronym ?? b.acronym),
     official_id: officialId(off?.officalbuildingid) ?? officialId(b.buildingRecordNumber),
     address: clean(off?.address) ?? clean(b.address),
@@ -293,7 +293,13 @@ const mguideRows = mguideSpaces.map((s) => ({
   is_listed: !unlisted.has(s.slug),
 }));
 
-const spaces = [...librarySpaces, ...mguideRows];
+const spaces = [...librarySpaces, ...mguideRows].map((s) => ({
+  ...s,
+  short_name: overrides.spaceShortNames[s.slug] ?? null,
+}));
+for (const slug of Object.keys(overrides.spaceShortNames)) {
+  if (!spaces.some((s) => s.slug === slug)) fail(`spaceShortNames names unknown space ${slug}`);
+}
 
 const seen = new Set();
 for (const s of spaces) {
@@ -898,7 +904,7 @@ const BUILDING_COLUMNS = [
   "elevator_access", "extra",
 ];
 const SPACE_COLUMNS = [
-  "slug", "building_slug", "name", "summary", "description", "floor", "floor_label",
+  "slug", "building_slug", "name", "short_name", "summary", "description", "floor", "floor_label",
   "noise_level", "features", "capacity", "image_url", "image_alt", "source",
   "source_url", "waitz_id", "is_listed",
 ];

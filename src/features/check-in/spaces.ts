@@ -1,3 +1,4 @@
+import { buildingShortName, spaceShortName } from "@/features/spaces/labels";
 import { distanceMeters } from "@/lib/geo";
 
 // A listed study space the check-in sheet can point at. Coordinates fall
@@ -5,7 +6,10 @@ import { distanceMeters } from "@/lib/geo";
 export type CheckInSpace = {
   id: string;
   slug: string;
+  /** Where it is inside the building: "Floor 2 · Computing". */
   name: string;
+  /** The full name, still searchable: "Art, Architecture, and Engineering Library Floor 2 Computing Spaces". */
+  fullName: string;
   lat: number | null;
   lng: number | null;
   buildingSlug: string | null;
@@ -18,18 +22,20 @@ export function toCheckInSpace(space: {
   id: string;
   slug: string;
   name: string;
+  short_name?: string | null;
   lat: number | null;
   lng: number | null;
-  building: { slug: string; name: string; lat: number | null; lng: number | null } | null;
+  building: { slug: string; name: string; short_name?: string | null; lat: number | null; lng: number | null } | null;
 }): CheckInSpace {
   return {
     id: space.id,
     slug: space.slug,
-    name: space.name,
+    name: spaceShortName(space),
+    fullName: space.name,
     lat: space.lat,
     lng: space.lng,
     buildingSlug: space.building?.slug ?? null,
-    buildingName: space.building?.name ?? null,
+    buildingName: buildingShortName(space.building),
     buildingLat: space.building?.lat ?? null,
     buildingLng: space.building?.lng ?? null,
   };
@@ -96,7 +102,7 @@ export function searchSpaces(spaces: readonly CheckInSpace[], query: string, lim
   if (!needle) return [];
   return spaces
     .filter((space) => {
-      const haystack = `${space.name} ${space.buildingName ?? ""}`.toLowerCase();
+      const haystack = `${space.name} ${space.fullName} ${space.buildingName ?? ""}`.toLowerCase();
       return haystack.includes(needle);
     })
     .slice(0, limit);

@@ -7,7 +7,7 @@ import { getSupabaseEnv } from "@/lib/supabase/env";
 import { chooseSpacePhotos, toSpaceDetail, type SpaceDetail, type SpaceDetailRow, type SpacePhotoRow, type SpacePhotos } from "./detail";
 
 const SPACE_DETAIL_SELECT =
-  "id, slug, name, summary, description, floor, floor_label, noise_level, light_level, features, capacity, image_url, image_alt, source, edited_fields, lat, lng, building:buildings(slug, name, short_name, lat, lng), locations:space_locations(floor, room_number)";
+  "id, slug, name, short_name, summary, description, floor, floor_label, noise_level, light_level, features, capacity, image_url, image_alt, source, edited_fields, lat, lng, building:buildings(slug, name, short_name, lat, lng), locations:space_locations(floor, room_number)";
 
 export type SpaceDetailState = {
   space: SpaceDetail | null;

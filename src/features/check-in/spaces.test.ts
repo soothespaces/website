@@ -7,6 +7,7 @@ const shapiro = { buildingSlug: "shapiro", buildingName: "Shapiro Library", buil
 function space(partial: Partial<CheckInSpace> & Pick<CheckInSpace, "id" | "name">): CheckInSpace {
   return {
     slug: partial.id,
+    fullName: partial.name,
     lat: null,
     lng: null,
     buildingSlug: shapiro.buildingSlug,
