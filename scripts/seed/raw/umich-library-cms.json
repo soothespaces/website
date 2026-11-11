@@ -7576,28 +7576,6 @@
         ]
       },
       {
-        "id": "8d32399e-2566-4963-8812-a6edc39de7a0",
-        "type": "node--location",
-        "title": "Ask a Librarian",
-        "path": "/ask-librarian",
-        "field_hours_different_from_build": true,
-        "field_display_hours_": true,
-        "parent_location": null,
-        "hours": [
-          "9f950554-5d2e-42f5-8711-b3e8ad1e9fce",
-          "2c7406eb-49bd-466e-ba65-30d4761549a7",
-          "f4b830b0-cb18-44c2-8a4e-e027515955e2",
-          "201894c8-2d36-402d-8bd0-0c73ca987a51",
-          "9b44cb15-270e-4dbd-8a4b-e149fe573b88",
-          "7dce8143-4a07-4a2f-b485-d2b6b98b4293",
-          "9e36721c-0d76-45af-892d-3545c181e6b8",
-          "a8ee0921-c033-47e1-924e-4e05f5a1511a",
-          "b097f52a-36eb-4615-9cd1-04551edb1cbf",
-          "83a9ef88-b6ba-43a6-ba00-7bd67a66088d",
-          "fecbcc76-924d-4975-ba22-64e82c3fbe94"
-        ]
-      },
-      {
         "id": "b717c0eb-92ba-4961-ad19-964b89543ff7",
         "type": "node--location",
         "title": "Hatcher Gallery Exhibit Space",
@@ -7836,6 +7814,28 @@
           "41a30aa1-5530-4068-8680-3731c5e44355",
           "688ea20c-53a2-4f6e-bcfe-8db653d8a9a0",
           "768368cb-9d87-4215-90ac-73bcf073caa8"
+        ]
+      },
+      {
+        "id": "8d32399e-2566-4963-8812-a6edc39de7a0",
+        "type": "node--location",
+        "title": "Ask a Librarian",
+        "path": "/ask-librarian",
+        "field_hours_different_from_build": true,
+        "field_display_hours_": true,
+        "parent_location": null,
+        "hours": [
+          "9f950554-5d2e-42f5-8711-b3e8ad1e9fce",
+          "2c7406eb-49bd-466e-ba65-30d4761549a7",
+          "f4b830b0-cb18-44c2-8a4e-e027515955e2",
+          "201894c8-2d36-402d-8bd0-0c73ca987a51",
+          "9b44cb15-270e-4dbd-8a4b-e149fe573b88",
+          "7dce8143-4a07-4a2f-b485-d2b6b98b4293",
+          "9e36721c-0d76-45af-892d-3545c181e6b8",
+          "a8ee0921-c033-47e1-924e-4e05f5a1511a",
+          "b097f52a-36eb-4615-9cd1-04551edb1cbf",
+          "83a9ef88-b6ba-43a6-ba00-7bd67a66088d",
+          "fecbcc76-924d-4975-ba22-64e82c3fbe94"
         ]
       }
     ],
@@ -43963,553 +43963,6 @@
         ]
       },
       {
-        "id": "9f950554-5d2e-42f5-8711-b3e8ad1e9fce",
-        "type": "paragraph--labor_day_holiday_hours",
-        "field_date_range": {
-          "value": "2026-09-05",
-          "end_value": "2026-09-07"
-        },
-        "field_hours_open": [
-          {
-            "day": 0,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 1,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 6,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          }
-        ]
-      },
-      {
-        "id": "2c7406eb-49bd-466e-ba65-30d4761549a7",
-        "type": "paragraph--fall_and_winter_semester_hours",
-        "field_date_range": {
-          "value": "2026-08-30",
-          "end_value": "2026-12-31"
-        },
-        "field_hours_open": [
-          {
-            "day": 0,
-            "all_day": false,
-            "starthours": 1400,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 1,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 2,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 3,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 4,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 5,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 1700,
-            "comment": ""
-          },
-          {
-            "day": 6,
-            "all_day": false,
-            "starthours": 1300,
-            "endhours": 1700,
-            "comment": ""
-          }
-        ]
-      },
-      {
-        "id": "f4b830b0-cb18-44c2-8a4e-e027515955e2",
-        "type": "paragraph--fall_study_break",
-        "field_date_range": null,
-        "field_hours_open": []
-      },
-      {
-        "id": "201894c8-2d36-402d-8bd0-0c73ca987a51",
-        "type": "paragraph--thanksgiving_break_hours",
-        "field_date_range": {
-          "value": "2026-11-25",
-          "end_value": "2026-11-28"
-        },
-        "field_hours_open": [
-          {
-            "day": 3,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 1700,
-            "comment": ""
-          },
-          {
-            "day": 4,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 5,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 6,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          }
-        ]
-      },
-      {
-        "id": "9b44cb15-270e-4dbd-8a4b-e149fe573b88",
-        "type": "paragraph--winter_break_hours",
-        "field_date_range": {
-          "value": "2026-12-22",
-          "end_value": "2027-01-01"
-        },
-        "field_hours_open": [
-          {
-            "day": 0,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 1,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 2,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 3,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 4,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 5,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 6,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          }
-        ]
-      },
-      {
-        "id": "7dce8143-4a07-4a2f-b485-d2b6b98b4293",
-        "type": "paragraph--intersession_after_winter_exams",
-        "field_date_range": {
-          "value": "2023-06-24",
-          "end_value": "2023-06-25"
-        },
-        "field_hours_open": [
-          {
-            "day": 0,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 1,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 2,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 3,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 4,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 5,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 6,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          }
-        ]
-      },
-      {
-        "id": "9e36721c-0d76-45af-892d-3545c181e6b8",
-        "type": "paragraph--memorial_day_holiday_hours",
-        "field_date_range": {
-          "value": "2026-05-23",
-          "end_value": "2026-05-25"
-        },
-        "field_hours_open": [
-          {
-            "day": 0,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 1,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 2,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 3,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 4,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 5,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 6,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          }
-        ]
-      },
-      {
-        "id": "a8ee0921-c033-47e1-924e-4e05f5a1511a",
-        "type": "paragraph--spring_term_hours",
-        "field_date_range": {
-          "value": "2026-05-03",
-          "end_value": "2026-06-25"
-        },
-        "field_hours_open": [
-          {
-            "day": 0,
-            "all_day": false,
-            "starthours": 1400,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 1,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 2,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 3,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 4,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 5,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 1700,
-            "comment": ""
-          },
-          {
-            "day": 6,
-            "all_day": false,
-            "starthours": 1300,
-            "endhours": 1700,
-            "comment": ""
-          }
-        ]
-      },
-      {
-        "id": "b097f52a-36eb-4615-9cd1-04551edb1cbf",
-        "type": "paragraph--july_4_holiday_hours",
-        "field_date_range": {
-          "value": "2026-07-03",
-          "end_value": "2026-07-04"
-        },
-        "field_hours_open": [
-          {
-            "day": 0,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 1,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 2,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 3,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 4,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 5,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 6,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          }
-        ]
-      },
-      {
-        "id": "83a9ef88-b6ba-43a6-ba00-7bd67a66088d",
-        "type": "paragraph--summer_term_hours",
-        "field_date_range": {
-          "value": "2026-06-26",
-          "end_value": "2026-08-29"
-        },
-        "field_hours_open": [
-          {
-            "day": 0,
-            "all_day": false,
-            "starthours": 1400,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 1,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 2,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 3,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 4,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 2000,
-            "comment": ""
-          },
-          {
-            "day": 5,
-            "all_day": false,
-            "starthours": 900,
-            "endhours": 1700,
-            "comment": ""
-          },
-          {
-            "day": 6,
-            "all_day": false,
-            "starthours": 1300,
-            "endhours": 1700,
-            "comment": ""
-          }
-        ]
-      },
-      {
-        "id": "fecbcc76-924d-4975-ba22-64e82c3fbe94",
-        "type": "paragraph--intersession_after_new_year",
-        "field_date_range": {
-          "value": "2025-01-02",
-          "end_value": "2025-01-04"
-        },
-        "field_hours_open": [
-          {
-            "day": 0,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 1,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 2,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 3,
-            "all_day": false,
-            "starthours": null,
-            "endhours": null,
-            "comment": "Closed"
-          },
-          {
-            "day": 4,
-            "all_day": false,
-            "starthours": 1300,
-            "endhours": 1700,
-            "comment": ""
-          },
-          {
-            "day": 5,
-            "all_day": false,
-            "starthours": 1300,
-            "endhours": 1700,
-            "comment": ""
-          },
-          {
-            "day": 6,
-            "all_day": false,
-            "starthours": 1300,
-            "endhours": 1700,
-            "comment": ""
-          }
-        ]
-      },
-      {
         "id": "50192390-a36b-4e48-9075-9bf8baa6d1f3",
         "type": "paragraph--labor_day_holiday_hours",
         "field_date_range": {
@@ -51920,6 +51373,553 @@
             "starthours": null,
             "endhours": null,
             "comment": "Closed"
+          }
+        ]
+      },
+      {
+        "id": "9f950554-5d2e-42f5-8711-b3e8ad1e9fce",
+        "type": "paragraph--labor_day_holiday_hours",
+        "field_date_range": {
+          "value": "2026-09-05",
+          "end_value": "2026-09-07"
+        },
+        "field_hours_open": [
+          {
+            "day": 0,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 1,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 6,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          }
+        ]
+      },
+      {
+        "id": "2c7406eb-49bd-466e-ba65-30d4761549a7",
+        "type": "paragraph--fall_and_winter_semester_hours",
+        "field_date_range": {
+          "value": "2026-08-30",
+          "end_value": "2026-12-31"
+        },
+        "field_hours_open": [
+          {
+            "day": 0,
+            "all_day": false,
+            "starthours": 1400,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 1,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 2,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 3,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 4,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 5,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 1700,
+            "comment": ""
+          },
+          {
+            "day": 6,
+            "all_day": false,
+            "starthours": 1300,
+            "endhours": 1700,
+            "comment": ""
+          }
+        ]
+      },
+      {
+        "id": "f4b830b0-cb18-44c2-8a4e-e027515955e2",
+        "type": "paragraph--fall_study_break",
+        "field_date_range": null,
+        "field_hours_open": []
+      },
+      {
+        "id": "201894c8-2d36-402d-8bd0-0c73ca987a51",
+        "type": "paragraph--thanksgiving_break_hours",
+        "field_date_range": {
+          "value": "2026-11-25",
+          "end_value": "2026-11-28"
+        },
+        "field_hours_open": [
+          {
+            "day": 3,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 1700,
+            "comment": ""
+          },
+          {
+            "day": 4,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 5,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 6,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          }
+        ]
+      },
+      {
+        "id": "9b44cb15-270e-4dbd-8a4b-e149fe573b88",
+        "type": "paragraph--winter_break_hours",
+        "field_date_range": {
+          "value": "2026-12-22",
+          "end_value": "2027-01-01"
+        },
+        "field_hours_open": [
+          {
+            "day": 0,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 1,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 2,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 3,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 4,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 5,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 6,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          }
+        ]
+      },
+      {
+        "id": "7dce8143-4a07-4a2f-b485-d2b6b98b4293",
+        "type": "paragraph--intersession_after_winter_exams",
+        "field_date_range": {
+          "value": "2023-06-24",
+          "end_value": "2023-06-25"
+        },
+        "field_hours_open": [
+          {
+            "day": 0,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 1,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 2,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 3,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 4,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 5,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 6,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          }
+        ]
+      },
+      {
+        "id": "9e36721c-0d76-45af-892d-3545c181e6b8",
+        "type": "paragraph--memorial_day_holiday_hours",
+        "field_date_range": {
+          "value": "2026-05-23",
+          "end_value": "2026-05-25"
+        },
+        "field_hours_open": [
+          {
+            "day": 0,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 1,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 2,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 3,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 4,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 5,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 6,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          }
+        ]
+      },
+      {
+        "id": "a8ee0921-c033-47e1-924e-4e05f5a1511a",
+        "type": "paragraph--spring_term_hours",
+        "field_date_range": {
+          "value": "2026-05-03",
+          "end_value": "2026-06-25"
+        },
+        "field_hours_open": [
+          {
+            "day": 0,
+            "all_day": false,
+            "starthours": 1400,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 1,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 2,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 3,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 4,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 5,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 1700,
+            "comment": ""
+          },
+          {
+            "day": 6,
+            "all_day": false,
+            "starthours": 1300,
+            "endhours": 1700,
+            "comment": ""
+          }
+        ]
+      },
+      {
+        "id": "b097f52a-36eb-4615-9cd1-04551edb1cbf",
+        "type": "paragraph--july_4_holiday_hours",
+        "field_date_range": {
+          "value": "2026-07-03",
+          "end_value": "2026-07-04"
+        },
+        "field_hours_open": [
+          {
+            "day": 0,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 1,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 2,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 3,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 4,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 5,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 6,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          }
+        ]
+      },
+      {
+        "id": "83a9ef88-b6ba-43a6-ba00-7bd67a66088d",
+        "type": "paragraph--summer_term_hours",
+        "field_date_range": {
+          "value": "2026-06-26",
+          "end_value": "2026-08-29"
+        },
+        "field_hours_open": [
+          {
+            "day": 0,
+            "all_day": false,
+            "starthours": 1400,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 1,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 2,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 3,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 4,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 2000,
+            "comment": ""
+          },
+          {
+            "day": 5,
+            "all_day": false,
+            "starthours": 900,
+            "endhours": 1700,
+            "comment": ""
+          },
+          {
+            "day": 6,
+            "all_day": false,
+            "starthours": 1300,
+            "endhours": 1700,
+            "comment": ""
+          }
+        ]
+      },
+      {
+        "id": "fecbcc76-924d-4975-ba22-64e82c3fbe94",
+        "type": "paragraph--intersession_after_new_year",
+        "field_date_range": {
+          "value": "2025-01-02",
+          "end_value": "2025-01-04"
+        },
+        "field_hours_open": [
+          {
+            "day": 0,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 1,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 2,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 3,
+            "all_day": false,
+            "starthours": null,
+            "endhours": null,
+            "comment": "Closed"
+          },
+          {
+            "day": 4,
+            "all_day": false,
+            "starthours": 1300,
+            "endhours": 1700,
+            "comment": ""
+          },
+          {
+            "day": 5,
+            "all_day": false,
+            "starthours": 1300,
+            "endhours": 1700,
+            "comment": ""
+          },
+          {
+            "day": 6,
+            "all_day": false,
+            "starthours": 1300,
+            "endhours": 1700,
+            "comment": ""
           }
         ]
       }
