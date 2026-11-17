@@ -93,10 +93,15 @@ Google only, `@umich.edu` only ([ADR 0003](docs/decisions/0003-supabase-as-backe
   RLS, never only by the hook.
 - **`@umich.edu`:** enforced by the `before_user_created` auth hook (must be enabled
   in the dashboard under Authentication → Hooks) and again in `/auth/callback`.
-- **Redirect URLs:** a deployment can only sign in if its origin is listed in
-  Supabase → Authentication → URL Configuration → Redirect URLs
-  (`http://localhost:3000/**`, `https://*-tanner-s-projects.vercel.app/**`, and the
-  production URL as Site URL).
+- **Redirect URLs:** a deployment can only sign in if its origin is allowed in
+  Supabase → Authentication → URL Configuration:
+  - Site URL: `https://soothespaces.vercel.app`
+  - Redirect URLs: `https://soothespaces.vercel.app/**`, `http://localhost:3000/**`,
+    `https://*-tanner-s-projects.vercel.app/**`
+
+  If the callback URL isn't allowed, Supabase silently sends the user to the Site
+  URL instead. Never use a `*-tanner-s-projects.vercel.app` alias as the Site URL:
+  those sit behind Vercel's team login, so anyone outside the team gets stuck there.
 
 ## Learn More
 
