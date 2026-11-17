@@ -84,7 +84,7 @@ export function MapDock() {
             <ResultsPanel density="compact" />
           </div>
         ) : (
-          <SelectionPanel density="compact" />
+          <SelectionPanel density="compact" frameClassName="py-2 pl-2" />
         )
       ) : null}
       {size != null ? (
@@ -192,11 +192,13 @@ function DockResizeHandle({
         Drag, or use the left and right arrow keys. Home and End jump to the smallest and largest width. Double-click
         restores the usual width.
       </span>
+      {/* Sits on the border and out over the map, clear of the cards and the
+          scrollbar in the list's end padding. */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 left-1/2 flex h-10 w-3 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background shadow-sm group-hover:border-muted-foreground group-focus-visible:border-ring group-focus-visible:ring-2 group-focus-visible:ring-ring"
+        className="pointer-events-none absolute top-1/2 right-1 flex h-8 w-2 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background shadow-sm group-hover:border-muted-foreground group-focus-visible:border-ring group-focus-visible:ring-2 group-focus-visible:ring-ring"
       >
-        <span className="h-4 w-0.5 rounded-full bg-muted-foreground" />
+        <span className="h-3 w-0.5 rounded-full bg-muted-foreground" />
       </span>
     </div>
   );
