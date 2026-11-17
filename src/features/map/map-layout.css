@@ -1,3 +1,26 @@
+/* The dock list scrolls inside the column. A thin thumb stays in the end
+   padding, with a gap before the cards and before the resize grip. */
+aside[aria-label="Study spaces"] [data-detail-scroll] {
+  padding-inline-end: 0.75rem;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--muted-foreground) 55%, transparent) transparent;
+}
+
+aside[aria-label="Study spaces"] [data-detail-scroll]::-webkit-scrollbar {
+  width: 10px;
+}
+
+aside[aria-label="Study spaces"] [data-detail-scroll]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+aside[aria-label="Study spaces"] [data-detail-scroll]::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, var(--muted-foreground) 55%, transparent);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
 /* The phone search screen slides in from the left, where it swipes away to. */
 @keyframes map-screen-in {
   from {
